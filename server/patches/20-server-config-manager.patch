@@ -1,0 +1,8 @@
+java/net/minecraft/src/ServerConfigurationManager.java
+25 - private Set bannedPlayers;
+25 + private Set<String> bannedPlayers;
+26 - private Set bannedIPs;
+26 + private Set<String> bannedIPs;
+27 - private Set ops;
+27 + private Set<String> ops;
+

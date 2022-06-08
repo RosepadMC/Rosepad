@@ -1,0 +1,495 @@
+import java.nio.file.*
+import java.util.zip.*
+
+group 'net.buj'
+version '1.0-SNAPSHOT'
+
+if (System.getenv("TOOLKIT_JAVA17") == null) {
+    throw new RuntimeException("Running Rosepad toolchain requires JDK 17. Set TOOLKIT_JAVA17 environment variable " +
+        "to your JDK 17 installation")
+}
+
+if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+    System.err.println("/!\\ Warning! /!\\")
+    System.err.println("Rosepad ONLY supports Java 8")
+    System.err.println("")
+    System.err.println("Compiling Rosepad with anything other than JDK 8 might result in " +
+            "broken jar file. Use -Dorg.gradle.java.home=/path/to/your/java8/home to change your JDK version " +
+            "for this build")
+    System.err.println("")
+    System.err.println("Build will resume in 10 seconds")
+    Thread.sleep(10000)
+}
+
+class Utils {
+
+    private Utils() {}
+
+    static def fetch(String file, Path path) {
+        if (new File(path.toString()).isFile()) return
+        Path parent = path.parent
+        Files.createDirectories(parent)
+        Files.copy(new URL(file).openStream(), path, StandardCopyOption.REPLACE_EXISTING)
+    }
+
+    static def unzip(Path source, Path dest) {
+        byte[] buffer = new byte[1024]
+        ZipInputStream zis = new ZipInputStream(new FileInputStream(source.toAbsolutePath().normalize().toString()))
+        ZipEntry zipEntry = zis.getNextEntry()
+        while (zipEntry != null) {
+            File newFile = new File(dest.toString(), zipEntry.name)
+            if (zipEntry.isDirectory()) {
+                if (!newFile.isDirectory() && !newFile.mkdirs()) {
+                    throw new IOException("Failed to create directory " + newFile)
+                }
+            } else {
+                // fix for Windows-created archives
+                File parent = newFile.parentFile
+                if (!parent.isDirectory() && !parent.mkdirs()) {
+                    throw new IOException("Failed to create directory " + parent)
+                }
+                // write file content
+                FileOutputStream fos = new FileOutputStream(newFile)
+                int len = 0
+                while ((len = zis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len)
+                }
+                fos.close()
+            }
+            zipEntry = zis.getNextEntry()
+        }
+        zis.closeEntry()
+        zis.close()
+    }
+
+    static def zip(Path dir, Path zip) {
+        ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(zip.toString()))
+        LoopFunction3 loop = (Path path, String entry) -> {}
+        loop = (Path path, String entry) -> {
+            for (File it : path.toFile().listFiles()) {
+                if (it.isFile()) {
+                    zipFile.putNextEntry(new ZipEntry(entry + it.name))
+                    def buffer = new byte[it.size()]
+                    it.withInputStream { str ->
+                        zipFile.write(buffer, 0, str.read(buffer))
+                    }
+                    zipFile.closeEntry()
+                }
+                else if (it.isDirectory()) {
+                    loop.run(it.toPath(), entry + it.name + "/")
+                }
+            }
+        }
+        loop.run(dir, "")
+        zipFile.close()
+    }
+
+    static def gradlew(Path root, String... tasks) { // Leftover from development phase
+        String shell = System.properties['os.name'].toLowerCase().contains('windows')
+                ? "cmd.exe" // Because windows
+                : "/usr/bin/bash"
+        String cmd = System.properties['os.name'].toLowerCase().contains('windows')
+                ? "gradlew.bat" // Because windows
+                : "gradlew"
+        List<String> command = new ArrayList<>()
+        command.add(shell)
+        command.add(cmd)
+        command.add("-Dorg.gradle.java.home=" + System.getenv("TOOLKIT_JAVA17"))
+        command.addAll(Arrays.asList(tasks))
+        Process process = new ProcessBuilder(command).directory(new File(root.toString())).start()
+        StreamGobbler out = new StreamGobbler(process.inputStream)
+        StreamGobbler err = new StreamGobbler(process.errorStream)
+        out.start()
+        err.start()
+
+        if (process.waitFor() != 0) {
+            throw new RuntimeException("Failed to build enigma")
+        }
+    }
+
+    static def enigma(Path jar, Path source, Path dest, Path tiny2map) {
+        new File(dest.toString()).mkdirs() // JIC directory does not exists
+        Path jre = Paths.get(System.getenv("TOOLKIT_JAVA17"), "bin", "java")
+
+        List<String> command = new ArrayList<String>()
+        command.add(jre.toAbsolutePath().normalize().toString())
+        command.add("-jar")
+        command.add(jar.toAbsolutePath().normalize().toString())
+        command.add("decompile")
+        command.add("procyon")
+        command.add(source.toAbsolutePath().normalize().toString())
+        command.add(dest.toAbsolutePath().normalize().toString())
+        command.add(tiny2map.toAbsolutePath().normalize().toString())
+
+        Process process = new ProcessBuilder(command).start()
+        StreamGobbler out = new StreamGobbler(process.inputStream)
+        StreamGobbler err = new StreamGobbler(process.errorStream)
+        out.start()
+        err.start()
+
+        if (process.waitFor() != 0) {
+            throw new RuntimeException("Failed to decompile source")
+        }
+    }
+
+    static def tiny(Path jar, Path source, Path dest, Path tiny2map, String from, String to) {
+        new File(dest.parent.toString()).mkdirs() // JIC directory does not exists
+        Path jre = Paths.get(System.getenv("TOOLKIT_JAVA17"), "bin", "java")
+
+        List<String> command = new ArrayList<String>()
+        command.add(jre.toAbsolutePath().normalize().toString())
+        command.add("-jar")
+        command.add(jar.toAbsolutePath().normalize().toString())
+        command.add(source.toAbsolutePath().normalize().toString())
+        command.add(dest.toAbsolutePath().normalize().toString())
+        command.add(tiny2map.toAbsolutePath().normalize().toString())
+        command.add(from)
+        command.add(to)
+
+        Process process = new ProcessBuilder(command).start()
+        StreamGobbler out = new StreamGobbler(process.inputStream)
+        StreamGobbler err = new StreamGobbler(process.errorStream)
+        out.start()
+        err.start()
+
+        if (process.waitFor() != 0) {
+            throw new RuntimeException("Failed to apply mappings")
+        }
+    }
+
+    static def rm(Path path) {
+        File file = new File(path.toString())
+        if (file.isDirectory()) {
+            for (File sf : file.listFiles()) {
+                rm(sf.toPath())
+            }
+        }
+        file.delete()
+    }
+
+    static class Patch {
+        boolean remove
+        int line
+        String text
+
+        Patch(boolean remove, int line, String text) {
+            this.remove = remove
+            this.line = line
+            this.text = text
+        }
+    }
+
+    static class PatchFile {
+        Path filename
+        List<Patch> patches
+
+        PatchFile(Path filename, List<Patch> patches) {
+            this.filename = filename
+            this.patches = patches
+        }
+    }
+
+    static PatchFile readPatchFile(Path mainDir, Path patchFile) {
+        FileReader reader = new FileReader(patchFile.toFile())
+        Scanner scanner = new Scanner(reader)
+        List<Paths> patches = new ArrayList<>()
+
+        Path filename = Paths.get(mainDir.toString(), scanner.nextLine())
+
+        while (scanner.hasNextLine()) {
+            String[] line = scanner.nextLine().trim().split(" ")
+            if (line.length < 3) continue
+            StringBuilder path = new StringBuilder()
+            for (int i = 2; i < line.length; i++) path.append(" ").append(line[i])
+            int lineNum = Integer.parseUnsignedInt(line[0]) - 1
+            boolean remove = line[1] == "-"
+
+            patches.add(new Patch(remove, lineNum, path.toString().trim()))
+        }
+
+        scanner.close()
+        reader.close()
+
+        return new PatchFile(filename, patches)
+    }
+
+    static def applyPath(Path mainDir, Path patchFile) {
+        PatchFile file = readPatchFile(mainDir, patchFile)
+        FileReader reader = new FileReader(file.filename.toFile())
+        Scanner scanner = new Scanner(reader)
+        List<String> lines = new ArrayList<>()
+
+        while (scanner.hasNextLine()) {
+            lines.add(scanner.nextLine())
+        }
+
+        scanner.close()
+        reader.close()
+
+        int i = 1
+        for (Patch patch : file.patches) {
+            i++
+            if (patch.remove) {
+                StringBuilder strs = new StringBuilder()
+                for (int _i = patch.line - 2; _i < patch.line + 2; _i++) {
+                    if (_i < 0) continue
+                    if (_i >= lines.size()) continue
+                    if (_i == patch.line) strs.append("> ")
+                    else strs.append("  ")
+                    strs.append(lines.get(_i)).append("\n")
+                }
+                if (lines.get(patch.line).trim() != patch.text)
+                    throw new RuntimeException("Incorrect line " + (patch.line + 1) + "\nExpected: " + patch.text
+                            + "\nGot: " + lines.get(patch.line).trim() + "\nFile: " + file.filename.toString() + ":" +
+                            (patch.line + 1) + "\nPatch: " + patchFile.toString() + ":" + i + "\n\n" + strs)
+                if (patch.line >= lines.size())
+                    throw new RuntimeException("Incorrect line " + (patch.line + 1) + "\nExpected: " + patch.text
+                            + "\nGot: <EMPTY>\nFile: " + file.filename.toString() + ":" + (patch.line + 1) +
+                            "\nPatch: " + patchFile.toString() + ":" + i + "\n\n" + strs)
+                lines.remove(patch.line)
+            }
+            else {
+                lines.add(patch.line, patch.text)
+            }
+        }
+
+        FileWriter writer = new FileWriter(file.filename.toFile())
+
+        for (String line : lines) {
+            writer.write(line)
+            writer.write('\n')
+        }
+
+        writer.close()
+    }
+}
+
+class StreamGobbler extends Thread { // Stolen from a guy on stackoverflow
+    InputStream is
+
+    StreamGobbler(InputStream is) {
+        this.is = is
+    }
+
+    void run() {
+        try {
+            InputStreamReader isr = new InputStreamReader(is)
+            BufferedReader br = new BufferedReader(isr)
+            String line = null
+            while ((line = br.readLine()) != null)
+                System.out.println(line)
+        } catch (IOException ioe) {
+            ioe.printStackTrace()
+        }
+    }
+}
+
+abstract class JarEarlyPatcher extends DefaultTask {
+
+    @TaskAction
+    def patchJars() {
+        Utils.fetch(
+                "https://github.com/AlphaVerUnofficialJars/LilypadClient/releases/download/v105/lilypad_qamod_v105.jar",
+                Paths.get(project.rootDir.toString(), "jars", "lilypad_client_s.jar"),
+        )
+        Utils.fetch(
+                "https://github.com/AlphaVerUnofficialJars/LilypadServer/releases/download/v104/lilypad_server_v104.jar",
+                Paths.get(project.rootDir.toString(), "jars", "lilypad_server_s.jar"),
+        )
+        Utils.unzip(
+                Paths.get(project.rootDir.toString(), "jars", "lilypad_client_s.jar"),
+                Paths.get(project.rootDir.toString(), "client/src/main/resources"),
+        )
+
+        LoopFunction loop = (Path dir) -> {} // Throwaway
+        loop = (Path dir) -> { // Remove all .class files
+            File file = new File(dir.toString())
+            if (!file.isDirectory()) return true
+            List<File> files = new ArrayList(Arrays.asList(file.listFiles()))
+            for (File sf : new ArrayList(files)) {
+                if (sf.isDirectory()) {
+                    if (!loop.run(sf.toPath())) files.remove(sf)
+                    continue
+                }
+                if (sf.path.endsWith(".class")) {
+                    sf.delete()
+                    files.remove(sf)
+                }
+            }
+            if (files.size() > 0) return true
+            file.delete()
+            return false
+        }
+        loop.run(Paths.get(project.rootDir.toString(), "client/src/main/resources"))
+
+        Utils.enigma(
+                Paths.get(project.rootDir.toString(), "tools", "enigma.jar"),
+                Paths.get(project.rootDir.toString(), "jars", "lilypad_client_s.jar"),
+                Paths.get(project.rootDir.toString(), "client/src/main/java"),
+                Paths.get(project.rootDir.toString(), "mappings", "client.tiny2"),
+        )
+        Utils.enigma(
+                Paths.get(project.rootDir.toString(), "tools", "enigma.jar"),
+                Paths.get(project.rootDir.toString(), "jars", "lilypad_server_s.jar"),
+                Paths.get(project.rootDir.toString(), "server/src/main/java"),
+                Paths.get(project.rootDir.toString(), "mappings", "server_deobf.tiny"),
+        )
+
+        Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java/paulscode"))
+        Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java/com"))
+
+        // Fix for error logs in .java files
+        Utils.enigma(
+                Paths.get(project.rootDir.toString(), "tools", "enigma.jar"),
+                Paths.get(project.rootDir.toString(), "jars", "lilypad_client_s.jar"),
+                Paths.get(project.rootDir.toString(), "client/src/main/java_fix"),
+                Paths.get(project.rootDir.toString(), "mappings", "client.tiny2"),
+        )
+        Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java_fix/paulscode"))
+        Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java_fix/com"))
+
+        LoopFunction2 loop2 = (Path path, Path p2) -> {}
+        loop2 = (Path source, Path other) -> {
+            File file = new File(source.toString())
+            if (file.isDirectory()) {
+                for (String sf : file.list()) {
+                    loop2(
+                            Paths.get(source.toString(), sf),
+                            Paths.get(other.toString(), sf)
+                    )
+                }
+            }
+            else if (file.isFile()) {
+                FileReader reader = new FileReader(file)
+                Scanner scanner = new Scanner(reader)
+                if (scanner.nextLine().startsWith("java.lang.ArrayIndexOutOfBoundsException")) {
+                    scanner.close()
+                    reader.close()
+                    Files.copy(other, source, StandardCopyOption.REPLACE_EXISTING)
+                }
+                else {
+                    scanner.close()
+                    reader.close()
+                }
+            }
+        }
+        loop2.run(
+                Paths.get(project.rootDir.toString(), "client/src/main/java"),
+                Paths.get(project.rootDir.toString(), "client/src/main/java_fix")
+        )
+        Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java_fix"))
+
+        // Apply patches
+        for (String patch : new File(Paths.get(project.rootDir.toString(), "client/patches").toString()).list()) {
+            System.out.println(patch)
+            Utils.applyPath(
+                    Paths.get(project.rootDir.toString(), "client/src/main"),
+                    Paths.get(project.rootDir.toString(), "client/patches", patch),
+            )
+        }
+
+        Path serverDefaultPkg = Paths.get(project.rootDir.toString(), "server/src/main/java")
+        for (String file : serverDefaultPkg.toFile().list()) {
+            if (!new File(serverDefaultPkg.toFile(), file).isFile()) continue
+            FileReader reader = new FileReader(new File(serverDefaultPkg.toFile(), file))
+            FileWriter writer = new FileWriter(new File(serverDefaultPkg.toFile(), "net/minecraft/src/" + file))
+            Scanner scanner = new Scanner(reader)
+            writer.write("package net.minecraft.src;\n\n")
+            while (scanner.hasNextLine()) {
+                writer.write(scanner.nextLine())
+                writer.write("\n")
+            }
+            scanner.close()
+            reader.close()
+            writer.close()
+            Files.deleteIfExists(Paths.get(serverDefaultPkg.toString(), file))
+        }
+
+        for (String patch : new File(Paths.get(project.rootDir.toString(), "server/patches").toString()).list()) {
+            System.out.println(patch)
+            Utils.applyPath(
+                    Paths.get(project.rootDir.toString(), "server/src/main"),
+                    Paths.get(project.rootDir.toString(), "server/patches", patch),
+            )
+        }
+    }
+}
+
+abstract class ObfuscateTask extends DefaultTask {
+
+    @TaskAction
+    def obfuscate() {
+        Files.createDirectories(Paths.get(project.rootDir.toString(), "build"))
+        Utils.tiny(
+                Paths.get(project.rootDir.toString(), "tools", "tiny-remapper.jar"),
+                Paths.get(project.rootDir.toString(), "server/build/libs/server-1.0-SNAPSHOT.jar"),
+                Paths.get(project.rootDir.toString(), "build/RosepadServer.jar"),
+                Paths.get(project.rootDir.toString(), "mappings/server_reobf.tiny"),
+                "official",
+                "named",
+        )
+        Utils.tiny(
+                Paths.get(project.rootDir.toString(), "tools", "tiny-remapper.jar"),
+                Paths.get(project.rootDir.toString(), "client/build/libs/client-1.0-SNAPSHOT.jar"),
+                Paths.get(project.rootDir.toString(), "build/RosepadClient.jar"),
+                Paths.get(project.rootDir.toString(), "mappings/client.tiny2"),
+                "named",
+                "intermediary"
+        )
+
+        Utils.rm(
+                Paths.get(project.rootDir.toString(), "build/assembly"),
+        )
+        Utils.unzip(
+                Paths.get(project.rootDir.toString(), "libs/soundsystem-20120107.jar"),
+                Paths.get(project.rootDir.toString(), "build/assembly"),
+        )
+        Utils.unzip(
+                Paths.get(project.rootDir.toString(), "libs/librarylwjglopenal-20100824.jar"),
+                Paths.get(project.rootDir.toString(), "build/assembly"),
+        )
+        Utils.unzip(
+                Paths.get(project.rootDir.toString(), "libs/libraryjavasound-20101123.jar"),
+                Paths.get(project.rootDir.toString(), "build/assembly"),
+        )
+        Utils.unzip(
+                Paths.get(project.rootDir.toString(), "libs/codecwav-20101023.jar"),
+                Paths.get(project.rootDir.toString(), "build/assembly"),
+        )
+        Utils.unzip(
+                Paths.get(project.rootDir.toString(), "libs/codecjorbis-20101023.jar"),
+                Paths.get(project.rootDir.toString(), "build/assembly"),
+        )
+        Utils.unzip(
+                Paths.get(project.rootDir.toString(), "build/RosepadClient.jar"),
+                Paths.get(project.rootDir.toString(), "build/assembly"),
+        )
+        Utils.rm(
+                Paths.get(project.rootDir.toString(), "build/RosepadClient.jar"),
+        )
+        Utils.zip(
+                Paths.get(project.rootDir.toString(), "build/assembly"),
+                Paths.get(project.rootDir.toString(), "build/RosepadClient.jar"),
+        )
+        Utils.rm(
+                Paths.get(project.rootDir.toString(), "build/assembly"),
+        )
+    }
+}
+
+interface LoopFunction {
+    boolean run(Path dir)
+}
+
+interface LoopFunction2 {
+    void run(Path dir, Path dir2)
+}
+
+interface LoopFunction3 {
+    void run(Path dir, String entry)
+}
+
+tasks.register("prepare", JarEarlyPatcher)
+tasks.register("pack", ObfuscateTask)
+
+

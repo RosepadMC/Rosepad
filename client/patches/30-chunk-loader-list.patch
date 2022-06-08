@@ -1,0 +1,3 @@
+java/net/minecraft/src/ChunkLoader.java
+114 - for (final Entity entity : (List)chunk.entities.get(i)) {
+114 + for (final Entity entity : chunk.entities.get(i)) {

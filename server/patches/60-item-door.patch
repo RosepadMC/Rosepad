@@ -1,0 +1,5 @@
+java/net/minecraft/src/ItemDoor.java
+44 - final int i9 = (world.isBlockNormalCube(x - b10, y, z - b11) + world.isBlockNormalCube(x - b10, y + 1, z - b11)) ? 1 : 0;
+44 + final int i9 = (world.isBlockNormalCube(x - b10, y, z - b11) && world.isBlockNormalCube(x - b10, y + 1, z - b11)) ? 1 : 0;
+45 - final int i10 = (world.isBlockNormalCube(x + b10, y, z + b11) + world.isBlockNormalCube(x + b10, y + 1, z + b11)) ? 1 : 0;
+45 + final int i10 = (world.isBlockNormalCube(x + b10, y, z + b11) && world.isBlockNormalCube(x + b10, y + 1, z + b11)) ? 1 : 0;

@@ -1,0 +1,3 @@
+java/net/minecraft/src/RenderManager.java
+63 - this.entityRenderMap.put(entityClass, entityClassRendderObject);
+63 + this.entityRenderMap.put((Class<? extends Entity>) entityClass, entityClassRendderObject);

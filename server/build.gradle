@@ -1,0 +1,13 @@
+
+plugins {
+    id 'java'
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "net.minecraft.server.MinecraftServer"
+    }
+}
+
+group 'net.buj'
+version '1.0-SNAPSHOT'

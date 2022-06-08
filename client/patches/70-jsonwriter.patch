@@ -1,0 +1,5 @@
+java/org/json/JSONWriter.java
+171 - final Map<?, ?> map = value;
+171 + final Map<?, ?> map = (Map<?, ?>) value;
+175 - final Collection<?> coll = value;
+175 + final Collection<?> coll = (Collection<?>) value;

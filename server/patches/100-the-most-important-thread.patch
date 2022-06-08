@@ -1,0 +1,6 @@
+java/net/minecraft/src/ThreadSleepForeverServer.java
+17 - while (true) {
+18 - }
+22 - break;
+20 - continue;
+

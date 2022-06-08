@@ -1,0 +1,4 @@
+java/net/minecraft/src/SpawnerAnimals.java
+11 - private Set eligibleChunksForSpawning;
+11 + private Set<ChunkCoordIntPair> eligibleChunksForSpawning;
+

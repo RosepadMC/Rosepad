@@ -1,0 +1,6 @@
+
+build
+.gradle
+client/src/main/resources/*
+client/src/main/java/*
+server/src/main/java/*

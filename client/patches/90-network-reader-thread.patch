@@ -1,0 +1,7 @@
+java/net/minecraft/src/NetworkReaderThread.java
+34 - synchronized (NetworkManager.threadSyncObject) {
+34 - --NetworkManager.numReadThreads;
+34 - }
+16 - break Label_0029;
+12 - Label_0029: {
+34 - }

@@ -1,0 +1,4 @@
+java/net/minecraft/server/MinecraftServer.java
+41 - public static HashMap playerList;
+41 + public static HashMap<String, Object> playerList;
+

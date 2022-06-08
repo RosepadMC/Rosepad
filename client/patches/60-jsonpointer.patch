@@ -1,0 +1,3 @@
+java/org/json/JSONPointer.java
+25 - this.refTokens = (List<String>)Collections.emptyList();
+25 + this.refTokens = Collections.emptyList();

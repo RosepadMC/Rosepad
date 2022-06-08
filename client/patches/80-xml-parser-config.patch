@@ -1,0 +1,5 @@
+java/org/json/XMLParserConfiguration.java
+23 - this.xsiTypeMap = (Map<String, XMLXsiTypeConverter<?>>)Collections.emptyMap();
+23 + this.xsiTypeMap = Collections.emptyMap();
+24 - this.forceList = (Set<String>)Collections.emptySet();
+24 + this.forceList = Collections.emptySet();

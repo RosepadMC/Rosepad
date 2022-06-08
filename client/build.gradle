@@ -1,0 +1,23 @@
+
+plugins {
+    id 'java'
+}
+
+dependencies {
+    implementation files('../libs/codecjorbis-20101023.jar')
+    implementation files('../libs/codecwav-20101023.jar')
+    implementation files('../libs/libraryjavasound-20101123.jar')
+    implementation files('../libs/librarylwjglopenal-20100824.jar')
+    implementation files('../libs/lwjgl-2.9.4-nightly-20150209.jar')
+    implementation files('../libs/lwjgl_util-2.9.4-nightly-20150209.jar')
+    implementation files('../libs/soundsystem-20120107.jar')
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "net.minecraft.client.Minecraft"
+    }
+}
+
+group 'net.buj'
+version '1.0-SNAPSHOT'
