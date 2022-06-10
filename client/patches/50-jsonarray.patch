@@ -1,3 +1,0 @@
-java/org/json/JSONArray.java
-176 - final E val = (E)this.<Enum>optEnum((java.lang.Class<Enum>)clazz, index);
-176 + final E val = this.optEnum(clazz, index);

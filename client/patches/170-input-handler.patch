@@ -1,0 +1,8 @@
+java/net/minecraft/src/InputHandler.java
+166 - else if (InputHandler.KBEventKey == 47 && InputHandler.KBEventKeyState && InputHandler.cheatsEnabled && !(InputHandler.mc.currentScreen instanceof GuiChat)) {
+166 + else if (InputHandler.KBEventKey == mc.gameSettings.keyBindOpenGMEnv.keyCode && InputHandler.KBEventKeyState && InputHandler.cheatsEnabled && !(InputHandler.mc.currentScreen instanceof GuiChat)) {
+167 - if (InputHandler.mc.thePlayer != null && !IsKeyDown(29)) {
+167 + if (InputHandler.mc.thePlayer != null && mc.currentScreen == null) {
+171 - else if (InputHandler.KBEventKey == 42 && InputHandler.KBEventKeyState) {
+171 + else if (InputHandler.KBEventKey == mc.gameSettings.keyBindDash.keyCode && InputHandler.KBEventKeyState) {
+

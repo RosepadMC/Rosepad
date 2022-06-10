@@ -1,0 +1,6 @@
+java/net/minecraft/src/BlockSponge.java
+15 - if (world.getBlockMaterial(i6, i7, i8) == Material.water) {}
+15 + if (world.getBlockMaterial(i6, i7, i8) == Material.water) {
+16 + world.setBlock(i6, i7, i8, 0);
+17 + world.notifyBlocksOfNeighborChange(i6, i7, i8, 0);
+18 + }

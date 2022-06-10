@@ -2,7 +2,7 @@ import java.nio.file.*
 import java.util.zip.*
 
 group 'net.buj'
-version '1.0-SNAPSHOT'
+version '1.1-SNAPSHOT'
 
 if (System.getenv("TOOLKIT_JAVA17") == null) {
     throw new RuntimeException("Running Rosepad toolchain requires JDK 17. Set TOOLKIT_JAVA17 environment variable " +
@@ -337,6 +337,7 @@ abstract class JarEarlyPatcher extends DefaultTask {
 
         Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java/paulscode"))
         Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java/com"))
+        Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java/org"))
 
         // Fix for error logs in .java files
         Utils.enigma(
@@ -422,7 +423,7 @@ abstract class ObfuscateTask extends DefaultTask {
         Files.createDirectories(Paths.get(project.rootDir.toString(), "build"))
         Utils.tiny(
                 Paths.get(project.rootDir.toString(), "tools", "tiny-remapper.jar"),
-                Paths.get(project.rootDir.toString(), "server/build/libs/server-1.0-SNAPSHOT.jar"),
+                Paths.get(project.rootDir.toString(), "server/build/libs/server-1.1-SNAPSHOT-all.jar"),
                 Paths.get(project.rootDir.toString(), "build/RosepadServer.jar"),
                 Paths.get(project.rootDir.toString(), "mappings/server_reobf.tiny"),
                 "official",
@@ -430,49 +431,11 @@ abstract class ObfuscateTask extends DefaultTask {
         )
         Utils.tiny(
                 Paths.get(project.rootDir.toString(), "tools", "tiny-remapper.jar"),
-                Paths.get(project.rootDir.toString(), "client/build/libs/client-1.0-SNAPSHOT.jar"),
+                Paths.get(project.rootDir.toString(), "client/build/libs/client-1.1-SNAPSHOT-all.jar"),
                 Paths.get(project.rootDir.toString(), "build/RosepadClient.jar"),
                 Paths.get(project.rootDir.toString(), "mappings/client.tiny2"),
                 "named",
                 "intermediary"
-        )
-
-        Utils.rm(
-                Paths.get(project.rootDir.toString(), "build/assembly"),
-        )
-        Utils.unzip(
-                Paths.get(project.rootDir.toString(), "libs/soundsystem-20120107.jar"),
-                Paths.get(project.rootDir.toString(), "build/assembly"),
-        )
-        Utils.unzip(
-                Paths.get(project.rootDir.toString(), "libs/librarylwjglopenal-20100824.jar"),
-                Paths.get(project.rootDir.toString(), "build/assembly"),
-        )
-        Utils.unzip(
-                Paths.get(project.rootDir.toString(), "libs/libraryjavasound-20101123.jar"),
-                Paths.get(project.rootDir.toString(), "build/assembly"),
-        )
-        Utils.unzip(
-                Paths.get(project.rootDir.toString(), "libs/codecwav-20101023.jar"),
-                Paths.get(project.rootDir.toString(), "build/assembly"),
-        )
-        Utils.unzip(
-                Paths.get(project.rootDir.toString(), "libs/codecjorbis-20101023.jar"),
-                Paths.get(project.rootDir.toString(), "build/assembly"),
-        )
-        Utils.unzip(
-                Paths.get(project.rootDir.toString(), "build/RosepadClient.jar"),
-                Paths.get(project.rootDir.toString(), "build/assembly"),
-        )
-        Utils.rm(
-                Paths.get(project.rootDir.toString(), "build/RosepadClient.jar"),
-        )
-        Utils.zip(
-                Paths.get(project.rootDir.toString(), "build/assembly"),
-                Paths.get(project.rootDir.toString(), "build/RosepadClient.jar"),
-        )
-        Utils.rm(
-                Paths.get(project.rootDir.toString(), "build/assembly"),
         )
     }
 }

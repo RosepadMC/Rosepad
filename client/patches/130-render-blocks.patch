@@ -1,0 +1,106 @@
+java/net/minecraft/src/RenderBlocks.java
+33 - if (renderType == 0) {
+33 - return this.renderStandardBlock(block, x, y, z);
+33 - }
+33 - if (renderType == 4) {
+33 - return this.renderBlockFluids(block, x, y, z);
+33 - }
+33 - if (renderType == 13) {
+33 - return this.renderBlockCactus(block, x, y, z);
+33 - }
+33 - if (renderType == 1) {
+33 - return this.renderBlockReed(block, x, y, z);
+33 - }
+33 - if (renderType == 6) {
+33 - return this.renderBlockCrops(block, x, y, z);
+33 - }
+33 - if (renderType == 2) {
+33 - return this.renderBlockTorch(block, x, y, z);
+33 - }
+33 - if (renderType == 3) {
+33 - return this.renderBlockFire(block, x, y, z);
+33 - }
+33 - if (renderType == 5) {
+33 - return this.renderBlockRedstoneWire(block, x, y, z);
+33 - }
+33 - if (renderType == 8) {
+33 - return this.renderBlockLadder(block, x, y, z);
+33 - }
+33 - if (renderType == 7) {
+33 - return this.renderBlockDoor(block, x, y, z);
+33 - }
+33 - if (renderType == 9) {
+33 - return this.renderBlockMinecartTrack(block, x, y, z);
+33 - }
+33 - if (renderType == 10) {
+33 - return this.renderBlockStairs(block, x, y, z);
+33 - }
+33 - if (renderType == 11) {
+33 - return this.renderBlockFence(block, x, y, z);
+33 - }
+33 - return renderType == 12 && this.renderBlockLever(block, x, y, z);
+33 + switch (renderType) {
+34 + case 0:
+35 + return this.renderStandardBlock(block, x, y, z);
+36 + case 1:
+37 + return this.renderBlockReed(block, x, y, z);
+38 + case 2:
+39 + return this.renderBlockTorch(block, x, y, z);
+40 + case 3:
+41 + return this.renderBlockFire(block, x, y, z);
+42 + case 4:
+43 + return this.renderBlockFluids(block, x, y, z);
+44 + case 5:
+45 + return this.renderBlockRedstoneWire(block, x, y, z);
+46 + case 6:
+47 + return this.renderBlockCrops(block, x, y, z);
+48 + case 7:
+49 + return this.renderBlockDoor(block, x, y, z);
+50 + case 8:
+51 + return this.renderBlockLadder(block, x, y, z);
+52 + case 9:
+53 + return this.renderBlockMinecartTrack(block, x, y, z);
+54 + case 10:
+55 + return this.renderBlockStairs(block, x, y, z);
+56 + case 11:
+57 + return this.renderBlockFence(block, x, y, z);
+58 + case 12:
+59 + return this.renderBlockLever(block, x, y, z);
+60 + case 13:
+61 + return this.renderBlockCactus(block, x, y, z);
+62 + default:
+63 + return false;
+64 + }
+78 - if (blockMetadata == 1) {
+78 - this.renderTorchAtAngle(block, x - 0.09999999403953552, y + 0.20000000298023224, z, -0.4000000059604645, 0.0);
+78 - }
+78 - else if (blockMetadata == 2) {
+78 - this.renderTorchAtAngle(block, x + 0.09999999403953552, y + 0.20000000298023224, z, 0.4000000059604645, 0.0);
+78 - }
+78 - else if (blockMetadata == 3) {
+78 - this.renderTorchAtAngle(block, x, y + 0.20000000298023224, z - 0.09999999403953552, 0.0, -0.4000000059604645);
+78 - }
+78 - else if (blockMetadata == 4) {
+78 - this.renderTorchAtAngle(block, x, y + 0.20000000298023224, z + 0.09999999403953552, 0.0, 0.4000000059604645);
+78 - }
+78 - else {
+78 - this.renderTorchAtAngle(block, x, y, z, 0.0, 0.0);
+78 - }
+78 + switch (blockMetadata) {
+79 + case 1:
+80 + this.renderTorchAtAngle(block, x - 0.09999999403953552, y + 0.20000000298023224, z, -0.4000000059604645, 0.0);
+81 + break;
+82 + case 2:
+83 + this.renderTorchAtAngle(block, x + 0.09999999403953552, y + 0.20000000298023224, z, 0.4000000059604645, 0.0);
+84 + break;
+85 + case 3:
+86 + this.renderTorchAtAngle(block, x, y + 0.20000000298023224, z - 0.09999999403953552, 0.0, -0.4000000059604645);
+87 + break;
+88 + case 4:
+89 + this.renderTorchAtAngle(block, x, y + 0.20000000298023224, z + 0.09999999403953552, 0.0, 0.4000000059604645);
+90 + break;
+91 + default:
+92 + this.renderTorchAtAngle(block, x, y, z, 0.0, 0.0);
+93 + break;
+94 + }
+

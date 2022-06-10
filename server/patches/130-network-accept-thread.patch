@@ -1,0 +1,47 @@
+java/net/minecraft/src/NetworkAcceptThread.java
+5 + import java.util.*;
+12 + final Map<ByteArrayWrapper, Long> lastConnectionAt;
+13 + public final class ByteArrayWrapper {
+14 + private final byte[] data;
+15 + public ByteArrayWrapper(byte[] data) {
+16 + if (data == null) {
+17 + throw new NullPointerException();
+18 + }
+19 + this.data = data;
+20 + }
+21 + @Override
+22 + public boolean equals(Object other) {
+23 + if (!(other instanceof ByteArrayWrapper))
+24 + {
+25 + return false;
+26 + }
+27 + return Arrays.equals(data, ((ByteArrayWrapper)other).data);
+28 + }
+29 + @Override
+30 + public int hashCode() {
+31 + return Arrays.hashCode(data);
+32 + }
+33 + @Override
+34 + public String toString() {
+35 + StringBuilder builder = new StringBuilder();
+36 + for (int i = 0; i < data.length; i++) {
+37 + if (i != 0) builder.append(".");
+38 + builder.append((Integer) (int) data[i]);
+39 + }
+40 + return builder.toString();
+41 + }
+42 + }
+47 + this.lastConnectionAt = new HashMap<>();
+58 + ByteArrayWrapper address = new ByteArrayWrapper(socket1.getInetAddress().getAddress());
+59 + if (!lastConnectionAt.containsKey(address)) {
+60 + lastConnectionAt.put(address, 0L);
+61 + }
+62 + long lastConnectedAt = lastConnectionAt.get(address);
+63 + if (System.currentTimeMillis() - lastConnectedAt < 5000) {
+64 + lastConnectionAt.put(address, System.currentTimeMillis());
+65 + socket1.close();
+66 + System.out.println("Connection throttled [" + address + "]");
+67 + continue;
+68 + }
+69 + lastConnectionAt.put(address, System.currentTimeMillis());
+
