@@ -1,0 +1,12 @@
+--- BlockSponge.java
++++ BlockSponge.java
+@@ -13,5 +13,8 @@
+             for (int i7 = y - b5; i7 <= y + b5; ++i7) {
+                 for (int i8 = z - b5; i8 <= z + b5; ++i8) {
+-                    if (world.getBlockMaterial(i6, i7, i8) == Material.water) {}
++if (world.getBlockMaterial(i6, i7, i8) == Material.water) {
++world.setBlock(i6, i7, i8, 0);
++world.notifyBlocksOfNeighborChange(i6, i7, i8, 0);
++}
+                 }
+             }

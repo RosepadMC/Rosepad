@@ -1,0 +1,9 @@
+--- ChunkLoader.java
++++ ChunkLoader.java
+@@ -112,5 +112,5 @@
+         final NBTTagList tag = new NBTTagList();
+         for (int i = 0; i < chunk.entities.size(); ++i) {
+-            for (final Entity entity : (List)chunk.entities.get(i)) {
++for (final Entity entity : chunk.entities.get(i)) {
+                 chunk.hasEntities = true;
+                 final NBTTagCompound nbtTagCompound = new NBTTagCompound();

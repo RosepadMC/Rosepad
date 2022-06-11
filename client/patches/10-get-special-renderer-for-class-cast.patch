@@ -1,3 +1,0 @@
-java/net/minecraft/src/TileEntityRenderer.java
-41 - this.specialRendererMap.put(tileClass, specialRendererForClass);
-41 + this.specialRendererMap.put((Class<? extends TileEntity>) tileClass, specialRendererForClass);

@@ -1,0 +1,9 @@
+--- SpawnerAnimals.java
++++ SpawnerAnimals.java
+@@ -9,5 +9,5 @@
+     private Class entityType;
+     private Class[] entities;
+-    private Set eligibleChunksForSpawning;
++private Set<ChunkCoordIntPair> eligibleChunksForSpawning;
+     
+     public SpawnerAnimals(final int i1, final Class class2, final Class[] class3) {

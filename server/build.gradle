@@ -2,9 +2,19 @@
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.brambolt.gradle.patching' version '2022.05.01-7057'
 }
 
-dependencies {
+processPatches {
+    content = "${projectDir}/src/orig/java"
+    patches = "${projectDir}/patches"
+    destination = "${projectDir}/src/main/java"
+}
+
+createPatches {
+    content = "${projectDir}/src/orig/java"
+    modified = "${projectDir}/src/main/java"
+    destination = "${projectDir}/patches"
 }
 
 jar {

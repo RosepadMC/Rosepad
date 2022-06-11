@@ -1,0 +1,9 @@
+--- RenderManager.java
++++ RenderManager.java
+@@ -61,5 +61,5 @@
+         if (entityClassRendderObject == null && entityClass != Entity.class) {
+             entityClassRendderObject = this.getEntityClassRendderObject(entityClass.getSuperclass());
+-            this.entityRenderMap.put(entityClass, entityClassRendderObject);
++this.entityRenderMap.put((Class<? extends Entity>) entityClass, entityClassRendderObject);
+         }
+         return entityClassRendderObject;

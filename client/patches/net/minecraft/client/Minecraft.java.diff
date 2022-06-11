@@ -1,0 +1,18 @@
+--- Minecraft.java
++++ Minecraft.java
+@@ -211,5 +211,5 @@
+             Display.setDisplayMode(new DisplayMode(this.displayWidth, this.displayHeight));
+         }
+-        Display.setTitle("Minecraft Minecraft Alpha v1.1.0");
++Display.setTitle("Minecraft Alpha v1.0.16.05_15 Rosepad QA");
+         try {
+             PixelFormat pixelformat = new PixelFormat();
+@@ -905,4 +905,8 @@
+                                 this.thePlayer.dropPlayerItemWithRandomChoice(this.thePlayer.inventory.decrStackSize(this.thePlayer.inventory.currentItem, 1), false);
+                             }
++if (InputHandler.GetKBEventKey() == this.gameSettings.keyBindHideGUI.keyCode && this.ingameGUI != null
++&& this.currentScreen == null && this.thePlayer != null) {
++this.ingameGUI.showGUI = !this.ingameGUI.showGUI;
++}
+                             if (this.isMultiplayerWorld() && InputHandler.GetKBEventKey() == this.gameSettings.keyBindChat.keyCode) {
+                                 this.displayGuiScreen(new GuiChat());

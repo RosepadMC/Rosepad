@@ -1,3 +1,0 @@
-java/net/minecraft/src/EntityTrackerEntry.java
-23 - public Set trackedPlayers;
-23 + public Set<EntityPlayerMP> trackedPlayers;

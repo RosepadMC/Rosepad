@@ -1,0 +1,20 @@
+--- EntityRenderer.java
++++ EntityRenderer.java
+@@ -316,4 +316,5 @@
+                 GL11.glDisable(3008);
+                 renderGlobal.drawBlockBreaking(thePlayer, this.mc.objectMouseOver, 0, thePlayer.inventory.getCurrentItem(), renderPartialTick);
++if (this.mc.ingameGUI.showGUI)
+                 renderGlobal.drawSelectionBox(thePlayer, this.mc.objectMouseOver, 0, thePlayer.inventory.getCurrentItem(), renderPartialTick);
+                 GL11.glEnable(3008);
+@@ -349,4 +350,5 @@
+                 GL11.glDisable(3008);
+                 renderGlobal.drawBlockBreaking(thePlayer, this.mc.objectMouseOver, 0, thePlayer.inventory.getCurrentItem(), renderPartialTick);
++if (this.mc.ingameGUI.showGUI)
+                 renderGlobal.drawSelectionBox(thePlayer, this.mc.objectMouseOver, 0, thePlayer.inventory.getCurrentItem(), renderPartialTick);
+                 GL11.glEnable(3008);
+@@ -362,4 +364,5 @@
+             this.setupFog(1);
+             GL11.glClear(256);
++if (this.mc.ingameGUI.showGUI || this.mc.currentScreen != null)
+             this.renderHand(renderPartialTick, i);
+             if (!this.mc.gameSettings.anaglyph) {

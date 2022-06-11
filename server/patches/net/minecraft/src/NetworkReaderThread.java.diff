@@ -1,0 +1,51 @@
+--- NetworkReaderThread.java
++++ NetworkReaderThread.java
+@@ -10,34 +10,18 @@
+     
+     public void run() {
+-        Object object1 = NetworkManager.threadSyncObject;
+-        synchronized (NetworkManager.threadSyncObject) {
+-            ++NetworkManager.numReadThreads;
+-        }
+-        // monitorexit(NetworkManager.threadSyncObject)
+-        boolean z11 = false;
+-        try {
+-            z11 = true;
+-            if (NetworkManager.isRunning(this.netManager)) {
+-                if (!NetworkManager.isServerTerminating(this.netManager)) {
+-                    NetworkManager.readNetworkPacket(this.netManager);
+-                }
+-                z11 = false;
+-            }
+-            z11 = false;
+-        }
+-        finally {
+-            if (z11) {
+-                final Object object2 = NetworkManager.threadSyncObject;
+-                synchronized (NetworkManager.threadSyncObject) {
+-                    --NetworkManager.numReadThreads;
+-                }
+-                // monitorexit(NetworkManager.threadSyncObject)
+-            }
+-        }
+-        object1 = NetworkManager.threadSyncObject;
+-        synchronized (NetworkManager.threadSyncObject) {
+-            --NetworkManager.numReadThreads;
+-        }
+-        // monitorexit(NetworkManager.threadSyncObject)
++synchronized (NetworkManager.threadSyncObject) {
++++NetworkManager.numReadThreads;
++}
++try {
++while (NetworkManager.isRunning(this.netManager) && !NetworkManager.isServerTerminating(this.netManager)) {
++NetworkManager.readNetworkPacket(this.netManager);
++}
++}
++catch (Exception e) {
++e.printStackTrace();
++}
++synchronized (NetworkManager.threadSyncObject) {
++--NetworkManager.numReadThreads;
++}
+     }
+ }

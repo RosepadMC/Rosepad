@@ -1,0 +1,145 @@
+--- ServerConfigurationManager.java
++++ ServerConfigurationManager.java
+@@ -23,10 +23,15 @@
+     private PlayerManager playerManagerObj;
+     private int maxPlayers;
+-    private Set bannedPlayers;
+-    private Set bannedIPs;
+-    private Set ops;
++private Set<String> bannedPlayers;
++private Set<String> bannedIPs;
++private Set<String> ops;
++private Set<String> whitelistedPlayers;
++private Set<String> whitelistedIPs;
++private boolean whitelistEnabled;
+     private File bannedPlayersFile;
+     private File ipBanFile;
+     private File opFile;
++private File whitelistFile;
++private File whitelistIPsFile;
+     private PlayerNBTManager playerNBTManagerObj;
+     
+@@ -40,16 +45,26 @@
+         this.bannedIPs = (Set)new HashSet();
+         this.ops = (Set)new HashSet();
++this.whitelistedPlayers = new HashSet<>();
++this.whitelistedIPs = new HashSet<>();
++this.whitelistEnabled = false;
+         this.mcServer = minecraftServer;
+         this.bannedPlayersFile = minecraftServer.getFile("banned-players.txt");
+         this.ipBanFile = minecraftServer.getFile("banned-ips.txt");
+         this.opFile = minecraftServer.getFile("ops.txt");
++this.whitelistFile = minecraftServer.getFile("whitelist.txt");
++this.whitelistIPsFile = minecraftServer.getFile("whitelist-ips.txt");
+         this.playerManagerObj = new PlayerManager(minecraftServer);
+         this.maxPlayers = minecraftServer.propertyManagerObj.getIntProperty("max-players", 20);
++this.whitelistEnabled = minecraftServer.propertyManagerObj.getBooleanProperty("whitelist", false);
+         this.readBannedPlayers();
+         this.loadBannedList();
+         this.loadOps();
++this.loadWhitelistedPlayers();
++this.loadWhitelistedIPs();
+         this.writeBannedPlayers();
+         this.saveBannedList();
+         this.saveOps();
++this.saveWhitelistedPlayers();
++this.saveWhitelistedIPs();
+     }
+     
+@@ -89,4 +104,8 @@
+             return null;
+         }
++if (!this.whitelistedPlayers.contains(string2.trim().toLowerCase()) && this.whitelistEnabled) {
++netLoginHandler1.kickUser("You are not whitelisted on this server!");
++return null;
++}
+         String string4 = netLoginHandler1.netManager.getRemoteAddress().toString();
+         string4 = string4.substring(string4.indexOf("/") + 1);
+@@ -96,4 +115,8 @@
+             return null;
+         }
++if (!this.whitelistedIPs.contains(string4.trim().toLowerCase()) && this.whitelistedIPs.size() > 0 && this.whitelistEnabled) {
++netLoginHandler1.kickUser("You are not whitelisted on this server!");
++return null;
++}
+         if (this.playerEntities.size() >= this.maxPlayers) {
+             netLoginHandler1.kickUser("The server is full!");
+@@ -256,4 +279,78 @@
+         return this.ops.contains(string1.trim().toLowerCase());
+     }
++private void loadWhitelistedPlayers() {
++try {
++this.whitelistedPlayers.clear();
++final BufferedReader bufferedReader1 = new BufferedReader((Reader)new FileReader(this.whitelistFile));
++String string2 = "";
++while ((string2 = bufferedReader1.readLine()) != null) {
++this.whitelistedPlayers.add(string2.trim().toLowerCase());
++}
++bufferedReader1.close();
++}
++catch (Exception exception3) {
++ServerConfigurationManager.logger.warning(new StringBuilder("Failed to load player whitelist: ").append(exception3).toString());
++}
++}
++private void saveWhitelistedPlayers() {
++try {
++final PrintWriter printWriter1 = new PrintWriter((Writer)new FileWriter(this.whitelistFile, false));
++for (final String string3 : this.whitelistedPlayers) {
++printWriter1.println(string3);
++}
++printWriter1.close();
++}
++catch (Exception exception4) {
++ServerConfigurationManager.logger.warning(new StringBuilder("Failed to save player whitelist: ").append(exception4).toString());
++}
++}
++public void whitelistPlayer(final String string1) {
++this.whitelistedPlayers.add(string1.toLowerCase());
++this.saveWhitelistedPlayers();
++}
++public void unwhitelistPlayer(final String string1) {
++this.whitelistedPlayers.remove(string1.toLowerCase());
++this.saveWhitelistedPlayers();
++}
++private void loadWhitelistedIPs() {
++try {
++this.whitelistedIPs.clear();
++final BufferedReader bufferedReader1 = new BufferedReader((Reader)new FileReader(this.whitelistIPsFile));
++String string2 = "";
++while ((string2 = bufferedReader1.readLine()) != null) {
++this.whitelistedIPs.add(string2.trim().toLowerCase());
++}
++bufferedReader1.close();
++}
++catch (Exception exception3) {
++ServerConfigurationManager.logger.warning(new StringBuilder("Failed to load ip whitelist: ").append(exception3).toString());
++}
++}
++private void saveWhitelistedIPs() {
++try {
++final PrintWriter printWriter1 = new PrintWriter((Writer)new FileWriter(this.whitelistIPsFile, false));
++for (final String string3 : this.whitelistedIPs) {
++printWriter1.println(string3);
++}
++printWriter1.close();
++}
++catch (Exception exception4) {
++ServerConfigurationManager.logger.warning(new StringBuilder("Failed to save ip whitelist: ").append(exception4).toString());
++}
++}
++public void whitelistIP(final String string1) {
++this.whitelistedIPs.add(string1.toLowerCase());
++this.saveWhitelistedIPs();
++}
++public void unwhitelistIP(final String string1) {
++this.whitelistedIPs.remove(string1.toLowerCase());
++this.saveWhitelistedIPs();
++}
++public void enableWhitelist() {
++this.whitelistEnabled = true;
++}
++public void disableWhitelist() {
++this.whitelistEnabled = false;
++}
+     
+     public EntityPlayerMP getPlayerEntity(final String string1) {

@@ -1,0 +1,66 @@
+--- NetworkAcceptThread.java
++++ NetworkAcceptThread.java
+@@ -3,4 +3,5 @@
+ import java.net.Socket;
+ import java.io.IOException;
++import java.util.*;
+ import net.minecraft.server.MinecraftServer;
+ 
+@@ -9,8 +10,40 @@
+     final NetworkListenThread networkListenThread;
+     
++final Map<ByteArrayWrapper, Long> lastConnectionAt;
++public final class ByteArrayWrapper {
++private final byte[] data;
++public ByteArrayWrapper(byte[] data) {
++if (data == null) {
++throw new NullPointerException();
++}
++this.data = data;
++}
++@Override
++public boolean equals(Object other) {
++if (!(other instanceof ByteArrayWrapper))
++{
++return false;
++}
++return Arrays.equals(data, ((ByteArrayWrapper)other).data);
++}
++@Override
++public int hashCode() {
++return Arrays.hashCode(data);
++}
++@Override
++public String toString() {
++StringBuilder builder = new StringBuilder();
++for (int i = 0; i < data.length; i++) {
++if (i != 0) builder.append(".");
++builder.append((Integer) (int) data[i]);
++}
++return builder.toString();
++}
++}
+     NetworkAcceptThread(final NetworkListenThread thread, final String string2, final MinecraftServer minecraftServer) {
+         super(string2);
+         this.networkListenThread = thread;
+         this.minecraftServer = minecraftServer;
++this.lastConnectionAt = new HashMap<>();
+     }
+     
+@@ -23,4 +56,16 @@
+                 }
+                 final NetLoginHandler netLoginHandler2 = new NetLoginHandler(this.minecraftServer, socket1, new StringBuilder("Connection #").append(NetworkListenThread.incrementConnections(this.networkListenThread)).toString());
++ByteArrayWrapper address = new ByteArrayWrapper(socket1.getInetAddress().getAddress());
++if (!lastConnectionAt.containsKey(address)) {
++lastConnectionAt.put(address, 0L);
++}
++long lastConnectedAt = lastConnectionAt.get(address);
++if (System.currentTimeMillis() - lastConnectedAt < 5000) {
++lastConnectionAt.put(address, System.currentTimeMillis());
++socket1.close();
++System.out.println("Connection throttled [" + address + "]");
++continue;
++}
++lastConnectionAt.put(address, System.currentTimeMillis());
+                 NetworkListenThread.addPendingConnection(this.networkListenThread, netLoginHandler2);
+             }

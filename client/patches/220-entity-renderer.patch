@@ -1,4 +1,0 @@
-java/net/minecraft/src/EntityRenderer.java
-318 + if (this.mc.ingameGUI.showGUI)
-352 + if (this.mc.ingameGUI.showGUI)
-366 + if (this.mc.ingameGUI.showGUI || this.mc.currentScreen != null)

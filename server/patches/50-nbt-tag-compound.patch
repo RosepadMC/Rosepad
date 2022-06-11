@@ -1,3 +1,0 @@
-java/net/minecraft/src/NBTTagCompound.java
-11 - private Map tagMap;
-11 + private Map<String, NBTBase> tagMap;

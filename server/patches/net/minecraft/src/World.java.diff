@@ -1,0 +1,9 @@
+--- World.java
++++ World.java
+@@ -53,5 +53,5 @@
+     public boolean worldChunkLoadOverride;
+     private ArrayList collidingBoundingBoxes;
+-    private Set positionsToUpdate;
++private Set<ChunkCoordIntPair> positionsToUpdate;
+     private int soundCounter;
+     private List entitiesWithinAABBExcludingEntity;

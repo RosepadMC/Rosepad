@@ -1,0 +1,11 @@
+--- Chunk.java
++++ Chunk.java
+@@ -19,6 +19,6 @@
+     public final int xPosition;
+     public final int zPosition;
+-    public Map chunkTileEntityMap;
+-    public List[] entities;
++public Map<ChunkPosition, TileEntity> chunkTileEntityMap;
++public List<Entity>[] entities;
+     public boolean isTerrainPopulated;
+     public boolean isModified;

@@ -167,15 +167,30 @@ class Utils {
         file.delete()
     }
 
+    static def cp(Path source, Path dest) {
+        File file = source.toFile()
+        if (file.isDirectory()) {
+            dest.toFile().mkdirs()
+            for (String sf : file.list()) {
+                cp(source.resolve(sf), dest.resolve(sf))
+            }
+        }
+        else if (file.isFile()) {
+            Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING)
+        }
+    }
+
     static class Patch {
         boolean remove
         int line
         String text
+        int patchFileLine
 
-        Patch(boolean remove, int line, String text) {
+        Patch(boolean remove, int line, String text, int patchFileLine) {
             this.remove = remove
             this.line = line
             this.text = text
+            this.patchFileLine = patchFileLine
         }
     }
 
@@ -196,7 +211,9 @@ class Utils {
 
         Path filename = Paths.get(mainDir.toString(), scanner.nextLine())
 
+        int li = 0
         while (scanner.hasNextLine()) {
+            li++
             String[] line = scanner.nextLine().trim().split(" ")
             if (line.length < 3) continue
             StringBuilder path = new StringBuilder()
@@ -204,7 +221,7 @@ class Utils {
             int lineNum = Integer.parseUnsignedInt(line[0]) - 1
             boolean remove = line[1] == "-"
 
-            patches.add(new Patch(remove, lineNum, path.toString().trim()))
+            patches.add(new Patch(remove, lineNum, path.toString().trim(), li))
         }
 
         scanner.close()
@@ -226,9 +243,7 @@ class Utils {
         scanner.close()
         reader.close()
 
-        int i = 1
         for (Patch patch : file.patches) {
-            i++
             if (patch.remove) {
                 StringBuilder strs = new StringBuilder()
                 for (int _i = patch.line - 2; _i < patch.line + 2; _i++) {
@@ -241,11 +256,12 @@ class Utils {
                 if (lines.get(patch.line).trim() != patch.text)
                     throw new RuntimeException("Incorrect line " + (patch.line + 1) + "\nExpected: " + patch.text
                             + "\nGot: " + lines.get(patch.line).trim() + "\nFile: " + file.filename.toString() + ":" +
-                            (patch.line + 1) + "\nPatch: " + patchFile.toString() + ":" + i + "\n\n" + strs)
+                            (patch.line + 1) + "\nPatch: " + patchFile.toString() + ":" + patch.patchFileLine + "\n\n"
+                            + strs)
                 if (patch.line >= lines.size())
                     throw new RuntimeException("Incorrect line " + (patch.line + 1) + "\nExpected: " + patch.text
                             + "\nGot: <EMPTY>\nFile: " + file.filename.toString() + ":" + (patch.line + 1) +
-                            "\nPatch: " + patchFile.toString() + ":" + i + "\n\n" + strs)
+                            "\nPatch: " + patchFile.toString() + ":" + patch.patchFileLine + "\n\n" + strs)
                 lines.remove(patch.line)
             }
             else {
@@ -380,14 +396,11 @@ abstract class JarEarlyPatcher extends DefaultTask {
         )
         Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java_fix"))
 
-        // Apply patches
-        for (String patch : new File(Paths.get(project.rootDir.toString(), "client/patches").toString()).list()) {
-            System.out.println(patch)
-            Utils.applyPath(
-                    Paths.get(project.rootDir.toString(), "client/src/main"),
-                    Paths.get(project.rootDir.toString(), "client/patches", patch),
-            )
-        }
+        Utils.rm(Paths.get(project.rootDir.toString(), "client/src/orig"))
+        Utils.cp(
+                Paths.get(project.rootDir.toString(), "client/src/main/java"),
+                Paths.get(project.rootDir.toString(), "client/src/orig/java"),
+        )
 
         Path serverDefaultPkg = Paths.get(project.rootDir.toString(), "server/src/main/java")
         for (String file : serverDefaultPkg.toFile().list()) {
@@ -406,13 +419,11 @@ abstract class JarEarlyPatcher extends DefaultTask {
             Files.deleteIfExists(Paths.get(serverDefaultPkg.toString(), file))
         }
 
-        for (String patch : new File(Paths.get(project.rootDir.toString(), "server/patches").toString()).list()) {
-            System.out.println(patch)
-            Utils.applyPath(
-                    Paths.get(project.rootDir.toString(), "server/src/main"),
-                    Paths.get(project.rootDir.toString(), "server/patches", patch),
-            )
-        }
+        Utils.rm(Paths.get(project.rootDir.toString(), "server/src/orig"))
+        Utils.cp(
+                Paths.get(project.rootDir.toString(), "server/src/main/java"),
+                Paths.get(project.rootDir.toString(), "server/src/orig/java"),
+        )
     }
 }
 

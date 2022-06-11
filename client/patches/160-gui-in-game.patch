@@ -1,9 +1,0 @@
-java/net/minecraft/src/GuiIngame.java
-243 - fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad", 2, 2, 16777215);
-243 + fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Rosepad.1.1", 2, 2, 16777215);
-263 - fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad", 2, 2, 16777215);
-263 + fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Rosepad.1.1", 2, 2, 16777215);
-30 + public boolean showGUI;
-105 + this.showGUI = true;
-109 + if (!this.showGUI && this.mc.currentScreen == null) return;
-

@@ -1,7 +1,0 @@
-java/net/minecraft/client/Minecraft.java
-213 - Display.setTitle("Minecraft Minecraft Alpha v1.1.0");
-213 + Display.setTitle("Minecraft Alpha v1.0.16.05_15 Rosepad QA");
-907 + if (InputHandler.GetKBEventKey() == this.gameSettings.keyBindHideGUI.keyCode && this.ingameGUI != null
-908 +         && this.currentScreen == null && this.thePlayer != null) {
-909 +     this.ingameGUI.showGUI = !this.ingameGUI.showGUI;
-910 + }

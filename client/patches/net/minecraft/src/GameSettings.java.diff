@@ -1,0 +1,88 @@
+--- GameSettings.java
++++ GameSettings.java
+@@ -23,4 +23,5 @@
+     public boolean limitFramerate;
+     public boolean fancyGraphics;
++public boolean acceptRemoteScripts;
+     public KeyBinding keyBindForward;
+     public KeyBinding keyBindLeft;
+@@ -32,4 +33,7 @@
+     public KeyBinding keyBindChat;
+     public KeyBinding keyBindToggleFog;
++public KeyBinding keyBindDash;
++public KeyBinding keyBindOpenGMEnv;
++public KeyBinding keyBindHideGUI;
+     public KeyBinding[] keyBindings;
+     protected Minecraft mc;
+@@ -54,4 +58,5 @@
+         this.limitFramerate = false;
+         this.fancyGraphics = true;
++this.acceptRemoteScripts = false;
+         this.keyBindForward = new KeyBinding("Forward", 17);
+         this.keyBindLeft = new KeyBinding("Left", 30);
+@@ -60,9 +65,12 @@
+         this.keyBindJump = new KeyBinding("Jump", 57);
+         this.keyBindInventory = new KeyBinding("Inventory", 23);
++this.keyBindDash = new KeyBinding("Dash", 42);
++this.keyBindOpenGMEnv = new KeyBinding("Cheat menu", 47);
+         this.keyBindDrop = new KeyBinding("Drop", 16);
+         this.keyBindChat = new KeyBinding("Chat", 20);
+         this.keyBindToggleFog = new KeyBinding("Toggle fog", 33);
+-        this.keyBindings = new KeyBinding[] { this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog };
+-        this.numberOfOptions = 10;
++this.keyBindHideGUI = new KeyBinding("Hide GUI", 59);
++this.keyBindings = new KeyBinding[] { this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog, this.keyBindOpenGMEnv, this.keyBindDash, this.keyBindHideGUI };
++this.numberOfOptions = 11;
+         this.difficulty = 2;
+         this.thirdPersonView = false;
+@@ -82,4 +90,5 @@
+         this.limitFramerate = false;
+         this.fancyGraphics = true;
++this.acceptRemoteScripts = false;
+         this.keyBindForward = new KeyBinding("Forward", 17);
+         this.keyBindLeft = new KeyBinding("Left", 30);
+@@ -88,9 +97,12 @@
+         this.keyBindJump = new KeyBinding("Jump", 57);
+         this.keyBindInventory = new KeyBinding("Inventory", 23);
++this.keyBindDash = new KeyBinding("Dash", 42);
++this.keyBindOpenGMEnv = new KeyBinding("Cheat menu", 47);
+         this.keyBindDrop = new KeyBinding("Drop", 16);
+         this.keyBindChat = new KeyBinding("Chat", 20);
+         this.keyBindToggleFog = new KeyBinding("Toggle fog", 33);
+-        this.keyBindings = new KeyBinding[] { this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog };
+-        this.numberOfOptions = 10;
++this.keyBindHideGUI = new KeyBinding("Hide GUI", 59);
++this.keyBindings = new KeyBinding[] { this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog, this.keyBindOpenGMEnv, this.keyBindDash, this.keyBindHideGUI };
++this.numberOfOptions = 11;
+         this.difficulty = 2;
+         this.thirdPersonView = false;
+@@ -141,4 +153,7 @@
+             this.mc.renderGlobal.loadRenderers();
+         }
++if (optionIndex == 10) {
++this.acceptRemoteScripts = !this.acceptRemoteScripts;
++}
+         this.saveOptions();
+     }
+@@ -175,4 +190,7 @@
+             return new StringBuilder().append("Graphics: ").append(this.fancyGraphics ? "FANCY" : "FAST").toString();
+         }
++if (optionIndex == 10) {
++return "Remote Scripts: " + (this.acceptRemoteScripts ? "ASK" : "DENY");
++}
+         return "";
+     }
+@@ -223,4 +241,7 @@
+                     this.fancyGraphics = split[1].equals("true");
+                 }
++if (split[0].equals("acceptRemoteScripts")) {
++this.acceptRemoteScripts = split[1].equals("true");
++}
+                 for (int i = 0; i < this.keyBindings.length; ++i) {
+                     if (split[0].equals(new StringBuilder("key_").append(this.keyBindings[i].keyDescription).toString())) {
+@@ -250,4 +271,5 @@
+             printWriter.println(new StringBuilder().append("limitFramerate:").append(this.limitFramerate).toString());
+             printWriter.println(new StringBuilder().append("fancyGraphics:").append(this.fancyGraphics).toString());
++printWriter.println(new StringBuilder().append("acceptRemoteScripts:").append(this.acceptRemoteScripts).toString());
+             printWriter.println("# Settings below are specific to 1605 extension.");
+             printWriter.println(new StringBuilder().append("a1605ext_difficulty:").append(this.difficulty).toString());

@@ -1,3 +1,0 @@
-java/net/minecraft/src/EntityTracker.java
-10 - private Set trackedEntitySet;
-10 + private Set<EntityTrackerEntry> trackedEntitySet;

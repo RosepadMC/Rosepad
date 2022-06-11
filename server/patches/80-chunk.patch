@@ -1,6 +1,0 @@
-java/net/minecraft/src/Chunk.java
-22 - public List[] entities;
-22 + public List<Entity>[] entities;
-21 - public Map chunkTileEntityMap;
-21 + public Map<ChunkPosition, TileEntity> chunkTileEntityMap;
-

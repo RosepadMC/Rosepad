@@ -1,0 +1,11 @@
+--- ItemDoor.java
++++ ItemDoor.java
+@@ -42,6 +42,6 @@
+             b10 = 1;
+         }
+-        final int i9 = (world.isBlockNormalCube(x - b10, y, z - b11) + world.isBlockNormalCube(x - b10, y + 1, z - b11)) ? 1 : 0;
+-        final int i10 = (world.isBlockNormalCube(x + b10, y, z + b11) + world.isBlockNormalCube(x + b10, y + 1, z + b11)) ? 1 : 0;
++final int i9 = (world.isBlockNormalCube(x - b10, y, z - b11) && world.isBlockNormalCube(x - b10, y + 1, z - b11)) ? 1 : 0;
++final int i10 = (world.isBlockNormalCube(x + b10, y, z + b11) && world.isBlockNormalCube(x + b10, y + 1, z + b11)) ? 1 : 0;
+         final boolean z2 = world.getBlockId(x - b10, y, z - b11) == block8.blockID || world.getBlockId(x - b10, y + 1, z - b11) == block8.blockID;
+         final boolean z3 = world.getBlockId(x + b10, y, z + b11) == block8.blockID || world.getBlockId(x + b10, y + 1, z + b11) == block8.blockID;

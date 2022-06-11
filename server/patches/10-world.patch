@@ -1,4 +1,0 @@
-java/net/minecraft/src/World.java
-55 - private Set positionsToUpdate;
-55 + private Set<ChunkCoordIntPair> positionsToUpdate;
-

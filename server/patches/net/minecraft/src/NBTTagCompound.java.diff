@@ -1,0 +1,9 @@
+--- NBTTagCompound.java
++++ NBTTagCompound.java
+@@ -9,5 +9,5 @@
+ 
+ public class NBTTagCompound extends NBTBase {
+-    private Map tagMap;
++private Map<String, NBTBase> tagMap;
+     
+     public NBTTagCompound() {

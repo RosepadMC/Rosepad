@@ -1,0 +1,118 @@
+--- MinecraftServer.java
++++ MinecraftServer.java
+@@ -39,5 +39,5 @@
+ public class MinecraftServer implements ICommandListener, Runnable {
+     public static Logger logger;
+-    public static HashMap playerList;
++public static HashMap<String, Object> playerList;
+     public NetworkListenThread networkServer;
+     public PropertyManager propertyManagerObj;
+@@ -73,5 +73,5 @@
+         threadCommandReader1.start();
+         ConsoleLogManager.init();
+-        MinecraftServer.logger.info("Starting minecraft server version 0.2.1");
++MinecraftServer.logger.info("Starting minecraft server version Rosepad 1.1");
+         if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L) {
+             MinecraftServer.logger.warning("**** NOT ENOUGH RAM!");
+@@ -81,5 +81,5 @@
+         this.propertyManagerObj = new PropertyManager(new File("server.properties"));
+         final String string2 = this.propertyManagerObj.getStringProperty("server-ip", "");
+-        this.onlineMode = this.propertyManagerObj.getBooleanProperty("online-mode", true);
++this.onlineMode = false;
+         InetAddress inetAddress3 = null;
+         if (string2.length() > 0) {
+@@ -97,10 +97,4 @@
+             return false;
+         }
+-        if (!this.onlineMode) {
+-            MinecraftServer.logger.warning("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
+-            MinecraftServer.logger.warning("The server will make no attempt to authenticate usernames. Beware.");
+-            MinecraftServer.logger.warning("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
+-            MinecraftServer.logger.warning("To change this, set \"online-mode\" to \"true\" in the server.settings file.");
+-        }
+         this.configManager = new ServerConfigurationManager(this);
+         this.entityTracker = new EntityTracker(this);
+@@ -420,4 +414,77 @@
+                     iCommandListener3.addHelpCommandMessage("There's no player by that name online.");
+                 }
++else if (string2.toLowerCase().startsWith("whitelist")) {
++final String[] args = string2.substring(Math.min("whitelist".length() + 1, string2.length() - 1)).split(" ");
++if (args.length == 0) {
++iCommandListener3.addHelpCommandMessage("Whitelist subcommands:");
++iCommandListener3.addHelpCommandMessage("   enable              enable whitelist");
++iCommandListener3.addHelpCommandMessage("   disable             disable whitelist");
++iCommandListener3.addHelpCommandMessage("   add <player>        add player to whitelist");
++iCommandListener3.addHelpCommandMessage("   remove <player>     remove player from whitelist");
++iCommandListener3.addHelpCommandMessage("   add-ip <ip>         add IP to whitelist");
++iCommandListener3.addHelpCommandMessage("   remove-ip <ip>      remove IP from whitelist");
++}
++else if (args[0].equalsIgnoreCase("enable")) {
++this.configManager.enableWhitelist();
++this.print(string3, "Whitelist enabled");
++}
++else if (args[0].equalsIgnoreCase("disable")) {
++this.configManager.disableWhitelist();
++this.print(string3, "Whitelist disabled");
++}
++else if (args[0].equalsIgnoreCase("add") && args.length > 1) {
++StringBuilder username = new StringBuilder();
++for (int i = 1; i < args.length; i++) {
++if (i != 1) username.append(" ");
++username.append(args[i]);
++}
++this.print(string3, "Added player \"" + username.toString()
++.replaceAll("\\\\", "\\\\")
++.replaceAll("\\\\\"", "\\\"") + "\" to whitelist");
++this.configManager.whitelistPlayer(username.toString().toLowerCase());
++}
++else if (args[0].equalsIgnoreCase("remove") && args.length > 1) {
++StringBuilder username = new StringBuilder();
++for (int i = 1; i < args.length; i++) {
++if (i != 1) username.append(" ");
++username.append(args[i]);
++}
++this.print(string3, "Remove player \"" + username.toString()
++.replaceAll("\\\\", "\\\\")
++.replaceAll("\\\\\"", "\\\"") + "\" from whitelist");
++this.configManager.unwhitelistPlayer(username.toString().toLowerCase());
++}
++else if (args[0].equalsIgnoreCase("add-ip") && args.length > 1) {
++StringBuilder username = new StringBuilder();
++for (int i = 1; i < args.length; i++) {
++if (i != 1) username.append(" ");
++username.append(args[i]);
++}
++this.print(string3, "Added IP \"" + username.toString()
++.replaceAll("\\\\", "\\\\")
++.replaceAll("\\\\\"", "\\\"") + "\" to whitelist");
++this.configManager.whitelistIP(username.toString().toLowerCase());
++}
++else if (args[0].equalsIgnoreCase("remove-ip") && args.length > 1) {
++StringBuilder username = new StringBuilder();
++for (int i = 1; i < args.length; i++) {
++if (i != 1) username.append(" ");
++username.append(args[i]);
++}
++this.print(string3, "Remove IP \"" + username.toString()
++.replaceAll("\\\\", "\\\\")
++.replaceAll("\\\\\"", "\\\"") + "\" from whitelist");
++this.configManager.unwhitelistIP(username.toString().toLowerCase());
++}
++else {
++iCommandListener3.addHelpCommandMessage("Whitelist subcommands:");
++iCommandListener3.addHelpCommandMessage("   enable              enable whitelist");
++iCommandListener3.addHelpCommandMessage("   disable             disable whitelist");
++iCommandListener3.addHelpCommandMessage("   add <player>        add player to whitelist");
++iCommandListener3.addHelpCommandMessage("   remove <player>     remove player from whitelist");
++iCommandListener3.addHelpCommandMessage("   add-ip <player>     add IP to whitelist");
++iCommandListener3.addHelpCommandMessage("   remove-ip <player>  remove IP from whitelist");
++}
++}
+                 else {
+                     MinecraftServer.logger.info("Unknown console command. Type \"help\" for help.");
+@@ -445,4 +512,5 @@
+                 iCommandListener3.addHelpCommandMessage("   list                      lists all currently connected players");
+                 iCommandListener3.addHelpCommandMessage("   say <message>             broadcasts a message to all players");
++iCommandListener3.addHelpCommandMessage("   whitelist                 manage server whitelist");
+             }
+         }

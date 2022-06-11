@@ -6,4 +6,6 @@ client/src/main/java/net/minecraft
 client/src/main/java/org
 client/src/main/java/adaptive
 server/src/main/java/net/minecraft
+client/src/orig
+server/src/orig
 jars/*

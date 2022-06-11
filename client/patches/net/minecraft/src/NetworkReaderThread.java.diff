@@ -1,0 +1,21 @@
+--- NetworkReaderThread.java
++++ NetworkReaderThread.java
+@@ -10,9 +10,7 @@
+     
+     public void run() {
+-        Label_0029: {
+             synchronized (NetworkManager.threadSyncObject) {
+                 ++NetworkManager.numReadThreads;
+                 // monitorexit(NetworkManager.threadSyncObject)
+-                break Label_0029;
+             }
+             try {
+@@ -32,8 +30,4 @@
+             }
+         }
+-        synchronized (NetworkManager.threadSyncObject) {
+-            --NetworkManager.numReadThreads;
+-        }
+         // monitorexit(NetworkManager.threadSyncObject)
+     }
+-}

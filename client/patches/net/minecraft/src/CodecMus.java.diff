@@ -1,0 +1,28 @@
+--- CodecMus.java
++++ CodecMus.java
+@@ -1,15 +1,21 @@
+ package net.minecraft.src;
+ 
+-import java.io.IOException;
+ import java.io.InputStream;
++import java.lang.reflect.*;
++import java.net.*;
+ import paulscode.sound.codecs.CodecJOrbis;
+ 
+ public class CodecMus extends CodecJOrbis {
+-    @Override
+     protected InputStream openInputStream() {
+         try {
+-            return new MusInputStream(this, this.url, this.urlConnection.getInputStream());
++Field f = this.getClass().getDeclaredField("url");
++f.setAccessible(true);
++URL url = (URL) f.get(this);
++f = this.getClass().getDeclaredField("urlConnection");
++f.setAccessible(true);
++URLConnection urlConnection = (URLConnection) f.get(this);
++return new MusInputStream(this, url, urlConnection.getInputStream());
+         }
+-        catch (IOException e) {
++catch (Exception e) {
+             e.printStackTrace();
+             return null;

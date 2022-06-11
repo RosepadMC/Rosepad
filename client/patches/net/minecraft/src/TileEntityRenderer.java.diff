@@ -1,0 +1,9 @@
+--- TileEntityRenderer.java
++++ TileEntityRenderer.java
+@@ -39,5 +39,5 @@
+         if (specialRendererForClass == null && tileClass != TileEntity.class) {
+             specialRendererForClass = this.getSpecialRendererForClass(tileClass.getSuperclass());
+-            this.specialRendererMap.put(tileClass, specialRendererForClass);
++this.specialRendererMap.put((Class<? extends TileEntity>) tileClass, specialRendererForClass);
+         }
+         return specialRendererForClass;
