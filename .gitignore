@@ -9,3 +9,4 @@ server/src/main/java/net/minecraft
 client/src/orig
 server/src/orig
 jars/*
+/bin/

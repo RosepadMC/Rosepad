@@ -18,7 +18,7 @@
          final int scaledWidth = scaledResolution.getScaledWidth();
 @@ -241,5 +244,5 @@
          GL11.glDisable(32826);
-         if (this.mc.gameSettings.invertMouse) {
+         if (this.mc.gameSettings.showFPS) {
 -            fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad", 2, 2, 16777215);
 +fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Rosepad.1.1", 2, 2, 16777215);
              fontRenderer.drawStringWithShadow(this.mc.debug, 2, 12, 16777215);

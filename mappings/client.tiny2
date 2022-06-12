@@ -2832,7 +2832,7 @@ c	fr	net/minecraft/src/GameSettings
 	m	()V	b	saveOptions
 	m	()V	a	loadOptions
 	f	Lit;	k	keyBindLeft
-	f	Z	d	invertMouse
+	f	Z	d	showFPS
 	f	Z	b	soundVolume
 	f	Lit;	o	keyBindInventory
 	f	Lit;	m	keyBindRight
@@ -2852,7 +2852,7 @@ c	fr	net/minecraft/src/GameSettings
 	m	(II)V	a	setKeyBinding
 		p	2		keyCode
 		p	1		bindingIndex
-	f	Z	c	mouseSensitivity
+	f	Z	c	invertMouse
 	f	Z	a	musicVolume
 	f	Lit;	n	keyBindJump
 	m	(Lnet/minecraft/client/Minecraft;Ljava/io/File;)V	<init>	<init>
