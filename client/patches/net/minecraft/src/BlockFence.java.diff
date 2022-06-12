@@ -1,0 +1,9 @@
+--- BlockFence.java
++++ BlockFence.java
+@@ -10,5 +10,5 @@
+     @Override
+     public void getCollidingBoundingBoxes(final World world, final int x, final int y, final int z, final AxisAlignedBB aabb, final ArrayList<AxisAlignedBB> collidingBoundingBoxes) {
+-        collidingBoundingBoxes.add(AxisAlignedBB.getBoundingBoxFromPool(x, y, z, x + 1, y + 1.5, z + 1));
++        collidingBoundingBoxes.add(AxisAlignedBB.getBoundingBoxFromPool(x, y, z, x + 1, y + 2, z + 1));
+     }
+     

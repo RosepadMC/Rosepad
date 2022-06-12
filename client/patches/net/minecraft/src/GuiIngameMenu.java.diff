@@ -13,3 +13,10 @@
 +this.controlList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 48, "Options..."));
      }
      
+@@ -25,5 +25,5 @@
+     protected void actionPerformed(final GuiButton button) {
+         if (button.id == 0) {
+-            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
++            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings.getMainOptionsMenuContext()));
+         }
+         if (button.id == 1) {

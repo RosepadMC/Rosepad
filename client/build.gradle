@@ -1,3 +1,4 @@
+import java.nio.file.*
 
 plugins {
     id 'java'
@@ -26,6 +27,31 @@ jar {
     }
 }
 
+abstract class DeletePatches extends DefaultTask {
+
+	@Input
+	String rmPath = "none";
+
+    static def rm(Path path) {
+        File file = new File(path.toString())
+        if (file.isDirectory()) {
+            for (File sf : file.listFiles()) {
+                rm(sf.toPath())
+            }
+        }
+        file.delete()
+    }
+	
+	@TaskAction
+	def delete() {
+		rm(Paths.get(rmPath))
+	}
+}
+
+tasks.register("deletePatches", DeletePatches) {
+	rmPath = "${projectDir}/patches"
+}
+
 processPatches {
     content = "${projectDir}/src/orig/java"
     patches = "${projectDir}/patches"
@@ -36,6 +62,7 @@ createPatches {
     content = "${projectDir}/src/orig/java"
     modified = "${projectDir}/src/main/java"
     destination = "${projectDir}/patches"
+    dependsOn tasks.named("deletePatches").get()
 }
 
 shadowJar {

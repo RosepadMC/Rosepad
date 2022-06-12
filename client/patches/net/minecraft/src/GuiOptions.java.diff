@@ -1,0 +1,101 @@
+--- GuiOptions.java
++++ GuiOptions.java
+@@ -1,22 +1,70 @@
+ package net.minecraft.src;
+ 
++import java.util.*;
++
+ public class GuiOptions extends GuiScreen {
+     private GuiScreen parentScreen;
+     protected String screenTitle;
+-    private GameSettings gameSettings;
++    private List<GuiOptionsButton> topButtons;
++    private List<GuiOptionsButton> bottomButtons;
++    private boolean initialized = false;
+     
+-    public GuiOptions(final GuiScreen screen, final GameSettings gameSettings) {
+-        this.screenTitle = "Options";
++    public GuiOptions(
++    		final String title,
++    		final GuiScreen screen,
++    		final List<GuiOptionsButton> top,
++    		final List<GuiOptionsButton> bottom
++    ) {
++        this.screenTitle = title;
+         this.parentScreen = screen;
+-        this.gameSettings = gameSettings;
++        topButtons = top;
++        bottomButtons = bottom;
+     }
+     
++    public GuiOptions(
++    		final GuiScreen screen,
++    		final GuiOptionsContext context
++    ) {
++        this.screenTitle = context.title;
++        this.parentScreen = screen;
++        topButtons = context.topButtons;
++        bottomButtons = context.bottomButtons;
++    }
++    
++    public static class GuiOptionsContext {
++    	public String title;
++    	public List<GuiOptionsButton> topButtons;
++    	public List<GuiOptionsButton> bottomButtons;
++    }
++    
++    public static abstract class GuiOptionsButton {
++    	public abstract String getText();
++    	public abstract void run(GuiButton button, GuiScreen parent);
++    }
++    
+     @Override
+     public void actionPerformed() {
+-        for (int i = 0; i < this.gameSettings.numberOfOptions; ++i) {
+-            this.controlList.add(new GuiSmallButton(i, this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), this.gameSettings.getOptionDisplayString(i)));
++    	if (initialized) return;
++    	initialized = true;
++    	for (int i = 0; i < topButtons.size(); i++) {
++            this.controlList.add(
++            		new GuiSmallButton(i,
++            				this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1),
++            				topButtons.get(i).getText()
++            ));
++    	}
++        for (int i = 0; i < bottomButtons.size(); i++) {
++            this.controlList.add(
++            		new GuiButton(topButtons.size() + i,
++            				this.width / 2 - 100, this.height / 6 + 132 - i * 36,
++            				bottomButtons.get(i).getText()
++            ));
+         }
+-        this.controlList.add(new GuiButton(100, this.width / 2 - 100, this.height / 6 + 120 + 12, "Controls..."));
+-        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, "Done"));
++        this.controlList.add(
++        		new GuiButton(
++        				topButtons.size() + bottomButtons.size(),
++        				this.width / 2 - 100, this.height / 6 + 168,
++        				"Done"
++        ));
+     }
+     
+@@ -26,12 +74,13 @@
+             return;
+         }
+-        if (button.id < 100) {
+-            this.gameSettings.setOptionValue(button.id, 1);
+-            button.displayString = this.gameSettings.getOptionDisplayString(button.id);
++        if (button.id < topButtons.size()) {
++        	this.topButtons.get(button.id).run(button, this);
++    		button.displayString = this.topButtons.get(button.id).getText();
+         }
+-        if (button.id == 100) {
+-            this.mc.displayGuiScreen(new GuiControls(this, this.gameSettings));
++        else if (button.id < topButtons.size() + bottomButtons.size()) {
++        	this.bottomButtons.get(button.id - topButtons.size()).run(button, this);
++    		button.displayString = this.bottomButtons.get(button.id - this.topButtons.size()).getText();
+         }
+-        if (button.id == 200) {
++        else {
+             this.mc.displayGuiScreen(this.parentScreen);
+         }
