@@ -1,0 +1,15 @@
+--- ScreenItemCheat.java
++++ ScreenItemCheat.java
+@@ -131,8 +131,10 @@
+         }
+         if (button.id >= 4096) {
+-            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Item.ITEMS_LIST[button.id - 4096], 1), true);
++        	int amount = this.mc.gameSettings.getCheatMenuItemAmount(1);
++            ItemStack stack = new ItemStack(Item.ITEMS_LIST[button.id - 4096], amount);
++            this.mc.thePlayer.dropPlayerItemWithRandomChoice(stack, true);
+         }
+         else if (button.id >= 2048) {
+-            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Block.BLOCKS_LIST[button.id - 2048], 64), true);
++            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Block.BLOCKS_LIST[button.id - 2048], this.mc.gameSettings.getCheatMenuItemAmount(0)), true);
+         }
+     }

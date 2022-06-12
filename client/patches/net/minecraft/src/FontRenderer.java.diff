@@ -3,10 +3,10 @@
 @@ -132,4 +132,5 @@
          GL11.glPushMatrix();
          GL11.glTranslatef((float)integer2, (float)integer3, 0.0f);
-+try {
++        try {
          for (int i = 0; i < string.length(); ++i) {
              while (string.charAt(i) == '§' && string.length() > i + 1) {
-@@ -156,4 +157,32 @@
+@@ -156,6 +157,35 @@
              }
          }
 +} catch (Exception e) {
@@ -39,3 +39,6 @@
 +}
          this.buffer.flip();
          GL11.glCallLists(this.buffer);
++        GL11.glColor4f(255, 255, 255, 255);
+         GL11.glPopMatrix();
+         GL11.glDisable(3042);
