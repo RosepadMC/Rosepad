@@ -1,0 +1,22 @@
+--- NetworkWriterThread.java
++++ NetworkWriterThread.java
+@@ -13,5 +13,4 @@
+             ++NetworkManager.numWriteThreads;
+         }
+-        // monitorexit(NetworkManager.threadSyncObject)
+         try {
+             do {
+@@ -20,13 +19,8 @@
+         }
+         finally {
+-            synchronized (NetworkManager.threadSyncObject) {
+-                --NetworkManager.numWriteThreads;
+-            }
+-            // monitorexit(NetworkManager.threadSyncObject)
+         }
+         synchronized (NetworkManager.threadSyncObject) {
+             --NetworkManager.numWriteThreads;
+         }
+-        // monitorexit(NetworkManager.threadSyncObject)
+     }
+ }

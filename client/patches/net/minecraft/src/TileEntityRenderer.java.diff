@@ -1,9 +1,14 @@
 --- TileEntityRenderer.java
 +++ TileEntityRenderer.java
-@@ -39,5 +39,5 @@
+@@ -35,8 +35,8 @@
+     }
+     
+-    public TileEntitySpecialRenderer getSpecialRendererForClass(final Class<?> tileClass) {
+-        TileEntitySpecialRenderer specialRendererForClass = (TileEntitySpecialRenderer)this.specialRendererMap.get(tileClass);
++    public TileEntitySpecialRenderer getSpecialRendererForClass(final Class<? extends TileEntity> tileClass) {
++        TileEntitySpecialRenderer specialRendererForClass = this.specialRendererMap.get(tileClass);
          if (specialRendererForClass == null && tileClass != TileEntity.class) {
-             specialRendererForClass = this.getSpecialRendererForClass(tileClass.getSuperclass());
--            this.specialRendererMap.put(tileClass, specialRendererForClass);
-+this.specialRendererMap.put((Class<? extends TileEntity>) tileClass, specialRendererForClass);
+-            specialRendererForClass = this.getSpecialRendererForClass(tileClass.getSuperclass());
++            specialRendererForClass = this.getSpecialRendererForClass((Class<? extends TileEntity>) tileClass.getSuperclass());
+             this.specialRendererMap.put(tileClass, specialRendererForClass);
          }
-         return specialRendererForClass;

@@ -1,21 +1,43 @@
 --- NetworkReaderThread.java
 +++ NetworkReaderThread.java
-@@ -10,9 +10,7 @@
+@@ -10,30 +10,19 @@
      
      public void run() {
 -        Label_0029: {
-             synchronized (NetworkManager.threadSyncObject) {
-                 ++NetworkManager.numReadThreads;
-                 // monitorexit(NetworkManager.threadSyncObject)
+-            synchronized (NetworkManager.threadSyncObject) {
+-                ++NetworkManager.numReadThreads;
+-                // monitorexit(NetworkManager.threadSyncObject)
 -                break Label_0029;
++        synchronized (NetworkManager.threadSyncObject) {
++            ++NetworkManager.numReadThreads;
++        }
++        try {
++            while (!this.netManager.isServerTerminating &&
++                this.netManager.isRunning) {
++                this.netManager.readPacket();
              }
-             try {
-@@ -32,8 +30,4 @@
-             }
+-            try {
+-                do {
+-                    this.netManager.readPacket();
+-                    if (this.netManager.isRunning) {
+-                        continue;
+-                    }
+-                    break;
+-                } while (!this.netManager.isServerTerminating);
+-            }
+-            finally {
+-                synchronized (NetworkManager.threadSyncObject) {
+-                    --NetworkManager.numReadThreads;
+-                }
+-                // monitorexit(NetworkManager.threadSyncObject)
+-            }
          }
--        synchronized (NetworkManager.threadSyncObject) {
--            --NetworkManager.numReadThreads;
--        }
-         // monitorexit(NetworkManager.threadSyncObject)
++        catch (Exception e) {
++
++        }
+         synchronized (NetworkManager.threadSyncObject) {
+             --NetworkManager.numReadThreads;
+         }
+-        // monitorexit(NetworkManager.threadSyncObject)
      }
--}
+ }
