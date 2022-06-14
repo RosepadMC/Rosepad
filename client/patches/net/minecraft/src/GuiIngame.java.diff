@@ -1,0 +1,32 @@
+--- GuiIngame.java
++++ GuiIngame.java
+@@ -28,4 +28,5 @@
+     public long areaTimer;
+     private static final String[] syllab;
++    public boolean showGUI;
+     
+     static {
+@@ -102,7 +103,9 @@
+         this.prevVignetteBrightness = 1.0f;
+         this.mc = minecraft;
++        this.showGUI = true;
+     }
+     
+     public void renderGameOverlay(final float renderPartialTick, final boolean hasScreen, final int width, final int height) {
++    	if (!this.showGUI && this.mc.currentScreen == null) return;
+         final ScaledResolution scaledResolution = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
+         final int scaledWidth = scaledResolution.getScaledWidth();
+@@ -241,5 +244,5 @@
+         GL11.glDisable(32826);
+         if (this.mc.gameSettings.showFPS) {
+-            fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad", 2, 2, 16777215);
++        	fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 (Rosepad " + mc.getVersionString() + ")", 2, 2, 16777215);
+             fontRenderer.drawStringWithShadow(this.mc.debug, 2, 12, 16777215);
+             fontRenderer.drawStringWithShadow(this.mc.debugInfoRenders(), 2, 22, 16777215);
+@@ -261,5 +264,5 @@
+         }
+         else {
+-            fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad", 2, 2, 16777215);
++        	fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 (Rosepad " + mc.getVersionString() + ")", 2, 2, 16777215);
+             if (GuiIngame.uqKey != "") {
+                 fontRenderer.drawStringWithShadow(GuiIngame.uqKey, 2, 12, 16777215);

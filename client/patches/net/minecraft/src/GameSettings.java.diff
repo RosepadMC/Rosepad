@@ -1,0 +1,396 @@
+--- GameSettings.java
++++ GameSettings.java
+@@ -1,17 +1,13 @@
+ package net.minecraft.src;
+ 
+-import java.io.Writer;
+-import java.io.PrintWriter;
+-import java.io.FileWriter;
+-import java.io.Reader;
+-import java.io.BufferedReader;
+-import java.io.FileReader;
++import java.io.*;
+ import org.lwjgl.input.Keyboard;
+-import java.io.File;
+-import net.minecraft.client.Minecraft;
++import java.util.*;
++import net.minecraft.client.*;
+ 
+ public class GameSettings {
+     private static final String[] RENDER_DISTANCES;
+     private static final String[] DIFFICULTY_LEVELS;
++    private static final String[] CHEAT_MENU_MODES;
+     public boolean musicVolume;
+     public boolean soundVolume;
+@@ -23,4 +19,5 @@
+     public boolean limitFramerate;
+     public boolean fancyGraphics;
++    public boolean acceptRemoteScripts;
+     public KeyBinding keyBindForward;
+     public KeyBinding keyBindLeft;
+@@ -32,9 +29,12 @@
+     public KeyBinding keyBindChat;
+     public KeyBinding keyBindToggleFog;
++    public KeyBinding keyBindDash;
++    public KeyBinding keyBindOpenGMEnv;
++    public KeyBinding keyBindHideGUI;
+     public KeyBinding[] keyBindings;
+     protected Minecraft mc;
+     private File optionsFile;
+-    public int numberOfOptions;
+     public int difficulty;
++    public int cheatMenuMode;
+     public boolean thirdPersonView;
+     
+@@ -42,4 +42,5 @@
+         RENDER_DISTANCES = new String[] { "FAR", "NORMAL", "SHORT", "TINY" };
+         DIFFICULTY_LEVELS = new String[] { "Peaceful", "Easy", "Normal", "Hard", "Frail" };
++        CHEAT_MENU_MODES = new String[] { "Default", "One", "Stack", "Inf", "Disabled" };
+     }
+     
+@@ -50,8 +51,10 @@
+         this.showFPS = false;
+         this.renderDistance = 0;
++        this.cheatMenuMode = 0;
+         this.viewBobbing = true;
+         this.anaglyph = false;
+         this.limitFramerate = false;
+         this.fancyGraphics = true;
++        this.acceptRemoteScripts = false;
+         this.keyBindForward = new KeyBinding("Forward", 17);
+         this.keyBindLeft = new KeyBinding("Left", 30);
+@@ -60,9 +63,11 @@
+         this.keyBindJump = new KeyBinding("Jump", 57);
+         this.keyBindInventory = new KeyBinding("Inventory", 23);
++        this.keyBindDash = new KeyBinding("Dash", 42);
++        this.keyBindOpenGMEnv = new KeyBinding("Cheat menu", 47);
+         this.keyBindDrop = new KeyBinding("Drop", 16);
+         this.keyBindChat = new KeyBinding("Chat", 20);
+         this.keyBindToggleFog = new KeyBinding("Toggle fog", 33);
+-        this.keyBindings = new KeyBinding[] { this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog };
+-        this.numberOfOptions = 10;
++        this.keyBindHideGUI = new KeyBinding("Hide GUI", 59);
++        this.keyBindings = new KeyBinding[] { this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog, this.keyBindOpenGMEnv, this.keyBindDash, this.keyBindHideGUI };
+         this.difficulty = 2;
+         this.thirdPersonView = false;
+@@ -78,8 +83,10 @@
+         this.showFPS = false;
+         this.renderDistance = 0;
++        this.cheatMenuMode = 0;
+         this.viewBobbing = true;
+         this.anaglyph = false;
+         this.limitFramerate = false;
+         this.fancyGraphics = true;
++        this.acceptRemoteScripts = false;
+         this.keyBindForward = new KeyBinding("Forward", 17);
+         this.keyBindLeft = new KeyBinding("Left", 30);
+@@ -88,9 +95,11 @@
+         this.keyBindJump = new KeyBinding("Jump", 57);
+         this.keyBindInventory = new KeyBinding("Inventory", 23);
++        this.keyBindDash = new KeyBinding("Dash", 42);
++        this.keyBindOpenGMEnv = new KeyBinding("Cheat menu", 47);
+         this.keyBindDrop = new KeyBinding("Drop", 16);
+         this.keyBindChat = new KeyBinding("Chat", 20);
+         this.keyBindToggleFog = new KeyBinding("Toggle fog", 33);
+-        this.keyBindings = new KeyBinding[] { this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog };
+-        this.numberOfOptions = 10;
++        this.keyBindHideGUI = new KeyBinding("Hide GUI", 59);
++        this.keyBindings = new KeyBinding[] { this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog, this.keyBindOpenGMEnv, this.keyBindDash, this.keyBindHideGUI };
+         this.difficulty = 2;
+         this.thirdPersonView = false;
+@@ -106,4 +115,265 @@
+     }
+     
++    public int getCheatMenuItemAmount(int type) {
++    	if (type == 1 && this.cheatMenuMode == 0) return 1;
++    	switch (this.cheatMenuMode) {
++    	case 4:
++    		return 0;
++    	case 3:
++    		return -1;
++    	case 1:
++    		return 1;
++    	case 2:
++    	default:
++    		return 64;
++    	}
++    }
++    
++    public GuiOptions.GuiOptionsContext getGameOptionsMenuContext() {
++    	GameSettings that = this;
++    	
++    	GuiOptions.GuiOptionsContext context = new GuiOptions.GuiOptionsContext();
++    	
++    	context.title = "Game settings";
++    	context.topButtons = new ArrayList<>();
++    	context.bottomButtons = new ArrayList<>();
++    	
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "Difficulty: " + GameSettings.DIFFICULTY_LEVELS[that.difficulty].toString();
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.difficulty++;
++    			that.difficulty %= 5;
++    		}
++    	});
++    	
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "Remote scripts: " + (that.acceptRemoteScripts ? "ASK" : "DENY");
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.acceptRemoteScripts = !that.acceptRemoteScripts;
++    		}
++    	});
++    	
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "Cheat menu mode: " + GameSettings.CHEAT_MENU_MODES[that.cheatMenuMode];
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.cheatMenuMode++;
++    			that.cheatMenuMode %= 5;
++    		}
++    	});
++    	
++    	return context;
++    }
++    
++    public GuiOptions.GuiOptionsContext getRenderOptionsMenuContext() {
++    	GameSettings that = this;
++    	
++    	GuiOptions.GuiOptionsContext context = new GuiOptions.GuiOptionsContext();
++    	
++    	context.title = "Render settings";
++    	context.topButtons = new ArrayList<>();
++    	context.bottomButtons = new ArrayList<>();
++    	
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "Render distance: " + GameSettings.RENDER_DISTANCES[that.renderDistance].toString();
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.renderDistance++;
++    			that.renderDistance %= 4;
++    		}
++    	});
++    	
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "Debug info: " + (that.showFPS ? "ON" : "OFF");
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.showFPS = !that.showFPS;
++    		}
++    	});
++    	
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "View bobbing: " + (that.viewBobbing ? "ON" : "OFF");
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.viewBobbing = !that.viewBobbing;
++    		}
++    	});
++    	
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "3D anaglyph: " + (that.anaglyph ? "ON" : "OFF");
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.anaglyph = !that.anaglyph;
++    			that.mc.renderEngine.refreshTextures();
++    		}
++    	});
++    	
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "Limit framerate: " + (that.limitFramerate ? "ON" : "OFF");
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.limitFramerate = !that.limitFramerate;
++    		}
++    	});
++    	
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "Graphics: " + (that.fancyGraphics ? "FANCY" : "FAST");
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.fancyGraphics = !that.fancyGraphics;
++    			that.mc.renderGlobal.loadRenderers();
++    		}
++    	});
++    	
++    	return context;
++    }
++    
++    public GuiOptions.GuiOptionsContext getSoundOptionsMenuContext() {
++    	GameSettings that = this;
++    	
++    	GuiOptions.GuiOptionsContext context = new GuiOptions.GuiOptionsContext();
++    	
++    	context.title = "Sound settings";
++    	context.topButtons = new ArrayList<>();
++    	context.bottomButtons = new ArrayList<>();
++    	
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "Music: " + (that.musicVolume ? "ON" : "OFF");
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.musicVolume = !that.musicVolume;
++    			that.mc.sndManager.onSoundOptionsChanged();
++    		}
++    	});
++    	
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "Sound: " + (that.soundVolume ? "ON" : "OFF");
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.soundVolume = !that.soundVolume;
++    			that.mc.sndManager.onSoundOptionsChanged();
++    		}
++    	});
++    	
++    	return context;
++    }
++    
++    public GuiOptions.GuiOptionsContext getMainOptionsMenuContext() {
++    	GameSettings that = this;
++    	
++    	GuiOptions.GuiOptionsContext context = new GuiOptions.GuiOptionsContext();
++    	context.title = "Settings";
++    	context.topButtons = new ArrayList<>();
++    	context.bottomButtons = new ArrayList<>();
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "Render settings";
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.mc.displayGuiScreen(
++    					new GuiOptions(
++    							screen,
++    							getRenderOptionsMenuContext()
++    					)
++    			);
++    		}
++    	});
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "Sound settings";
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.mc.displayGuiScreen(
++    					new GuiOptions(
++    							screen,
++    							getSoundOptionsMenuContext()
++    					)
++    			);
++    		}
++    	});
++    	context.topButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "Game settings";
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.mc.displayGuiScreen(
++    					new GuiOptions(
++    							screen,
++    							getGameOptionsMenuContext()
++    					)
++    			);
++    		}
++    	});
++    	context.bottomButtons.add(new GuiOptions.GuiOptionsButton() {
++    		@Override
++    		public String getText() {
++    			return "Controls";
++    		}
++    		
++    		@Override
++    		public void run(GuiButton button, GuiScreen screen) {
++    			that.mc.displayGuiScreen(
++    					new GuiControls(screen, that)
++    			);
++    		}
++    	});
++    	return context;
++    }
++    
+     public void setOptionValue(final int optionIndex, final int value) {
+         if (optionIndex == 0) {
+@@ -141,4 +411,7 @@
+             this.mc.renderGlobal.loadRenderers();
+         }
++if (optionIndex == 10) {
++this.acceptRemoteScripts = !this.acceptRemoteScripts;
++}
+         this.saveOptions();
+     }
+@@ -175,4 +448,7 @@
+             return new StringBuilder().append("Graphics: ").append(this.fancyGraphics ? "FANCY" : "FAST").toString();
+         }
++if (optionIndex == 10) {
++return "Remote Scripts: " + (this.acceptRemoteScripts ? "ASK" : "DENY");
++}
+         return "";
+     }
+@@ -223,4 +499,7 @@
+                     this.fancyGraphics = split[1].equals("true");
+                 }
++if (split[0].equals("acceptRemoteScripts")) {
++this.acceptRemoteScripts = split[1].equals("true");
++}
+                 for (int i = 0; i < this.keyBindings.length; ++i) {
+                     if (split[0].equals(new StringBuilder("key_").append(this.keyBindings[i].keyDescription).toString())) {
+@@ -250,4 +529,5 @@
+             printWriter.println(new StringBuilder().append("limitFramerate:").append(this.limitFramerate).toString());
+             printWriter.println(new StringBuilder().append("fancyGraphics:").append(this.fancyGraphics).toString());
++printWriter.println(new StringBuilder().append("acceptRemoteScripts:").append(this.acceptRemoteScripts).toString());
+             printWriter.println("# Settings below are specific to 1605 extension.");
+             printWriter.println(new StringBuilder().append("a1605ext_difficulty:").append(this.difficulty).toString());

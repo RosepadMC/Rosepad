@@ -1,0 +1,44 @@
+--- FontRenderer.java
++++ FontRenderer.java
+@@ -132,4 +132,5 @@
+         GL11.glPushMatrix();
+         GL11.glTranslatef((float)integer2, (float)integer3, 0.0f);
++        try {
+         for (int i = 0; i < string.length(); ++i) {
+             while (string.charAt(i) == '§' && string.length() > i + 1) {
+@@ -156,6 +157,35 @@
+             }
+         }
++} catch (Exception e) {
++e.printStackTrace();
++String errorStr = "§cUnexpected error";
++for (int i = 0; i < errorStr.length(); ++i) {
++while (errorStr.charAt(i) == '§' && errorStr.length() > i + 1) {
++int n7 = "0123456789abcdef".indexOf((int) errorStr.toLowerCase().charAt(i + 1));
++if (n7 < 0 || n7 > 15) {
++n7 = 15;
++}
++this.buffer.put(this.fontDisplayLists + 256 + n7 + (boolean5 ? 16 : 0));
++if (this.buffer.remaining() == 0) {
++this.buffer.flip();
++GL11.glCallLists(this.buffer);
++this.buffer.clear();
++}
++i += 2;
++}
++int n7 = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~\u2302\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8?\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1???®¬???«»".indexOf((int) errorStr.charAt(i));
++if (n7 >= 0) {
++this.buffer.put(this.fontDisplayLists + n7 + 32);
++}
++if (this.buffer.remaining() == 0) {
++this.buffer.flip();
++GL11.glCallLists(this.buffer);
++this.buffer.clear();
++}
++}
++}
+         this.buffer.flip();
+         GL11.glCallLists(this.buffer);
++        GL11.glColor4f(255, 255, 255, 255);
+         GL11.glPopMatrix();
+         GL11.glDisable(3042);

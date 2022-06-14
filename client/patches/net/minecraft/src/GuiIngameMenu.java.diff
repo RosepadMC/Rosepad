@@ -1,0 +1,22 @@
+--- GuiIngameMenu.java
++++ GuiIngameMenu.java
+@@ -14,10 +14,10 @@
+         this.updateCounter2 = 0;
+         this.controlList.clear();
+-        this.controlList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 48, "Save and quit to title"));
++this.controlList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 96, "Save and quit to title"));
+         if (this.mc.isMultiplayerWorld()) {
+             ((GuiButton)this.controlList.get(0)).displayString = "Disconnect";
+         }
+         this.controlList.add(new GuiButton(4, this.width / 2 - 100, this.height / 4 + 24, "Back to game"));
+-        this.controlList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96, "Options..."));
++this.controlList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 48, "Options..."));
+     }
+     
+@@ -25,5 +25,5 @@
+     protected void actionPerformed(final GuiButton button) {
+         if (button.id == 0) {
+-            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
++            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings.getMainOptionsMenuContext()));
+         }
+         if (button.id == 1) {

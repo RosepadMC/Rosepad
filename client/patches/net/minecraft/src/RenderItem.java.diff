@@ -1,0 +1,23 @@
+--- RenderItem.java
++++ RenderItem.java
+@@ -137,4 +137,20 @@
+             GL11.glEnable(2929);
+         }
++        else if (itemStack.stackSize < -99) {
++            final String string = "...";
++            GL11.glDisable(2896);
++            GL11.glDisable(2929);
++            fontRenderer.drawStringWithShadow(string, x + 19 - 2 - fontRenderer.getStringWidth(string), y + 6 + 3, 0xffff4040);
++            GL11.glEnable(2896);
++            GL11.glEnable(2929);
++        }
++        else if (itemStack.stackSize <= -1) {
++            final String string = new StringBuilder().append("").append(itemStack.stackSize).toString();
++            GL11.glDisable(2896);
++            GL11.glDisable(2929);
++            fontRenderer.drawStringWithShadow(string, x + 19 - 2 - fontRenderer.getStringWidth(string), y + 6 + 3, 0xffff4040);
++            GL11.glEnable(2896);
++            GL11.glEnable(2929);
++        }
+         if (itemStack.itemDmg > 0) {
+             final int width = 13 - itemStack.itemDmg * 13 / itemStack.getMaxDamage();

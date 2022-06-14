@@ -1,0 +1,9 @@
+--- Packet1Login.java
++++ Packet1Login.java
+@@ -30,5 +30,5 @@
+         dataOutputStream.writeInt(this.protocolVersion);
+         dataOutputStream.writeUTF(this.username);
+-        dataOutputStream.writeUTF(this.password);
++dataOutputStream.writeUTF("name=rosepad;version=1.1.0.1");
+     }
+     

@@ -1,0 +1,18 @@
+--- InputHandler.java
++++ InputHandler.java
+@@ -164,11 +164,11 @@
+             InputHandler.mc.thePlayer.setPosition(InputHandler.mc.thePlayer.posX, InputHandler.mc.thePlayer.posY, InputHandler.mc.thePlayer.posZ);
+         }
+-        else if (InputHandler.KBEventKey == 47 && InputHandler.KBEventKeyState && InputHandler.cheatsEnabled && !(InputHandler.mc.currentScreen instanceof GuiChat)) {
+-            if (InputHandler.mc.thePlayer != null && !IsKeyDown(29)) {
++        else if (InputHandler.KBEventKey == mc.gameSettings.keyBindOpenGMEnv.keyCode && InputHandler.KBEventKeyState && InputHandler.cheatsEnabled && !(InputHandler.mc.currentScreen instanceof GuiChat)) {
++        	if (InputHandler.mc.thePlayer != null && mc.currentScreen == null && mc.gameSettings.cheatMenuMode != 4) {
+                 InputHandler.mc.displayGuiScreen(new ScreenItemCheat(InputHandler.mc));
+             }
+         }
+-        else if (InputHandler.KBEventKey == 42 && InputHandler.KBEventKeyState) {
+-            InputDash();
++        else if (InputHandler.KBEventKey == mc.gameSettings.keyBindDash.keyCode && InputHandler.KBEventKeyState) {
++            if (mc.currentScreen == null) InputDash();
+         }
+     }

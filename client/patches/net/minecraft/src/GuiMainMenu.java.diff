@@ -1,0 +1,9 @@
+--- GuiMainMenu.java
++++ GuiMainMenu.java
+@@ -76,5 +76,5 @@
+     protected void actionPerformed(final GuiButton button) {
+         if (button.id == 0) {
+-            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
++            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings.getMainOptionsMenuContext()));
+         }
+         if (button.id == 1) {

@@ -1,0 +1,9 @@
+--- ObsidianPick.java
++++ ObsidianPick.java
+@@ -20,5 +20,5 @@
+         }
+         if (block == Block.OBSIDIAN) {
+-            return this.harvestLevel == 3;
++            return this.harvestLevel >= 3;
+         }
+         if (block == Block.BLOCK_DIAMOND || block == Block.ORE_DIAMOND) {

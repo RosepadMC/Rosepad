@@ -1,0 +1,116 @@
+--- RenderBlocks.java
++++ RenderBlocks.java
+@@ -31,44 +31,36 @@
+         final int renderType = block.getRenderType();
+         block.setBlockBoundsBasedOnState(this.blockAccess, x, y, z);
+-        if (renderType == 0) {
+-            return this.renderStandardBlock(block, x, y, z);
+-        }
+-        if (renderType == 4) {
+-            return this.renderBlockFluids(block, x, y, z);
+-        }
+-        if (renderType == 13) {
+-            return this.renderBlockCactus(block, x, y, z);
+-        }
+-        if (renderType == 1) {
+-            return this.renderBlockReed(block, x, y, z);
+-        }
+-        if (renderType == 6) {
+-            return this.renderBlockCrops(block, x, y, z);
+-        }
+-        if (renderType == 2) {
+-            return this.renderBlockTorch(block, x, y, z);
+-        }
+-        if (renderType == 3) {
+-            return this.renderBlockFire(block, x, y, z);
+-        }
+-        if (renderType == 5) {
+-            return this.renderBlockRedstoneWire(block, x, y, z);
+-        }
+-        if (renderType == 8) {
+-            return this.renderBlockLadder(block, x, y, z);
+-        }
+-        if (renderType == 7) {
+-            return this.renderBlockDoor(block, x, y, z);
+-        }
+-        if (renderType == 9) {
+-            return this.renderBlockMinecartTrack(block, x, y, z);
+-        }
+-        if (renderType == 10) {
+-            return this.renderBlockStairs(block, x, y, z);
+-        }
+-        if (renderType == 11) {
+-            return this.renderBlockFence(block, x, y, z);
+-        }
+-        return renderType == 12 && this.renderBlockLever(block, x, y, z);
++switch (renderType) {
++case 0:
++return this.renderStandardBlock(block, x, y, z);
++case 1:
++return this.renderBlockReed(block, x, y, z);
++case 2:
++return this.renderBlockTorch(block, x, y, z);
++case 3:
++return this.renderBlockFire(block, x, y, z);
++case 4:
++return this.renderBlockFluids(block, x, y, z);
++case 5:
++return this.renderBlockRedstoneWire(block, x, y, z);
++case 6:
++return this.renderBlockCrops(block, x, y, z);
++case 7:
++return this.renderBlockDoor(block, x, y, z);
++case 8:
++return this.renderBlockLadder(block, x, y, z);
++case 9:
++return this.renderBlockMinecartTrack(block, x, y, z);
++case 10:
++return this.renderBlockStairs(block, x, y, z);
++case 11:
++return this.renderBlockFence(block, x, y, z);
++case 12:
++return this.renderBlockLever(block, x, y, z);
++case 13:
++return this.renderBlockCactus(block, x, y, z);
++default:
++return false;
++}
+     }
+     
+@@ -84,19 +76,21 @@
+         final double n2 = 0.09999999403953552;
+         final double n3 = 0.20000000298023224;
+-        if (blockMetadata == 1) {
+-            this.renderTorchAtAngle(block, x - 0.09999999403953552, y + 0.20000000298023224, z, -0.4000000059604645, 0.0);
+-        }
+-        else if (blockMetadata == 2) {
+-            this.renderTorchAtAngle(block, x + 0.09999999403953552, y + 0.20000000298023224, z, 0.4000000059604645, 0.0);
+-        }
+-        else if (blockMetadata == 3) {
+-            this.renderTorchAtAngle(block, x, y + 0.20000000298023224, z - 0.09999999403953552, 0.0, -0.4000000059604645);
+-        }
+-        else if (blockMetadata == 4) {
+-            this.renderTorchAtAngle(block, x, y + 0.20000000298023224, z + 0.09999999403953552, 0.0, 0.4000000059604645);
+-        }
+-        else {
+-            this.renderTorchAtAngle(block, x, y, z, 0.0, 0.0);
+-        }
++switch (blockMetadata) {
++case 1:
++this.renderTorchAtAngle(block, x - 0.09999999403953552, y + 0.20000000298023224, z, -0.4000000059604645, 0.0);
++break;
++case 2:
++this.renderTorchAtAngle(block, x + 0.09999999403953552, y + 0.20000000298023224, z, 0.4000000059604645, 0.0);
++break;
++case 3:
++this.renderTorchAtAngle(block, x, y + 0.20000000298023224, z - 0.09999999403953552, 0.0, -0.4000000059604645);
++break;
++case 4:
++this.renderTorchAtAngle(block, x, y + 0.20000000298023224, z + 0.09999999403953552, 0.0, 0.4000000059604645);
++break;
++default:
++this.renderTorchAtAngle(block, x, y, z, 0.0, 0.0);
++break;
++}
+         return true;
+     }
