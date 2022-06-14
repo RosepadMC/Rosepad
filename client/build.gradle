@@ -48,8 +48,84 @@ abstract class DeletePatches extends DefaultTask {
 	}
 }
 
+abstract class InjectClasses extends DefaultTask {
+	
+	@Input
+	String source = "none";
+	@Input
+	String dest = "none";
+	
+    static def cp(Path source, Path dest) {
+        File file = new File(source.toString())
+        if (file.isDirectory()) {
+        	dest.toFile().mkdirs()
+            for (String sf : file.list()) {
+            	cp(source.resolve(sf), dest.resolve(sf))
+            }
+        }
+        else if (file.isFile()) {
+        	Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING)
+        }
+    }
+	
+	@TaskAction
+	def copy() {
+		cp(Paths.get(source), Paths.get(dest))
+	}
+}
+
+abstract class CreateInjectClasses extends DefaultTask {
+
+	@Input
+	String source = "none";
+	@Input
+	String orig = "none";
+	@Input
+	String dest = "none";
+	
+    static def cpIfMissing(Path source, Path check, Path dest) {
+        File file = source.toFile()
+        if (file.isDirectory()) {
+            for (String sf : file.list()) {
+            	cpIfMissing(source.resolve(sf), check.resolve(sf), dest.resolve(sf))
+            }
+        }
+        else if (file.isFile() && !check.toFile().exists()) {
+        	dest.parent.toFile().mkdirs();
+        	Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING)
+        }
+    }
+    
+    static def rm(Path path) {
+        File file = new File(path.toString())
+        if (file.isDirectory()) {
+            for (File sf : file.listFiles()) {
+                rm(sf.toPath())
+            }
+        }
+        file.delete()
+    }
+	
+	@TaskAction
+	def copy() {
+		rm(Paths.get(dest))
+		cpIfMissing(Paths.get(source), Paths.get(orig), Paths.get(dest))
+	}
+}
+
 tasks.register("deletePatches", DeletePatches) {
 	rmPath = "${projectDir}/patches"
+}
+
+tasks.register("injectClasses", InjectClasses) {
+	source = "${projectDir}/inject"
+	dest = "${projectDir}/src/main/java"
+}
+
+tasks.register("ejectClasses", CreateInjectClasses) {
+	source = "${projectDir}/src/main/java"
+	orig = "${projectDir}/src/orig/java"
+	dest = "${projectDir}/inject"
 }
 
 processPatches {

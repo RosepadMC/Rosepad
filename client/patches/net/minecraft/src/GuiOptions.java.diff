@@ -1,6 +1,6 @@
 --- GuiOptions.java
 +++ GuiOptions.java
-@@ -1,22 +1,70 @@
+@@ -1,22 +1,59 @@
  package net.minecraft.src;
  
 +import java.util.*;
@@ -38,17 +38,6 @@
 +        bottomButtons = context.bottomButtons;
 +    }
 +    
-+    public static class GuiOptionsContext {
-+    	public String title;
-+    	public List<GuiOptionsButton> topButtons;
-+    	public List<GuiOptionsButton> bottomButtons;
-+    }
-+    
-+    public static abstract class GuiOptionsButton {
-+    	public abstract String getText();
-+    	public abstract void run(GuiButton button, GuiScreen parent);
-+    }
-+    
      @Override
      public void actionPerformed() {
 -        for (int i = 0; i < this.gameSettings.numberOfOptions; ++i) {
@@ -79,7 +68,7 @@
 +        ));
      }
      
-@@ -26,12 +74,13 @@
+@@ -26,12 +63,13 @@
              return;
          }
 -        if (button.id < 100) {

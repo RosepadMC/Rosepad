@@ -10,3 +10,4 @@ client/src/orig
 server/src/orig
 jars/*
 /bin/
+/.metadata/
