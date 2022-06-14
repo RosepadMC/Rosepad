@@ -1,0 +1,41 @@
+# Automatically build the project and run any configured tests for every push
+# and submitted pull request. This can help catch issues that only occur on
+# certain platforms or Java versions, and provides a first line of defence
+# against bad commits.
+
+name: build
+on: [pull_request, push]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        # Use these Java versions
+        java1: [17]
+        java2: [8]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v3
+      - name: validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: setup jdk ${{ matrix.java1 }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: ${{ matrix.java1 }}
+      - name: setup jdk ${{ matrix.java2 }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: ${{ matrix.java2 }}
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: build
+        run: TOOLKIT_JAVA17=$(echo /opt/hostedtoolcache/Java_Zulu_jdk/17.*/x64) ./gradlew -Dorg.gradle.java.home=$(echo /opt/hostedtoolcache/Java_Zulu_jdk/8.*/x64) prepare processPatches shadowJar pack
+      - name: capture build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Artifacts
+          path: build/Rosepad*.jar
