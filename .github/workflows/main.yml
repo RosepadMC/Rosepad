@@ -33,7 +33,7 @@ jobs:
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: build
-        run: TOOLKIT_JAVA17=/opt/hostedtoolcache/Java_Zulu_jdk/17.0.3-7/x64 ./gradlew -Dorg.gradle.java.home=/opt/hostedtoolcache/Java_Zulu_jdk/8.0.332-9/x64 prepare processPatches shadowJar pack
+        run: TOOLKIT_JAVA17=/opt/hostedtoolcache/Java_Zulu_jdk/17.*/x64 ./gradlew -Dorg.gradle.java.home=/opt/hostedtoolcache/Java_Zulu_jdk/8.*/x64 prepare processPatches shadowJar pack
       - name: capture build artifacts
         uses: actions/upload-artifact@v3
         with:
