@@ -1,12 +1,25 @@
 --- GuiIngame.java
 +++ GuiIngame.java
-@@ -28,4 +28,5 @@
+@@ -28,6 +28,10 @@
      public long areaTimer;
      private static final String[] syllab;
+-    private static final String versionName = "Minecraft Alpha 1.0.16.05_13 Lilypad (LPUJ v106)";
 +    public boolean showGUI;
      
++    private String getVersionName() {
++    	return "Minecraft Alpha 1.0.16.05_13 Lilypad (Rosepad " + mc.getVersionString() + ")";
++    }
++    
      static {
-@@ -102,7 +103,9 @@
+         GuiIngame.uqKey = "";
+@@ -95,5 +99,5 @@
+         this.currentArea = "";
+         this.areaTimer = 0L;
+-        this.chatMessageList = (List<ChatLine>)new ArrayList();
++        this.chatMessageList = new ArrayList<>();
+         this.rand = new Random();
+         this.testMessage = null;
+@@ -103,7 +107,9 @@
          this.prevVignetteBrightness = 1.0f;
          this.mc = minecraft;
 +        this.showGUI = true;
@@ -16,17 +29,31 @@
 +    	if (!this.showGUI && this.mc.currentScreen == null) return;
          final ScaledResolution scaledResolution = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
          final int scaledWidth = scaledResolution.getScaledWidth();
-@@ -241,5 +244,5 @@
+@@ -242,5 +248,5 @@
          GL11.glDisable(32826);
          if (this.mc.gameSettings.showFPS) {
--            fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad", 2, 2, 16777215);
-+        	fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 (Rosepad " + mc.getVersionString() + ")", 2, 2, 16777215);
+-            fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad (LPUJ v106)", 2, 2, 16777215);
++            fontRenderer.drawStringWithShadow(this.getVersionName(), 2, 2, 16777215);
              fontRenderer.drawStringWithShadow(this.mc.debug, 2, 12, 16777215);
              fontRenderer.drawStringWithShadow(this.mc.debugInfoRenders(), 2, 22, 16777215);
-@@ -261,5 +264,5 @@
+@@ -262,5 +268,5 @@
          }
          else {
--            fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad", 2, 2, 16777215);
-+        	fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 (Rosepad " + mc.getVersionString() + ")", 2, 2, 16777215);
+-            fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad (LPUJ v106)", 2, 2, 16777215);
++            fontRenderer.drawStringWithShadow(this.getVersionName(), 2, 2, 16777215);
              if (GuiIngame.uqKey != "") {
                  fontRenderer.drawStringWithShadow(GuiIngame.uqKey, 2, 12, 16777215);
+@@ -410,6 +416,5 @@
+         ++this.updateCounter;
+         for (int i = 0; i < this.chatMessageList.size(); ++i) {
+-            final ChatLine chatLine2;
+-            final ChatLine chatLine = chatLine2 = (ChatLine)this.chatMessageList.get(i);
++            final ChatLine chatLine2 = this.chatMessageList.get(i);
+             ++chatLine2.updateCounter;
+         }
+@@ -417,4 +422,5 @@
+     
+     public void addChatMessage(String message) {
++    	if (message.length() > 2000) message = message.substring(message.length() - 2000).trim();
+         while (this.mc.fontRenderer.getStringWidth(message) > 320) {
+             int n;

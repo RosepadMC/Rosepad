@@ -4,7 +4,7 @@
      private int joinPlayerCounter;
      
 +    public int[] getVersion() {
-+    	return new int[] { 1, 1, 0, 2 };
++    	return new int[] { 1, 1, 0, 3 };
 +    }
 +    
 +    public String getVersionTag() {

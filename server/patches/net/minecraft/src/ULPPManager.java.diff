@@ -1,0 +1,87 @@
+--- ULPPManager.java
++++ ULPPManager.java
+@@ -1,4 +1,6 @@
+ package net.minecraft.src;
+ 
++import java.util.*;
++
+ import net.minecraft.server.MinecraftServer;
+ 
+@@ -6,13 +8,62 @@
+     public static final boolean enabled = true;
+     public static final String ULPP_PREFIX = "ULPP";
++    /**
++     * @deprecated ULPP offline mode is redundant
++     */
+     public static final String OFFLINE_PREFIX = "OFFL";
+     public static final int ULPP_VERSION = 1;
+     
++    public static List<ULPPExtension> getProtocolExtensions(final String ver) {
++    	String[] argsP = ver.split(";+");
++    	List<ULPPExtension> args = new ArrayList<>();
++    	for (String arg : argsP) {
++    		arg = arg.trim();
++    		if (!arg.matches("^[A-Za-z_-][0-9]+$"))
++    			continue;
++    		int numBegin = 0;
++    		while (numBegin < arg.length() && Character.isDigit(arg.charAt(numBegin)))
++    			numBegin++;
++    		String name = arg.substring(0, numBegin);
++    		int version = 0;
++    		try {
++    			version = Integer.parseUnsignedInt(arg.substring(numBegin));
++    		} catch (Exception e) {
++    			continue;
++    		}
++    		args.add(new ULPPExtension(name, version));
++    	}
++    	return args;
++    }
++    
++    public static boolean supportsExtension(
++    		final String ver,
++    		final String extension,
++    		int versionNumberMin,
++    		int versionNumberMax) {
++    	List<ULPPExtension> extensions = getProtocolExtensions(ver);
++    	for (ULPPExtension ext : extensions) {
++    		if (ext.getName().equals(extension)) {
++    			if (ext.getVersion() < versionNumberMin)
++    				return false;
++    			if (ext.getVersion() > versionNumberMax)
++    				return false;
++    			return true;
++    		}
++    	}
++    	return false;
++    }
++    
+     public static String GetVersionString() {
+         return new StringBuilder("ULPP").append(Integer.toString(1)).toString();
+     }
+     
++    /**
++     * Check if client supports ULPP
++     * 
++     * @deprecated Use {@link ULPPManager#supportsExtension} instead
++     * @param ver Version string (Login packet)
++     */
+     public static boolean IsVersionString(final String ver) {
+-        return ver.startsWith("ULPP") || ver.startsWith("OFFL");
++        return supportsExtension(ver, "ULPP", 1, 1);
+     }
+     
+@@ -21,6 +72,12 @@
+     }
+     
++    /**
++     * Check if client uses ULPP online mode
++     * 
++     * @deprecated Use {@link ULPPManager#supportsExtension} instead
++     * @param ver Version string (Login packet)
++     */
+     public static boolean IsOnline(final String ver) {
+-        return ver.startsWith("ULPP");
++        return supportsExtension(ver, "ULPP", 1, 1);
+     }
+     

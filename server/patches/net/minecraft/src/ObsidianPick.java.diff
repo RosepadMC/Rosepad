@@ -1,0 +1,9 @@
+--- ObsidianPick.java
++++ ObsidianPick.java
+@@ -24,5 +24,5 @@
+         }
+         if (block == Block.obsidian) {
+-            return this.harvestLevel == 3;
++            return this.harvestLevel >= 3;
+         }
+         if (block != Block.blockDiamond) {

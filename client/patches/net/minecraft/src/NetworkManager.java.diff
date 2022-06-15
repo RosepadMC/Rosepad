@@ -1,0 +1,13 @@
+--- NetworkManager.java
++++ NetworkManager.java
+@@ -40,7 +40,7 @@
+         this.sendQueueLock = new Object();
+         this.isRunning = true;
+-        this.readPackets = (List<Packet>)Collections.synchronizedList((List)new LinkedList());
+-        this.dataPackets = (List<Packet>)Collections.synchronizedList((List)new LinkedList());
+-        this.chunkDataPackets = (List<Packet>)Collections.synchronizedList((List)new LinkedList());
++        this.readPackets = Collections.synchronizedList(new LinkedList<>());
++        this.dataPackets = Collections.synchronizedList(new LinkedList<>());
++        this.chunkDataPackets = Collections.synchronizedList(new LinkedList<>());
+         this.isServerTerminating = false;
+         this.isTerminating = false;

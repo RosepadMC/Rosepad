@@ -1,0 +1,10 @@
+--- NetClientHandler.java
++++ NetClientHandler.java
+@@ -300,5 +300,6 @@
+     public void handleHandshake(final Packet2Handshake packet) {
+         final boolean online = this.mc.session.sessionID.startsWith("token");
+-        final String usedPassword = ULPPManager.GetVersionString(online);
++        final String usedPassword = ULPPManager.GetVersionString(online, this.mc.gameSettings.acceptRemoteScripts);
++        System.out.println("Using client agent: " + usedPassword);
+         this.addToSendQueue(new Packet1Login(this.mc.session.username, usedPassword, 2));
+     }

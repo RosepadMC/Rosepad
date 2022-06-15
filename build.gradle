@@ -364,11 +364,11 @@ abstract class JarEarlyPatcher extends DefaultTask {
     @TaskAction
     def patchJars() {
         Utils.fetch(
-                "https://github.com/AlphaVerUnofficialJars/LilypadClient/releases/download/v105/lilypad_qamod_v105.jar",
+                "https://github.com/AlphaVerUnofficialJars/LilypadClient/releases/download/v106/lilypad_qamod_v106.jar",
                 Paths.get(project.rootDir.toString(), "jars", "lilypad_client_s.jar"),
         )
         Utils.fetch(
-                "https://github.com/AlphaVerUnofficialJars/LilypadServer/releases/download/v104/lilypad_server_v104.jar",
+                "https://github.com/AlphaVerUnofficialJars/LilypadServer/releases/download/v105/lilypad_server_v105.jar",
                 Paths.get(project.rootDir.toString(), "jars", "lilypad_server_s.jar"),
         )
         Utils.unzip(
@@ -413,6 +413,7 @@ abstract class JarEarlyPatcher extends DefaultTask {
         Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java/paulscode"))
         Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java/com"))
         Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java/org"))
+        Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java/net/java"))
 
         Utils.rm(Paths.get(project.rootDir.toString(), "client/src/orig"))
         Utils.cp(

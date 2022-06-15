@@ -1,29 +1,28 @@
 --- ThreadDownloadImage.java
 +++ ThreadDownloadImage.java
-@@ -20,4 +20,20 @@
-         this.imageData = image;
+@@ -22,8 +22,25 @@
      }
-+//
-+public boolean checkUsername(String username) {
-+if (username.length() < 2 || username.length() > 32) return false;
-+String fine = "qwertyuiopasdfghjklzxcvbnnmQWERTYUIOPAFGHJKLZXVBNM1234567890-_";
-+for (int i = 0; i < username.length(); i++) {
-+boolean good = false;
-+for (int o = 0; o < fine.length(); o++) {
-+if (username.charAt(i) == fine.charAt(o)) {
-+good = true;
-+break;
-+}
-+}
-+if (!good) return false;
-+}
-+return true;
-+}
      
++    public boolean checkUsername(String username) {
++    	if (username.length() < 2 || username.length() > 32) return false;
++    	String fine = "qwertyuiopasdfghjklzxcvbnnmQWERTYUIOPAFGHJKLZXVBNM1234567890-_";
++    	for (int i = 0; i < username.length(); i++) {
++    		boolean good = false;
++    		for (int o = 0; o < fine.length(); o++) {
++    			if (username.charAt(i) == fine.charAt(o)) {
++    				good = true;
++    				break;
++    			}
++    		}
++    		if (!good) return false;
++    	}
++    	return true;
++    }
++    
      public void run() {
-@@ -25,4 +41,5 @@
+         if (this.buffer.startsWith("skin:///")) {
              HttpURLConnection skinURLConnection = null;
              final String skinUsername = this.buffer.substring(8);
-+if (!checkUsername(skinUsername)) return;
++            if (!checkUsername(skinUsername)) return;
              try {
                  final URL uuidURL = new URL(new StringBuilder("https://api.mojang.com/users/profiles/minecraft/").append(skinUsername).toString());

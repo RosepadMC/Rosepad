@@ -34,9 +34,14 @@ jobs:
         run: chmod +x ./gradlew
       - name: build
         run: TOOLKIT_JAVA17=$(echo /opt/hostedtoolcache/Java_Zulu_jdk/17.*/x64) ./gradlew -Dorg.gradle.java.home=$(echo /opt/hostedtoolcache/Java_Zulu_jdk/8.*/x64) prepare injectClasses processPatches shadowJar pack
-      - name: capture build artifacts
+      - name: capture client
         uses: actions/upload-artifact@v3
         with:
-          name: Artifacts
-          path: build/Rosepad*.jar
+          name: RosepadClient.jar
+          path: build/RosepadClient.jar
+      - name: capture server
+        uses: actions/upload-artifact@v3
+        with:
+          name: RosepadServer.jar
+          path: build/RosepadServer.jar
 

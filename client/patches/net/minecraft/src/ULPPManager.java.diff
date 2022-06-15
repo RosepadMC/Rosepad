@@ -1,0 +1,36 @@
+--- ULPPManager.java
++++ ULPPManager.java
+@@ -2,6 +2,9 @@
+ 
+ import java.io.IOException;
++import java.util.*;
++
+ import net.minecraft.client.Minecraft;
+ 
++// TODO: Replace half of methods with better implementation
+ public class ULPPManager {
+     public static final boolean enabled = true;
+@@ -10,9 +13,20 @@
+     public static final int ULPP_VERSION = 1;
+     
+-    public static String GetVersionString(final boolean online) {
++    public static String GetVersionString(final boolean online, final boolean rosepad) {
++    	List<String> parts = new ArrayList<>();
++    	StringBuilder builder = new StringBuilder();
+         if (online) {
+-            return new StringBuilder("ULPP").append(Integer.toString(1)).toString();
++            parts.add("ULPP1");
+         }
+-        return new StringBuilder("OFFL").append(Integer.toString(1)).toString();
++        if (rosepad) {
++            parts.add("ROSE1");
++        }
++    	boolean first = true;
++    	for (String part : parts) {
++    		if (!first) builder.append(";");
++    		builder.append(part);
++    		first = false;
++    	}
++    	return builder.toString();
+     }
+     
