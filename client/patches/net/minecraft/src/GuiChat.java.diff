@@ -1,0 +1,22 @@
+--- GuiChat.java
++++ GuiChat.java
+@@ -29,4 +29,13 @@
+     @Override
+     protected void keyTyped(final char character, final int key) {
++    	if (character == '\u0016') {
++    		String clipStr = getClipboardString();
++    		if (clipStr == null) clipStr = "";
++    		this.message += clipStr;
++    		if (this.message.length() > 100) {
++    			this.message = this.message.substring(0, 100);
++    		}
++    		return;
++    	}
+         if (key == 1) {
+             this.mc.displayGuiScreen(null);
+@@ -61,5 +70,4 @@
+             }
+             this.message = String.valueOf(this.message) + this.mc.ingameGUI.testMessage;
+-            final int n = 100;
+             if (this.message.length() > 100) {
+                 this.message = this.message.substring(0, 100);

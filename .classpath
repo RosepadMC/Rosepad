@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="server"/>
+	<classpathentry kind="src" path="client"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="lib" path="libs/codecjorbis-20101023.jar"/>
+	<classpathentry kind="lib" path="libs/codecwav-20101023.jar"/>
+	<classpathentry kind="lib" path="libs/libraryjavasound-20101123.jar"/>
+	<classpathentry kind="lib" path="libs/librarylwjglopenal-20100824.jar"/>
+	<classpathentry kind="lib" path="libs/lwjgl_util-2.9.4-nightly-20150209.jar"/>
+	<classpathentry kind="lib" path="libs/lwjgl-2.9.4-nightly-20150209.jar"/>
+	<classpathentry kind="lib" path="libs/soundsystem-20120107.jar"/>
+	<classpathentry kind="lib" path="tools/enigma.jar"/>
+	<classpathentry kind="lib" path="tools/tiny-remapper.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -16,8 +16,8 @@ public class DifficultyButton implements GuiOptionsButton {
 
 	@Override
 	public void run(GuiButton button, GuiScreen parent) {
-    	settings.renderDistance++;
-    	settings.renderDistance %= 4;
+    	settings.difficulty++;
+    	settings.difficulty %= 5;
 	}
 
 }

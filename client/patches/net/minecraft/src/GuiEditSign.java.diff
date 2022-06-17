@@ -1,0 +1,17 @@
+--- GuiEditSign.java
++++ GuiEditSign.java
+@@ -46,4 +46,14 @@
+     @Override
+     protected void keyTyped(final char character, final int key) {
++        if (character == '\u0016') {
++            String clipboardString = GuiScreen.getClipboardString();
++            if (clipboardString == null) {
++                clipboardString = "";
++            }
++            this.entitySign.signText[this.editLine] += clipboardString;
++            if (this.entitySign.signText[this.editLine].length() > 15) {
++            	this.entitySign.signText[this.editLine] = this.entitySign.signText[this.editLine].substring(0, 15);
++            }
++        }
+         if (key == 200) {
+             this.editLine = (this.editLine - 1 & 0x3);

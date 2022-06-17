@@ -16,7 +16,7 @@ public class LimitFramerateButton implements GuiOptionsButton {
 
 	@Override
 	public void run(GuiButton button, GuiScreen parent) {
-    	settings.limitFramerate = !settings.acceptRemoteScripts;
+    	settings.limitFramerate = !settings.limitFramerate;
 	}
 
 }

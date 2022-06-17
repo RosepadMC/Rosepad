@@ -1,0 +1,9 @@
+--- GuiControls.java
++++ GuiControls.java
+@@ -26,5 +26,5 @@
+     protected void actionPerformed(final GuiButton button) {
+         for (int i = 0; i < this.gameSettings.keyBindings.length; ++i) {
+-            ((GuiButton)this.controlList.get(i)).displayString = this.gameSettings.getKeyBindingDescription(i);
++            this.controlList.get(i).displayString = this.gameSettings.getKeyBindingDescription(i);
+         }
+         if (button.id == 200) {

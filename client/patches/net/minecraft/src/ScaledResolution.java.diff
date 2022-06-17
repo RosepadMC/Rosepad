@@ -1,0 +1,51 @@
+--- ScaledResolution.java
++++ ScaledResolution.java
+@@ -4,6 +4,10 @@
+     private int scaledWidth;
+     private int scaledHeight;
++    private int width;
++    private int height;
+     public int scaleFactor;
+     
++    public static int guiScaling = 4;
++    
+     public ScaledResolution(final int width, final int height) {
+         this.scaledWidth = width;
+@@ -13,8 +17,25 @@
+             ++this.scaleFactor;
+         }
++        this.scaleFactor = this.scaleFactor > guiScaling ? guiScaling : this.scaleFactor;
+         this.scaledWidth /= this.scaleFactor;
+         this.scaledHeight /= this.scaleFactor;
++        this.width = width;
++        this.height = height;
+     }
+     
++    public ScaledResolution(final int width, final int height, final boolean ignoreScaling) {
++        this.scaledWidth = width;
++        this.scaledHeight = height;
++        this.scaleFactor = 1;
++        while (this.scaledWidth / (this.scaleFactor + 1) >= 320 && this.scaledHeight / (this.scaleFactor + 1) >= 240) {
++            ++this.scaleFactor;
++        }
++        if (!ignoreScaling) this.scaleFactor = this.scaleFactor > guiScaling ? guiScaling : this.scaleFactor;
++        this.scaledWidth /= this.scaleFactor;
++        this.scaledHeight /= this.scaleFactor;
++        this.width = width;
++        this.height = height;
++    }
++    
+     public int getScaledWidth() {
+         return this.scaledWidth;
+@@ -24,3 +45,11 @@
+         return this.scaledHeight;
+     }
++    
++    public int getWidth() {
++    	return width;
++    }
++    
++    public int getHeight() {
++    	return height;
++    }
+ }

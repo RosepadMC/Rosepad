@@ -1,0 +1,9 @@
+--- GuiScreenInputPass.java
++++ GuiScreenInputPass.java
+@@ -146,5 +146,5 @@
+             this.drawCenteredString(this.fontRenderer, "Input key", this.width / 2, this.height / 4 - 60 + 20, -1593835521);
+             this.drawString(this.fontRenderer, "Please enter your QA Preview key", this.width / 2 - 140, this.height / 4 - 60 + 60 + 0, 10526880);
+-            this.drawString(this.fontRenderer, "If you don't have one, register at: exalpha_dev@protonmail.com", this.width / 2 - 140, this.height / 4 - 60 + 60 + 18, 10526880);
++            this.drawString(this.fontRenderer, "If you don't have one, register at: https://exaplha-dev.github.io/", this.width / 2 - 140, this.height / 4 - 60 + 60 + 18, 10526880);
+             final int xMin = this.width / 2 - 150;
+             final int yMin = this.height / 4 - 10 + 50 + 18;

@@ -1,0 +1,52 @@
+--- GuiScreen.java
++++ GuiScreen.java
+@@ -15,4 +15,5 @@
+     public int width;
+     public int height;
++    public ScaledResolution size;
+     protected List<GuiButton> controlList;
+     public boolean allowUserInput;
+@@ -23,5 +24,4 @@
+     static {
+         GuiScreen.currentID = "";
+-        GuiScreen.currentID = "";
+     }
+     
+@@ -32,5 +32,5 @@
+     public GuiScreen() {
+         this.hasInputHandler = false;
+-        this.controlList = (List<GuiButton>)new ArrayList();
++        this.controlList = new ArrayList<>();
+         this.allowUserInput = false;
+         this.hasInputHandler = this.InputHandlerLoaded();
+@@ -39,5 +39,5 @@
+     public void drawScreen(final int mouseX, final int mouseY, final float renderPartialTick) {
+         for (int i = 0; i < this.controlList.size(); ++i) {
+-            ((GuiButton)this.controlList.get(i)).drawButton(this.mc, mouseX, mouseY);
++        	this.controlList.get(i).drawButton(this.mc, mouseX, mouseY);
+         }
+     }
+@@ -64,5 +64,5 @@
+         if (mouseButton == 0) {
+             for (int i = 0; i < this.controlList.size(); ++i) {
+-                final GuiButton button = (GuiButton)this.controlList.get(i);
++                final GuiButton button = this.controlList.get(i);
+                 if (button.mousePressed(x, y)) {
+                     this.mc.sndManager.playSoundFX("random.click", 1.0f, 1.0f);
+@@ -79,5 +79,5 @@
+     }
+     
+-    public void setWorldAndResolution(final Minecraft minecraft, final int width, final int height) {
++    public void setWorldAndResolution(final Minecraft minecraft, final ScaledResolution size) {
+         this.mc = minecraft;
+         if (this.hasInputHandler) {
+@@ -85,6 +85,7 @@
+         }
+         this.fontRenderer = minecraft.fontRenderer;
+-        this.width = width;
+-        this.height = height;
++        this.width = size.getScaledWidth();
++        this.height = size.getScaledHeight();
++        this.size = size;
+         this.actionPerformed();
+     }

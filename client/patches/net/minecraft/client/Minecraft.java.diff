@@ -4,7 +4,7 @@
      private int joinPlayerCounter;
      
 +    public int[] getVersion() {
-+    	return new int[] { 1, 1, 0, 3 };
++    	return new int[] { 1, 1, 0, 4 };
 +    }
 +    
 +    public String getVersionTag() {
@@ -32,7 +32,42 @@
 +        Display.setTitle(getVersionString());
          try {
              PixelFormat pixelformat = new PixelFormat();
-@@ -905,4 +925,8 @@
+@@ -280,5 +300,5 @@
+     
+     private void loadScreen() throws LWJGLException {
+-        final ScaledResolution scaledResolution = new ScaledResolution(this.displayWidth, this.displayHeight);
++        final ScaledResolution scaledResolution = new ScaledResolution(this.displayWidth, this.displayHeight, true);
+         final int scaledWidth = scaledResolution.getScaledWidth();
+         final int scaledHeight = scaledResolution.getScaledHeight();
+@@ -304,6 +324,4 @@
+         instance.addVertexWithUV(0.0, 0.0, 0.0, 0.0, 0.0);
+         instance.draw();
+-        final int integer5 = 256;
+-        final int integer6 = 256;
+         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         instance.setColorOpaque_I(16777215);
+@@ -317,6 +335,4 @@
+     
+     public void scaledTessellator(final int integer1, final int integer2, final int integer3, final int integer4, final int integer5, final int integer6) {
+-        final float n = 0.00390625f;
+-        final float n2 = 0.00390625f;
+         final Tessellator instance = Tessellator.instance;
+         instance.startDrawingQuads();
+@@ -407,5 +423,5 @@
+             this.setIngameNotInFocus();
+             final ScaledResolution scaledResolution = new ScaledResolution(this.displayWidth, this.displayHeight);
+-            guiScreen.setWorldAndResolution(this, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight());
++            guiScreen.setWorldAndResolution(this, scaledResolution);
+             this.skipRenderWorld = false;
+         }
+@@ -788,5 +804,5 @@
+         if (this.currentScreen != null) {
+             final ScaledResolution scaledResolution = new ScaledResolution(width, height);
+-            this.currentScreen.setWorldAndResolution(this, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight());
++            this.currentScreen.setWorldAndResolution(this, scaledResolution);
+         }
+     }
+@@ -905,4 +921,8 @@
                                  this.thePlayer.dropPlayerItemWithRandomChoice(this.thePlayer.inventory.decrStackSize(this.thePlayer.inventory.currentItem, 1), false);
                              }
 +if (InputHandler.GetKBEventKey() == this.gameSettings.keyBindHideGUI.keyCode && this.ingameGUI != null
