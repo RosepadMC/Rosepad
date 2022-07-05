@@ -14,14 +14,36 @@
 +    private List<ServerCommand> commands;
      public EntityTracker entityTracker;
      public boolean onlineMode;
-@@ -60,5 +60,5 @@
+@@ -58,7 +58,27 @@
+     private static Random rand;
+     
++    public int[] getVersion() {
++    	return new int[] { 1, 1, 0, 5 };
++    }
++    
++    public String getVersionTag() {
++    	return "dev";
++    }
++    
++    public String getVersionString() {
++    	int[] version = getVersion();
++    	StringBuilder str = new StringBuilder();
++    	for (int i = 0; i < version.length; i++) {
++    		if (i != 0) str.append(".");
++    		str.append(version[i]);
++    	}
++    	String tag = getVersionTag();
++    	if (tag != null) str.append("-").append(tag);
++    	return str.toString();
++    }
++    
      static {
          MinecraftServer.logger = Logger.getLogger("Minecraft");
 -        MinecraftServer.playerList = new HashMap();
 +        MinecraftServer.playerList = new HashMap<>();
          MinecraftServer.rand = new Random(System.currentTimeMillis());
      }
-@@ -68,6 +68,6 @@
+@@ -68,6 +88,6 @@
          this.serverStopped = false;
          this.deathTime = 0;
 -        this.playersOnline = (List)new ArrayList();
@@ -30,7 +52,14 @@
 +        this.commands = Collections.synchronizedList(new ArrayList<>());
          new ThreadSleepForeverServer(this);
      }
-@@ -432,4 +432,77 @@
+@@ -78,5 +98,5 @@
+         threadCommandReader1.start();
+         ConsoleLogManager.init();
+-        MinecraftServer.logger.info("Starting minecraft server version 0.2.1");
++        MinecraftServer.logger.info("Starting minecraft server version " + getVersionString());
+         if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L) {
+             MinecraftServer.logger.warning("**** NOT ENOUGH RAM!");
+@@ -432,4 +452,77 @@
                      iCommandListener3.addHelpCommandMessage("There's no player by that name online.");
                  }
 +                else if (string2.toLowerCase().startsWith("whitelist")) {
@@ -108,7 +137,7 @@
 +                }
                  else {
                      MinecraftServer.logger.info("Unknown console command. Type \"help\" for help.");
-@@ -457,4 +530,5 @@
+@@ -457,4 +550,5 @@
                  iCommandListener3.addHelpCommandMessage("   list                      lists all currently connected players");
                  iCommandListener3.addHelpCommandMessage("   say <message>             broadcasts a message to all players");
 +                iCommandListener3.addHelpCommandMessage("   whitelist                 manage server whitelist");
