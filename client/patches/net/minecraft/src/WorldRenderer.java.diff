@@ -1,0 +1,60 @@
+--- WorldRenderer.java
++++ WorldRenderer.java
+@@ -1,5 +1,4 @@
+ package net.minecraft.src;
+ 
+-import java.util.Collection;
+ import java.util.HashSet;
+ import org.lwjgl.opengl.GL11;
+@@ -52,5 +51,5 @@
+         this.isVisible = true;
+         this.isInitialised = false;
+-        this.tileEntityRenderers = (List<TileEntity>)new ArrayList();
++        this.tileEntityRenderers = new ArrayList<>();
+         this.worldObj = world;
+         this.tileEntities = tileEnts;
+@@ -83,7 +82,7 @@
+         this.posZMinus = z - this.posZClip;
+         final float n = 2.0f;
+-        this.rendererBoundingBox = AxisAlignedBB.getBoundingBox(x - 2.0f, y - 2.0f, z - 2.0f, x + this.sizeWidth + 2.0f, y + this.sizeHeight + 2.0f, z + this.sizeDepth + 2.0f);
++        this.rendererBoundingBox = AxisAlignedBB.getBoundingBox(x - n, y - n, z - n, x + this.sizeWidth + n, y + this.sizeHeight + n, z + this.sizeDepth + n);
+         GL11.glNewList(this.glRenderList + 2, 4864);
+-        Render.renderAABB(AxisAlignedBB.getBoundingBoxFromPool(this.posXClip - 2.0f, this.posYClip - 2.0f, this.posZClip - 2.0f, this.posXClip + this.sizeWidth + 2.0f, this.posYClip + this.sizeHeight + 2.0f, this.posZClip + this.sizeDepth + 2.0f));
++        Render.renderAABB(AxisAlignedBB.getBoundingBoxFromPool(this.posXClip - n, this.posYClip - n, this.posZClip - n, this.posXClip + this.sizeWidth + n, this.posYClip + this.sizeHeight + n, this.posZClip + this.sizeDepth + n));
+         GL11.glEndList();
+         this.markDirty();
+@@ -109,8 +108,7 @@
+         }
+         Chunk.isLit = false;
+-        final HashSet<TileEntity> set = (HashSet<TileEntity>)new HashSet();
+-        set.addAll((Collection)this.tileEntityRenderers);
++        final HashSet<TileEntity> set = new HashSet<>();
++        set.addAll(this.tileEntityRenderers);
+         this.tileEntityRenderers.clear();
+-        final int n4 = 1;
+         final ChunkCache blockAccess = new ChunkCache(this.worldObj, posX - 1, posY - 1, posZ - 1, n + 1, n2 + 1, n3 + 1);
+         final RenderBlocks renderBlocks = new RenderBlocks(blockAccess);
+@@ -131,5 +129,5 @@
+                                 final float n6 = 1.000001f;
+                                 GL11.glTranslatef(-this.sizeDepth / 2.0f, -this.sizeHeight / 2.0f, -this.sizeDepth / 2.0f);
+-                                GL11.glScalef(1.000001f, 1.000001f, 1.000001f);
++                                GL11.glScalef(n6, n6, n6);
+                                 GL11.glTranslatef(this.sizeDepth / 2.0f, this.sizeHeight / 2.0f, this.sizeDepth / 2.0f);
+                                 WorldRenderer.tessellator.startDrawingQuads();
+@@ -170,10 +168,10 @@
+             }
+         }
+-        final HashSet<TileEntity> set2 = (HashSet<TileEntity>)new HashSet();
+-        set2.addAll((Collection)this.tileEntityRenderers);
+-        set2.removeAll((Collection)set);
+-        this.tileEntities.addAll((Collection)set2);
+-        set.removeAll((Collection)this.tileEntityRenderers);
+-        this.tileEntities.removeAll((Collection)set);
++        final HashSet<TileEntity> set2 = new HashSet<>();
++        set2.addAll(this.tileEntityRenderers);
++        set2.removeAll(set);
++        this.tileEntities.addAll(set2);
++        set.removeAll(this.tileEntityRenderers);
++        this.tileEntities.removeAll(set);
+         this.isChunkLit = Chunk.isLit;
+         this.isInitialised = true;

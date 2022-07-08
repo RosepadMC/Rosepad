@@ -1,0 +1,11 @@
+--- BlockSafe.java
++++ BlockSafe.java
+@@ -10,6 +10,7 @@
+         if (entityPlayer.inventory.getCurrentItem() == null) {
+             InputHandler.mc.displayGuiScreen(new GuiScreenKeyInput(InputHandler.mc, 1));
++            return true;
+         }
+-        return true;
++        return false;
+     }
+ }

@@ -1,0 +1,8 @@
+--- EntityPlayerSP.java
++++ EntityPlayerSP.java
+@@ -63,5 +63,4 @@
+             }
+         }
+-        final long milestone = this.worldObj.milestone;
+         super.onLivingUpdate();
+     }

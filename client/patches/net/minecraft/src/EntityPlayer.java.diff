@@ -1,0 +1,25 @@
+--- EntityPlayer.java
++++ EntityPlayer.java
+@@ -89,5 +89,5 @@
+             if (entitiesWithinAABBExcludingEntity != null) {
+                 for (int i = 0; i < entitiesWithinAABBExcludingEntity.size(); ++i) {
+-                    this.collideWithPlayer((Entity)entitiesWithinAABBExcludingEntity.get(i));
++                    this.collideWithPlayer(entitiesWithinAABBExcludingEntity.get(i));
+                 }
+             }
+@@ -173,12 +173,9 @@
+             final float n3 = this.rand.nextFloat() * 3.1415927f * 2.0f;
+             final float n4 = 0.02f * this.rand.nextFloat();
+-            final EntityItem entityItem5;
+-            final EntityItem entityItem2 = entityItem5 = entityItem;
++            final EntityItem entityItem5 = entityItem;
+             entityItem5.motionX += Math.cos((double)n3) * n4;
+-            final EntityItem entityItem6;
+-            final EntityItem entityItem3 = entityItem6 = entityItem;
++            final EntityItem entityItem6 = entityItem;
+             entityItem6.motionY += (this.rand.nextFloat() - this.rand.nextFloat()) * 0.1f;
+-            final EntityItem entityItem7;
+-            final EntityItem entityItem4 = entityItem7 = entityItem;
++            final EntityItem entityItem7 = entityItem;
+             entityItem7.motionZ += Math.sin((double)n3) * n4;
+         }

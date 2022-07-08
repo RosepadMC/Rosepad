@@ -1,0 +1,46 @@
+--- AxisAlignedBB.java
++++ AxisAlignedBB.java
+@@ -5,5 +5,5 @@
+ 
+ public class AxisAlignedBB {
+-    private static List boundingBoxes;
++    private static List<AxisAlignedBB> boundingBoxes;
+     private static int numBoundingBoxesInUse;
+     public double minX;
+@@ -15,5 +15,5 @@
+     
+     static {
+-        AxisAlignedBB.boundingBoxes = (List)new ArrayList();
++        AxisAlignedBB.boundingBoxes = new ArrayList<>();
+         AxisAlignedBB.numBoundingBoxesInUse = 0;
+     }
+@@ -31,5 +31,5 @@
+             AxisAlignedBB.boundingBoxes.add(getBoundingBox(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+         }
+-        return ((AxisAlignedBB)AxisAlignedBB.boundingBoxes.get(AxisAlignedBB.numBoundingBoxesInUse++)).setBounds(minX, minY, minZ, maxX, maxY, maxZ);
++        return AxisAlignedBB.boundingBoxes.get(AxisAlignedBB.numBoundingBoxesInUse++).setBounds(minX, minY, minZ, maxX, maxY, maxZ);
+     }
+     
+@@ -92,5 +92,6 @@
+     
+     public AxisAlignedBB getOffsetBoundingBox(final double offsetX, final double offsetY, final double offsetZ) {
+-        return getBoundingBoxFromPool(this.minX + offsetX, this.minY + offsetY, this.minZ + offsetZ, this.maxX + offsetX, this.maxY + offsetY, this.maxZ + offsetZ);
++        return getBoundingBoxFromPool(this.minX + offsetX, this.minY + offsetY, this.minZ + offsetZ, this.maxX + offsetX,
++            this.maxY + offsetY, this.maxZ + offsetZ);
+     }
+     
+@@ -162,5 +163,6 @@
+     
+     public boolean intersectsWith(final AxisAlignedBB aabb) {
+-        return aabb.maxX > this.minX && aabb.minX < this.maxX && (aabb.maxY > this.minY && aabb.minY < this.maxY) && (aabb.maxZ > this.minZ && aabb.minZ < this.maxZ);
++        return aabb.maxX > this.minX && aabb.minX < this.maxX && (aabb.maxY > this.minY && aabb.minY < this.maxY) &&
++            (aabb.maxZ > this.minZ && aabb.minZ < this.maxZ);
+     }
+     
+@@ -275,5 +277,5 @@
+         return new MovingObjectPosition(0, 0, 0, b10, vec3D9);
+     }
+-    
++
+     private boolean isVecInYZ(final Vec3D vector) {
+         return vector != null && (vector.yCoord >= this.minY && vector.yCoord <= this.maxY && vector.zCoord >= this.minZ && vector.zCoord <= this.maxZ);

@@ -16,3 +16,21 @@
 +            if (mc.currentScreen == null) InputDash();
          }
      }
+@@ -178,13 +178,8 @@
+             InputHandler.mc.theWorld.playSoundEffect(InputHandler.mc.thePlayer.posX, InputHandler.mc.thePlayer.posY, InputHandler.mc.thePlayer.posZ, "ext.dash", 0.6f, 1.0f);
+             InputHandler.mc.thePlayer.dashTimer = 30;
+-            final EntityPlayerSP thePlayer4;
+-            final EntityPlayerSP thePlayer = thePlayer4 = InputHandler.mc.thePlayer;
+-            thePlayer4.motionX *= 10.0;
+-            final EntityPlayerSP thePlayer5;
+-            final EntityPlayerSP thePlayer2 = thePlayer5 = InputHandler.mc.thePlayer;
+-            thePlayer5.motionY *= 3.0;
+-            final EntityPlayerSP thePlayer6;
+-            final EntityPlayerSP thePlayer3 = thePlayer6 = InputHandler.mc.thePlayer;
+-            thePlayer6.motionZ *= 10.0;
++            final EntityPlayerSP player = InputHandler.mc.thePlayer;
++            player.motionX *= 10.0;
++            player.motionY *= 3.0;
++            player.motionZ *= 10.0;
+         }
+     }

@@ -1,0 +1,14 @@
+--- RenderGlobal.java
++++ RenderGlobal.java
+@@ -265,9 +265,9 @@
+     
+     public String getDebugInfoRenders() {
+-        return new StringBuilder().append("C: ").append(this.renderersBeingRendered).append("/").append(this.renderersLoaded).append(". F: ").append(this.renderersBeingClipped).append(", O: ").append(this.renderersBeingOccluded).append(", E: ").append(this.renderersSkippingRenderPass).toString();
++        return new StringBuilder().append("C: §6").append(this.renderersBeingRendered).append("§r/§e").append(this.renderersLoaded).append("§r. F: §c").append(this.renderersBeingClipped).append("§r, O: §8").append(this.renderersBeingOccluded).append("§r, E: §7").append(this.renderersSkippingRenderPass).toString();
+     }
+     
+     public String getDebugInfoEntities() {
+-        return new StringBuilder().append("E: ").append(this.countEntitiesRendered).append("/").append(this.countEntitiesTotal).append(". B: ").append(this.countEntitiesHidden).append(", I: ").append(this.countEntitiesTotal - this.countEntitiesHidden - this.countEntitiesRendered).toString();
++        return new StringBuilder().append("E: §9").append(this.countEntitiesRendered).append("§r/§b").append(this.countEntitiesTotal).append("§r. B: §8").append(this.countEntitiesHidden).append("§r, I: §7").append(this.countEntitiesTotal - this.countEntitiesHidden - this.countEntitiesRendered).toString();
+     }
+     

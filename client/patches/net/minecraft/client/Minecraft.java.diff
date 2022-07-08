@@ -60,6 +60,13 @@
 +            guiScreen.setWorldAndResolution(this, scaledResolution);
              this.skipRenderWorld = false;
          }
+@@ -538,5 +554,5 @@
+                 this.isGamePaused = (!this.isMultiplayerWorld() && this.currentScreen != null && this.currentScreen.doesGuiPauseGame());
+                 while (System.currentTimeMillis() >= currentTimeMillis + 1000L) {
+-                    this.debug = new StringBuilder().append(n).append(" fps, ").append(WorldRenderer.chunksUpdated).append(" chunk updates").toString();
++                    this.debug = new StringBuilder(n > 100 ? "§a" : n >= 60 ? "§e" : "§c").append(n).append("§r fps, §b").append(WorldRenderer.chunksUpdated).append("§r chunk updates").toString();
+                     WorldRenderer.chunksUpdated = 0;
+                     currentTimeMillis += 1000L;
 @@ -788,5 +804,5 @@
          if (this.currentScreen != null) {
              final ScaledResolution scaledResolution = new ScaledResolution(width, height);
@@ -76,3 +83,10 @@
 +}
                              if (this.isMultiplayerWorld() && InputHandler.GetKBEventKey() == this.gameSettings.keyBindChat.keyCode) {
                                  this.displayGuiScreen(new GuiChat());
+@@ -1093,5 +1113,5 @@
+     
+     public String debugLoadedEntities() {
+-        return new StringBuilder("P: ").append(this.effectRenderer.getStatistics()).append(". T: ").append(this.theWorld.getDebugLoadedEntities()).toString();
++        return new StringBuilder("P: §5").append(this.effectRenderer.getStatistics()).append("§f. T: ").append(this.theWorld.getDebugLoadedEntities()).toString();
+     }
+     

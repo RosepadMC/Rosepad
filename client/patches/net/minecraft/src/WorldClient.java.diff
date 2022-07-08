@@ -1,0 +1,26 @@
+--- WorldClient.java
++++ WorldClient.java
+@@ -17,9 +17,9 @@
+     public WorldClient(final NetClientHandler netHandler) {
+         super("MpServer");
+-        this.blocksToReceive = (LinkedList<WorldBlockPositionType>)new LinkedList();
++        this.blocksToReceive = new LinkedList<>();
+         this.noTileEntityUpdates = false;
+         this.entityHashTable = new MCHashTable();
+-        this.entityList = (Set<Entity>)new HashSet();
+-        this.entitySpawnQueue = (Set<Entity>)new HashSet();
++        this.entityList = new HashSet<>();
++        this.entitySpawnQueue = new HashSet<>();
+         this.sendQueue = netHandler.netManager;
+         this.spawnX = 8;
+@@ -43,8 +43,6 @@
+         this.sendQueue.processReadPackets();
+         for (int i = 0; i < this.blocksToReceive.size(); ++i) {
+-            final WorldBlockPositionType worldBlockPositionType3;
+-            final WorldBlockPositionType worldBlockPositionType4;
+-            final WorldBlockPositionType worldBlockPositionType2 = worldBlockPositionType4 = (worldBlockPositionType3 = (WorldBlockPositionType)this.blocksToReceive.get(i));
+-            if (--worldBlockPositionType4.acceptCountdown == 0) {
++            final WorldBlockPositionType worldBlockPositionType3 = this.blocksToReceive.get(i);
++            if (--worldBlockPositionType3.acceptCountdown == 0) {
+                 super.setBlockAndMetadata(worldBlockPositionType3.x, worldBlockPositionType3.y, worldBlockPositionType3.z, worldBlockPositionType3.blockID, worldBlockPositionType3.metadata);
+                 super.markBlockNeedsUpdate(worldBlockPositionType3.x, worldBlockPositionType3.y, worldBlockPositionType3.z);

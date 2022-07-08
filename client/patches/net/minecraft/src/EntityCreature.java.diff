@@ -1,0 +1,8 @@
+--- EntityCreature.java
++++ EntityCreature.java
+@@ -14,5 +14,4 @@
+     protected void updateEntityActionState() {
+         this.hasAttacked = false;
+-        final float n = 16.0f;
+         if (this.entityToAttack == null) {
+             this.entityToAttack = this.findPlayerToAttack();

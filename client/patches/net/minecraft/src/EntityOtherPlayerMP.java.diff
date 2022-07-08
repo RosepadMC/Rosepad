@@ -1,0 +1,12 @@
+--- EntityOtherPlayerMP.java
++++ EntityOtherPlayerMP.java
+@@ -8,9 +8,7 @@
+     private double otherPlayerMPYaw;
+     private double otherPlayerMPPitch;
+-    float unusedFloat5;
+     
+     public EntityOtherPlayerMP(final World worldd, final String username) {
+         super(worldd);
+-        this.unusedFloat5 = 0.0f;
+         this.username = username;
+         this.yOffset = 0.0f;

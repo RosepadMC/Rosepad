@@ -1,0 +1,16 @@
+--- AxisAlignedBB.java
++++ AxisAlignedBB.java
+@@ -15,5 +15,5 @@
+     
+     static {
+-        AxisAlignedBB.boundingBoxes = (List<AxisAlignedBB>)new ArrayList();
++        AxisAlignedBB.boundingBoxes = new ArrayList<>();
+         AxisAlignedBB.numBoundingBoxesInUse = 0;
+     }
+@@ -31,5 +31,5 @@
+             AxisAlignedBB.boundingBoxes.add(getBoundingBox(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+         }
+-        return ((AxisAlignedBB)AxisAlignedBB.boundingBoxes.get(AxisAlignedBB.numBoundingBoxesInUse++)).setBounds(minX, minY, minZ, maxX, maxY, maxZ);
++        return AxisAlignedBB.boundingBoxes.get(AxisAlignedBB.numBoundingBoxesInUse++).setBounds(minX, minY, minZ, maxX, maxY, maxZ);
+     }
+     

@@ -1,0 +1,9 @@
+--- BlockSafe.java
++++ BlockSafe.java
+@@ -11,5 +11,5 @@
+     @Override
+     public boolean blockActivated(final World world, final int x, final int y, final int z, final EntityPlayer entityPlayer) {
+-        return true;
++        return entityPlayer.inventory.getCurrentItem() == null;
+     }
+ }

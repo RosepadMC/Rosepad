@@ -1,18 +1,41 @@
 --- GuiIngame.java
 +++ GuiIngame.java
-@@ -28,6 +28,10 @@
+@@ -3,8 +3,10 @@
+ import java.awt.Color;
+ import java.util.ArrayList;
++import java.util.List;
++import java.util.Random;
++
+ import org.lwjgl.opengl.GL11;
++
+ import net.minecraft.client.Minecraft;
+-import java.util.Random;
+-import java.util.List;
+ 
+ public class GuiIngame extends Gui {
+@@ -19,5 +21,4 @@
+     public float damageGuiPartialTime;
+     float prevVignetteBrightness;
+-    public boolean renderQAName;
+     public static String uqKey;
+     private boolean initedArea;
+@@ -28,6 +29,10 @@
      public long areaTimer;
      private static final String[] syllab;
 -    private static final String versionName = "Minecraft Alpha 1.0.16.05_13 Lilypad (LPUJ v106)";
 +    public boolean showGUI;
      
 +    private String getVersionName() {
-+    	return "Minecraft Alpha 1.0.16.05_13 Lilypad (Rosepad " + mc.getVersionString() + ")";
++    	return "Minecraft Alpha 1.0.16.05_13 §2Lilypad QA§f (§cRosepad " + mc.getVersionString() + "§f)";
 +    }
 +    
      static {
          GuiIngame.uqKey = "";
-@@ -95,5 +99,5 @@
+@@ -91,9 +96,8 @@
+     
+     public GuiIngame(final Minecraft minecraft) {
+-        this.renderQAName = true;
+         this.initedArea = false;
          this.currentArea = "";
          this.areaTimer = 0L;
 -        this.chatMessageList = (List<ChatLine>)new ArrayList();
@@ -29,21 +52,47 @@
 +    	if (!this.showGUI && this.mc.currentScreen == null) return;
          final ScaledResolution scaledResolution = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
          final int scaledWidth = scaledResolution.getScaledWidth();
-@@ -242,5 +248,5 @@
+@@ -242,14 +248,21 @@
          GL11.glDisable(32826);
          if (this.mc.gameSettings.showFPS) {
 -            fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad (LPUJ v106)", 2, 2, 16777215);
 +            fontRenderer.drawStringWithShadow(this.getVersionName(), 2, 2, 16777215);
              fontRenderer.drawStringWithShadow(this.mc.debug, 2, 12, 16777215);
              fontRenderer.drawStringWithShadow(this.mc.debugInfoRenders(), 2, 22, 16777215);
-@@ -262,5 +268,5 @@
+             fontRenderer.drawStringWithShadow(this.mc.getEntityDebug(), 2, 32, 16777215);
+             fontRenderer.drawStringWithShadow(this.mc.debugLoadedEntities(), 2, 42, 16777215);
+-            if (this.mc.theWorld != null) {
+-                fontRenderer.drawStringWithShadow(Long.toString(this.mc.theWorld.randomSeed), 2, 52, 16777215);
++            int i = 0;
++            if (this.mc.thePlayer != null) {
++                String string = "X: §c" + Math.round(this.mc.thePlayer.posX * 100) / 100.0;
++                string += "§f, Y: §a" + Math.round(this.mc.thePlayer.posY * 100) / 100.0;
++                string += "§f, Z: §b" + Math.round(this.mc.thePlayer.posZ * 100) / 100.0;
++                fontRenderer.drawStringWithShadow(string, 2, 52 + (i++) * 10, 16777215);
+             }
++            if (this.mc.theWorld != null && !this.mc.theWorld.multiplayerWorld) {
++                fontRenderer.drawStringWithShadow(Long.toString(this.mc.theWorld.randomSeed), 2, 52 + (i++) * 10, 16777215);
++            }
+             if (GuiIngame.uqKey != "") {
+-                fontRenderer.drawStringWithShadow(GuiIngame.uqKey, 2, 52, 16777215);
++                fontRenderer.drawStringWithShadow(GuiIngame.uqKey, 2, 52 + (i++) * 10, 16777215);
+             }
+             final long maxMemory = Runtime.getRuntime().maxMemory();
+@@ -262,5 +275,5 @@
          }
          else {
 -            fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad (LPUJ v106)", 2, 2, 16777215);
 +            fontRenderer.drawStringWithShadow(this.getVersionName(), 2, 2, 16777215);
              if (GuiIngame.uqKey != "") {
                  fontRenderer.drawStringWithShadow(GuiIngame.uqKey, 2, 12, 16777215);
-@@ -410,6 +416,5 @@
+@@ -341,5 +354,5 @@
+             }
+         }
+-        if (this.renderQAName) {
++        if (this.mc.gameSettings.renderQAName) {
+             GL11.glScalef(2.0f, 2.0f, 2.0f);
+             fontRenderer.drawStringWithShadow(new StringBuilder("QA BUILD: ").append(GuiScreenInputPass.name).toString(), 5, 0, 553320302);
+@@ -410,6 +423,5 @@
          ++this.updateCounter;
          for (int i = 0; i < this.chatMessageList.size(); ++i) {
 -            final ChatLine chatLine2;
@@ -51,7 +100,7 @@
 +            final ChatLine chatLine2 = this.chatMessageList.get(i);
              ++chatLine2.updateCounter;
          }
-@@ -417,4 +422,5 @@
+@@ -417,4 +429,5 @@
      
      public void addChatMessage(String message) {
 +    	if (message.length() > 2000) message = message.substring(message.length() - 2000).trim();

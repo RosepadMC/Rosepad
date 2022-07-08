@@ -5,7 +5,21 @@
      public final int zPosition;
 -    public Map chunkTileEntityMap;
 -    public List[] entities;
-+public Map<ChunkPosition, TileEntity> chunkTileEntityMap;
-+public List<Entity>[] entities;
++    public Map<ChunkPosition, TileEntity> chunkTileEntityMap;
++    public List<Entity>[] entities;
      public boolean isTerrainPopulated;
      public boolean isModified;
+@@ -29,5 +29,5 @@
+     
+     public Chunk(final World world, final int xPosition, final int zPosition) {
+-        this.chunkTileEntityMap = (Map)new HashMap();
++        this.chunkTileEntityMap = new HashMap<>();
+         this.entities = new List[8];
+         this.isTerrainPopulated = false;
+@@ -41,5 +41,5 @@
+         this.heightMap = new byte[256];
+         for (int i4 = 0; i4 < this.entities.length; ++i4) {
+-            this.entities[i4] = (List)new ArrayList();
++            this.entities[i4] = new ArrayList<>();
+         }
+     }

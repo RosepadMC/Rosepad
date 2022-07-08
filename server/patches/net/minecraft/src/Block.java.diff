@@ -1,0 +1,30 @@
+--- Block.java
++++ Block.java
+@@ -379,5 +379,6 @@
+     }
+     
+-    public void getCollidingBoundingBoxes(final World world, final int x, final int y, final int z, final AxisAlignedBB aabb, final ArrayList arrayList) {
++    public void getCollidingBoundingBoxes(final World world, final int x, final int y, final int z,
++        final AxisAlignedBB aabb, final ArrayList<AxisAlignedBB> arrayList) {
+         final AxisAlignedBB axisAlignedBB7 = this.getCollisionBoundingBoxFromPool(world, x, y, z);
+         if (axisAlignedBB7 != null && aabb.intersectsWith(axisAlignedBB7)) {
+@@ -544,13 +545,16 @@
+     
+     private boolean isVecInsideYZBounds(final Vec3D vector) {
+-        return vector != null && (vector.yCoord >= this.minY && vector.yCoord <= this.maxY && vector.zCoord >= this.minZ && vector.zCoord <= this.maxZ);
++        return vector != null && (vector.yCoord >= this.minY && vector.yCoord <= this.maxY &&
++            vector.zCoord >= this.minZ && vector.zCoord <= this.maxZ);
+     }
+     
+     private boolean isVecInsideXZBounds(final Vec3D vector) {
+-        return vector != null && (vector.xCoord >= this.minX && vector.xCoord <= this.maxX && vector.zCoord >= this.minZ && vector.zCoord <= this.maxZ);
++        return vector != null && (vector.xCoord >= this.minX && vector.xCoord <= this.maxX &&
++            vector.zCoord >= this.minZ && vector.zCoord <= this.maxZ);
+     }
+     
+     private boolean isVecInsideXYBounds(final Vec3D vector) {
+-        return vector != null && (vector.xCoord >= this.minX && vector.xCoord <= this.maxX && vector.yCoord >= this.minY && vector.yCoord <= this.maxY);
++        return vector != null && (vector.xCoord >= this.minX && vector.xCoord <= this.maxX &&
++            vector.yCoord >= this.minY && vector.yCoord <= this.maxY);
+     }
+     

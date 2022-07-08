@@ -1,0 +1,16 @@
+--- DS5Packet.java
++++ DS5Packet.java
+@@ -8,5 +8,5 @@
+     
+     public DS5Packet() {
+-        this.ds5Instructions = (List<DS5Instruction>)new ArrayList();
++        this.ds5Instructions = new ArrayList<>();
+     }
+     
+@@ -18,5 +18,5 @@
+         String s = "{\"instructions\":[";
+         for (int i = 0; i != this.ds5Instructions.size(); ++i) {
+-            s = String.valueOf(s) + ((DS5Instruction)this.ds5Instructions.get(i)).GetJSON();
++            s = String.valueOf(s) + this.ds5Instructions.get(i).GetJSON();
+             if (i != this.ds5Instructions.size() - 1) {
+                 s = String.valueOf(s) + ",";

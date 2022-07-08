@@ -1,0 +1,74 @@
+--- Entity.java
++++ Entity.java
+@@ -108,6 +108,6 @@
+     }
+     
+-    public boolean equals(final Object entity) {
+-        return entity instanceof Entity && ((Entity)entity).entityID == this.entityID;
++    public boolean equals(final Entity entity) {
++        return entity instanceof Entity && entity.entityID == this.entityID;
+     }
+     
+@@ -127,5 +127,4 @@
+             ++this.posY;
+         }
+-        final double motionX = 0.0;
+         this.motionZ = 0.0;
+         this.motionY = 0.0;
+@@ -159,6 +158,6 @@
+         final float rotationPitch = this.rotationPitch;
+         final float rotationYaw = this.rotationYaw;
+-        this.rotationYaw += (float)(yaw * 0.15);
+-        this.rotationPitch -= (float)(pitch * 0.15);
++        this.rotationYaw += yaw * 0.15;
++        this.rotationPitch -= pitch * 0.15;
+         if (this.rotationPitch < -90.0f) {
+             this.rotationPitch = -90.0f;
+@@ -253,5 +252,5 @@
+         final List<AxisAlignedBB> collidingBoundingBoxes = this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox.addCoord(moveX, moveY, moveZ));
+         for (int i = 0; i < collidingBoundingBoxes.size(); ++i) {
+-            moveY = ((AxisAlignedBB)collidingBoundingBoxes.get(i)).calculateYOffset(this.boundingBox, moveY);
++            moveY = collidingBoundingBoxes.get(i).calculateYOffset(this.boundingBox, moveY);
+         }
+         this.boundingBox.offset(0.0, moveY, 0.0);
+@@ -261,5 +260,5 @@
+         final boolean b = this.onGround || (n2 != moveY && n2 < 0.0);
+         for (int j = 0; j < collidingBoundingBoxes.size(); ++j) {
+-            moveX = ((AxisAlignedBB)collidingBoundingBoxes.get(j)).calculateXOffset(this.boundingBox, moveX);
++            moveX = collidingBoundingBoxes.get(j).calculateXOffset(this.boundingBox, moveX);
+         }
+         this.boundingBox.offset(moveX, 0.0, 0.0);
+@@ -268,5 +267,5 @@
+         }
+         for (int j = 0; j < collidingBoundingBoxes.size(); ++j) {
+-            moveZ = ((AxisAlignedBB)collidingBoundingBoxes.get(j)).calculateZOffset(this.boundingBox, moveZ);
++            moveZ = collidingBoundingBoxes.get(j).calculateZOffset(this.boundingBox, moveZ);
+         }
+         this.boundingBox.offset(0.0, 0.0, moveZ);
+@@ -285,5 +284,5 @@
+             final List<AxisAlignedBB> collidingBoundingBoxes2 = this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox.addCoord(moveX, moveY, moveZ));
+             for (int k = 0; k < collidingBoundingBoxes2.size(); ++k) {
+-                moveY = ((AxisAlignedBB)collidingBoundingBoxes2.get(k)).calculateYOffset(this.boundingBox, moveY);
++                moveY = collidingBoundingBoxes2.get(k).calculateYOffset(this.boundingBox, moveY);
+             }
+             this.boundingBox.offset(0.0, moveY, 0.0);
+@@ -292,5 +291,5 @@
+             }
+             for (int k = 0; k < collidingBoundingBoxes2.size(); ++k) {
+-                moveX = ((AxisAlignedBB)collidingBoundingBoxes2.get(k)).calculateXOffset(this.boundingBox, moveX);
++                moveX = collidingBoundingBoxes2.get(k).calculateXOffset(this.boundingBox, moveX);
+             }
+             this.boundingBox.offset(moveX, 0.0, 0.0);
+@@ -299,5 +298,5 @@
+             }
+             for (int k = 0; k < collidingBoundingBoxes2.size(); ++k) {
+-                moveZ = ((AxisAlignedBB)collidingBoundingBoxes2.get(k)).calculateZOffset(this.boundingBox, moveZ);
++                moveZ = collidingBoundingBoxes2.get(k).calculateZOffset(this.boundingBox, moveZ);
+             }
+             this.boundingBox.offset(0.0, 0.0, moveZ);
+@@ -722,5 +721,4 @@
+         double n = this.entityRiderYawDelta * 0.5;
+         double n2 = this.entityRiderPitchDelta * 0.5;
+-        final float n3 = 10.0f;
+         if (n > 10.0) {
+             n = 10.0;

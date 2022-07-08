@@ -1,0 +1,8 @@
+--- WorldGenDungeons.java
++++ WorldGenDungeons.java
+@@ -6,5 +6,4 @@
+     @Override
+     public boolean generate(final World world, final Random rand, final int x, final int y, final int z) {
+-        final int n = 3;
+         final int n2 = rand.nextInt(2) + 2;
+         final int n3 = rand.nextInt(2) + 2;

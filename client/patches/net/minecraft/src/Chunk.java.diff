@@ -1,0 +1,51 @@
+--- Chunk.java
++++ Chunk.java
+@@ -29,6 +29,6 @@
+     
+     public Chunk(final World world, final int xPos, final int zPos) {
+-        this.chunkTileEntityMap = (Map<ChunkPosition, TileEntity>)new HashMap();
+-        this.entities = (List<List<Entity>>)new ArrayList(8);
++        this.chunkTileEntityMap = new HashMap<>();
++        this.entities = new ArrayList<>(8);
+         this.isTerrainPopulated = false;
+         this.isModified = false;
+@@ -41,5 +41,5 @@
+         this.heightMap = new byte[256];
+         for (int i = 0; i < 8; ++i) {
+-            this.entities.add(new ArrayList());
++            this.entities.add(new ArrayList<>());
+         }
+     }
+@@ -318,5 +318,5 @@
+         entity.chunkCoordY = floor_double3;
+         entity.chunkCoordZ = this.zPosition;
+-        ((List)this.entities.get(floor_double3)).add(entity);
++        this.entities.get(floor_double3).add(entity);
+     }
+     
+@@ -332,5 +332,5 @@
+             index = this.entities.size() - 1;
+         }
+-        ((List)this.entities.get(index)).remove(entity);
++        this.entities.get(index).remove(entity);
+     }
+     
+@@ -347,6 +347,6 @@
+                 return null;
+             }
+-            ((BlockContainer)Block.BLOCKS_LIST[blockID]).onBlockAdded(this.worldObj, this.xPosition * 16 + x, y, this.zPosition * 16 + z);
+-            tileEntity = (TileEntity)this.chunkTileEntityMap.get(chunkPosition);
++            Block.BLOCKS_LIST[blockID].onBlockAdded(this.worldObj, this.xPosition * 16 + x, y, this.zPosition * 16 + z);
++            tileEntity = this.chunkTileEntityMap.get(chunkPosition);
+         }
+         return tileEntity;
+@@ -413,7 +413,7 @@
+         }
+         for (int i = floor_double; i <= floor_double2; ++i) {
+-            final List<Entity> list2 = (List<Entity>)this.entities.get(i);
++            final List<Entity> list2 = this.entities.get(i);
+             for (int j = 0; j < list2.size(); ++j) {
+-                final Entity entity2 = (Entity)list2.get(j);
++                final Entity entity2 = list2.get(j);
+                 if (entity2 != entity && entity2.boundingBox.intersectsWith(aabb)) {
+                     list.add(entity2);

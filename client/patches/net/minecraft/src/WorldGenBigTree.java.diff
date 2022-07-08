@@ -1,0 +1,54 @@
+--- WorldGenBigTree.java
++++ WorldGenBigTree.java
+@@ -69,6 +69,6 @@
+                     final double n6 = this.scaleWidth * (layerSize * (this.rand.nextFloat() + 0.328));
+                     final double n7 = this.rand.nextFloat() * 2.0 * 3.14159;
+-                    final int n8 = (int)(n6 * Math.sin(n7) + this.basePos[0] + 0.5);
+-                    final int n9 = (int)(n6 * Math.cos(n7) + this.basePos[2] + 0.5);
++                    final int n8 = (int)(n6 * Math.sin(n7) + this.basePos[0] + n5);
++                    final int n9 = (int)(n6 * Math.cos(n7) + this.basePos[2] + n5);
+                     final int[] array2 = { n8, n2, n9 };
+                     if (this.checkBlockLine(array2, new int[] { n8, n2 + this.leafDistanceLimit, n9 }) == -1) {
+@@ -211,36 +211,12 @@
+         this.placeBlockLine(array, array2, 17);
+         if (this.trunkSize == 2) {
+-            final int[] array3 = array;
+-            final int n5 = 0;
+-            final int[] array9 = array3;
+-            final int n11 = 0;
+-            ++array9[n11];
+-            final int[] array4 = array2;
+-            final int n6 = 0;
+-            final int[] array10 = array4;
+-            final int n12 = 0;
+-            ++array10[n12];
++            ++array[0];
++            ++array2[0];
+             this.placeBlockLine(array, array2, 17);
+-            final int[] array5 = array;
+-            final int n7 = 2;
+-            final int[] array11 = array5;
+-            final int n13 = 2;
+-            ++array11[n13];
+-            final int[] array6 = array2;
+-            final int n8 = 2;
+-            final int[] array12 = array6;
+-            final int n14 = 2;
+-            ++array12[n14];
++            ++array[2];
++            ++array2[2];
+             this.placeBlockLine(array, array2, 17);
+-            final int[] array7 = array;
+-            final int n9 = 0;
+-            final int[] array13 = array7;
+-            final int n15 = 0;
+-            --array13[n15];
+-            final int[] array8 = array2;
+-            final int n10 = 0;
+-            final int[] array14 = array8;
+-            final int n16 = 0;
+-            --array14[n16];
++            --array[0];
++            --array2[0];
+             this.placeBlockLine(array, array2, 17);
+         }

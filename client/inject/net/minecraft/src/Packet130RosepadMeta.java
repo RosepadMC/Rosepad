@@ -3,8 +3,6 @@ package net.minecraft.src;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 // Reserved for future modifications
 public class Packet130RosepadMeta extends Packet {
