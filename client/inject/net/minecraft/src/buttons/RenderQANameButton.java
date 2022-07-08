@@ -11,11 +11,11 @@ public class RenderQANameButton implements GuiOptionsButton {
 
 	@Override
 	public String getText() {
-    	return "Show QA build name: " + (settings.mc.ingameGUI.renderQAName ? "Yes" : "No");
+    	return "Show QA build name: " + (settings.renderQAName ? "Yes" : "No");
 	}
 
 	@Override
 	public void run(GuiButton button, GuiScreen parent) {
-        settings.mc.ingameGUI.renderQAName = !settings.mc.ingameGUI.renderQAName;
+        settings.renderQAName = !settings.renderQAName;
 	}
 }
