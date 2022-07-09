@@ -1,0 +1,29 @@
+--- BlockStep.java
++++ BlockStep.java
+@@ -4,9 +4,9 @@
+ 
+ public class BlockStep extends Block {
+-    private boolean blockType;
++    private boolean fullBlock;
+     
+-    public BlockStep(final int blockID, final boolean blockType) {
++    public BlockStep(final int blockID, final boolean fullBlock) {
+         super(blockID, 6, Material.ROCK);
+-        if (!(this.blockType = blockType)) {
++        if (!(this.fullBlock = fullBlock)) {
+             this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f);
+         }
+@@ -24,5 +24,5 @@
+     @Override
+     public boolean isOpaqueCube() {
+-        return this.blockType;
++        return this.fullBlock;
+     }
+     
+@@ -52,5 +52,5 @@
+     @Override
+     public boolean renderAsNormalBlock() {
+-        return this.blockType;
++        return this.fullBlock;
+     }
+     

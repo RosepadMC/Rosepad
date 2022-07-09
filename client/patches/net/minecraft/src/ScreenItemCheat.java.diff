@@ -1,6 +1,14 @@
 --- ScreenItemCheat.java
 +++ ScreenItemCheat.java
-@@ -131,8 +131,10 @@
+@@ -4,4 +4,7 @@
+ import net.minecraft.client.Minecraft;
+ 
++import java.util.ArrayList;
++import java.util.List;
++
+ public class ScreenItemCheat extends GuiScreen {
+     public Minecraft mc;
+@@ -131,8 +134,10 @@
          }
          if (button.id >= 4096) {
 -            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Item.ITEMS_LIST[button.id - 4096], 1), true);
@@ -13,3 +21,17 @@
 +            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Block.BLOCKS_LIST[button.id - 2048], this.mc.gameSettings.getCheatMenuItemAmount(0)), true);
          }
      }
+@@ -140,4 +145,6 @@
+     @Override
+     public void drawScreen(final int mouseX, final int mouseY, final float renderPartialTick) {
++        String itemName = null;
++        List<String> itemInfo = new ArrayList<>();
+         this.drawDefaultBackground();
+         if (this.rotateTimer == -1L) {
+@@ -146,5 +153,5 @@
+         this.drawGradientRect(0, (int)(this.height * (1.0f - Math.min((System.currentTimeMillis() - this.rotateTimer) / 100.0f, 1.0f))), this.width, this.height, 1614823488, 1612718112);
+         this.drawCenteredString(this.fontRenderer, "Palette", this.width / 2, 15, 16777215);
+-        this.drawCenteredString(this.fontRenderer, new StringBuilder().append("").append(this.currentPage).toString(), 208, 35, 16777215);
++        this.drawCenteredString(this.fontRenderer, String.valueOf(this.currentPage), 208, 35, 16777215);
+         GL11.glBindTexture(3553, this.mc.renderEngine.getTexture("/terrain.png"));
+         final int lastCols = (this.width - 18) / 32;

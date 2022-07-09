@@ -1,0 +1,9 @@
+--- TileEntityFurnace.java
++++ TileEntityFurnace.java
+@@ -223,5 +223,5 @@
+     }
+     
+-    private int getItemBurnTime(final ItemStack itemStack) {
++    public static int getItemBurnTime(final ItemStack itemStack) {
+         if (itemStack == null) {
+             return 0;

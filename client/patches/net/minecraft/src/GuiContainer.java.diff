@@ -1,0 +1,153 @@
+--- GuiContainer.java
++++ GuiContainer.java
+@@ -10,4 +10,6 @@
+     protected int ySize;
+     protected List<SlotInventory> inventorySlots;
++    protected int selectedSlot = 0;
++    protected IInventory selectedInventory = null;
+     
+     static {
+@@ -20,7 +22,94 @@
+         this.inventorySlots = (List<SlotInventory>)new ArrayList();
+     }
+-    
++
++    public static String getItemInfo(final ItemStack stack, List<String> additionalInfo, GuiContainer inventory) {
++        StringBuilder renderItemName;
++
++        Item item = stack.getItem();
++        switch (item.getRarity()) {
++            case -1:
++                renderItemName = new StringBuilder("§4");
++                break;
++            case 1:
++                renderItemName = new StringBuilder("§e");
++                break;
++            case 2:
++                renderItemName = new StringBuilder("§b");
++                break;
++            case 3:
++                renderItemName = new StringBuilder("§d");
++                break;
++            default:
++                renderItemName = new StringBuilder();
++                break;
++        }
++        renderItemName.append(item.getName());
++
++        if (stack.itemDmg > 0 && (item instanceof ItemArmor || item instanceof ItemTool)) {
++            int max = stack.getMaxDamage();
++            float per = 1 - stack.itemDmg / (float) max;
++            String durColor = per > 0.6f ? "a" : per > 0.2f ? "e" : "c";
++            additionalInfo.add("Durability: §" + durColor + (max - stack.itemDmg) + "§r/" + max);
++        }
++
++        if (item instanceof ItemBow && inventory != null) {
++            int count = 0;
++            for (SlotInventory slot : inventory.inventorySlots) {
++                ItemStack stack1;
++                if ((stack1 = slot.getStack()) == null) continue;
++                if (stack1.getItem() != Item.ARROW) continue;
++
++                count += Math.max(1, stack1.stackSize); // Negative arrows act like 1 arrow
++            }
++            additionalInfo.add("Ammo: §e" + count);
++        }
++
++        if (item == Item.DOOR_IRON) {
++            additionalInfo.add("§6Hub code is missing from Lilypad QA");
++        }
++
++        if (item == Item.edibleFire) {
++            additionalInfo.add("It does look tasty, but please don't eat it");
++        }
++
++        if (inventory instanceof GuiFurnace && TileEntityFurnace.getItemBurnTime(stack) > 0) {
++            int time = TileEntityFurnace.getItemBurnTime(stack);
++            String burnColor = time > 1600 ? "b" : time > 300 ? "c" : time > 100 ? "6" : "e";
++            additionalInfo.add("Burn time: §" + burnColor + (TileEntityFurnace.getItemBurnTime(stack) / 20) + " seconds");
++        }
++
++        return renderItemName.toString();
++    }
++
++    public static void drawTooltip(final int x, final int y, final String name, final List<String> info, GuiScreen screen) {
++        GL11.glDisable(GL11.GL_DEPTH_TEST);
++
++        int lenX = screen.fontRenderer.getStringWidth(name);
++        int lenY = 10;
++        if (info.size() > 0) {
++            lenY *= 2 + info.size();
++            for (String str : info) {
++                lenX = Math.max(screen.fontRenderer.getStringWidth(str), lenX);
++            }
++        }
++
++        screen.drawRect(
++                x, y,
++                x + 10 + lenX, y + 8 + lenY,
++                0xAA000000
++        );
++        screen.fontRenderer.drawString(name, x + 5, y + 5, 0xffffff);
++
++        for (int i = 0; i < info.size(); i++) {
++            screen.fontRenderer.drawString(info.get(i), x + 5, y + 25 + i * 10, 0xffffff);
++        }
++
++        GL11.glEnable(GL11.GL_DEPTH_TEST);
++    }
++
+     @Override
+     public void drawScreen(final int mouseX, final int mouseY, final float renderPartialTick) {
++        String renderItemName = null;
++        List<String> additionalInfo = new ArrayList<>();
+         this.drawDefaultBackground();
+         final int n = (this.width - this.xSize) / 2;
+@@ -35,12 +124,19 @@
+         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         GL11.glEnable(32826);
+-        for (int i = 0; i < this.inventorySlots.size(); ++i) {
+-            final SlotInventory slotInventory = (SlotInventory)this.inventorySlots.get(i);
++        selectedInventory = null;
++        selectedSlot = -1;
++        for (int i = 0; i < this.inventorySlots.size(); i++) {
++            final SlotInventory slotInventory = this.inventorySlots.get(i);
+             this.drawSlotInventory(slotInventory);
+             if (slotInventory.getIsMouseOverSlot(mouseX, mouseY)) {
++                selectedInventory = slotInventory.inventory;
++                selectedSlot = slotInventory.slotIndex;
+                 GL11.glDisable(2896);
+                 GL11.glDisable(2929);
+                 final int xDisplayPosition = slotInventory.xDisplayPosition;
+                 final int yDisplayPosition = slotInventory.yDisplayPosition;
++                if (slotInventory.getStack() != null && slotInventory.getStack().getItem() != null) {
++                    renderItemName = getItemInfo(slotInventory.getStack(), additionalInfo, this);
++                }
+                 this.drawGradientRect(xDisplayPosition, yDisplayPosition, xDisplayPosition + 16, yDisplayPosition + 16, -2130706433, -2130706433);
+                 GL11.glEnable(2896);
+@@ -59,4 +155,12 @@
+         GL11.glDisable(2929);
+         this.drawGuiContainerForegroundLayer();
++        if (renderItemName != null) {
++            drawTooltip(
++                    mouseX - n + 10, mouseY - n2 + 10,
++                    renderItemName,
++                    additionalInfo,
++                    this
++            );
++        }
+         GL11.glEnable(2896);
+         GL11.glEnable(2929);
+@@ -215,4 +319,12 @@
+             this.mc.displayGuiScreen(null);
+         }
++
++        if (key == this.mc.gameSettings.keyBindDrop.keyCode && this.selectedInventory != null) {
++            ItemStack stack = this.selectedInventory.getStackInSlot(this.selectedSlot);
++            this.mc.thePlayer.dropPlayerItem(stack.splitStack(1));
++            if (stack.stackSize <= 0) {
++                selectedInventory.setInventorySlotContents(selectedSlot, null);
++            }
++        }
+     }
+     

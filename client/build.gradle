@@ -119,12 +119,12 @@ tasks.register("deletePatches", DeletePatches) {
 
 tasks.register("injectClasses", InjectClasses) {
 	source = "${projectDir}/inject"
-	dest = "${projectDir}/src/main/java"
+	dest = "${projectDir}/src/main"
 }
 
 tasks.register("ejectClasses", CreateInjectClasses) {
-	source = "${projectDir}/src/main/java"
-	orig = "${projectDir}/src/orig/java"
+	source = "${projectDir}/src/main"
+	orig = "${projectDir}/src/orig"
 	dest = "${projectDir}/inject"
 }
 

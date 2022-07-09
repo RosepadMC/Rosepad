@@ -1,21 +1,77 @@
 --- FontRenderer.java
 +++ FontRenderer.java
-@@ -132,11 +132,23 @@
+@@ -93,27 +93,27 @@
+     }
+     
+-    public void drawStringWithShadow(final String string, final int integer2, final int integer3, final int integer4) {
+-        this.renderString(string, integer2 + 1, integer3 + 1, integer4, true);
+-        this.drawString(string, integer2, integer3, integer4);
++    public void drawStringWithShadow(final String string, final int beginX, final int beginY, final int color) {
++        this.renderString(string, beginX + 1, beginY + 1, color, true);
++        this.drawString(string, beginX, beginY, color);
+     }
+     
+-    public void drawString(final String string, final int integer2, final int integer3, final int integer4) {
+-        this.renderString(string, integer2, integer3, integer4, false);
++    public void drawString(final String string, final int beginX, final int beginY, final int color) {
++        this.renderString(string, beginX, beginY, color, false);
+     }
+     
+-    public void renderString(final String string, final int integer2, final int integer3, int integer4, final boolean boolean5) {
++    public void renderString(final String string, final int beginX, final int beginY, int color, final boolean renderShadow) {
+         if (string == null) {
+             return;
+         }
+-        if (boolean5) {
+-            final int n = integer4 >> 24 & 0xFF;
+-            final int n2 = integer4 & 0xFF000000;
+-            integer4 = (integer4 & 0xFCFCFC) >> 2;
+-            integer4 += n2;
++        if (renderShadow) {
++            final int n = color >> 24 & 0xFF;
++            final int n2 = color & 0xFF000000;
++            color = (color & 0xFCFCFC) >> 2;
++            color += n2;
+             if (n == 255 || n == 0) {
+-                integer4 |= 0xFF000000;
++                color |= 0xFF000000;
+             }
+             else {
+-                integer4 |= n / 2 << 24;
++                color |= n / 2 << 24;
+             }
+         }
+@@ -121,8 +121,8 @@
+         GL11.glBlendFunc(770, 771);
+         GL11.glBindTexture(3553, this.fontTextureName);
+-        final float n3 = (integer4 >> 16 & 0xFF) / 255.0f;
+-        final float n4 = (integer4 >> 8 & 0xFF) / 255.0f;
+-        final float n5 = (integer4 & 0xFF) / 255.0f;
+-        float n6 = (integer4 >> 24 & 0xFF) / 255.0f;
++        final float n3 = (color >> 16 & 0xFF) / 255.0f;
++        final float n4 = (color >> 8 & 0xFF) / 255.0f;
++        final float n5 = (color & 0xFF) / 255.0f;
++        float n6 = (color >> 24 & 0xFF) / 255.0f;
+         if (n6 == 0.0f) {
+             n6 = 1.0f;
+@@ -131,12 +131,24 @@
+         this.buffer.clear();
          GL11.glPushMatrix();
-         GL11.glTranslatef((float)integer2, (float)integer3, 0.0f);
+-        GL11.glTranslatef((float)integer2, (float)integer3, 0.0f);
 -        for (int i = 0; i < string.length(); ++i) {
 -            while (string.charAt(i) == '§' && string.length() > i + 1) {
 -                int n7 = "0123456789abcdef".indexOf((int)string.toLowerCase().charAt(i + 1));
 -                if (n7 < 0 || n7 > 15) {
 -                    n7 = 15;
++        GL11.glTranslatef((float)beginX, (float)beginY, 0);
 +        try {
 +            for (int i = 0; i < string.length(); ++i) {
 +                while (string.charAt(i) == '§' && string.length() > i + 2) {
-+                    int n7 = "0123456789abcdef".indexOf((int)string.toLowerCase().charAt(i + 1));
-+                    if (n7 < 0 || n7 > 15) {
++                    int n7 = "0123456789abcdef".indexOf(string.toLowerCase().charAt(i + 1));
++                    if (n7 < 0) {
 +                        n7 = 15;
 +                    }
-+                    this.buffer.put(this.fontDisplayLists + 256 + n7 + (boolean5 ? 16 : 0));
++                    this.buffer.put(this.fontDisplayLists + 256 + n7 + (renderShadow ? 16 : 0));
 +                    if (this.buffer.remaining() == 0) {
 +                        this.buffer.flip();
 +                        GL11.glCallLists(this.buffer);
@@ -44,10 +100,10 @@
 +            for (int i = 0; i < errorStr.length(); ++i) {
 +                while (errorStr.charAt(i) == '§' && errorStr.length() > i + 2) {
 +                    int n7 = "0123456789abcdef".indexOf((int) errorStr.toLowerCase().charAt(i + 1));
-+                    if (n7 < 0 || n7 > 15) {
++                    if (n7 < 0) {
 +                        n7 = 15;
 +                    }
-+                    this.buffer.put(this.fontDisplayLists + 256 + n7 + (boolean5 ? 16 : 0));
++                    this.buffer.put(this.fontDisplayLists + 256 + n7 + (renderShadow ? 16 : 0));
 +                    if (this.buffer.remaining() == 0) {
 +                        this.buffer.flip();
 +                        GL11.glCallLists(this.buffer);
