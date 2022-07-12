@@ -1,0 +1,10 @@
+--- EntityLiving.java
++++ EntityLiving.java
+@@ -280,7 +280,4 @@
+     @Override
+     public boolean attackEntityFrom(final Entity entity, int damage) {
+-        if (this.worldObj.multiplayerWorld) {
+-            damage = 0;
+-        }
+         this.entityAge = 0;
+         if (this.health <= 0) {

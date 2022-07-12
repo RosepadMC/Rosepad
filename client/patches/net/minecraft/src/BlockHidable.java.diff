@@ -1,0 +1,8 @@
+--- BlockHidable.java
++++ BlockHidable.java
+@@ -22,4 +22,5 @@
+         if (entityPlayer.inventory.getCurrentItem() == null) {
+             this.render = !this.render;
++            world.setBlockWithNotify(x, y, z, 0);
+             world.setBlockWithNotify(x, y, z, this.id);
+             return true;

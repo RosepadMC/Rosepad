@@ -1,0 +1,60 @@
+--- NetworkManager.java
++++ NetworkManager.java
+@@ -14,16 +14,16 @@
+     public static int numReadThreads;
+     public static int numWriteThreads;
+-    private Object sendQueueLock;
+-    private Socket networkSocket;
+-    private DataInputStream socketInputStream;
+-    private DataOutputStream socketOutputStream;
++    private final Object sendQueueLock;
++    private final Socket networkSocket;
++    private final DataInputStream socketInputStream;
++    private final DataOutputStream socketOutputStream;
+     private boolean isRunning;
+-    private List readPackets;
+-    private List dataPackets;
+-    private List chunkDataPackets;
++    private final List<Packet> readPackets;
++    private final List<Packet> dataPackets;
++    private final List<Packet> chunkDataPackets;
+     private NetHandler netHandler;
+     private boolean isServerTerminating;
+-    private Thread writeThread;
+-    private Thread readThread;
++    private final Thread writeThread;
++    private final Thread readThread;
+     private boolean isTerminating;
+     private String terminationReason;
+@@ -39,7 +39,7 @@
+         this.sendQueueLock = new Object();
+         this.isRunning = true;
+-        this.readPackets = Collections.synchronizedList((List)new LinkedList());
+-        this.dataPackets = Collections.synchronizedList((List)new LinkedList());
+-        this.chunkDataPackets = Collections.synchronizedList((List)new LinkedList());
++        this.readPackets = Collections.synchronizedList(new LinkedList<>());
++        this.dataPackets = Collections.synchronizedList(new LinkedList<>());
++        this.chunkDataPackets = Collections.synchronizedList(new LinkedList<>());
+         this.isServerTerminating = false;
+         this.isTerminating = false;
+@@ -53,6 +53,6 @@
+         this.socketInputStream = new DataInputStream(socket.getInputStream());
+         this.socketOutputStream = new DataOutputStream(socket.getOutputStream());
+-        this.readThread = new NetworkReaderThread(this, String.valueOf(threadName) + " read thread");
+-        this.writeThread = new NetworkWriterThread(this, String.valueOf(threadName) + " write thread");
++        this.readThread = new NetworkReaderThread(this, threadName + " read thread");
++        this.writeThread = new NetworkWriterThread(this, threadName + " write thread");
+         this.readThread.start();
+         this.writeThread.start();
+@@ -65,5 +65,4 @@
+     public void addToSendQueue(final Packet packet) {
+         if (!this.isServerTerminating) {
+-            final Object object2 = this.sendQueueLock;
+             synchronized (this.sendQueueLock) {
+                 this.sendQueueByteLength += packet.getPacketSize() + 1;
+@@ -75,5 +74,4 @@
+                 }
+             }
+-            // monitorexit(this.sendQueueLock)
+         }
+     }

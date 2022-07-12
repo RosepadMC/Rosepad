@@ -1,0 +1,16 @@
+--- NetULPP1ClientHandler.java
++++ NetULPP1ClientHandler.java
+@@ -7,4 +7,5 @@
+ import java.net.URL;
+ import java.io.IOException;
++import java.net.URLEncoder;
+ import java.util.Random;
+ import net.minecraft.client.Minecraft;
+@@ -48,5 +49,6 @@
+         if (this.serverId.length() > 0) {
+             try {
+-                final URL uuidURL = new URL(new StringBuilder("https://api.mojang.com/users/profiles/minecraft/").append(this.mc.session.username).toString());
++                final URL uuidURL = new URL("https://api.mojang.com/users/profiles/minecraft/" +
++                        URLEncoder.encode(this.mc.session.username, "utf-8"));
+                 final JSONTokener uuidTokener = new JSONTokener(uuidURL.openStream());
+                 final JSONObject uuidRoot = new JSONObject(uuidTokener);

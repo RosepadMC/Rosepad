@@ -23,3 +23,12 @@
 +            final EntityItem entityItem7 = entityItem;
              entityItem7.motionZ += Math.sin((double)n3) * n4;
          }
+@@ -201,6 +198,6 @@
+     }
+     
+-    public boolean canHarvestBlock(final Block block) {
+-        return this.inventory.canHarvestBlock(block);
++    public boolean canHarvestBlock(final Block block, final World world) {
++        return this.inventory.canHarvestBlock(block, world);
+     }
+     

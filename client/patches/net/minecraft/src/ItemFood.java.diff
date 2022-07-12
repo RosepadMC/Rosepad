@@ -1,0 +1,13 @@
+--- ItemFood.java
++++ ItemFood.java
+@@ -14,4 +14,10 @@
+         --itemStack.stackSize;
+         entityPlayer.heal(this.healAmount);
++        if (entityPlayer instanceof EntityPlayerSP && world.rosepadContentEnabled()) {
++            ((EntityPlayerSP) entityPlayer).hunger = Math.max(
++                    0,
++                    ((EntityPlayerSP) entityPlayer).hunger - this.healAmount * 150
++            );
++        }
+         return itemStack;
+     }

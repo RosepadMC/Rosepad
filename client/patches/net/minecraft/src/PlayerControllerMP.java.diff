@@ -1,0 +1,16 @@
+--- PlayerControllerMP.java
++++ PlayerControllerMP.java
+@@ -48,5 +48,5 @@
+             }
+         }
+-        if (sendBlockRemoved && this.mc.thePlayer.canHarvestBlock(Block.BLOCKS_LIST[blockID])) {
++        if (sendBlockRemoved && this.mc.thePlayer.canHarvestBlock(Block.BLOCKS_LIST[blockID], mc.theWorld)) {
+             Block.BLOCKS_LIST[blockID].dropBlockAsItem(this.mc.theWorld, x, y, z, blockMetadata);
+         }
+@@ -94,5 +94,5 @@
+             final Block block = Block.BLOCKS_LIST[blockID];
+             this.curBlockDamageMP += block.blockStrength(this.mc.thePlayer);
+-            if (this.stepSoundTickCounter % 4.0f == 0.0f && block != null) {
++            if (this.stepSoundTickCounter % 4.0f == 0.0f) {
+                 this.mc.sndManager.playSound(block.stepSound.getStepSound(), x + 0.5f, y + 0.5f, z + 0.5f, (block.stepSound.getVolume() + 1.0f) / 8.0f, block.stepSound.getPitch() * 0.5f);
+             }

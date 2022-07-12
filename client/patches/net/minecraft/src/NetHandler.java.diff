@@ -1,0 +1,14 @@
+--- NetHandler.java
++++ NetHandler.java
+@@ -114,3 +114,11 @@
+         this.registerPacket(packet);
+     }
++
++    public void handleRosepadMeta(final Packet130RosepadMeta packet) {
++        this.registerPacket(packet);
++    }
++
++    public void handleEntityDamage(final Packet35EntityDamage packet) {
++        this.registerPacket(packet);
++    }
+ }

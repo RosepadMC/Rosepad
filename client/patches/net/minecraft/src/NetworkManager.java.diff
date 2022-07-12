@@ -1,5 +1,25 @@
 --- NetworkManager.java
 +++ NetworkManager.java
+@@ -13,12 +13,12 @@
+     public static int numReadThreads;
+     public static int numWriteThreads;
+-    private Object sendQueueLock;
+-    private Socket networkSocket;
+-    private DataInputStream socketInputStream;
+-    private DataOutputStream socketOutputStream;
++    private final Object sendQueueLock;
++    private final Socket networkSocket;
++    private final DataInputStream socketInputStream;
++    private final DataOutputStream socketOutputStream;
+     boolean isRunning;
+-    private List<Packet> readPackets;
+-    private List<Packet> dataPackets;
+-    private List<Packet> chunkDataPackets;
++    private final List<Packet> readPackets;
++    private final List<Packet> dataPackets;
++    private final List<Packet> chunkDataPackets;
+     private NetHandler netHandler;
+     boolean isServerTerminating;
 @@ -40,7 +40,7 @@
          this.sendQueueLock = new Object();
          this.isRunning = true;
@@ -11,3 +31,76 @@
 +        this.chunkDataPackets = Collections.synchronizedList(new LinkedList<>());
          this.isServerTerminating = false;
          this.isTerminating = false;
+@@ -54,6 +54,6 @@
+         this.socketInputStream = new DataInputStream(socket.getInputStream());
+         this.socketOutputStream = new DataOutputStream(socket.getOutputStream());
+-        this.readThread = new NetworkReaderThread(this, String.valueOf(name) + " read thread");
+-        this.writeThread = new NetworkWriterThread(this, String.valueOf(name) + " write thread");
++        this.readThread = new NetworkReaderThread(this, name + " read thread");
++        this.writeThread = new NetworkWriterThread(this, name + " write thread");
+         this.readThread.start();
+         this.writeThread.start();
+@@ -73,5 +73,4 @@
+             }
+         }
+-        // monitorexit(this.sendQueueLock)
+     }
+     
+@@ -92,8 +91,7 @@
+                 final Packet packet;
+                 synchronized (this.sendQueueLock) {
+-                    packet = (Packet)this.dataPackets.remove(0);
++                    packet = this.dataPackets.remove(0);
+                     this.sendQueueByteLength -= packet.getPacketSize() + 1;
+                 }
+-                // monitorexit(this.sendQueueLock)
+                 Packet.writePacket(packet, this.socketOutputStream);
+             }
+@@ -102,8 +100,7 @@
+                 final Packet packet;
+                 synchronized (this.sendQueueLock) {
+-                    packet = (Packet)this.chunkDataPackets.remove(0);
++                    packet = this.chunkDataPackets.remove(0);
+                     this.sendQueueByteLength -= packet.getPacketSize() + 1;
+                 }
+-                // monitorexit(this.sendQueueLock)
+                 Packet.writePacket(packet, this.socketOutputStream);
+                 this.chunkDataSendCounter = 50;
+@@ -113,5 +110,5 @@
+             }
+         }
+-        catch (InterruptedException ex) {}
++        catch (InterruptedException ignored) {}
+         catch (Exception exception) {
+             if (!this.isTerminating) {
+@@ -140,5 +137,5 @@
+     private void onNetworkError(final Exception exception) {
+         exception.printStackTrace();
+-        this.networkShutdown(new StringBuilder("Internal exception: ").append(exception.toString()).toString());
++        this.networkShutdown("Internal exception: " + exception.toString());
+     }
+     
+@@ -154,13 +151,13 @@
+             this.socketInputStream.close();
+         }
+-        catch (Throwable t) {}
++        catch (Throwable ignored) {}
+         try {
+             this.socketOutputStream.close();
+         }
+-        catch (Throwable t2) {}
++        catch (Throwable ignored) {}
+         try {
+             this.networkSocket.close();
+         }
+-        catch (Throwable t3) {}
++        catch (Throwable ignored) {}
+     }
+     
+@@ -182,5 +179,5 @@
+         int n = 100;
+         while (!this.readPackets.isEmpty() && n-- >= 0 && !this.isSwitchingHandler) {
+-            ((Packet)this.readPackets.remove(0)).processPacket(this.netHandler);
++            this.readPackets.remove(0).processPacket(this.netHandler);
+         }
+         if (this.isTerminating && this.readPackets.isEmpty()) {

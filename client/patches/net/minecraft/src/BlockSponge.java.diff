@@ -1,13 +1,17 @@
 --- BlockSponge.java
 +++ BlockSponge.java
-@@ -12,6 +12,8 @@
+@@ -9,9 +9,12 @@
+     @Override
+     public void onBlockAdded(final World world, final int x, final int y, final int z) {
++        if (!world.rosepadContentEnabled()) return;
+         for (int n = 2, i = x - n; i <= x + n; ++i) {
              for (int j = y - n; j <= y + n; ++j) {
                  for (int k = z - n; k <= z + n; ++k) {
 -                    world.getBlockMaterial(i, j, k);
 -                    final Material water = Material.WATER;
-+if (world.getBlockMaterial(i, j, k) == Material.WATER) {
-+world.setBlock(i, j, k, 0);
-+world.notifyBlocksOfNeighborChange(i, j, k, 0);
-+}
++                    if (world.getBlockMaterial(i, j, k) == Material.WATER) {
++                        world.setBlock(i, j, k, 0);
++                        world.notifyBlocksOfNeighborChange(i, j, k, 0);
++                    }
                  }
              }

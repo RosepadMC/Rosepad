@@ -1,0 +1,9 @@
+--- BlockJukebox.java
++++ BlockJukebox.java
+@@ -28,5 +28,5 @@
+         final EntityItem entity = new EntityItem(world, x + (world.rand.nextFloat() * 0.7f + 0.15000000596046448), y + (world.rand.nextFloat() * 0.7f + 0.06000000238418579 + 0.6), z + (world.rand.nextFloat() * 0.7f + 0.15000000596046448), new ItemStack(itemID));
+         entity.delayBeforeCanPickup = 10;
+-        world.spawnEntityInWorld(entity);
++        if (!world.multiplayerWorld) world.spawnEntityInWorld(entity);
+     }
+     

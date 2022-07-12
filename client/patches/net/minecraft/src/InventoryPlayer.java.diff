@@ -1,0 +1,15 @@
+--- InventoryPlayer.java
++++ InventoryPlayer.java
+@@ -263,10 +263,10 @@
+     }
+     
+-    public boolean canHarvestBlock(final Block block) {
++    public boolean canHarvestBlock(final Block block, final World world) {
+         if (block.material != Material.ROCK && block.material != Material.IRON && block.material != Material.CRAFTED_SNOW && block.material != Material.SNOW) {
+             return true;
+         }
+         final ItemStack stackInSlot = this.getStackInSlot(this.currentItem);
+-        return stackInSlot != null && stackInSlot.canHarvestBlock(block);
++        return stackInSlot != null && stackInSlot.canHarvestBlock(block, world);
+     }
+     

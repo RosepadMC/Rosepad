@@ -1,0 +1,10 @@
+--- NetHandler.java
++++ NetHandler.java
+@@ -114,3 +114,7 @@
+         this.registerPacket(packet);
+     }
++
++    public void handleEntityDamage(final Packet35EntityDamage packet) {
++        System.out.println("Entity " + packet.entityId + " took " + packet.damage + " damage");
++    }
+ }

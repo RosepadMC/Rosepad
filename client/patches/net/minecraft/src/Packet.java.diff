@@ -1,0 +1,60 @@
+--- Packet.java
++++ Packet.java
+@@ -13,6 +13,6 @@
+     
+     static {
+-        Packet.packetIDToClassMap = (Map<Integer, Class<? extends Packet>>)new HashMap();
+-        Packet.packetClassToIDMap = (Map<Class<? extends Packet>, Integer>)new HashMap();
++        Packet.packetIDToClassMap = new HashMap<>();
++        Packet.packetClassToIDMap = new HashMap<>();
+         addIDClassMapping(0, Packet0KeepAlive.class);
+         addIDClassMapping(1, Packet1Login.class);
+@@ -42,4 +42,5 @@
+         addIDClassMapping(33, Packet33RelEntityMoveLook.class);
+         addIDClassMapping(34, Packet34EntityTeleport.class);
++        addIDClassMapping(35, Packet35EntityDamage.class);
+         addIDClassMapping(50, Packet50PreChunk.class);
+         addIDClassMapping(51, Packet51MapChunk.class);
+@@ -48,4 +49,5 @@
+         addIDClassMapping(59, Packet59ComplexEntity.class);
+         addIDClassMapping(129, Packet129ULPPLoggedIn.class);
++        addIDClassMapping(130, Packet130RosepadMeta.class);
+         addIDClassMapping(255, Packet255KickDisconnect.class);
+     }
+@@ -57,8 +59,8 @@
+     static void addIDClassMapping(final int id, final Class<? extends Packet> packetClass) {
+         if (Packet.packetIDToClassMap.containsKey(id)) {
+-            throw new IllegalArgumentException(new StringBuilder().append("Duplicate packet id:").append(id).toString());
++            throw new IllegalArgumentException("Duplicate packet id:" + id);
+         }
+         if (Packet.packetClassToIDMap.containsKey(packetClass)) {
+-            throw new IllegalArgumentException(new StringBuilder().append("Duplicate packet class:").append(packetClass).toString());
++            throw new IllegalArgumentException("Duplicate packet class:" + packetClass);
+         }
+         Packet.packetIDToClassMap.put(id, packetClass);
+@@ -72,9 +74,9 @@
+                 return null;
+             }
+-            return (Packet)clazz.newInstance();
++            return clazz.newInstance();
+         }
+         catch (Exception ex) {
+             ex.printStackTrace();
+-            System.out.println(new StringBuilder().append("Skipping packet with id ").append(id).toString());
++            System.out.println("Skipping packet with id " + id);
+             return null;
+         }
+@@ -82,5 +84,5 @@
+     
+     public final int getPacketID() {
+-        return (int)Packet.packetClassToIDMap.get(this.getClass());
++        return Packet.packetClassToIDMap.get(this.getClass());
+     }
+     
+@@ -92,5 +94,5 @@
+         final Packet newPacket = getNewPacket(read);
+         if (newPacket == null) {
+-            throw new IOException(new StringBuilder().append("Bad packet id ").append(read).toString());
++            throw new IOException("Bad packet id " + read);
+         }
+         newPacket.readPacketData(dataInputStream);

@@ -1,0 +1,9 @@
+--- PlayerControllerSP.java
++++ PlayerControllerSP.java
+@@ -38,5 +38,5 @@
+         final boolean sendBlockRemoved = super.sendBlockRemoved(x, y, z, side);
+         final ItemStack currentEquippedItem = this.mc.thePlayer.getCurrentEquippedItem();
+-        final boolean canHarvestBlock = this.mc.thePlayer.canHarvestBlock(Block.BLOCKS_LIST[blockID]);
++        final boolean canHarvestBlock = this.mc.thePlayer.canHarvestBlock(Block.BLOCKS_LIST[blockID], mc.theWorld);
+         if (currentEquippedItem != null) {
+             currentEquippedItem.onDestroyBlock(blockID, x, y, z);

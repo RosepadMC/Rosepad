@@ -1,0 +1,9 @@
+--- ItemShovel.java
++++ ItemShovel.java
+@@ -13,5 +13,5 @@
+     
+     @Override
+-    public boolean canHarvestBlock(final Block block) {
++    public boolean canHarvestBlock(final Block block, final World world) {
+         return block == Block.SNOW || block == Block.BLOCK_SNOW;
+     }

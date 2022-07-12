@@ -7,8 +7,11 @@
 +    protected IInventory selectedInventory = null;
      
      static {
-@@ -20,7 +22,94 @@
-         this.inventorySlots = (List<SlotInventory>)new ArrayList();
+@@ -18,9 +20,98 @@
+         this.xSize = 176;
+         this.ySize = 166;
+-        this.inventorySlots = (List<SlotInventory>)new ArrayList();
++        this.inventorySlots = new ArrayList<>();
      }
 -    
 +
@@ -35,7 +38,8 @@
 +        }
 +        renderItemName.append(item.getName());
 +
-+        if (stack.itemDmg > 0 && (item instanceof ItemArmor || item instanceof ItemTool)) {
++        if (stack.itemDmg > 0 && (item instanceof ItemArmor || item instanceof ItemTool
++                || item instanceof ItemSword || item instanceof ItemFlintAndSteel)) {
 +            int max = stack.getMaxDamage();
 +            float per = 1 - stack.itemDmg / (float) max;
 +            String durColor = per > 0.6f ? "a" : per > 0.2f ? "e" : "c";
@@ -71,7 +75,8 @@
 +        return renderItemName.toString();
 +    }
 +
-+    public static void drawTooltip(final int x, final int y, final String name, final List<String> info, GuiScreen screen) {
++    public static void drawTooltip(
++            final int x, final int y, final String name, final List<String> info, GuiScreen screen) {
 +        GL11.glDisable(GL11.GL_DEPTH_TEST);
 +
 +        int lenX = screen.fontRenderer.getStringWidth(name);
@@ -103,15 +108,14 @@
 +        List<String> additionalInfo = new ArrayList<>();
          this.drawDefaultBackground();
          final int n = (this.width - this.xSize) / 2;
-@@ -35,12 +124,19 @@
+@@ -35,13 +126,24 @@
          GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
          GL11.glEnable(32826);
 -        for (int i = 0; i < this.inventorySlots.size(); ++i) {
 -            final SlotInventory slotInventory = (SlotInventory)this.inventorySlots.get(i);
 +        selectedInventory = null;
 +        selectedSlot = -1;
-+        for (int i = 0; i < this.inventorySlots.size(); i++) {
-+            final SlotInventory slotInventory = this.inventorySlots.get(i);
++        for (final SlotInventory slotInventory : this.inventorySlots) {
              this.drawSlotInventory(slotInventory);
              if (slotInventory.getIsMouseOverSlot(mouseX, mouseY)) {
 +                selectedInventory = slotInventory.inventory;
@@ -120,12 +124,34 @@
                  GL11.glDisable(2929);
                  final int xDisplayPosition = slotInventory.xDisplayPosition;
                  final int yDisplayPosition = slotInventory.yDisplayPosition;
-+                if (slotInventory.getStack() != null && slotInventory.getStack().getItem() != null) {
+-                this.drawGradientRect(xDisplayPosition, yDisplayPosition, xDisplayPosition + 16, yDisplayPosition + 16, -2130706433, -2130706433);
++                if (slotInventory.getStack() != null && slotInventory.getStack().getItem() != null &&
++                        this.mc.thePlayer.inventory.draggedItemStack == null) {
 +                    renderItemName = getItemInfo(slotInventory.getStack(), additionalInfo, this);
 +                }
-                 this.drawGradientRect(xDisplayPosition, yDisplayPosition, xDisplayPosition + 16, yDisplayPosition + 16, -2130706433, -2130706433);
++                this.drawGradientRect(
++                        xDisplayPosition, yDisplayPosition,
++                        xDisplayPosition + 16, yDisplayPosition + 16,
++                        -2130706433, -2130706433
++                );
                  GL11.glEnable(2896);
-@@ -59,4 +155,12 @@
+                 GL11.glEnable(2929);
+@@ -51,6 +153,12 @@
+         if (inventory.draggedItemStack != null) {
+             GL11.glTranslatef(0.0f, 0.0f, 32.0f);
+-            GuiContainer.itemRenderer.renderItemIntoGUI(this.fontRenderer, this.mc.renderEngine, inventory.draggedItemStack, mouseX - n - 8, mouseY - n2 - 8);
+-            GuiContainer.itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.renderEngine, inventory.draggedItemStack, mouseX - n - 8, mouseY - n2 - 8);
++            GuiContainer.itemRenderer.renderItemIntoGUI(
++                    this.fontRenderer, this.mc.renderEngine, inventory.draggedItemStack,
++                    mouseX - n - 8, mouseY - n2 - 8
++            );
++            GuiContainer.itemRenderer.renderItemOverlayIntoGUI(
++                    this.fontRenderer, this.mc.renderEngine, inventory.draggedItemStack,
++                    mouseX - n - 8, mouseY - n2 - 8
++            );
+         }
+         GL11.glDisable(32826);
+@@ -59,4 +167,12 @@
          GL11.glDisable(2929);
          this.drawGuiContainerForegroundLayer();
 +        if (renderItemName != null) {
@@ -138,7 +164,97 @@
 +        }
          GL11.glEnable(2896);
          GL11.glEnable(2929);
-@@ -215,4 +319,12 @@
+@@ -80,16 +196,25 @@
+                 GL11.glDisable(2896);
+                 this.mc.renderEngine.bindTexture(this.mc.renderEngine.getTexture("/gui/items.png"));
+-                this.drawTexturedModalRect(xDisplayPosition, yDisplayPosition, backgroundIconIndex % 16 * 16, backgroundIconIndex / 16 * 16, 16, 16);
++                this.drawTexturedModalRect(
++                        xDisplayPosition, yDisplayPosition,
++                        backgroundIconIndex % 16 * 16, backgroundIconIndex / 16 * 16,
++                        16, 16
++                );
+                 GL11.glEnable(2896);
+                 return;
+             }
+         }
+-        GuiContainer.itemRenderer.renderItemIntoGUI(this.fontRenderer, this.mc.renderEngine, stackInSlot, xDisplayPosition, yDisplayPosition);
+-        GuiContainer.itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.renderEngine, stackInSlot, xDisplayPosition, yDisplayPosition);
++        GuiContainer.itemRenderer.renderItemIntoGUI(
++                this.fontRenderer, this.mc.renderEngine, stackInSlot,
++                xDisplayPosition, yDisplayPosition
++        );
++        GuiContainer.itemRenderer.renderItemOverlayIntoGUI(
++                this.fontRenderer, this.mc.renderEngine, stackInSlot,
++                xDisplayPosition, yDisplayPosition
++        );
+     }
+     
+     private Slot getSlotAtPosition(final int integer1, final int integer2) {
+-        for (int i = 0; i < this.inventorySlots.size(); ++i) {
+-            final SlotInventory slotInventory = (SlotInventory)this.inventorySlots.get(i);
++        for (final SlotInventory slotInventory : this.inventorySlots) {
+             if (slotInventory.getIsMouseOverSlot(integer1, integer2)) {
+                 return slotInventory;
+@@ -109,5 +234,7 @@
+                     if (stack != null && inventory.draggedItemStack == null) {
+                         final int stackSize = (mouseButton == 0) ? stack.stackSize : ((stack.stackSize + 1) / 2);
+-                        inventory.draggedItemStack = slotAtPosition.inventory.decrStackSize(slotAtPosition.slotIndex, stackSize);
++                        inventory.draggedItemStack = slotAtPosition.inventory.decrStackSize(
++                                slotAtPosition.slotIndex, stackSize
++                        );
+                         if (stack.stackSize == 0) {
+                             slotAtPosition.putStack(null);
+@@ -115,5 +242,5 @@
+                         slotAtPosition.onPickupFromSlot();
+                     }
+-                    else if (stack == null && inventory.draggedItemStack != null && slotAtPosition.isItemValid(inventory.draggedItemStack)) {
++                    else if (stack == null && slotAtPosition.isItemValid(inventory.draggedItemStack)) {
+                         int stackSize = (mouseButton == 0) ? inventory.draggedItemStack.stackSize : 1;
+                         if (stackSize > slotAtPosition.inventory.getInventoryStackLimit()) {
+@@ -125,14 +252,13 @@
+                         }
+                     }
+-                    else if (stack != null && inventory.draggedItemStack != null) {
++                    else if (stack != null) {
+                         if (slotAtPosition.isItemValid(inventory.draggedItemStack)) {
+                             if (stack.itemID != inventory.draggedItemStack.itemID) {
+                                 if (inventory.draggedItemStack.stackSize <= slotAtPosition.inventory.getInventoryStackLimit()) {
+-                                    final ItemStack draggedItemStack = stack;
+                                     slotAtPosition.putStack(inventory.draggedItemStack);
+-                                    inventory.draggedItemStack = draggedItemStack;
++                                    inventory.draggedItemStack = stack;
+                                 }
+                             }
+-                            else if (stack.itemID == inventory.draggedItemStack.itemID) {
++                            else {
+                                 if (mouseButton == 0) {
+                                     int stackSize = inventory.draggedItemStack.stackSize;
+@@ -151,5 +277,5 @@
+                                     itemStack3.stackSize += stackSize;
+                                 }
+-                                else if (mouseButton == 1) {
++                                else {
+                                     int stackSize = 1;
+                                     if (stackSize > slotAtPosition.inventory.getInventoryStackLimit() - stack.stackSize) {
+@@ -163,7 +289,5 @@
+                                         inventory.draggedItemStack = null;
+                                     }
+-                                    final ItemStack itemStack4;
+-                                    final ItemStack itemStack2 = itemStack4 = stack;
+-                                    itemStack4.stackSize += stackSize;
++                                    stack.stackSize += stackSize;
+                                 }
+                             }
+@@ -172,7 +296,5 @@
+                             final int stackSize = stack.stackSize;
+                             if (stackSize > 0 && stackSize + inventory.draggedItemStack.stackSize <= inventory.draggedItemStack.getMaxStackSize()) {
+-                                final ItemStack draggedItemStack3;
+-                                final ItemStack draggedItemStack2 = draggedItemStack3 = inventory.draggedItemStack;
+-                                draggedItemStack3.stackSize += stackSize;
++                                inventory.draggedItemStack.stackSize += stackSize;
+                                 stack.splitStack(stackSize);
+                                 if (stack.stackSize == 0) {
+@@ -215,4 +337,12 @@
              this.mc.displayGuiScreen(null);
          }
 +

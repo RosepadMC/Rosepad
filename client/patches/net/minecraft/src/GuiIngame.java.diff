@@ -1,9 +1,10 @@
 --- GuiIngame.java
 +++ GuiIngame.java
-@@ -3,8 +3,10 @@
+@@ -3,8 +3,11 @@
  import java.awt.Color;
  import java.util.ArrayList;
 +import java.util.List;
++import java.util.Objects;
 +import java.util.Random;
 +
  import org.lwjgl.opengl.GL11;
@@ -13,13 +14,13 @@
 -import java.util.List;
  
  public class GuiIngame extends Gui {
-@@ -19,5 +21,4 @@
+@@ -19,5 +22,4 @@
      public float damageGuiPartialTime;
      float prevVignetteBrightness;
 -    public boolean renderQAName;
      public static String uqKey;
      private boolean initedArea;
-@@ -28,6 +29,10 @@
+@@ -28,6 +30,10 @@
      public long areaTimer;
      private static final String[] syllab;
 -    private static final String versionName = "Minecraft Alpha 1.0.16.05_13 Lilypad (LPUJ v106)";
@@ -31,7 +32,7 @@
 +    
      static {
          GuiIngame.uqKey = "";
-@@ -91,9 +96,8 @@
+@@ -91,9 +97,8 @@
      
      public GuiIngame(final Minecraft minecraft) {
 -        this.renderQAName = true;
@@ -42,7 +43,7 @@
 +        this.chatMessageList = new ArrayList<>();
          this.rand = new Random();
          this.testMessage = null;
-@@ -103,7 +107,9 @@
+@@ -103,7 +108,9 @@
          this.prevVignetteBrightness = 1.0f;
          this.mc = minecraft;
 +        this.showGUI = true;
@@ -52,47 +53,109 @@
 +    	if (!this.showGUI && this.mc.currentScreen == null) return;
          final ScaledResolution scaledResolution = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
          final int scaledWidth = scaledResolution.getScaledWidth();
-@@ -242,14 +248,21 @@
+@@ -132,5 +139,5 @@
+         final int health = this.mc.thePlayer.health;
+         final int prevHealth = this.mc.thePlayer.prevHealth;
+-        this.rand.setSeed((long)(this.updateCounter * 312871));
++        this.rand.setSeed((long)(this.updateCounter * 312871L));
+         if (this.mc.playerController.shouldDrawHUD()) {
+             final int i = this.mc.thePlayer.getPlayerArmorValue();
+@@ -140,5 +147,4 @@
+                 final ItemStack armorItemInSlot = this.mc.thePlayer.inventory.armorItemInSlot(j);
+                 if (armorItemInSlot != null && armorItemInSlot.getItem() instanceof ItemArmor) {
+-                    armorItemInSlot.getItem();
+                     final int maxDamage = armorItemInSlot.getMaxDamage();
+                     final int n3 = maxDamage - armorItemInSlot.itemDmg;
+@@ -242,26 +248,48 @@
          GL11.glDisable(32826);
          if (this.mc.gameSettings.showFPS) {
 -            fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad (LPUJ v106)", 2, 2, 16777215);
-+            fontRenderer.drawStringWithShadow(this.getVersionName(), 2, 2, 16777215);
-             fontRenderer.drawStringWithShadow(this.mc.debug, 2, 12, 16777215);
-             fontRenderer.drawStringWithShadow(this.mc.debugInfoRenders(), 2, 22, 16777215);
-             fontRenderer.drawStringWithShadow(this.mc.getEntityDebug(), 2, 32, 16777215);
-             fontRenderer.drawStringWithShadow(this.mc.debugLoadedEntities(), 2, 42, 16777215);
+-            fontRenderer.drawStringWithShadow(this.mc.debug, 2, 12, 16777215);
+-            fontRenderer.drawStringWithShadow(this.mc.debugInfoRenders(), 2, 22, 16777215);
+-            fontRenderer.drawStringWithShadow(this.mc.getEntityDebug(), 2, 32, 16777215);
+-            fontRenderer.drawStringWithShadow(this.mc.debugLoadedEntities(), 2, 42, 16777215);
 -            if (this.mc.theWorld != null) {
 -                fontRenderer.drawStringWithShadow(Long.toString(this.mc.theWorld.randomSeed), 2, 52, 16777215);
-+            int i = 0;
++            List<String> lines = new ArrayList<>();
++            lines.add(this.getVersionName());
++            if (this.mc.theWorld != null && this.mc.theWorld.multiplayerWorld) {
++                if (this.mc.theWorld.rosepadContentEnabled())
++                    lines.add(
++                            "\"§7" + NetClientHandler.rosepadMeta.getBrandName() + "§f\" server (Version " +
++                                    NetClientHandler.rosepadMeta.getVersionString() + "§f)"
++                    );
++                else
++                    lines.add("Vanilla server");
+             }
+-            if (GuiIngame.uqKey != "") {
+-                fontRenderer.drawStringWithShadow(GuiIngame.uqKey, 2, 52, 16777215);
++            lines.add(this.mc.debug);
++            lines.add(this.mc.debugInfoRenders());
++            lines.add(this.mc.getEntityDebug());
++            lines.add(this.mc.debugLoadedEntities());
 +            if (this.mc.thePlayer != null) {
 +                String string = "X: §c" + Math.round(this.mc.thePlayer.posX * 100) / 100.0;
-+                string += "§f, Y: §a" + Math.round(this.mc.thePlayer.posY * 100) / 100.0;
++                string += "§f, Y: §a" + Math.round(this.mc.thePlayer.boundingBox.minY * 100) / 100.0;
 +                string += "§f, Z: §b" + Math.round(this.mc.thePlayer.posZ * 100) / 100.0;
-+                fontRenderer.drawStringWithShadow(string, 2, 52 + (i++) * 10, 16777215);
++                lines.add(string);
              }
 +            if (this.mc.theWorld != null && !this.mc.theWorld.multiplayerWorld) {
-+                fontRenderer.drawStringWithShadow(Long.toString(this.mc.theWorld.randomSeed), 2, 52 + (i++) * 10, 16777215);
++                lines.add(Long.toString(this.mc.theWorld.randomSeed));
 +            }
-             if (GuiIngame.uqKey != "") {
--                fontRenderer.drawStringWithShadow(GuiIngame.uqKey, 2, 52, 16777215);
-+                fontRenderer.drawStringWithShadow(GuiIngame.uqKey, 2, 52 + (i++) * 10, 16777215);
-             }
++            if (!Objects.equals(GuiIngame.uqKey, "")) {
++                lines.add(GuiIngame.uqKey);
++            }
++
++            int i = 0;
++            for (String str : lines) {
++                fontRenderer.drawStringWithShadow(str, 2, 2 + (i++) * 10, 16777215);
++            }
++
              final long maxMemory = Runtime.getRuntime().maxMemory();
-@@ -262,5 +275,5 @@
+             final long totalMemory = Runtime.getRuntime().totalMemory();
+             final long n6 = totalMemory - Runtime.getRuntime().freeMemory();
+-            final String string = new StringBuilder().append("Used memory: ").append(n6 * 100L / maxMemory).append("% (").append(n6 / 1024L / 1024L).append("MB) of ").append(maxMemory / 1024L / 1024L).append("MB").toString();
++            final String string = "Used memory: " + n6 * 100L / maxMemory + "% (" + n6 / 1024L / 1024L + "MB) of " + maxMemory / 1024L / 1024L + "MB";
+             this.drawString(fontRenderer, string, scaledWidth - fontRenderer.getStringWidth(string) - 2, 2, 14737632);
+-            final String string2 = new StringBuilder().append("Allocated memory: ").append(totalMemory * 100L / maxMemory).append("% (").append(totalMemory / 1024L / 1024L).append("MB)").toString();
++            final String string2 = "Allocated memory: " + totalMemory * 100L / maxMemory + "% (" + totalMemory / 1024L / 1024L + "MB)";
+             this.drawString(fontRenderer, string2, scaledWidth - fontRenderer.getStringWidth(string2) - 2, 12, 14737632);
          }
          else {
 -            fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad (LPUJ v106)", 2, 2, 16777215);
+-            if (GuiIngame.uqKey != "") {
 +            fontRenderer.drawStringWithShadow(this.getVersionName(), 2, 2, 16777215);
-             if (GuiIngame.uqKey != "") {
++            if (!Objects.equals(GuiIngame.uqKey, "")) {
                  fontRenderer.drawStringWithShadow(GuiIngame.uqKey, 2, 12, 16777215);
-@@ -341,5 +354,5 @@
+             }
+@@ -271,5 +299,5 @@
+             this.ResetNamegen();
+         }
+-        final float n7 = (float)(1.0 * Math.pow(0.5, (double)(this.currentArea.length() / 10)));
++        final float n7 = (float)(Math.pow(0.5f, (float)this.currentArea.length() / 10.0f));
+         GL11.glScalef(1.0f + n7, 1.0f + n7, 1.0f + n7);
+         final int n = (int)(255.0f * Math.max(1.0f - Math.min(System.currentTimeMillis() - this.areaTimer, 5000L) / 5000.0f, 0.3f));
+@@ -306,7 +334,7 @@
+         GL11.glPushMatrix();
+         GL11.glTranslatef(0.0f, (float)(scaledHeight - 48), 0.0f);
+-        if (GuiScreen.currentID != "") {
++        if (!Objects.equals(GuiScreen.currentID, "")) {
+             fontRenderer.drawStringWithShadow("[Use numpad to enter, - to clear, + to give]", 2, 10, 16449390);
+-            fontRenderer.drawStringWithShadow(new StringBuilder("Give item: ").append(GuiScreen.currentID).toString(), 2, 20, 16449390);
++            fontRenderer.drawStringWithShadow("Give item: " + GuiScreen.currentID, 2, 20, 16449390);
+             try {
+                 final int int1 = Integer.parseInt(GuiScreen.currentID);
+@@ -341,7 +369,7 @@
              }
          }
 -        if (this.renderQAName) {
 +        if (this.mc.gameSettings.renderQAName) {
              GL11.glScalef(2.0f, 2.0f, 2.0f);
-             fontRenderer.drawStringWithShadow(new StringBuilder("QA BUILD: ").append(GuiScreenInputPass.name).toString(), 5, 0, 553320302);
-@@ -410,6 +423,5 @@
+-            fontRenderer.drawStringWithShadow(new StringBuilder("QA BUILD: ").append(GuiScreenInputPass.name).toString(), 5, 0, 553320302);
++            fontRenderer.drawStringWithShadow("QA BUILD: " + GuiScreenInputPass.name, 5, 0, 553320302);
+         }
+         GL11.glPopMatrix();
+@@ -410,6 +438,5 @@
          ++this.updateCounter;
          for (int i = 0; i < this.chatMessageList.size(); ++i) {
 -            final ChatLine chatLine2;
@@ -100,7 +163,7 @@
 +            final ChatLine chatLine2 = this.chatMessageList.get(i);
              ++chatLine2.updateCounter;
          }
-@@ -417,4 +429,5 @@
+@@ -417,4 +444,5 @@
      
      public void addChatMessage(String message) {
 +    	if (message.length() > 2000) message = message.substring(message.length() - 2000).trim();

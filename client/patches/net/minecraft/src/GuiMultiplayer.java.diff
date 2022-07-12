@@ -1,0 +1,70 @@
+--- GuiMultiplayer.java
++++ GuiMultiplayer.java
+@@ -2,5 +2,5 @@
+ 
+ public class GuiMultiplayer extends GuiScreen {
+-    private GuiScreen parentScreen;
++    private final GuiScreen parentScreen;
+     private int updateCounter;
+     private String ipText;
+@@ -10,4 +10,5 @@
+         this.ipText = "";
+         this.parentScreen = screen;
++        NetClientHandler.rosepadMeta = null; // Feel free to make an RP to remove this
+     }
+     
+@@ -20,7 +21,9 @@
+     public void actionPerformed() {
+         this.controlList.clear();
+-        this.controlList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 12, "Connect"));
+-        this.controlList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 120 + 12, "Cancel"));
+-        ((GuiButton)this.controlList.get(0)).enabled = false;
++        this.controlList.add(new GuiButton(0,
++                this.width / 2 - 100, this.height / 4 + 96 + 12, "Connect"));
++        this.controlList.add(new GuiButton(1,
++                this.width / 2 - 100, this.height / 4 + 120 + 12, "Cancel"));
++        this.controlList.get(0).enabled = false;
+     }
+     
+@@ -51,17 +54,17 @@
+             }
+             if (length > 0) {
+-                this.ipText = String.valueOf(this.ipText) + clipboardString.substring(0, length);
++                this.ipText = this.ipText + clipboardString.substring(0, length);
+             }
+         }
+         if (character == '\r') {
+-            this.actionPerformed((GuiButton)this.controlList.get(0));
++            this.actionPerformed(this.controlList.get(0));
+         }
+         if (key == 14 && this.ipText.length() > 0) {
+             this.ipText = this.ipText.substring(0, this.ipText.length() - 1);
+         }
+-        if (" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~\u2302\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8£\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1ªº¿®¬½¼¡«»".indexOf((int)character) >= 0 && this.ipText.length() < 32) {
+-            this.ipText = String.valueOf(this.ipText) + character;
++        if (" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~\u2302\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8£\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1ªº¿®¬½¼¡«»".indexOf(character) >= 0 && this.ipText.length() < 32) {
++            this.ipText = this.ipText + character;
+         }
+-        ((GuiButton)this.controlList.get(0)).enabled = (this.ipText.length() > 0);
++        this.controlList.get(0).enabled = (this.ipText.length() > 0);
+     }
+     
+@@ -70,14 +73,12 @@
+         this.drawDefaultBackground();
+         this.drawCenteredString(this.fontRenderer, "Play Multiplayer", this.width / 2, this.height / 4 - 60 + 20, 16777215);
+-        this.drawString(this.fontRenderer, "Minecraft Multiplayer is currently not finished, but there", this.width / 2 - 140, this.height / 4 - 60 + 60 + 0, 10526880);
+-        this.drawString(this.fontRenderer, "is some buggy early testing going on.", this.width / 2 - 140, this.height / 4 - 60 + 60 + 9, 10526880);
+-        this.drawString(this.fontRenderer, "Enter the IP of a server to connect to it:", this.width / 2 - 140, this.height / 4 - 60 + 60 + 36, 10526880);
++        this.drawString(this.fontRenderer, "Minecraft Multiplayer is currently not finished, but there", this.width / 2 - 140, this.height / 4, 10526880);
++        this.drawString(this.fontRenderer, "is some buggy early testing going on.", this.width / 2 - 140, this.height / 4 + 9, 10526880);
++        this.drawString(this.fontRenderer, "Enter the IP of a server to connect to it:", this.width / 2 - 140, this.height / 4 + 36, 10526880);
+         final int xMin = this.width / 2 - 100;
+         final int yMin = this.height / 4 - 10 + 50 + 18;
+-        final int n = 200;
+-        final int n2 = 20;
+         this.drawRect(xMin - 1, yMin - 1, xMin + 200 + 1, yMin + 20 + 1, -6250336);
+         this.drawRect(xMin, yMin, xMin + 200, yMin + 20, -16777216);
+-        this.drawString(this.fontRenderer, String.valueOf(this.ipText) + ((this.updateCounter / 6 % 2 == 0) ? "_" : ""), xMin + 4, yMin + 6, 14737632);
++        this.drawString(this.fontRenderer, this.ipText + ((this.updateCounter / 6 % 2 == 0) ? "_" : ""), xMin + 4, yMin + 6, 14737632);
+         super.drawScreen(mouseX, mouseY, renderPartialTick);
+     }

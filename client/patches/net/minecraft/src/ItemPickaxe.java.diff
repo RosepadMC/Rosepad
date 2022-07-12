@@ -1,0 +1,9 @@
+--- ItemPickaxe.java
++++ ItemPickaxe.java
+@@ -15,5 +15,5 @@
+     
+     @Override
+-    public boolean canHarvestBlock(final Block block) {
++    public boolean canHarvestBlock(final Block block, final World world) {
+         if (block == Block.OBSIDIAN) {
+             return this.harvestLevel == 3;

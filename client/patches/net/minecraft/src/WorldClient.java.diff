@@ -24,3 +24,11 @@
 +            if (--worldBlockPositionType3.acceptCountdown == 0) {
                  super.setBlockAndMetadata(worldBlockPositionType3.x, worldBlockPositionType3.y, worldBlockPositionType3.z, worldBlockPositionType3.blockID, worldBlockPositionType3.metadata);
                  super.markBlockNeedsUpdate(worldBlockPositionType3.x, worldBlockPositionType3.y, worldBlockPositionType3.z);
+@@ -211,3 +209,7 @@
+         this.sendQueue.addToSendQueue(new Packet255KickDisconnect("Quitting"));
+     }
++
++    public void addToSendQueue(Packet packet) {
++        this.sendQueue.addToSendQueue(packet);
++    }
+ }

@@ -274,3 +274,10 @@
 +        Item.flameberge = new ItemSwordFlameberge(106).setIconIndex(69).setName("Flameberge").setRarity(2);
      }
      
+@@ -285,5 +308,5 @@
+     }
+     
+-    public boolean canHarvestBlock(final Block block) {
++    public boolean canHarvestBlock(final Block block, final World world) {
+         return false;
+     }

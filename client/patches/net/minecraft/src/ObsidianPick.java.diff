@@ -1,9 +1,28 @@
 --- ObsidianPick.java
 +++ ObsidianPick.java
-@@ -20,5 +20,5 @@
+@@ -3,8 +3,10 @@
+ public class ObsidianPick extends ItemTool {
+     private static Block[] blocksEffectiveAgainst;
+-    private int harvestLevel;
++    private final int harvestLevel;
+     
+     static {
+-        ObsidianPick.blocksEffectiveAgainst = new Block[] { Block.COBBLESTONE, Block.BEDROCK, Block.STAIR_DOUBLE, Block.STAIR_SINGLE, Block.STONE, Block.COBBLESTONE_MOSSY, Block.ORE_IRON, Block.BLOCK_IRON, Block.ORE_COAL, Block.BLOCK_GOLD, Block.ORE_GOLD, Block.ORE_DIAMOND, Block.BLOCK_DIAMOND, Block.ICE };
++        ObsidianPick.blocksEffectiveAgainst = new Block[] { Block.COBBLESTONE, Block.BEDROCK, Block.STAIR_DOUBLE,
++                Block.STAIR_SINGLE, Block.STONE, Block.COBBLESTONE_MOSSY, Block.ORE_IRON, Block.BLOCK_IRON,
++                Block.ORE_COAL, Block.BLOCK_GOLD, Block.ORE_GOLD, Block.ORE_DIAMOND, Block.BLOCK_DIAMOND, Block.ICE };
+     }
+     
+@@ -15,10 +17,10 @@
+     
+     @Override
+-    public boolean canHarvestBlock(final Block block) {
++    public boolean canHarvestBlock(final Block block, final World world) {
+         if (block == Block.BEDROCK) {
+             return true;
          }
          if (block == Block.OBSIDIAN) {
 -            return this.harvestLevel == 3;
-+            return this.harvestLevel >= 3;
++            return world.rosepadContentEnabled();
          }
          if (block == Block.BLOCK_DIAMOND || block == Block.ORE_DIAMOND) {

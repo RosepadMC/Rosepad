@@ -11,9 +11,9 @@
         <option name="gradleJvm" value="liberica-1.8" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/client" />
-            <option value="$PROJECT_DIR$/server" />
+            <option value="/media/data/projects/java/Rosepad" />
+            <option value="/media/data/projects/java/Rosepad/client" />
+            <option value="/media/data/projects/java/Rosepad/server" />
           </set>
         </option>
       </GradleProjectSettings>

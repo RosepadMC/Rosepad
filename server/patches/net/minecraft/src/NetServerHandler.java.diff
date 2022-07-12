@@ -1,0 +1,117 @@
+--- NetServerHandler.java
++++ NetServerHandler.java
+@@ -151,10 +151,10 @@
+         final int i20 = packet.zPosition;
+         final int i21 = packet.face;
+-        final int maxDistX = (int)MathHelper.abs((float)(i18 - this.mcServer.worldMngr.spawnX));
+-        int maxDist = (int)MathHelper.abs((float)(i20 - this.mcServer.worldMngr.spawnZ));
+-        if (maxDistX > maxDist) {
+-            maxDist = maxDistX;
+-        }
+-        final boolean allowed = maxDist > 4096 || (isAuthed && maxDist > 16) || isOP;
++        double distance = Math.abs(packet.xPosition - playerEntity.posX) +
++                Math.abs(packet.yPosition - playerEntity.posY) +
++                Math.abs(packet.zPosition - playerEntity.posZ);
++        double spawnDistance = Math.abs(packet.xPosition - worldMngr.spawnX) +
++                Math.abs(packet.zPosition - worldMngr.spawnZ);
++        final boolean allowed = (isAuthed || !mcServer.onlineMode) && distance < 7.5 && spawnDistance > 16 || isOP;
+         if (packet.status == 0) {
+             if (allowed) {
+@@ -193,14 +193,15 @@
+         final int i5 = packet.zPosition;
+         final int i6 = packet.direction;
+-        final int maxDistX = (int)MathHelper.abs((float)(i3 - this.mcServer.worldMngr.spawnX));
+-        int maxDist = (int)MathHelper.abs((float)(i5 - this.mcServer.worldMngr.spawnZ));
+-        if (maxDistX > maxDist) {
+-            maxDist = maxDistX;
+-        }
+-        final boolean allowed = maxDist > 4096 || (isAuthed && maxDist > 16) || isOP;
++        double distance = Math.abs(packet.xPosition - playerEntity.posX) +
++                Math.abs(packet.yPosition - playerEntity.posY) +
++                Math.abs(packet.zPosition - playerEntity.posZ);
++        double spawnDistance = Math.abs(packet.xPosition - worldMngr.spawnX) +
++                Math.abs(packet.zPosition - worldMngr.spawnZ);
++        final boolean allowed = (isAuthed || !mcServer.onlineMode) && distance < 7.5 && spawnDistance > 16 || isOP;
+         if (allowed) {
+             final ItemStack itemStack9 = (packet.id >= 0) ? new ItemStack(packet.id) : null;
+             this.playerEntity.theItemInWorldManager.activeBlockOrUseItem(this.playerEntity, this.mcServer.worldMngr, itemStack9, i3, i4, i5, i6);
+         }
++        else System.out.println("Denied block placement");
+         this.playerEntity.playerNetServerHandler.sendPacket(new Packet53BlockChange(i3, i4, i5, this.mcServer.worldMngr));
+         this.mcServer.worldMngr.disableSpawnProtection = false;
+@@ -269,5 +270,5 @@
+             }
+             else {
+-                string2 = new StringBuilder("<").append(this.playerEntity.username).append("> ").append(string2).toString();
++                string2 = "<" + this.playerEntity.username + "> " + string2;
+                 NetServerHandler.logger.info(string2);
+                 this.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat(string2));
+@@ -278,5 +279,5 @@
+     private void handleSlashCommand(String string1) {
+         if (string1.toLowerCase().startsWith("/me ")) {
+-            string1 = new StringBuilder("* ").append(this.playerEntity.username).append(" ").append(string1.substring(string1.indexOf(" ")).trim()).toString();
++            string1 = "* " + this.playerEntity.username + " " + string1.substring(string1.indexOf(" ")).trim();
+             NetServerHandler.logger.info(string1);
+             this.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat(string1));
+@@ -287,6 +288,6 @@
+                 string1 = string1.substring(string1.indexOf(" ")).trim();
+                 string1 = string1.substring(string1.indexOf(" ")).trim();
+-                string1 = new StringBuilder("§7").append(this.playerEntity.username).append(" whispers ").append(string1).toString();
+-                NetServerHandler.logger.info(String.valueOf(string1) + " to " + string2[1]);
++                string1 = "§7" + this.playerEntity.username + " whispers " + string1;
++                NetServerHandler.logger.info(string1 + " to " + string2[1]);
+                 if (!this.mcServer.configManager.sendPacketToPlayer(string2[1], new Packet3Chat(string1))) {
+                     this.sendPacket(new Packet3Chat("§cThere's no player by that name online."));
+@@ -295,5 +296,5 @@
+         }
+         else if (string1.toLowerCase().equalsIgnoreCase("/home")) {
+-            NetServerHandler.logger.info(String.valueOf(this.playerEntity.username) + " returned home");
++            NetServerHandler.logger.info(this.playerEntity.username + " returned home");
+             final int i3 = this.mcServer.worldMngr.getTopSolidOrLiquidBlock(this.mcServer.worldMngr.spawnX, this.mcServer.worldMngr.spawnZ);
+             this.teleportTo(this.mcServer.worldMngr.spawnX + 0.5, i3 + 1.5, this.mcServer.worldMngr.spawnZ + 0.5, 0.0f, 0.0f);
+@@ -301,10 +302,10 @@
+         else if (string1.toLowerCase().equalsIgnoreCase("/iron")) {
+             if (MinecraftServer.playerList.containsKey(this.playerEntity.username)) {
+-                NetServerHandler.logger.info(String.valueOf(this.playerEntity.username) + " failed to iron!");
++                NetServerHandler.logger.info(this.playerEntity.username + " failed to iron!");
+                 this.sendPacket(new Packet3Chat("§cYou can't /iron again so soon!"));
+             }
+             else {
+                 MinecraftServer.playerList.put(this.playerEntity.username, 6000);
+-                NetServerHandler.logger.info(String.valueOf(this.playerEntity.username) + " ironed!");
++                NetServerHandler.logger.info(this.playerEntity.username + " ironed!");
+                 for (int i3 = 0; i3 < 4; ++i3) {
+                     this.playerEntity.dropPlayerItem(new ItemStack(Item.ingotIron, 1));
+@@ -314,10 +315,10 @@
+         else if (string1.toLowerCase().equalsIgnoreCase("/wood")) {
+             if (MinecraftServer.playerList.containsKey(this.playerEntity.username)) {
+-                NetServerHandler.logger.info(String.valueOf(this.playerEntity.username) + " failed to wood!");
++                NetServerHandler.logger.info(this.playerEntity.username + " failed to wood!");
+                 this.sendPacket(new Packet3Chat("§cYou can't /wood again so soon!"));
+             }
+             else {
+                 MinecraftServer.playerList.put(this.playerEntity.username, 6000);
+-                NetServerHandler.logger.info(String.valueOf(this.playerEntity.username) + " wooded!");
++                NetServerHandler.logger.info(this.playerEntity.username + " wooded!");
+                 for (int i3 = 0; i3 < 4; ++i3) {
+                     this.playerEntity.dropPlayerItem(new ItemStack(Block.sapling, 1));
+@@ -327,10 +328,10 @@
+         else if (this.mcServer.configManager.isOp(this.playerEntity.username)) {
+             final String string3 = string1.substring(1);
+-            NetServerHandler.logger.info(String.valueOf(this.playerEntity.username) + " issued server command: " + string3);
++            NetServerHandler.logger.info(this.playerEntity.username + " issued server command: " + string3);
+             this.mcServer.addCommand(string3, this);
+         }
+         else {
+             final String string3 = string1.substring(1);
+-            NetServerHandler.logger.info(String.valueOf(this.playerEntity.username) + " tried command: " + string3);
++            NetServerHandler.logger.info(this.playerEntity.username + " tried command: " + string3);
+         }
+     }
+@@ -354,5 +355,5 @@
+     @Override
+     public void addHelpCommandMessage(final String helpCommandMessage) {
+-        this.sendPacket(new Packet3Chat(new StringBuilder("§7").append(helpCommandMessage).toString()));
++        this.sendPacket(new Packet3Chat("§7" + helpCommandMessage));
+     }
+     

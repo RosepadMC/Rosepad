@@ -1,0 +1,11 @@
+--- ItemStack.java
++++ ItemStack.java
+@@ -114,6 +114,6 @@
+     }
+     
+-    public boolean canHarvestBlock(final Block block) {
+-        return Item.ITEMS_LIST[this.itemID].canHarvestBlock(block);
++    public boolean canHarvestBlock(final Block block, final World world) {
++        return Item.ITEMS_LIST[this.itemID].canHarvestBlock(block, world);
+     }
+     

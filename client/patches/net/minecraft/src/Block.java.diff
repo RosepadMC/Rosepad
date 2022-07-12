@@ -252,3 +252,10 @@
 +            throw new IllegalArgumentException("Slot " + id + " is already occupied by \"" + Block.BLOCKS_LIST[id].getName() + "\" when adding \"" + this.getName() + "\"");
          }
          this.material = material;
+@@ -452,5 +473,5 @@
+         }
+         else {
+-            if (!entityPlayer.canHarvestBlock(this)) {
++            if (!entityPlayer.canHarvestBlock(this, entityPlayer.worldObj)) {
+                 return 1.0f / this.hardness / 100.0f;
+             }

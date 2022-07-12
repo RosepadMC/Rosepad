@@ -118,14 +118,14 @@ tasks.register("deletePatches", DeletePatches) {
 }
 
 tasks.register("injectClasses", InjectClasses) {
-	source = "${projectDir}/inject"
-	dest = "${projectDir}/src/main"
+	source = "${projectDir}/inject/java"
+	dest = "${projectDir}/src/main/java"
 }
 
 tasks.register("ejectClasses", CreateInjectClasses) {
-	source = "${projectDir}/src/main"
-	orig = "${projectDir}/src/orig"
-	dest = "${projectDir}/inject"
+	source = "${projectDir}/src/main/java"
+	orig = "${projectDir}/src/orig/java"
+	dest = "${projectDir}/inject/java"
 }
 
 processPatches {

@@ -6,3 +6,9 @@
 -        final long milestone = this.worldObj.milestone;
          super.onLivingUpdate();
      }
+@@ -83,5 +82,4 @@
+         }
+         this.heartsLife = this.heartsHalvesLife;
+-        System.out.println(new StringBuilder().append("Damage taken: ").append(damage).toString());
+         if (this.inventory.getTotalArmorValue() == 0) {
+             this.health = 0;

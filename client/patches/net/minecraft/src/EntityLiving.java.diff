@@ -1,0 +1,23 @@
+--- EntityLiving.java
++++ EntityLiving.java
+@@ -292,5 +292,13 @@
+     public boolean attackEntityFrom(final Entity entity, int damage) {
+         if (this.worldObj.multiplayerWorld) {
+-            damage = 0;
++            if (this.worldObj.rosepadContentEnabled() && (entity instanceof EntityPlayerSP || this instanceof EntityPlayerSP)) {
++                if (this.worldObj instanceof WorldClient) {
++                    ((WorldClient) this.worldObj).addToSendQueue(
++                            new Packet35EntityDamage().hit(this, damage)
++                    );
++                }
++                else damage = 0;
++            }
++            else damage = 0;
+         }
+         this.entityAge = 0;
+@@ -369,4 +377,5 @@
+         }
+         this.dead = true;
++        if (worldObj.multiplayerWorld) return;
+         final int dropItemID = this.getDropItemID();
+         if (dropItemID > 0) {

@@ -1,10 +1,133 @@
 --- NetClientHandler.java
 +++ NetClientHandler.java
-@@ -300,5 +300,6 @@
+@@ -5,4 +5,5 @@
+ import java.net.Socket;
+ import java.net.InetAddress;
++import java.util.Arrays;
+ import java.util.Random;
+ import net.minecraft.client.Minecraft;
+@@ -14,4 +15,8 @@
+     protected boolean posUpdated;
+     protected Random rand;
++    public static RosepadMeta rosepadMeta  // This is absolutely terrible thing I've done
++                                           // and I have no idea how to fix that. Feel
++                                           // free to make an RP
++    = null;
+     
+     protected boolean shouldCreateNetManager() {
+@@ -23,10 +28,10 @@
+     }
+     
+-    public NetClientHandler(final Minecraft minecraft, final String ip, final int port) throws UnknownHostException, IOException {
++    public NetClientHandler(final Minecraft minecraft, final String ip, final int port) throws IOException {
+         this.posUpdated = false;
+         this.rand = new Random();
+         this.mc = minecraft;
+         if (this.shouldCreateNetManager()) {
+-            this.netManager = new NetworkManager(new Socket(InetAddress.getByName(ip), port), "Client", (NetHandler)this);
++            this.netManager = new NetworkManager(new Socket(InetAddress.getByName(ip), port), "Client", this);
+         }
+     }
+@@ -38,5 +43,5 @@
+     @Override
+     public void handleLogin(final Packet1Login packet) {
+-        System.out.println(new StringBuilder("Server is using ULPP version ").append(Integer.toString(packet.protocolVersion)).toString());
++        System.out.println("Server is using ULPP version " + packet.protocolVersion);
+         final int minVersion = Integer.min(packet.protocolVersion, 1);
+         if (minVersion > this.GetULPPVer()) {
+@@ -50,4 +55,5 @@
+         this.worldClient.multiplayerWorld = true;
+         this.mc.changeWorld1(this.worldClient);
++        System.out.println("Changed world");
+         this.mc.displayGuiScreen(new GuiDownloadTerrain(this));
+     }
+@@ -134,14 +140,13 @@
+             return;
+         }
+-        final Entity entity4;
+-        final Entity entity = entity4 = entityByID;
+-        entity4.serverPosX += packet.xPosition;
+-        final Entity entity5;
+-        final Entity entity2 = entity5 = entityByID;
+-        entity5.serverPosY += packet.yPosition;
+-        final Entity entity6;
+-        final Entity entity3 = entity6 = entityByID;
+-        entity6.serverPosZ += packet.zPosition;
+-        entityByID.setPositionAndRotation(entityByID.serverPosX / 32.0, entityByID.serverPosY / 32.0, entityByID.serverPosZ / 32.0, packet.rotating ? (packet.yaw * 360 / 256.0f) : entityByID.rotationYaw, packet.rotating ? (packet.pitch * 360 / 256.0f) : entityByID.rotationPitch, 3);
++        entityByID.serverPosX += packet.xPosition;
++        entityByID.serverPosY += packet.yPosition;
++        entityByID.serverPosZ += packet.zPosition;
++        entityByID.setPositionAndRotation(
++                entityByID.serverPosX / 32.0, entityByID.serverPosY / 32.0, entityByID.serverPosZ / 32.0,
++                packet.rotating ? (packet.yaw * 360 / 256.0f) : entityByID.rotationYaw,
++                packet.rotating ? (packet.pitch * 360 / 256.0f) : entityByID.rotationPitch,
++                3
++        );
+     }
+     
+@@ -169,11 +174,7 @@
+         }
+         thePlayer.ySize = 0.0f;
+-        final EntityPlayerSP entityPlayerSP = thePlayer;
+-        final EntityPlayerSP entityPlayerSP2 = thePlayer;
+-        final EntityPlayerSP entityPlayerSP3 = thePlayer;
+-        final double motionX = 0.0;
+-        entityPlayerSP3.motionZ = 0.0;
+-        entityPlayerSP2.motionY = 0.0;
+-        entityPlayerSP.motionX = 0.0;
++        thePlayer.motionZ = 0.0;
++        thePlayer.motionY = 0.0;
++        thePlayer.motionX = 0.0;
+         thePlayer.setPositionAndRotation(posX, posY, posZ, rotationYaw, rotationPitch);
+         packet.xPosition = thePlayer.posX;
+@@ -193,4 +194,8 @@
+     @Override
+     public void handlePreChunk(final Packet50PreChunk packet) {
++        if (this.worldClient == null) {
++            System.out.println("TODO: Fix server sending first chunk before LOGIN");
++            return;
++        }
+         this.worldClient.doPreChunk(packet.xPos, packet.zPos, packet.mode);
+     }
+@@ -256,5 +261,5 @@
+         }
+         if (entityItem != null) {
+-            this.worldClient.playSoundAtEntity((Entity)entityItem, "random.pop", 0.2f, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7f + 1.0f) * 2.0f);
++            this.worldClient.playSoundAtEntity(entityItem, "random.pop", 0.2f, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7f + 1.0f) * 2.0f);
+             this.mc.effectRenderer.addEffect(new EntityPickupFX(this.mc.theWorld, entityItem, thePlayer, -0.5f));
+             this.worldClient.removeEntityFromWorld(packet.collectedEntityID);
+@@ -300,5 +305,5 @@
      public void handleHandshake(final Packet2Handshake packet) {
          final boolean online = this.mc.session.sessionID.startsWith("token");
 -        final String usedPassword = ULPPManager.GetVersionString(online);
 +        final String usedPassword = ULPPManager.GetVersionString(online, this.mc.gameSettings.acceptRemoteScripts);
-+        System.out.println("Using client agent: " + usedPassword);
          this.addToSendQueue(new Packet1Login(this.mc.session.username, usedPassword, 2));
      }
+@@ -358,3 +363,27 @@
+         this.worldClient.spawnZ = packet.zPos;
+     }
++
++    @Override
++    public void handleRosepadMeta(Packet130RosepadMeta packet) {
++        if (!Arrays.equals(packet.version, Minecraft.getVersion()) || !packet.tag.equals(Minecraft.getVersionTag())) {
++            System.err.println("Server version does not match client!");
++        }
++
++        for (ULPPExtension extension : packet.extensions) {
++            if (extension.getName().equals("ROSE") && extension.getVersion() != 1) {
++                this.netManager.networkShutdown("Server Rosepad protocol extension version does not match client");
++                return;
++            }
++            if (extension.getName().equals("ULPP") && extension.getVersion() != 1) {
++                this.netManager.networkShutdown("Server ULPP protocol extension version does not match client");
++                return;
++            }
++        }
++
++        System.out.println("Remote server is running Rosepad, enabling Rosepad-specific features...");
++
++        // TODO: Check meta flags
++
++        NetClientHandler.rosepadMeta = packet.getMeta();
++    }
+ }

@@ -1,0 +1,55 @@
+--- EntityClientPlayerMP.java
++++ EntityClientPlayerMP.java
+@@ -4,5 +4,6 @@
+ 
+ public class EntityClientPlayerMP extends EntityPlayerSP {
+-    private NetworkManager sendQueue;
++    private static final double EPSILON = 0.0001;
++    private final NetworkManager sendQueue;
+     private int motionUpdateCounter;
+     private double oldPosX;
+@@ -13,5 +14,5 @@
+     private float oldRotationPitch;
+     private InventoryPlayer serverSideInventory;
+-    
++
+     public EntityClientPlayerMP(final Minecraft minecraft, final World world, final Session session, final NetworkManager sendQueue) {
+         super(minecraft, world, session);
+@@ -26,4 +27,8 @@
+         this.sendMotionUpdates();
+     }
++
++    private boolean compare(double before, double after) {
++        return Math.abs(before - after) > EPSILON;
++    }
+     
+     @Override
+@@ -42,11 +47,11 @@
+             this.motionUpdateCounter = 0;
+         }
+-        final double n = this.posX - this.oldPosX;
+-        final double n2 = this.boundingBox.minY - this.oldBasePos;
+-        final double n3 = this.posY - this.oldPosY;
+-        final double n4 = this.posZ - this.oldPosZ;
++        final boolean posXChanged = compare(this.posX, this.oldPosX);
++        final boolean boundingBoxYChanged = compare(this.boundingBox.minY, this.oldBasePos);
++        final boolean posYChanged = compare(this.posY, this.oldPosY);
++        final boolean posZChanged = compare(this.posZ, this.oldPosZ);
+         final double n5 = this.rotationYaw - this.oldRotationYaw;
+         final double n6 = this.rotationPitch - this.oldRotationPitch;
+-        final boolean b = n2 != 0.0 || n3 != 0.0 || n != 0.0 || n4 != 0.0;
++        final boolean b = boundingBoxYChanged || posYChanged || posXChanged || posZChanged;
+         final boolean b2 = n5 != 0.0 || n6 != 0.0;
+         if (b && b2) {
+@@ -59,7 +64,8 @@
+             this.sendQueue.addToSendQueue(new Packet12PlayerLook(this.rotationYaw, this.rotationPitch, this.onGround));
+         }
+-        else {
+-            this.sendQueue.addToSendQueue(new Packet10Flying(this.onGround));
+-        }
++        //if (onGround != oldOnGround) {
++        //    oldOnGround = onGround;
++        //    this.sendQueue.addToSendQueue(new Packet10Flying(this.onGround));
++        //}
+         if (b) {
+             this.oldPosX = this.posX;

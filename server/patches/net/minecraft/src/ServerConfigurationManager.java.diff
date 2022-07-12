@@ -13,12 +13,13 @@
 +    public List<EntityPlayerMP> playerEntities;
      private MinecraftServer mcServer;
      private PlayerManager playerManagerObj;
-@@ -27,8 +26,13 @@
+@@ -27,8 +26,14 @@
      private Set<String> ops;
      private Set<String> authenticatedPlayers;
 +    private Set<String> whitelistedPlayers;
 +    private Set<String> whitelistedIPs;
 +    private boolean whitelistEnabled;
++    private boolean enforceRosepad;
      private File bannedPlayersFile;
      private File ipBanFile;
      private File opFile;
@@ -27,7 +28,7 @@
 +    private File whitelistIPsFile;
      private PlayerNBTManager playerNBTManagerObj;
      
-@@ -38,9 +42,12 @@
+@@ -38,9 +43,12 @@
      
      public ServerConfigurationManager(final MinecraftServer minecraftServer) {
 -        this.playerEntities = (List)new ArrayList();
@@ -45,7 +46,7 @@
 +        this.whitelistEnabled = false;
          this.mcServer = minecraftServer;
          this.bannedPlayersFile = minecraftServer.getFile("banned-players.txt");
-@@ -48,14 +55,21 @@
+@@ -48,14 +56,22 @@
          this.opFile = minecraftServer.getFile("ops.txt");
          this.authFile = minecraftServer.getFile("authed-players.txt");
 +        this.whitelistFile = minecraftServer.getFile("whitelist.txt");
@@ -53,6 +54,7 @@
          this.playerManagerObj = new PlayerManager(minecraftServer);
          this.maxPlayers = minecraftServer.propertyManagerObj.getIntProperty("max-players", 20);
 +        this.whitelistEnabled = minecraftServer.propertyManagerObj.getBooleanProperty("whitelist", false);
++        this.enforceRosepad = minecraftServer.propertyManagerObj.getBooleanProperty("enforce-rosepad", false);
          this.readBannedPlayers();
          this.loadBannedList();
          this.loadOps();
@@ -67,14 +69,14 @@
 +        this.saveWhitelistedIPs();
      }
      
-@@ -91,5 +105,5 @@
+@@ -91,5 +107,5 @@
      
      private static boolean isValidName(final String username) {
 -        return username.matches("[a-zA-Z0-9_ \\u0107 \\u015b]*");
 +        return username.matches("[a-zA-Z0-9_ \\u0107 \\u015b]{2,32}");
      }
      
-@@ -99,11 +113,19 @@
+@@ -99,11 +115,19 @@
              return null;
          }
 -        String string4 = netLoginHandler1.netManager.getRemoteAddress().toString();
@@ -98,21 +100,50 @@
 +        }
          if (this.playerEntities.size() >= this.maxPlayers) {
              netLoginHandler1.kickUser("The server is full!");
-@@ -115,5 +137,5 @@
+@@ -114,10 +138,27 @@
+             return null;
          }
++        {
++            List<ULPPExtension> extList = ULPPManager.getProtocolExtensions(password);
++            ULPPExtension ext = null;
++            for (ULPPExtension ext1 : extList) {
++                if (ext1.getName().equals("ROSE")) {
++                    ext = ext1;
++                }
++            }
++            if ((ext == null || ext.getVersion() == 0) && this.enforceRosepad) {
++                netLoginHandler1.kickUser("This server requires client to support scripts");
++                return null;
++            }
++            else if (ext != null && ext.getVersion() != 1) {
++                netLoginHandler1.kickUser("This server requires Rosepad " + MinecraftServer.getVersionString() + " to join");
++                return null;
++            }
++        }
          if (!authed && this.isAuthed(username)) {
 -            netLoginHandler1.kickUser("This user is authenticated! Log in using LPUJ >=v1.0.6 to authenticate.");
 +            netLoginHandler1.kickUser("This user is authenticated! Log in using Rosepad >=1.1.0.2-beta to authenticate.");
              return null;
          }
-@@ -173,5 +195,5 @@
+         for (int i5 = 0; i5 < this.playerEntities.size(); ++i5) {
+-            final EntityPlayerMP entityPlayerMP6 = (EntityPlayerMP)this.playerEntities.get(i5);
++            final EntityPlayerMP entityPlayerMP6 = this.playerEntities.get(i5);
+             if (entityPlayerMP6.username.equals(username)) {
+                 if (!this.mcServer.ULPPOnlineMode) {
+@@ -131,4 +172,5 @@
+             this.authPlayer(username);
+         }
++        netLoginHandler1.netManager.addToSendQueue(new Packet130RosepadMeta().Default());
+         return new EntityPlayerMP(this.mcServer, this.mcServer.worldMngr, username, new ItemInWorldManager(this.mcServer.worldMngr));
+     }
+@@ -173,5 +215,5 @@
          try {
              this.bannedPlayers.clear();
 -            final BufferedReader bufferedReader1 = new BufferedReader((Reader)new FileReader(this.bannedPlayersFile));
 +            BufferedReader bufferedReader1 = new BufferedReader((Reader)new FileReader(this.bannedPlayersFile));
              String string2 = "";
              while ((string2 = bufferedReader1.readLine()) != null) {
-@@ -198,4 +220,88 @@
+@@ -198,4 +240,88 @@
      }
      
 +    private void loadWhitelistedPlayers() {

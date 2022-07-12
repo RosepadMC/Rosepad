@@ -3,15 +3,15 @@
 @@ -136,4 +136,24 @@
      private int joinPlayerCounter;
      
-+    public int[] getVersion() {
++    public static int[] getVersion() {
 +    	return new int[] { 1, 1, 0, 5 };
 +    }
 +    
-+    public String getVersionTag() {
++    public static String getVersionTag() {
 +    	return "dev";
 +    }
 +    
-+    public String getVersionString() {
++    public static String getVersionString() {
 +    	int[] version = getVersion();
 +    	StringBuilder str = new StringBuilder();
 +    	for (int i = 0; i < version.length; i++) {
@@ -19,7 +19,7 @@
 +    		str.append(version[i]);
 +    	}
 +    	String tag = getVersionTag();
-+    	if (tag != null) str.append("-").append(tag);
++    	if (tag.length() > 0) str.append("-").append(tag);
 +    	return str.toString();
 +    }
 +    
@@ -83,7 +83,16 @@
 +}
                              if (this.isMultiplayerWorld() && InputHandler.GetKBEventKey() == this.gameSettings.keyBindChat.keyCode) {
                                  this.displayGuiScreen(new GuiChat());
-@@ -1093,5 +1113,5 @@
+@@ -1003,7 +1023,5 @@
+             else if (this.thePlayer != null) {
+                 this.thePlayer.preparePlayerToSpawn();
+-                if (world != null) {
+-                    world.spawnEntityInWorld(this.thePlayer);
+-                }
++                world.spawnEntityInWorld(this.thePlayer);
+             }
+             if (!world.multiplayerWorld) {
+@@ -1093,5 +1111,5 @@
      
      public String debugLoadedEntities() {
 -        return new StringBuilder("P: ").append(this.effectRenderer.getStatistics()).append(". T: ").append(this.theWorld.getDebugLoadedEntities()).toString();

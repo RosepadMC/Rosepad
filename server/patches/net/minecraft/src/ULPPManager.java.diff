@@ -1,43 +1,44 @@
 --- ULPPManager.java
 +++ ULPPManager.java
-@@ -1,4 +1,6 @@
+@@ -1,18 +1,66 @@
  package net.minecraft.src;
  
 +import java.util.*;
 +
  import net.minecraft.server.MinecraftServer;
  
-@@ -6,13 +8,62 @@
-     public static final boolean enabled = true;
-     public static final String ULPP_PREFIX = "ULPP";
-+    /**
-+     * @deprecated ULPP offline mode is redundant
-+     */
-     public static final String OFFLINE_PREFIX = "OFFL";
-     public static final int ULPP_VERSION = 1;
-     
-+    public static List<ULPPExtension> getProtocolExtensions(final String ver) {
+ public class ULPPManager {
+-    public static final boolean enabled = true;
+-    public static final String ULPP_PREFIX = "ULPP";
+-    public static final String OFFLINE_PREFIX = "OFFL";
+-    public static final int ULPP_VERSION = 1;
++
++	public static List<ULPPExtension> getProtocolExtensions(final String ver) {
 +    	String[] argsP = ver.split(";+");
 +    	List<ULPPExtension> args = new ArrayList<>();
 +    	for (String arg : argsP) {
 +    		arg = arg.trim();
-+    		if (!arg.matches("^[A-Za-z_-][0-9]+$"))
++    		if (!arg.matches("^[A-Z]+[0-9]+$"))
 +    			continue;
-+    		int numBegin = 0;
-+    		while (numBegin < arg.length() && Character.isDigit(arg.charAt(numBegin)))
++    		System.out.println("MATCH " + arg);
++			int numBegin = 0;
++    		while (numBegin < arg.length() && !Character.isDigit(arg.charAt(numBegin)))
 +    			numBegin++;
 +    		String name = arg.substring(0, numBegin);
-+    		int version = 0;
++    		int version;
 +    		try {
 +    			version = Integer.parseUnsignedInt(arg.substring(numBegin));
 +    		} catch (Exception e) {
++    			System.out.println("Failed to parse int");
++    			e.printStackTrace(System.out);
 +    			continue;
 +    		}
-+    		args.add(new ULPPExtension(name, version));
++    		System.out.println("EXT NAME " + name + " VER " + version);
++			args.add(new ULPPExtension(name, version));
 +    	}
 +    	return args;
 +    }
-+    
+     
 +    public static boolean supportsExtension(
 +    		final String ver,
 +    		final String extension,
@@ -57,7 +58,8 @@
 +    }
 +    
      public static String GetVersionString() {
-         return new StringBuilder("ULPP").append(Integer.toString(1)).toString();
+-        return new StringBuilder("ULPP").append(Integer.toString(1)).toString();
++        return "ULPP" + Integer.toString(1);
      }
      
 +    /**
@@ -71,7 +73,7 @@
 +        return supportsExtension(ver, "ULPP", 1, 1);
      }
      
-@@ -21,6 +72,12 @@
+@@ -21,6 +69,12 @@
      }
      
 +    /**
