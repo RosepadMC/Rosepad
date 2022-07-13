@@ -13,6 +13,10 @@ focused on adding new features to the game.
 > You may have to re-run build several times for it to succeed.
 > If you encounter `java.lang.IllegalStateException: An error occurred while decompiling this method.` in runtime, try rebuilding Rosepad.
 
+## Running
+
+To test Rosepad, first build then run `./gradlew -Dorg.gradle.java.home=/path/to/your/java8/home runClient`.
+
 ## Contributing
 
 Since Minecraft is not licensed under a free software license, we can't share its source code, any modifications

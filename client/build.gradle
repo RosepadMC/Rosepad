@@ -15,8 +15,8 @@ dependencies {
     shadow files('../libs/codecwav-20101023.jar')
     shadow files('../libs/libraryjavasound-20101123.jar')
     shadow files('../libs/librarylwjglopenal-20100824.jar')
-    implementation files('../libs/lwjgl-2.9.4-nightly-20150209.jar')
-    implementation files('../libs/lwjgl_util-2.9.4-nightly-20150209.jar')
+    implementation files('../libs/lwjgl-2.9.1-nightly-20130708.jar')
+    implementation files('../libs/lwjgl_util-2.9.1-nightly-20130708.jar')
     shadow files('../libs/soundsystem-20120107.jar')
     shadow group: 'org.json', name: 'json', version: '20220320'
 }
@@ -113,6 +113,96 @@ abstract class CreateInjectClasses extends DefaultTask {
 	}
 }
 
+class RunClient extends DefaultTask {
+    @Input
+    String jarLocation = ""
+
+    @Input
+    String libDir = ""
+
+    @Input
+    String runDir = ""
+
+    @Input
+    String allocatedMemory = ""
+
+    static String getLilypadClasspath(Path clientJar, Path libDir) {
+        File folder = libDir.toFile()
+        List<String> libraries = new ArrayList<String>()
+        libraries.add(clientJar.toString())
+
+        for (File file : folder.listFiles()) {
+            if (!file.isDirectory()) {
+                libraries.add(file.toString())
+            }
+        }
+
+        return String.join(";", libraries)
+    }
+
+    static def runClient(Path clientJar, Path libDir, Path runDir, allocatedMemory) {
+        File runDirectory = runDir.toFile()
+        runDirectory.mkdirs()
+
+        String username = "Player" + new Random().nextInt(999)
+        String mainClass = "net.minecraft.client.Minecraft"
+
+        Path jdk = System.properties['os.name'].toLowerCase().contains('windows')
+                ? Paths.get(System.getProperty('java.home') + "/bin/java.exe")
+                : Paths.get(System.getProperty('java.home') + "/bin/java")
+
+        List<String> command = new ArrayList<String>()
+
+        String lilypadClassPath = getLilypadClasspath(clientJar, libDir)
+
+        command.add(jdk.toAbsolutePath().normalize().toString())
+        command.add("-Xmx" + allocatedMemory)
+        command.add("-Xms" + allocatedMemory)
+        command.add("-Djava.util.Arrays.useLegacyMergeSort=true")
+        command.add("-Djava.library.path=" + Paths.get(libDir.toString(), "natives/"))
+        command.add("-cp")
+        command.add("\"" + lilypadClassPath + "\"")
+        command.add(mainClass)
+        command.add(username)
+
+        Process process = new ProcessBuilder(command).directory(runDirectory).start()
+
+        StreamGobbler out = new StreamGobbler(process.inputStream)
+        StreamGobbler err = new StreamGobbler(process.errorStream)
+        out.start()
+        err.start()
+
+        if (process.waitFor() != 0) {
+            throw new RuntimeException("Failed to run")
+        }
+    }
+
+    @TaskAction
+    def run() {
+        runClient(Paths.get(jarLocation), Paths.get(libDir), Paths.get(runDir), allocatedMemory)
+    }
+}
+
+class StreamGobbler extends Thread { // Stolen from a guy on stackoverflow
+    InputStream is
+
+    StreamGobbler(InputStream is) {
+        this.is = is
+    }
+
+    void run() {
+        try {
+            InputStreamReader isr = new InputStreamReader(is)
+            BufferedReader br = new BufferedReader(isr)
+            String line = null
+            while ((line = br.readLine()) != null)
+                System.out.println(line)
+        } catch (IOException ioe) {
+            ioe.printStackTrace()
+        }
+    }
+}
+
 tasks.register("deletePatches", DeletePatches) {
 	rmPath = "${projectDir}/patches"
 }
@@ -126,6 +216,13 @@ tasks.register("ejectClasses", CreateInjectClasses) {
 	source = "${projectDir}/src/main/java"
 	orig = "${projectDir}/src/orig/java"
 	dest = "${projectDir}/inject/java"
+}
+
+tasks.register("runClient", RunClient) {
+    jarLocation = "${projectDir}/../build/RosepadClient.jar"
+    libDir = "${projectDir}/../libs/"
+    runDir = "${projectDir}/run/"
+    allocatedMemory = "3G"
 }
 
 processPatches {

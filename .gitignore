@@ -12,4 +12,5 @@ jars/*
 /bin/
 /server/bin
 /client/bin
+/client/run
 /.metadata/
