@@ -15,7 +15,7 @@ focused on adding new features to the game.
 
 ## Running
 
-To test Rosepad, first build then run `./gradlew -Dorg.gradle.java.home=/path/to/your/java8/home runClient`.
+To test Rosepad, you must set it up and run `./gradlew -Dorg.gradle.java.home=/path/to/your/java8/home runClient`.
 
 ## Contributing
 
