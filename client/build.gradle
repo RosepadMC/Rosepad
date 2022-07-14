@@ -15,8 +15,8 @@ dependencies {
     shadow files('../libs/codecwav-20101023.jar')
     shadow files('../libs/libraryjavasound-20101123.jar')
     shadow files('../libs/librarylwjglopenal-20100824.jar')
-    implementation files('../libs/lwjgl-2.9.1-nightly-20130708.jar')
-    implementation files('../libs/lwjgl_util-2.9.1-nightly-20130708.jar')
+    implementation files('../libs/lwjgl-2.9.4-nightly-20150209.jar')
+    implementation files('../libs/lwjgl_util-2.9.4-nightly-20150209.jar')
     shadow files('../libs/soundsystem-20120107.jar')
     shadow group: 'org.json', name: 'json', version: '20220320'
     implementation group: 'org.json', name: 'json', version: '20220320' // we do this to get the path of
