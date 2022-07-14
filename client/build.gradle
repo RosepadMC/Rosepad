@@ -146,6 +146,16 @@ static List<String> getRunJVMArgs(String allocatedMemory, String libDir) {
     return jvmArgs
 }
 
+static String makeAndGetDir(String dir) {
+    File directory = new File(dir)
+
+    if (!directory.exists()) {
+        directory.mkdir()
+    }
+
+    return directory.getPath()
+}
+
 tasks.register("deletePatches", DeletePatches) {
 	rmPath = "${projectDir}/patches"
 }
@@ -169,7 +179,7 @@ task runClient (type: JavaExec) {
     classpath = getLilypadClasspath(sourceSets.main.runtimeClasspath, libraryPath)
     argsString = username
     jvmArgs = getRunJVMArgs("1024M", libraryPath)
-    workingDir = "${projectDir}/run/"
+    workingDir = makeAndGetDir("${projectDir}/run/")
 }
 
 processPatches {
