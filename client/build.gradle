@@ -15,10 +15,11 @@ dependencies {
     shadow files('../libs/codecwav-20101023.jar')
     shadow files('../libs/libraryjavasound-20101123.jar')
     shadow files('../libs/librarylwjglopenal-20100824.jar')
-    implementation files('../libs/lwjgl-2.9.4-nightly-20150209.jar')
-    implementation files('../libs/lwjgl_util-2.9.4-nightly-20150209.jar')
+    implementation files('../libs/lwjgl-2.9.1-nightly-20130708.jar')
+    implementation files('../libs/lwjgl_util-2.9.1-nightly-20130708.jar')
     shadow files('../libs/soundsystem-20120107.jar')
     shadow group: 'org.json', name: 'json', version: '20220320'
+    implementation group: 'org.json', name: 'json', version: '20220320' // we do this to get the path of it
 }
 
 jar {
@@ -113,6 +114,48 @@ abstract class CreateInjectClasses extends DefaultTask {
 	}
 }
 
+FileCollection getLilypadClasspath(FileCollection originalCollection, String libraryFolder) {
+    File libFolder = new File(libraryFolder)
+
+    ArrayList<File> finalList = libFolder.listFiles()
+
+    // Remove files from libFolder that original already has
+    for (File libraryFile : libFolder.listFiles()) {
+        for (File classpathFile in originalCollection.getFiles()) {
+            if (classpathFile.isDirectory()) {
+                if (!finalList.contains(classpathFile)) {
+                    finalList.add(classpathFile) // for src/main/java and src/main/resources
+                }
+            } else {
+                if (!finalList.contains(classpathFile)) {
+                    finalList.add(classpathFile)
+                }
+            }
+        }
+    }
+
+    return files(finalList)
+}
+
+static List<String> getRunJVMArgs(String allocatedMemory, String libDir) {
+    List<String> jvmArgs = new ArrayList<String>()
+    jvmArgs.add("-Xmx" + allocatedMemory)
+    jvmArgs.add("-Xms" + allocatedMemory)
+    jvmArgs.add("-Djava.util.Arrays.useLegacyMergeSort=true")
+    jvmArgs.add("-Djava.library.path=" + Paths.get(libDir.toString(), "natives/"))
+    return jvmArgs
+}
+
+static String makeAndGetDir(String dir) {
+    File directory = new File(dir)
+
+    if (!directory.exists()) {
+        directory.mkdir()
+    }
+
+    return directory.getPath()
+}
+
 tasks.register("deletePatches", DeletePatches) {
 	rmPath = "${projectDir}/patches"
 }
@@ -126,6 +169,17 @@ tasks.register("ejectClasses", CreateInjectClasses) {
 	source = "${projectDir}/src/main/java"
 	orig = "${projectDir}/src/orig/java"
 	dest = "${projectDir}/inject/java"
+}
+
+String username = new Random().nextInt(999)
+String libraryPath = "${projectDir}/../libs/"
+
+task runClient (type: JavaExec) {
+    mainClass = "net.minecraft.client.Minecraft"
+    classpath = getLilypadClasspath(sourceSets.main.runtimeClasspath, libraryPath)
+    argsString = username
+    jvmArgs = getRunJVMArgs("1024M", libraryPath)
+    workingDir = makeAndGetDir("${projectDir}/run/")
 }
 
 processPatches {
