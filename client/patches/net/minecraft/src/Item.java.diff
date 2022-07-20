@@ -9,7 +9,7 @@
 +    public static Item SHOVEL_IRON;
      public static Item PICKAXE_IRON;
      public static Item AXE_IRON;
-@@ -98,9 +99,4 @@
+@@ -98,9 +99,6 @@
      public static Item RECORD_HIDDEN_DEN;
      public static Item RECORD_LEMURIA;
 -    public final int shiftedIndex;
@@ -17,9 +17,11 @@
 -    protected int maxDamage;
 -    protected int iconIndex;
 -    protected boolean bFull3D;
++    public static Item RECORD_43343138;
++    public static Item RECORD_ESTONIAN_RELIQUARY;
      public static Item obsidianArmor0;
      public static Item obsidianArmor1;
-@@ -120,117 +116,144 @@
+@@ -120,117 +118,156 @@
      public static Item edibleFire;
      public static Item flameberge;
 -    
@@ -31,6 +33,7 @@
 +    protected boolean bFull3D;
 +    protected String itemName = null;
 +    protected int rarity = 0;
++    protected boolean isVanilla = true;
 +
 +    public String getName() {
 +        if (itemName == null) return "item." + this.shiftedIndex + ".name";
@@ -48,6 +51,15 @@
 +
 +    public Item setRarity(int rarity) {
 +        this.rarity = rarity;
++        return this;
++    }
++
++    public boolean getVanilla() {
++        return isVanilla;
++    }
++
++    public Item setVanilla(boolean isVanilla) {
++        this.isVanilla = isVanilla;
 +        return this;
 +    }
 +
@@ -255,6 +267,8 @@
 +        Item.COMPASS = new Item(89).setIconIndex(54).setName("Compass");
 +        Item.RECORD_HIDDEN_DEN = new ItemRecord(2000, "hidden_den").setIconIndex(240).setName("[5] - Hidden Den").setRarity(2);
 +        Item.RECORD_LEMURIA = new ItemRecord(2001, "lemuria").setIconIndex(241).setName("[5] - Lemuria").setRarity(2);
++        Item.RECORD_43343138 = new ItemRecord(2002, "43343138").setIconIndex(242).setName("[5] - 43343138").setRarity(2).setVanilla(false);
++        Item.RECORD_ESTONIAN_RELIQUARY = new ItemRecord(2003, "estonian_reliquary").setIconIndex(243).setName("[5] - Estonian Reliquary").setRarity(2).setVanilla(false);
 +        Item.obsidianArmor0 = new ItemArmor(90, 4, 5, 0).setIconIndex(144).setName("Obsidian helmet").setRarity(1);
 +        Item.obsidianArmor1 = new ItemArmor(91, 4, 5, 1).setIconIndex(160).setName("Obsidian chestplate").setRarity(1);
 +        Item.obsidianArmor2 = new ItemArmor(92, 4, 5, 2).setIconIndex(176).setName("Obsidian leggings").setRarity(1);
@@ -274,7 +288,14 @@
 +        Item.flameberge = new ItemSwordFlameberge(106).setIconIndex(69).setName("Flameberge").setRarity(2);
      }
      
-@@ -285,5 +308,5 @@
+@@ -241,5 +278,5 @@
+         this.shiftedIndex = 256 + id;
+         if (Item.ITEMS_LIST[256 + id] != null) {
+-            System.out.println(new StringBuilder().append("CONFLICT @ ").append(id).toString());
++            System.out.println("CONFLICT @ " + id);
+         }
+         Item.ITEMS_LIST[256 + id] = this;
+@@ -285,5 +322,5 @@
      }
      
 -    public boolean canHarvestBlock(final Block block) {

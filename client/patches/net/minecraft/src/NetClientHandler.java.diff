@@ -103,18 +103,15 @@
 +        final String usedPassword = ULPPManager.GetVersionString(online, this.mc.gameSettings.acceptRemoteScripts);
          this.addToSendQueue(new Packet1Login(this.mc.session.username, usedPassword, 2));
      }
-@@ -358,3 +363,27 @@
+@@ -358,3 +363,24 @@
          this.worldClient.spawnZ = packet.zPos;
      }
 +
 +    @Override
 +    public void handleRosepadMeta(Packet130RosepadMeta packet) {
-+        if (!Arrays.equals(packet.version, Minecraft.getVersion()) || !packet.tag.equals(Minecraft.getVersionTag())) {
-+            System.err.println("Server version does not match client!");
-+        }
-+
 +        for (ULPPExtension extension : packet.extensions) {
-+            if (extension.getName().equals("ROSE") && extension.getVersion() != 1) {
++            if (extension.getName().equals("ROSE") && extension.getVersion() != 2) {
++                System.err.println("Server reported rosepad version " + extension.getVersion());
 +                this.netManager.networkShutdown("Server Rosepad protocol extension version does not match client");
 +                return;
 +            }

@@ -1,6 +1,6 @@
 --- ScreenItemCheat.java
 +++ ScreenItemCheat.java
-@@ -4,4 +4,7 @@
+@@ -4,7 +4,10 @@
  import net.minecraft.client.Minecraft;
  
 +import java.util.ArrayList;
@@ -8,6 +8,17 @@
 +
  public class ScreenItemCheat extends GuiScreen {
      public Minecraft mc;
+-    private RenderBlocks blockRendererBlurryTroll;
++    private final RenderBlocks blockRendererBlurryTroll;
+     private boolean createButtons;
+     private int lastCols;
+@@ -78,5 +81,5 @@
+         int n = 0;
+         for (int i = 256; i != Item.ITEMS_LIST.length; ++i) {
+-            if (Item.ITEMS_LIST[i] != null) {
++            if (Item.ITEMS_LIST[i] != null && (Item.ITEMS_LIST[i].getVanilla() || NetClientHandler.rosepadMeta != null)) {
+                 ++n;
+             }
 @@ -131,8 +134,10 @@
          }
          if (button.id >= 4096) {

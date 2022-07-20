@@ -10,7 +10,7 @@
 +// TODO: Replace half of methods with better implementation
  public class ULPPManager {
      public static final boolean enabled = true;
-@@ -10,9 +13,20 @@
+@@ -10,23 +13,22 @@
      public static final int ULPP_VERSION = 1;
      
 -    public static String GetVersionString(final boolean online) {
@@ -23,7 +23,7 @@
          }
 -        return new StringBuilder("OFFL").append(Integer.toString(1)).toString();
 +        if (rosepad) {
-+            parts.add("ROSE1");
++            parts.add("ROSE2");
 +        }
 +    	boolean first = true;
 +    	for (String part : parts) {
@@ -33,4 +33,33 @@
 +    	}
 +    	return builder.toString();
      }
-     
+-    
+-    public static boolean IsVersionString(final String ver) {
+-        return ver.startsWith("ULPP") || ver.startsWith("OFFL");
+-    }
+-    
+-    public static int GetVersion(final String ver) {
+-        return Integer.parseInt(ver.substring("ULPP".length()));
+-    }
+-    
+-    public static boolean IsOnline(final String ver) {
+-        return ver.startsWith("ULPP");
+-    }
+-    
++
+     public static NetHandler CreateClientHandler(final int version, final Minecraft mc, final NetworkManager netManager) {
+         try {
+@@ -36,5 +38,5 @@
+                 }
+                 default: {
+-                    throw new RuntimeException(new StringBuilder("Unknown ULPP version ").append(Integer.toString(version)).toString());
++                    throw new RuntimeException("Unknown ULPP version " + Integer.toString(version));
+                 }
+             }
+@@ -42,5 +44,5 @@
+         catch (IOException e) {
+             e.printStackTrace();
+-            throw new RuntimeException(new StringBuilder("Error occurred creating ULPP ").append(Integer.toString(version)).append(" handler").toString());
++            throw new RuntimeException("Error occurred creating ULPP " + Integer.toString(version) + " handler");
+         }
+     }

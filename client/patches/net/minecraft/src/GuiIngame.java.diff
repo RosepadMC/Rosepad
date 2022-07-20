@@ -66,7 +66,7 @@
 -                    armorItemInSlot.getItem();
                      final int maxDamage = armorItemInSlot.getMaxDamage();
                      final int n3 = maxDamage - armorItemInSlot.itemDmg;
-@@ -242,26 +248,48 @@
+@@ -242,26 +248,49 @@
          GL11.glDisable(32826);
          if (this.mc.gameSettings.showFPS) {
 -            fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad (LPUJ v106)", 2, 2, 16777215);
@@ -86,6 +86,7 @@
 +                    );
 +                else
 +                    lines.add("Vanilla server");
++                lines.add("Network: §6" + ThreadBandwidthCounter.getWBPS() + "§f/§b" + ThreadBandwidthCounter.getRBPS());
              }
 -            if (GuiIngame.uqKey != "") {
 -                fontRenderer.drawStringWithShadow(GuiIngame.uqKey, 2, 52, 16777215);
@@ -128,14 +129,14 @@
 +            if (!Objects.equals(GuiIngame.uqKey, "")) {
                  fontRenderer.drawStringWithShadow(GuiIngame.uqKey, 2, 12, 16777215);
              }
-@@ -271,5 +299,5 @@
+@@ -271,5 +300,5 @@
              this.ResetNamegen();
          }
 -        final float n7 = (float)(1.0 * Math.pow(0.5, (double)(this.currentArea.length() / 10)));
 +        final float n7 = (float)(Math.pow(0.5f, (float)this.currentArea.length() / 10.0f));
          GL11.glScalef(1.0f + n7, 1.0f + n7, 1.0f + n7);
          final int n = (int)(255.0f * Math.max(1.0f - Math.min(System.currentTimeMillis() - this.areaTimer, 5000L) / 5000.0f, 0.3f));
-@@ -306,7 +334,7 @@
+@@ -306,7 +335,7 @@
          GL11.glPushMatrix();
          GL11.glTranslatef(0.0f, (float)(scaledHeight - 48), 0.0f);
 -        if (GuiScreen.currentID != "") {
@@ -145,7 +146,7 @@
 +            fontRenderer.drawStringWithShadow("Give item: " + GuiScreen.currentID, 2, 20, 16449390);
              try {
                  final int int1 = Integer.parseInt(GuiScreen.currentID);
-@@ -341,7 +369,7 @@
+@@ -341,7 +370,7 @@
              }
          }
 -        if (this.renderQAName) {
@@ -155,7 +156,7 @@
 +            fontRenderer.drawStringWithShadow("QA BUILD: " + GuiScreenInputPass.name, 5, 0, 553320302);
          }
          GL11.glPopMatrix();
-@@ -410,6 +438,5 @@
+@@ -410,6 +439,5 @@
          ++this.updateCounter;
          for (int i = 0; i < this.chatMessageList.size(); ++i) {
 -            final ChatLine chatLine2;
@@ -163,7 +164,7 @@
 +            final ChatLine chatLine2 = this.chatMessageList.get(i);
              ++chatLine2.updateCounter;
          }
-@@ -417,4 +444,5 @@
+@@ -417,4 +445,5 @@
      
      public void addChatMessage(String message) {
 +    	if (message.length() > 2000) message = message.substring(message.length() - 2000).trim();

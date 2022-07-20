@@ -1,0 +1,24 @@
+--- Item.java
++++ Item.java
+@@ -98,4 +98,6 @@
+     public static Item record13;
+     public static Item recordCat;
++    public static Item record43343138;
++    public static Item recordEstonianReliquary;
+     public final int shiftedIndex;
+     protected int maxStackSize;
+@@ -120,5 +122,6 @@
+     public static Item edibleFire;
+     public static Item flameberge;
+-    
++
++
+     static {
+         Item.rand = new Random();
+@@ -216,4 +219,6 @@
+         Item.record13 = new ItemRecord(2000, "hidden_den").setIconIndex(240);
+         Item.recordCat = new ItemRecord(2001, "lemuria").setIconIndex(241);
++        Item.record43343138 = new ItemRecord(2002, "43343138").setIconIndex(242);
++        Item.recordEstonianReliquary = new ItemRecord(2003, "estonian_reliquary").setIconIndex(243);
+         Item.obsidianArmor0 = new ItemArmor(90, 4, 5, 0).setIconIndex(144);
+         Item.obsidianArmor1 = new ItemArmor(91, 4, 5, 1).setIconIndex(160);

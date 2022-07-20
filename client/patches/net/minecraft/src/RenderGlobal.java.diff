@@ -12,3 +12,10 @@
 +        return new StringBuilder().append("E: §9").append(this.countEntitiesRendered).append("§r/§b").append(this.countEntitiesTotal).append("§r. B: §8").append(this.countEntitiesHidden).append("§r, I: §7").append(this.countEntitiesTotal - this.countEntitiesHidden - this.countEntitiesRendered).toString();
      }
      
+@@ -891,5 +891,5 @@
+     public void playRecord(final String record, final int x, final int y, final int z) {
+         if (record != null) {
+-            this.mc.ingameGUI.setRecordPlayingMessage(new StringBuilder("C418 - ").append(record).toString());
++            this.mc.ingameGUI.setRecordPlayingMessage("[5] - " + record);
+         }
+         this.mc.sndManager.playStreaming(record, (float)x, (float)y, (float)z, 1.0f, 1.0f);

@@ -18,7 +18,7 @@
      private static Random rand;
      
 +    public static int[] getVersion() {
-+    	return new int[] { 1, 1, 0, 5 };
++    	return new int[] { 1, 1, 0, 6 };
 +    }
 +    
 +    public static String getVersionTag() {

@@ -1,0 +1,24 @@
+--- SoundManager.java
++++ SoundManager.java
+@@ -132,7 +132,7 @@
+             return;
+         }
+-        final String string2 = "streaming";
+-        if (this.sndSystem.playing("streaming")) {
+-            this.sndSystem.stop("streaming");
++        final String name = "streaming" + Math.round(float2) + ":" + Math.round(float3) + ":" + Math.round(float4);
++        if (this.sndSystem.playing(name)) {
++            this.sndSystem.stop(name);
+         }
+         if (string == null) {
+@@ -144,7 +144,7 @@
+                 this.sndSystem.stop("BgMusic");
+             }
+-            this.sndSystem.newStreamingSource(true, "streaming", randomSoundFromSoundPool.soundUrl, randomSoundFromSoundPool.soundName, false, float2, float3, float4, 2, 64.0f);
+-            this.sndSystem.setVolume("streaming", 0.5f);
+-            this.sndSystem.play("streaming");
++            this.sndSystem.newStreamingSource(true, name, randomSoundFromSoundPool.soundUrl, randomSoundFromSoundPool.soundName, false, float2, float3, float4, 2, 64.0f);
++            this.sndSystem.setVolume(name, 0.5f);
++            this.sndSystem.play(name);
+         }
+     }

@@ -1,6 +1,6 @@
 --- ULPPManager.java
 +++ ULPPManager.java
-@@ -1,18 +1,66 @@
+@@ -1,26 +1,66 @@
  package net.minecraft.src;
  
 +import java.util.*;
@@ -12,15 +12,17 @@
 -    public static final String ULPP_PREFIX = "ULPP";
 -    public static final String OFFLINE_PREFIX = "OFFL";
 -    public static final int ULPP_VERSION = 1;
+-    
+-    public static String GetVersionString() {
+-        return new StringBuilder("ULPP").append(Integer.toString(1)).toString();
 +
 +	public static List<ULPPExtension> getProtocolExtensions(final String ver) {
 +    	String[] argsP = ver.split(";+");
 +    	List<ULPPExtension> args = new ArrayList<>();
 +    	for (String arg : argsP) {
 +    		arg = arg.trim();
-+    		if (!arg.matches("^[A-Z]+[0-9]+$"))
++    		if (!arg.matches("^[A-Z]+\\d+$"))
 +    			continue;
-+    		System.out.println("MATCH " + arg);
 +			int numBegin = 0;
 +    		while (numBegin < arg.length() && !Character.isDigit(arg.charAt(numBegin)))
 +    			numBegin++;
@@ -28,16 +30,13 @@
 +    		int version;
 +    		try {
 +    			version = Integer.parseUnsignedInt(arg.substring(numBegin));
-+    		} catch (Exception e) {
-+    			System.out.println("Failed to parse int");
-+    			e.printStackTrace(System.out);
++    		} catch (Exception ignored) {
 +    			continue;
 +    		}
-+    		System.out.println("EXT NAME " + name + " VER " + version);
 +			args.add(new ULPPExtension(name, version));
 +    	}
 +    	return args;
-+    }
+     }
      
 +    public static boolean supportsExtension(
 +    		final String ver,
@@ -49,19 +48,12 @@
 +    		if (ext.getName().equals(extension)) {
 +    			if (ext.getVersion() < versionNumberMin)
 +    				return false;
-+    			if (ext.getVersion() > versionNumberMax)
-+    				return false;
-+    			return true;
-+    		}
++				return ext.getVersion() <= versionNumberMax;
++			}
 +    	}
 +    	return false;
 +    }
-+    
-     public static String GetVersionString() {
--        return new StringBuilder("ULPP").append(Integer.toString(1)).toString();
-+        return "ULPP" + Integer.toString(1);
-     }
-     
++
 +    /**
 +     * Check if client supports ULPP
 +     * 
@@ -72,10 +64,12 @@
 -        return ver.startsWith("ULPP") || ver.startsWith("OFFL");
 +        return supportsExtension(ver, "ULPP", 1, 1);
      }
-     
-@@ -21,6 +69,12 @@
-     }
-     
+-    
+-    public static int GetVersion(final String ver) {
+-        return Integer.parseInt(ver.substring("ULPP".length()));
+-    }
+-    
++
 +    /**
 +     * Check if client uses ULPP online mode
 +     * 
@@ -87,3 +81,10 @@
 +        return supportsExtension(ver, "ULPP", 1, 1);
      }
      
+@@ -31,5 +71,5 @@
+             }
+             default: {
+-                throw new RuntimeException(new StringBuilder("Unknown ULPP version ").append(Integer.toString(version)).toString());
++                throw new RuntimeException("Unknown ULPP version " + version);
+             }
+         }

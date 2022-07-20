@@ -73,7 +73,7 @@
      
      private static boolean isValidName(final String username) {
 -        return username.matches("[a-zA-Z0-9_ \\u0107 \\u015b]*");
-+        return username.matches("[a-zA-Z0-9_ \\u0107 \\u015b]{2,32}");
++        return username.matches("[a-zA-Z\\d_ \\u0107 \\u015b]{2,32}");
      }
      
 @@ -99,11 +115,19 @@
@@ -100,7 +100,7 @@
 +        }
          if (this.playerEntities.size() >= this.maxPlayers) {
              netLoginHandler1.kickUser("The server is full!");
-@@ -114,10 +138,27 @@
+@@ -114,10 +138,28 @@
              return null;
          }
 +        {
@@ -115,14 +115,15 @@
 +                netLoginHandler1.kickUser("This server requires client to support scripts");
 +                return null;
 +            }
-+            else if (ext != null && ext.getVersion() != 1) {
-+                netLoginHandler1.kickUser("This server requires Rosepad " + MinecraftServer.getVersionString() + " to join");
++            else if (ext != null && ext.getVersion() != 2 && this.enforceRosepad) {
++                netLoginHandler1.kickUser("This server requires Rosepad "
++                        + MinecraftServer.getVersionString() + " to join");
 +                return null;
 +            }
 +        }
          if (!authed && this.isAuthed(username)) {
 -            netLoginHandler1.kickUser("This user is authenticated! Log in using LPUJ >=v1.0.6 to authenticate.");
-+            netLoginHandler1.kickUser("This user is authenticated! Log in using Rosepad >=1.1.0.2-beta to authenticate.");
++            netLoginHandler1.kickUser("This user is authenticated! Log in using Rosepad >=1.1.0.6-beta to authenticate.");
              return null;
          }
          for (int i5 = 0; i5 < this.playerEntities.size(); ++i5) {
@@ -130,26 +131,69 @@
 +            final EntityPlayerMP entityPlayerMP6 = this.playerEntities.get(i5);
              if (entityPlayerMP6.username.equals(username)) {
                  if (!this.mcServer.ULPPOnlineMode) {
-@@ -131,4 +172,5 @@
+@@ -131,4 +173,5 @@
              this.authPlayer(username);
          }
 +        netLoginHandler1.netManager.addToSendQueue(new Packet130RosepadMeta().Default());
          return new EntityPlayerMP(this.mcServer, this.mcServer.worldMngr, username, new ItemInWorldManager(this.mcServer.worldMngr));
      }
-@@ -173,5 +215,5 @@
+@@ -144,5 +187,5 @@
+     public void sendPacketToAllPlayers(final Packet packet1) {
+         for (int i2 = 0; i2 < this.playerEntities.size(); ++i2) {
+-            final EntityPlayerMP entityPlayerMP3 = (EntityPlayerMP)this.playerEntities.get(i2);
++            final EntityPlayerMP entityPlayerMP3 = this.playerEntities.get(i2);
+             entityPlayerMP3.playerNetServerHandler.sendPacket(packet1);
+         }
+@@ -150,12 +193,12 @@
+     
+     public String getPlayerList() {
+-        String string1 = "";
++        StringBuilder string1 = new StringBuilder();
+         for (int i2 = 0; i2 < this.playerEntities.size(); ++i2) {
+             if (i2 > 0) {
+-                string1 = String.valueOf(string1) + ", ";
++                string1.append(", ");
+             }
+-            string1 = String.valueOf(string1) + ((EntityPlayerMP)this.playerEntities.get(i2)).username;
++            string1.append(this.playerEntities.get(i2).username);
+         }
+-        return string1;
++        return string1.toString();
+     }
+     
+@@ -173,5 +216,5 @@
          try {
              this.bannedPlayers.clear();
 -            final BufferedReader bufferedReader1 = new BufferedReader((Reader)new FileReader(this.bannedPlayersFile));
-+            BufferedReader bufferedReader1 = new BufferedReader((Reader)new FileReader(this.bannedPlayersFile));
++            BufferedReader bufferedReader1 = new BufferedReader(new FileReader(this.bannedPlayersFile));
              String string2 = "";
              while ((string2 = bufferedReader1.readLine()) != null) {
-@@ -198,4 +240,88 @@
+@@ -181,5 +224,5 @@
+         }
+         catch (Exception exception3) {
+-            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to load ban list: ").append(exception3).toString());
++            ServerConfigurationManager.logger.warning("Failed to load ban list: " + exception3);
+         }
+     }
+@@ -187,5 +230,5 @@
+     private void writeBannedPlayers() {
+         try {
+-            final PrintWriter printWriter1 = new PrintWriter((Writer)new FileWriter(this.bannedPlayersFile, false));
++            final PrintWriter printWriter1 = new PrintWriter(new FileWriter(this.bannedPlayersFile, false));
+             for (final String string3 : this.bannedPlayers) {
+                 printWriter1.println(string3);
+@@ -194,8 +237,92 @@
+         }
+         catch (Exception exception4) {
+-            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to save ban list: ").append(exception4).toString());
++            ServerConfigurationManager.logger.warning("Failed to save ban list: " + exception4);
+         }
      }
      
 +    private void loadWhitelistedPlayers() {
 +    	try {
 +    		this.whitelistedPlayers.clear();
-+    		final BufferedReader bufferedReader1 = new BufferedReader((Reader)new FileReader(this.whitelistFile));
++    		final BufferedReader bufferedReader1 = new BufferedReader(new FileReader(this.whitelistFile));
 +    		String string2 = "";
 +    		while ((string2 = bufferedReader1.readLine()) != null) {
 +    			this.whitelistedPlayers.add(string2.trim().toLowerCase());
@@ -157,20 +201,20 @@
 +    		bufferedReader1.close();
 +    	}
 +    	catch (Exception exception3) {
-+    		ServerConfigurationManager.logger.warning(new StringBuilder("Failed to load player whitelist: ").append(exception3).toString());
++    		ServerConfigurationManager.logger.warning("Failed to load player whitelist: " + exception3);
 +    	}
 +    }
 +    
 +    private void saveWhitelistedPlayers() {
 +    	try {
-+    		final PrintWriter printWriter1 = new PrintWriter((Writer)new FileWriter(this.whitelistFile, false));
++    		final PrintWriter printWriter1 = new PrintWriter(new FileWriter(this.whitelistFile, false));
 +    		for (final String string3 : this.whitelistedPlayers) {
 +    			printWriter1.println(string3);
 +    		}
 +    		printWriter1.close();
 +    	}
 +    	catch (Exception exception4) {
-+    		ServerConfigurationManager.logger.warning(new StringBuilder("Failed to save player whitelist: ").append(exception4).toString());
++    		ServerConfigurationManager.logger.warning("Failed to save player whitelist: " + exception4);
 +    	}
 +    }
 +    
@@ -187,7 +231,7 @@
 +    private void loadWhitelistedIPs() {
 +    	try {
 +    		this.whitelistedIPs.clear();
-+    		final BufferedReader bufferedReader1 = new BufferedReader((Reader)new FileReader(this.whitelistIPsFile));
++    		final BufferedReader bufferedReader1 = new BufferedReader(new FileReader(this.whitelistIPsFile));
 +    		String string2 = "";
 +    		while ((string2 = bufferedReader1.readLine()) != null) {
 +    			this.whitelistedIPs.add(string2.trim().toLowerCase());
@@ -195,20 +239,20 @@
 +    		bufferedReader1.close();
 +    	}
 +    	catch (Exception exception3) {
-+    		ServerConfigurationManager.logger.warning(new StringBuilder("Failed to load ip whitelist: ").append(exception3).toString());
++    		ServerConfigurationManager.logger.warning("Failed to load ip whitelist: " + exception3);
 +    	}
 +    }
 +    
 +    private void saveWhitelistedIPs() {
 +    	try {
-+    		final PrintWriter printWriter1 = new PrintWriter((Writer)new FileWriter(this.whitelistIPsFile, false));
++    		final PrintWriter printWriter1 = new PrintWriter(new FileWriter(this.whitelistIPsFile, false));
 +    		for (final String string3 : this.whitelistedIPs) {
 +    			printWriter1.println(string3);
 +    		}
 +    		printWriter1.close();
 +    	}
 +    	catch (Exception exception4) {
-+    		ServerConfigurationManager.logger.warning(new StringBuilder("Failed to save ip whitelist: ").append(exception4).toString());
++    		ServerConfigurationManager.logger.warning("Failed to save ip whitelist: " + exception4);
 +    	}
 +    }
 +    
@@ -232,3 +276,45 @@
 +    
      public void banIP(final String string1) {
          this.bannedIPs.add(string1);
+@@ -219,5 +346,5 @@
+         }
+         catch (Exception exception3) {
+-            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to load ip ban list: ").append(exception3).toString());
++            ServerConfigurationManager.logger.warning("Failed to load ip ban list: " + exception3);
+         }
+     }
+@@ -232,5 +359,5 @@
+         }
+         catch (Exception exception4) {
+-            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to save ip ban list: ").append(exception4).toString());
++            ServerConfigurationManager.logger.warning("Failed to save ip ban list: " + exception4);
+         }
+     }
+@@ -266,5 +393,5 @@
+         }
+         catch (Exception exception3) {
+-            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to load op list: ").append(exception3).toString());
++            ServerConfigurationManager.logger.warning("Failed to load op list: " + exception3);
+         }
+     }
+@@ -279,5 +406,5 @@
+         }
+         catch (Exception exception4) {
+-            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to save op list: ").append(exception4).toString());
++            ServerConfigurationManager.logger.warning("Failed to save op list: " + exception4);
+         }
+     }
+@@ -294,5 +421,5 @@
+         }
+         catch (Exception exception3) {
+-            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to load authenticated player list: ").append(exception3).toString());
++            ServerConfigurationManager.logger.warning("Failed to load authenticated player list: " + exception3);
+         }
+     }
+@@ -307,5 +434,5 @@
+         }
+         catch (Exception exception4) {
+-            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to save authenticated player list: ").append(exception4).toString());
++            ServerConfigurationManager.logger.warning("Failed to save authenticated player list: " + exception4);
+         }
+     }

@@ -1,6 +1,13 @@
 --- NetworkManager.java
 +++ NetworkManager.java
-@@ -13,12 +13,12 @@
+@@ -1,4 +1,6 @@
+ package net.minecraft.src;
+ 
++import org.lwjgl.Sys;
++
+ import java.io.IOException;
+ import java.util.Collections;
+@@ -13,12 +15,12 @@
      public static int numReadThreads;
      public static int numWriteThreads;
 -    private Object sendQueueLock;
@@ -20,7 +27,7 @@
 +    private final List<Packet> chunkDataPackets;
      private NetHandler netHandler;
      boolean isServerTerminating;
-@@ -40,7 +40,7 @@
+@@ -40,7 +42,7 @@
          this.sendQueueLock = new Object();
          this.isRunning = true;
 -        this.readPackets = (List<Packet>)Collections.synchronizedList((List)new LinkedList());
@@ -31,22 +38,29 @@
 +        this.chunkDataPackets = Collections.synchronizedList(new LinkedList<>());
          this.isServerTerminating = false;
          this.isTerminating = false;
-@@ -54,6 +54,6 @@
-         this.socketInputStream = new DataInputStream(socket.getInputStream());
-         this.socketOutputStream = new DataOutputStream(socket.getOutputStream());
+@@ -52,10 +54,11 @@
+         this.netHandler = netHandler;
+         socket.setTrafficClass(24);
+-        this.socketInputStream = new DataInputStream(socket.getInputStream());
+-        this.socketOutputStream = new DataOutputStream(socket.getOutputStream());
 -        this.readThread = new NetworkReaderThread(this, String.valueOf(name) + " read thread");
 -        this.writeThread = new NetworkWriterThread(this, String.valueOf(name) + " write thread");
++        this.socketInputStream = new CountDataInputStream(socket.getInputStream());
++        this.socketOutputStream = new CountDataOutputStream(socket.getOutputStream());
 +        this.readThread = new NetworkReaderThread(this, name + " read thread");
 +        this.writeThread = new NetworkWriterThread(this, name + " write thread");
          this.readThread.start();
          this.writeThread.start();
-@@ -73,5 +73,4 @@
++        ThreadBandwidthCounter.spawn();
+     }
+     
+@@ -73,5 +76,4 @@
              }
          }
 -        // monitorexit(this.sendQueueLock)
      }
      
-@@ -92,8 +91,7 @@
+@@ -92,8 +94,7 @@
                  final Packet packet;
                  synchronized (this.sendQueueLock) {
 -                    packet = (Packet)this.dataPackets.remove(0);
@@ -56,7 +70,7 @@
 -                // monitorexit(this.sendQueueLock)
                  Packet.writePacket(packet, this.socketOutputStream);
              }
-@@ -102,8 +100,7 @@
+@@ -102,8 +103,7 @@
                  final Packet packet;
                  synchronized (this.sendQueueLock) {
 -                    packet = (Packet)this.chunkDataPackets.remove(0);
@@ -66,21 +80,25 @@
 -                // monitorexit(this.sendQueueLock)
                  Packet.writePacket(packet, this.socketOutputStream);
                  this.chunkDataSendCounter = 50;
-@@ -113,5 +110,5 @@
+@@ -113,5 +113,5 @@
              }
          }
 -        catch (InterruptedException ex) {}
 +        catch (InterruptedException ignored) {}
          catch (Exception exception) {
              if (!this.isTerminating) {
-@@ -140,5 +137,5 @@
+@@ -140,8 +140,9 @@
      private void onNetworkError(final Exception exception) {
          exception.printStackTrace();
 -        this.networkShutdown(new StringBuilder("Internal exception: ").append(exception.toString()).toString());
 +        this.networkShutdown("Internal exception: " + exception.toString());
      }
      
-@@ -154,13 +151,13 @@
+     public void networkShutdown(final String reason) {
++        System.out.println("Network closed: " + reason);
+         if (!this.isRunning) {
+             return;
+@@ -154,13 +155,13 @@
              this.socketInputStream.close();
          }
 -        catch (Throwable t) {}
@@ -97,7 +115,7 @@
 +        catch (Throwable ignored) {}
      }
      
-@@ -182,5 +179,5 @@
+@@ -182,5 +183,5 @@
          int n = 100;
          while (!this.readPackets.isEmpty() && n-- >= 0 && !this.isSwitchingHandler) {
 -            ((Packet)this.readPackets.remove(0)).processPacket(this.netHandler);

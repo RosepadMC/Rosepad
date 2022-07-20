@@ -1,5 +1,19 @@
 --- NetServerHandler.java
 +++ NetServerHandler.java
+@@ -71,5 +71,5 @@
+                 if (d5 > 1.65 || d5 < 0.1) {
+                     this.kickPlayer("Illegal stance");
+-                    NetServerHandler.logger.warning(String.valueOf(this.playerEntity.username) + " had an illegal stance: " + d5);
++                    NetServerHandler.logger.warning(this.playerEntity.username + " had an illegal stance: " + d5);
+                 }
+                 this.playerEntity.managedPosY = packet.stance;
+@@ -98,5 +98,5 @@
+             if (d8 > 0.0625) {
+                 z18 = true;
+-                NetServerHandler.logger.warning(String.valueOf(this.playerEntity.username) + " moved wrongly!");
++                NetServerHandler.logger.warning(this.playerEntity.username + " moved wrongly!");
+             }
+             this.playerEntity.setPositionAndRotation(d2, d3, d4, f8, f9);
 @@ -151,10 +151,10 @@
          final int i20 = packet.zPosition;
          final int i21 = packet.face;

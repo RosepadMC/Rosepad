@@ -1,0 +1,9 @@
+--- ItemMinecart.java
++++ ItemMinecart.java
+@@ -13,5 +13,5 @@
+     public boolean onItemUse(final ItemStack stack, final EntityPlayer entityPlayer, final World world, final int x, final int y, final int z, final int side) {
+         if (world.getBlockID(x, y, z) == Block.MINECART_TRACK.blockID) {
+-            world.spawnEntityInWorld(new EntityMinecart(world, x + 0.5f, y + 0.5f, z + 0.5f, this.minecartType));
++            if (!world.multiplayerWorld) world.spawnEntityInWorld(new EntityMinecart(world, x + 0.5f, y + 0.5f, z + 0.5f, this.minecartType));
+             --stack.stackSize;
+             return true;
