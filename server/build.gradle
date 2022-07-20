@@ -92,6 +92,43 @@ abstract class CreateInjectClasses extends DefaultTask {
 	}
 }
 
+FileCollection getLilypadClasspath(FileCollection originalCollection, String libraryFolder) {
+    File libFolder = new File(libraryFolder)
+
+    ArrayList<File> finalList = libFolder.listFiles()
+
+    // Remove files from libFolder that original already has
+    for (File libraryFile : libFolder.listFiles()) {
+        for (File classpathFile in originalCollection.getFiles()) {
+            if (!finalList.contains(classpathFile)) {
+                finalList.add(classpathFile) // for src/main/java and src/main/resources
+            }
+        }
+    }
+
+    return files(finalList)
+}
+
+static List<String> getRunJVMArgs(String allocatedMemory) {
+    List<String> jvmArgs = new ArrayList<String>()
+    jvmArgs.add("-Xmx" + allocatedMemory)
+    jvmArgs.add("-Xms" + allocatedMemory)
+    return jvmArgs
+}
+
+static String makeAndGetDir(String dir) {
+    File directory = new File(dir)
+
+    if (!directory.exists()) {
+        directory.mkdir()
+    }
+
+    return directory.getPath()
+}
+
+String mainServerClass = "net.minecraft.server.MinecraftServer"
+String libraryPath = "${projectDir}/../libs/"
+
 tasks.register("deletePatches", DeletePatches) {
 	rmPath = "${projectDir}/patches"
 }
@@ -105,6 +142,13 @@ tasks.register("ejectClasses", CreateInjectClasses) {
 	source = "${projectDir}/src/main/java"
 	orig = "${projectDir}/src/orig/java"
 	dest = "${projectDir}/inject"
+}
+
+task runServer (type: JavaExec) {
+    mainClass = mainServerClass
+    classpath = getLilypadClasspath(sourceSets.main.runtimeClasspath, libraryPath)
+    jvmArgs = getRunJVMArgs("2048M")
+    workingDir = makeAndGetDir("${projectDir}/run/")
 }
 
 processPatches {
@@ -122,7 +166,7 @@ createPatches {
 
 jar {
     manifest {
-        attributes "Main-Class": "net.minecraft.server.MinecraftServer"
+        attributes "Main-Class": mainServerClass
     }
 }
 

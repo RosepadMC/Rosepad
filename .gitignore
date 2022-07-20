@@ -11,6 +11,7 @@ server/src/orig
 jars/*
 /bin/
 /server/bin
+/server/run
 /client/bin
 /client/run
 /.metadata/
