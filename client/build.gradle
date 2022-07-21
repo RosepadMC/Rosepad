@@ -122,14 +122,8 @@ FileCollection getLilypadClasspath(FileCollection originalCollection, String lib
     // Remove files from libFolder that original already has
     for (File libraryFile : libFolder.listFiles()) {
         for (File classpathFile in originalCollection.getFiles()) {
-            if (classpathFile.isDirectory()) {
-                if (!finalList.contains(classpathFile)) {
-                    finalList.add(classpathFile) // for src/main/java and src/main/resources
-                }
-            } else {
-                if (!finalList.contains(classpathFile)) {
-                    finalList.add(classpathFile)
-                }
+            if (!finalList.contains(classpathFile)) {
+                finalList.add(classpathFile) // for src/main/java and src/main/resources
             }
         }
     }
