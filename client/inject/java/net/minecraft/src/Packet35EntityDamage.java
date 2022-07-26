@@ -39,10 +39,10 @@ public class Packet35EntityDamage extends Packet {
         return 9;
     }
 
-    public Packet35EntityDamage hit(Entity entity, int damage) {
-        this.entityId = entity.entityID;
+    public Packet35EntityDamage hit(int entityID, int damage, boolean isDead) {
+        this.entityId = entityID;
         this.damage = damage;
-        this.dead = entity.isDead;
+        this.dead = isDead;
         return this;
     }
 }

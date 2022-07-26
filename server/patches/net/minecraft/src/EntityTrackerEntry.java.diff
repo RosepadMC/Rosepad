@@ -4,7 +4,7 @@
      private boolean firstUpdateDone;
      public boolean playerEntitiesUpdated;
 -    public Set trackedPlayers;
-+public Set<EntityPlayerMP> trackedPlayers;
++    public Set<EntityPlayerMP> trackedPlayers;
      
      public EntityTrackerEntry(final Entity entity1, final int i2, final int i3) {
 @@ -67,5 +67,5 @@

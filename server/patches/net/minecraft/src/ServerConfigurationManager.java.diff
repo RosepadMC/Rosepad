@@ -54,7 +54,7 @@
          this.playerManagerObj = new PlayerManager(minecraftServer);
          this.maxPlayers = minecraftServer.propertyManagerObj.getIntProperty("max-players", 20);
 +        this.whitelistEnabled = minecraftServer.propertyManagerObj.getBooleanProperty("whitelist", false);
-+        this.enforceRosepad = minecraftServer.propertyManagerObj.getBooleanProperty("enforce-rosepad", false);
++        this.enforceRosepad = minecraftServer.propertyManagerObj.getBooleanProperty("enforce-rosepad", true);
          this.readBannedPlayers();
          this.loadBannedList();
          this.loadOps();

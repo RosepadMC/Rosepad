@@ -5,6 +5,6 @@
      }
 +
 +    public void handleEntityDamage(final Packet35EntityDamage packet) {
-+        System.out.println("Entity " + packet.entityId + " took " + packet.damage + " damage");
++        // System.out.println("Entity " + packet.entityId + " took " + packet.damage + " damage");
 +    }
  }

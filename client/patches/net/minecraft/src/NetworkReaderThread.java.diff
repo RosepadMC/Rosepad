@@ -1,21 +1,60 @@
 --- NetworkReaderThread.java
 +++ NetworkReaderThread.java
-@@ -10,9 +10,7 @@
+@@ -3,37 +3,33 @@
+ class NetworkReaderThread extends Thread {
+     final NetworkManager netManager;
++    final ThreadNetworkKeepAlive keepAlive;
+     
+-    NetworkReaderThread(final NetworkManager netManager, final String name) {
++    NetworkReaderThread(final ThreadNetworkKeepAlive keepAlive, final NetworkManager netManager, final String name) {
+         super(name);
+         this.netManager = netManager;
++        this.keepAlive = keepAlive;
+     }
      
      public void run() {
 -        Label_0029: {
++        synchronized (NetworkManager.threadSyncObject) {
++            ++NetworkManager.numReadThreads;
++            // monitorexit(NetworkManager.threadSyncObject)
++        }
++        try {
++            do {
++                this.netManager.readPacket();
++                if (this.netManager.isRunning) {
++                    continue;
++                }
++                break;
++            } while (!this.netManager.isServerTerminating);
++        }
++        finally {
              synchronized (NetworkManager.threadSyncObject) {
-                 ++NetworkManager.numReadThreads;
-                 // monitorexit(NetworkManager.threadSyncObject)
+-                ++NetworkManager.numReadThreads;
+-                // monitorexit(NetworkManager.threadSyncObject)
 -                break Label_0029;
++                --NetworkManager.numReadThreads;
              }
-             try {
-@@ -32,8 +30,4 @@
-             }
+-            try {
+-                do {
+-                    this.netManager.readPacket();
+-                    if (this.netManager.isRunning) {
+-                        continue;
+-                    }
+-                    break;
+-                } while (!this.netManager.isServerTerminating);
+-            }
+-            finally {
+-                synchronized (NetworkManager.threadSyncObject) {
+-                    --NetworkManager.numReadThreads;
+-                }
+-                // monitorexit(NetworkManager.threadSyncObject)
+-            }
++            // monitorexit(NetworkManager.threadSyncObject)
          }
 -        synchronized (NetworkManager.threadSyncObject) {
 -            --NetworkManager.numReadThreads;
 -        }
-         // monitorexit(NetworkManager.threadSyncObject)
+-        // monitorexit(NetworkManager.threadSyncObject)
      }
--}
++    // monitorexit(NetworkManager.threadSyncObject)
+ }

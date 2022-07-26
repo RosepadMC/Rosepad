@@ -1,0 +1,17 @@
+--- MCHashTable.java
++++ MCHashTable.java
+@@ -31,4 +31,14 @@
+         return null;
+     }
++
++    public int lookup(final Object obj) {
++        for (MCHashEntry nextEntry : this.slots) {
++            if (nextEntry == null) continue;
++            if (nextEntry.valueEntry == obj) {
++                return nextEntry.hashEntry;
++            }
++        }
++        return -1;
++    }
+     
+     public void addKey(final int integer, final Object object) {

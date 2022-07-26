@@ -50,3 +50,26 @@
 +        this.size = size;
          this.actionPerformed();
      }
+@@ -120,5 +121,5 @@
+     public void handleKeyboardInput() {
+         if (Keyboard.getEventKeyState()) {
+-            if (this.hasInputHandler && InputHandler.cheatsEnabled) {
++            if (this.hasInputHandler && InputHandler.cheatsEnabled && this.mc.gameSettings.cheatMenuMode != 4) {
+                 if (Keyboard.getEventKey() == 79) {
+                     GuiScreen.currentID = String.valueOf(GuiScreen.currentID) + '1';
+@@ -167,9 +168,12 @@
+                     try {
+                         if (Block.BLOCKS_LIST.length > Integer.parseInt(GuiScreen.currentID) && Block.BLOCKS_LIST[Integer.parseInt(GuiScreen.currentID)] != null) {
+-                            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Block.BLOCKS_LIST[Integer.parseInt(GuiScreen.currentID)], 64), true);
++                            this.mc.thePlayer.dropPlayerItemWithRandomChoice(
++                                    new ItemStack(Block.BLOCKS_LIST[Integer.parseInt(GuiScreen.currentID)], mc.gameSettings.getCheatMenuItemAmount(0)), true);
+                             System.out.println("Given block to the player");
+                         }
+-                        else if (Item.ITEMS_LIST[Integer.parseInt(GuiScreen.currentID)] != null) {
+-                            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Item.ITEMS_LIST[Integer.parseInt(GuiScreen.currentID)], 1), true);
++                        else if (Item.ITEMS_LIST[Integer.parseInt(GuiScreen.currentID)] != null && (
++                                Item.ITEMS_LIST[Integer.parseInt(GuiScreen.currentID)].getVanilla() || NetClientHandler.rosepadMeta != null)) {
++                            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Item.ITEMS_LIST[Integer.parseInt(GuiScreen.currentID)],
++                                    mc.gameSettings.getCheatMenuItemAmount(1)), true);
+                             System.out.println("Given item to the player");
+                         }

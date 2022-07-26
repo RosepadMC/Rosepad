@@ -14,6 +14,7 @@
 - [ ] Show item name in hotbar
 - [ ] Move all stuff in registry
 - [ ] Add scripting engine (proof-of-concept)
+- [ ] Add colored lights
 
 # Future-proofing
 

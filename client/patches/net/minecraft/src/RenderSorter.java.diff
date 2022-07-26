@@ -1,0 +1,10 @@
+--- RenderSorter.java
++++ RenderSorter.java
+@@ -19,4 +19,7 @@
+             return -1;
+         }
++        if (worldRenderer1.distanceToEntitySquared(this.baseEntity) == worldRenderer2.distanceToEntitySquared(this.baseEntity)) {
++            return 0;
++        }
+         return (worldRenderer1.distanceToEntitySquared(this.baseEntity) < worldRenderer2.distanceToEntitySquared(this.baseEntity)) ? 1 : -1;
+     }

@@ -13,6 +13,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/client" />
+            <option value="$PROJECT_DIR$/rml" />
             <option value="$PROJECT_DIR$/server" />
           </set>
         </option>

@@ -129,3 +129,30 @@
 +        this.sendPacket(new Packet3Chat("§7" + helpCommandMessage));
      }
      
+@@ -389,3 +390,26 @@
+         }
+     }
++
++    @Override
++    public void handleEntityDamage(Packet35EntityDamage packet) {
++        System.out.println("Entity " + packet.entityId + " took " + packet.damage + " damage" + (packet.dead ? " (dead)" : ""));
++        Entity entity = this.mcServer.worldMngr.getEntityWithId(packet.entityId);
++        if (entity == null) {
++            System.out.println("No entity found");
++            return;
++        }
++        if (entity instanceof EntityPlayer) {
++            if (entity.entityID != playerEntity.entityID) return;
++            if (packet.dead) {
++                entity.setPosition(
++                        mcServer.worldMngr.spawnX,
++                        mcServer.worldMngr.spawnY,
++                        mcServer.worldMngr.spawnZ
++                );
++            }
++            return;
++        }
++        System.out.println("Entity took damage");
++        entity.attackEntityFrom(playerEntity, packet.damage);
++    }
+ }

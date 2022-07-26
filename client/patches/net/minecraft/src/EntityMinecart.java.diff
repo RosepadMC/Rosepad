@@ -1,0 +1,30 @@
+--- EntityMinecart.java
++++ EntityMinecart.java
+@@ -76,12 +76,21 @@
+         this.damageTaken += damage * 10;
+         if (this.damageTaken > 40) {
+-            this.entityDropItem(Item.MINECART_EMPTY.shiftedIndex, 1, 0.0f);
+-            if (this.minecartType == 1) {
+-                this.entityDropItem(Block.CHEST.blockID, 1, 0.0f);
++            if (this.worldObj.multiplayerWorld && this.worldObj instanceof WorldClient) {
++                new Packet35EntityDamage().hit(
++                        ((WorldClient) this.worldObj).getIDByEntity(this),
++                        41,
++                        true
++                );
+             }
+-            else if (this.minecartType == 2) {
+-                this.entityDropItem(Block.STONE_OVEN_IDLE.blockID, 1, 0.0f);
++            else {
++                this.entityDropItem(Item.MINECART_EMPTY.shiftedIndex, 1, 0.0f);
++                if (this.minecartType == 1) {
++                    this.entityDropItem(Block.CHEST.blockID, 1, 0.0f);
++                }
++                else if (this.minecartType == 2) {
++                    this.entityDropItem(Block.STONE_OVEN_IDLE.blockID, 1, 0.0f);
++                }
++                this.setEntityDead();
+             }
+-            this.setEntityDead();
+         }
+         return true;

@@ -1,9 +1,87 @@
 --- World.java
 +++ World.java
+@@ -20,9 +20,9 @@
+ public class World implements IBlockAccess {
+     private List lightingToUpdate;
+-    public List loadedEntityList;
+-    private List unloadedEntityList;
++    public List<Entity> loadedEntityList;
++    private List<Entity> unloadedEntityList;
+     private TreeSet scheduledTickTreeSet;
+     private Set scheduledTickSet;
+-    public List loadedTileEntityList;
++    public List<TileEntity> loadedTileEntityList;
+     public long worldTime;
+     public boolean snowCovered;
+@@ -44,5 +44,5 @@
+     public int spawnZ;
+     public boolean isNewWorld;
+-    protected List worldAccesses;
++    protected List<IWorldAccess> worldAccesses;
+     private IChunkProvider chunkProvider;
+     public File saveDirectory;
 @@ -53,5 +53,5 @@
      public boolean worldChunkLoadOverride;
      private ArrayList collidingBoundingBoxes;
 -    private Set positionsToUpdate;
-+private Set<ChunkCoordIntPair> positionsToUpdate;
++    private Set<ChunkCoordIntPair> positionsToUpdate;
      private int soundCounter;
      private List entitiesWithinAABBExcludingEntity;
+@@ -100,10 +100,10 @@
+         this.bossPeriod = 10L;
+         this.numLightingUpdates = 0;
+-        this.lightingToUpdate = (List)new ArrayList();
+-        this.loadedEntityList = (List)new ArrayList();
+-        this.unloadedEntityList = (List)new ArrayList();
++        this.lightingToUpdate = new ArrayList();
++        this.loadedEntityList = new ArrayList<>();
++        this.unloadedEntityList = new ArrayList<>();
+         this.scheduledTickTreeSet = new TreeSet();
+-        this.scheduledTickSet = (Set)new HashSet();
+-        this.loadedTileEntityList = (List)new ArrayList();
++        this.scheduledTickSet = new HashSet();
++        this.loadedTileEntityList = new ArrayList<>();
+         this.worldTime = 0L;
+         this.snowCovered = false;
+@@ -144,9 +144,9 @@
+         this.numLightingUpdates = 0;
+         this.lightingToUpdate = (List)new ArrayList();
+-        this.loadedEntityList = (List)new ArrayList();
+-        this.unloadedEntityList = (List)new ArrayList();
++        this.loadedEntityList = new ArrayList<>();
++        this.unloadedEntityList = new ArrayList<>();
+         this.scheduledTickTreeSet = new TreeSet();
+         this.scheduledTickSet = (Set)new HashSet();
+-        this.loadedTileEntityList = (List)new ArrayList();
++        this.loadedTileEntityList = new ArrayList<>();
+         this.worldTime = 0L;
+         this.snowCovered = false;
+@@ -437,5 +437,5 @@
+     public void markBlockNeedsUpdate(final int x, final int y, final int z) {
+         for (int i4 = 0; i4 < this.worldAccesses.size(); ++i4) {
+-            ((IWorldAccess)this.worldAccesses.get(i4)).markBlockAndNeighborsNeedsUpdate(x, y, z);
++            this.worldAccesses.get(i4).markBlockAndNeighborsNeedsUpdate(x, y, z);
+         }
+     }
+@@ -457,5 +457,5 @@
+     public void markBlocksDirty(final int i1, final int i2, final int i3, final int i4, final int i5, final int i6) {
+         for (int i7 = 0; i7 < this.worldAccesses.size(); ++i7) {
+-            ((IWorldAccess)this.worldAccesses.get(i7)).markBlockRangeNeedsUpdate(i1, i2, i3, i4, i5, i6);
++            this.worldAccesses.get(i7).markBlockRangeNeedsUpdate(i1, i2, i3, i4, i5, i6);
+         }
+     }
+@@ -747,4 +747,14 @@
+         return null;
+     }
++
++    public Entity getEntityWithId(int id) {
++        for (Entity entity : loadedEntityList) {
++            if (entity.entityID == id) return entity;
++        }
++        for (Entity entity : unloadedEntityList) {
++            if (entity.entityID == id) return entity;
++        }
++        return null;
++    }
+     
+     public void playSoundAtEntity(final Entity entity, final String soundName, final float f3, final float f4) {

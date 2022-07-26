@@ -24,7 +24,19 @@
 +            if (--worldBlockPositionType3.acceptCountdown == 0) {
                  super.setBlockAndMetadata(worldBlockPositionType3.x, worldBlockPositionType3.y, worldBlockPositionType3.z, worldBlockPositionType3.blockID, worldBlockPositionType3.metadata);
                  super.markBlockNeedsUpdate(worldBlockPositionType3.x, worldBlockPositionType3.y, worldBlockPositionType3.z);
-@@ -211,3 +209,7 @@
+@@ -144,4 +142,8 @@
+         return (Entity)this.entityHashTable.lookup(id);
+     }
++
++    public int getIDByEntity(final Entity entity) {
++        return this.entityHashTable.lookup(entity);
++    }
+     
+     public Entity removeEntityFromWorld(final int id) {
+@@ -209,5 +211,10 @@
+     @Override
+     public void sendQuittingDisconnectingPacket() {
++        this.sendQueue.graceful = true;
          this.sendQueue.addToSendQueue(new Packet255KickDisconnect("Quitting"));
      }
 +
