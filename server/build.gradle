@@ -6,6 +6,14 @@ plugins {
     id 'com.brambolt.gradle.patching' version '2022.05.01-7057'
 }
 
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":rml")
+}
+
 abstract class DeletePatches extends DefaultTask {
 
 	@Input
@@ -121,6 +129,13 @@ static String makeAndGetDir(String dir) {
 
     if (!directory.exists()) {
         directory.mkdir()
+
+        File properties = new File(dir, "server.properties")
+        properties.createNewFile()
+
+        FileWriter writer = new FileWriter(properties)
+        writer.write("online-mode=false") // Disable online mode for test server
+        writer.close()
     }
 
     return directory.getPath()

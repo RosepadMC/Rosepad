@@ -117,7 +117,7 @@
 +            }
 +            else if (ext != null && ext.getVersion() != 2 && this.enforceRosepad) {
 +                netLoginHandler1.kickUser("This server requires Rosepad "
-+                        + MinecraftServer.getVersionString() + " to join");
++                        + MinecraftServer.INSTANCE.getVersionString() + " to join");
 +                return null;
 +            }
 +        }

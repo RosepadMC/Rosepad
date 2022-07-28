@@ -6,6 +6,9 @@ plugins {
     id 'com.brambolt.gradle.patching' version '2022.05.01-7057'
 }
 
+group 'net.buj'
+version '1.1-SNAPSHOT'
+
 repositories {
     mavenCentral()
 }
@@ -20,6 +23,7 @@ dependencies {
     shadow files('../libs/soundsystem-20120107.jar')
     shadow group: 'org.json', name: 'json', version: '20220320'
     implementation group: 'org.json', name: 'json', version: '20220320' // we do this to get the path of it
+    shadow project(':rml')
 }
 
 jar {
@@ -114,7 +118,7 @@ abstract class CreateInjectClasses extends DefaultTask {
 	}
 }
 
-FileCollection getLilypadClasspath(FileCollection originalCollection, String libraryFolder) {
+FileCollection getLilypadClasspath(FileCollection originalCollection, String libraryFolder, String mainFile) {
     File libFolder = new File(libraryFolder)
 
     ArrayList<File> finalList = libFolder.listFiles()
@@ -127,6 +131,8 @@ FileCollection getLilypadClasspath(FileCollection originalCollection, String lib
             }
         }
     }
+
+    finalList.add(mainFile)
 
     return files(finalList)
 }
@@ -170,9 +176,11 @@ String libraryPath = "${projectDir}/../libs/"
 
 task runClient (type: JavaExec) {
     mainClass = "net.minecraft.client.Minecraft"
-    classpath = getLilypadClasspath(sourceSets.main.runtimeClasspath, libraryPath)
+    classpath = getLilypadClasspath(sourceSets.main.runtimeClasspath, libraryPath,
+            "${projectDir}/build/libs/client-${version}-all.jar")
     argsString = username
     jvmArgs = getRunJVMArgs("1024M", libraryPath)
+    environment("HOME", "${projectDir}/run/")
     workingDir = makeAndGetDir("${projectDir}/run/")
 }
 
@@ -203,6 +211,3 @@ sourceSets {
         }
     }
 }
-
-group 'net.buj'
-version '1.1-SNAPSHOT'

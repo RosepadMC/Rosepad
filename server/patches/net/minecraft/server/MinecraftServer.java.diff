@@ -1,31 +1,47 @@
 --- MinecraftServer.java
 +++ MinecraftServer.java
-@@ -40,5 +40,5 @@
- public class MinecraftServer implements ICommandListener, Runnable {
+@@ -1,4 +1,6 @@
+ package net.minecraft.server;
+ 
++import net.buj.rml.MinecraftImpl;
++import net.buj.rml.RosepadModLoader;
+ import net.minecraft.src.ThreadServerApplication;
+ import net.minecraft.src.ServerGUI;
+@@ -38,7 +40,7 @@
+ import net.minecraft.src.ICommandListener;
+ 
+-public class MinecraftServer implements ICommandListener, Runnable {
++public class MinecraftServer implements ICommandListener, Runnable, MinecraftImpl {
      public static Logger logger;
 -    public static HashMap playerList;
 +    public static HashMap<String, Integer> playerList;
      public NetworkListenThread networkServer;
      public PropertyManager propertyManagerObj;
-@@ -51,5 +51,5 @@
+@@ -50,6 +52,6 @@
+     public String currentTask;
      public int percentDone;
-     private List playersOnline;
+-    private List playersOnline;
 -    private List commands;
-+    private List<ServerCommand> commands;
++    private final List<IUpdatePlayerListBox> playersOnline;
++    private final List<ServerCommand> commands;
      public EntityTracker entityTracker;
      public boolean onlineMode;
-@@ -58,7 +58,27 @@
+@@ -57,8 +59,31 @@
+     public String serverId;
      private static Random rand;
++    public RosepadModLoader modLoader;
++
++    public static MinecraftServer INSTANCE;
      
-+    public static int[] getVersion() {
++    public int[] getVersion() {
 +    	return new int[] { 1, 1, 0, 6 };
 +    }
 +    
-+    public static String getVersionTag() {
++    public String getVersionTag() {
 +    	return "dev";
 +    }
 +    
-+    public static String getVersionString() {
++    public String getVersionString() {
 +    	int[] version = getVersion();
 +    	StringBuilder str = new StringBuilder();
 +    	for (int i = 0; i < version.length; i++) {
@@ -43,23 +59,101 @@
 +        MinecraftServer.playerList = new HashMap<>();
          MinecraftServer.rand = new Random(System.currentTimeMillis());
      }
-@@ -68,6 +88,6 @@
+@@ -68,7 +93,10 @@
          this.serverStopped = false;
          this.deathTime = 0;
 -        this.playersOnline = (List)new ArrayList();
 -        this.commands = Collections.synchronizedList((List)new ArrayList());
 +        this.playersOnline = new ArrayList<>();
 +        this.commands = Collections.synchronizedList(new ArrayList<>());
++        this.modLoader = new RosepadModLoader();
          new ThreadSleepForeverServer(this);
++
++        INSTANCE = this;
      }
-@@ -78,5 +98,5 @@
+     
+@@ -78,9 +106,10 @@
          threadCommandReader1.start();
          ConsoleLogManager.init();
 -        MinecraftServer.logger.info("Starting minecraft server version 0.2.1");
 +        MinecraftServer.logger.info("Starting minecraft server version " + getVersionString());
          if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L) {
              MinecraftServer.logger.warning("**** NOT ENOUGH RAM!");
-@@ -432,4 +452,77 @@
+             MinecraftServer.logger.warning("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+         }
++        MinecraftServer.logger.info("Loading mods");
+         MinecraftServer.logger.info("Loading properties");
+         this.propertyManagerObj = new PropertyManager(new File("server.properties"));
+@@ -93,5 +122,5 @@
+         }
+         final int i4 = this.propertyManagerObj.getIntProperty("server-port", 25565);
+-        MinecraftServer.logger.info(new StringBuilder("Starting Minecraft server on ").append((string2.length() == 0) ? "*" : string2).append(":").append(i4).toString());
++        MinecraftServer.logger.info("Starting Minecraft server on " + ((string2.length() == 0) ? "*" : string2) + ":" + i4);
+         this.serverId = Long.toHexString(MinecraftServer.rand.nextLong());
+         try {
+@@ -100,5 +129,5 @@
+         catch (IOException iOException6) {
+             MinecraftServer.logger.warning("**** FAILED TO BIND TO PORT!");
+-            MinecraftServer.logger.log(Level.WARNING, new StringBuilder("The exception was: ").append(iOException6.toString()).toString());
++            MinecraftServer.logger.log(Level.WARNING, "The exception was: " + iOException6.toString());
+             MinecraftServer.logger.warning("Perhaps a server is already running on that port?");
+             return false;
+@@ -118,5 +147,5 @@
+         this.entityTracker = new EntityTracker(this);
+         final String string3 = this.propertyManagerObj.getStringProperty("level-name", "world");
+-        MinecraftServer.logger.info(new StringBuilder("Preparing level \"").append(string3).append("\"").toString());
++        MinecraftServer.logger.info("Preparing level \"" + string3 + "\"");
+         this.initWorld(string3);
+         MinecraftServer.logger.info("Done! For help, type \"help\" or \"?\"");
+@@ -145,5 +174,5 @@
+         this.currentTask = currentTask;
+         this.percentDone = percent;
+-        System.out.println(String.valueOf(currentTask) + ": " + percent + "%");
++        System.out.println(currentTask + ": " + percent + "%");
+     }
+     
+@@ -234,7 +263,7 @@
+     
+     private void doTick() throws IOException {
+-        final ArrayList arrayList1 = new ArrayList();
++        final ArrayList<String> arrayList1 = new ArrayList<>();
+         for (final String string3 : MinecraftServer.playerList.keySet()) {
+-            final int i4 = (int)MinecraftServer.playerList.get(string3);
++            final int i4 = MinecraftServer.playerList.get(string3);
+             if (i4 > 0) {
+                 MinecraftServer.playerList.put(string3, (i4 - 1));
+@@ -244,6 +273,6 @@
+             }
+         }
+-        for (int i5 = 0; i5 < arrayList1.size(); ++i5) {
+-            MinecraftServer.playerList.remove(arrayList1.get(i5));
++        for (String s : arrayList1) {
++            MinecraftServer.playerList.remove(s);
+         }
+         AxisAlignedBB.clearBoundingBoxPool();
+@@ -254,11 +283,11 @@
+         }
+         this.worldMngr.tick();
+-        while (this.worldMngr.updatingLighting()) {}
++        // while (this.worldMngr.updatingLighting()) {}
+         this.worldMngr.updateEntities();
+         this.networkServer.handleNetworkListenThread();
+         this.configManager.onTick();
+         this.entityTracker.updateTrackedEntities();
+-        for (int i5 = 0; i5 < this.playersOnline.size(); ++i5) {
+-            ((IUpdatePlayerListBox)this.playersOnline.get(i5)).addAllPlayers();
++        for (IUpdatePlayerListBox iUpdatePlayerListBox : this.playersOnline) {
++            iUpdatePlayerListBox.addAllPlayers();
+         }
+         try {
+@@ -282,5 +311,5 @@
+             if (!string2.toLowerCase().startsWith("help") && !string2.toLowerCase().startsWith("?")) {
+                 if (string2.toLowerCase().startsWith("list")) {
+-                    iCommandListener3.addHelpCommandMessage(new StringBuilder("Connected players: ").append(this.configManager.getPlayerList()).toString());
++                    iCommandListener3.addHelpCommandMessage("Connected players: " + this.configManager.getPlayerList());
+                 }
+                 else if (string2.toLowerCase().startsWith("stop")) {
+@@ -432,4 +461,77 @@
                      iCommandListener3.addHelpCommandMessage("There's no player by that name online.");
                  }
 +                else if (string2.toLowerCase().startsWith("whitelist")) {
@@ -137,7 +231,7 @@
 +                }
                  else {
                      MinecraftServer.logger.info("Unknown console command. Type \"help\" for help.");
-@@ -457,4 +550,5 @@
+@@ -457,4 +559,5 @@
                  iCommandListener3.addHelpCommandMessage("   list                      lists all currently connected players");
                  iCommandListener3.addHelpCommandMessage("   say <message>             broadcasts a message to all players");
 +                iCommandListener3.addHelpCommandMessage("   whitelist                 manage server whitelist");

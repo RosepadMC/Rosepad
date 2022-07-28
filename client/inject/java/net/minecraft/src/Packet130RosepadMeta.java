@@ -11,8 +11,8 @@ import java.util.List;
 public class Packet130RosepadMeta extends Packet {
 	public List<ULPPExtension> extensions = new ArrayList<>();
 	public String clientName = "Rosepad";
-	public int[] version = Minecraft.getVersion();
-	public String tag = Minecraft.getVersionTag();
+	public int[] version = Minecraft.INSTANCE.getVersion();
+	public String tag = Minecraft.INSTANCE.getVersionTag();
 	public long flags = 0;
 
 	@Override
@@ -56,8 +56,8 @@ public class Packet130RosepadMeta extends Packet {
 		this.extensions.add(new ULPPExtension("ULPP", 1));
 		this.extensions.add(new ULPPExtension("ROSE", 2));
 
-		this.version = Minecraft.getVersion();
-		this.tag = Minecraft.getVersionTag();
+		this.version = Minecraft.INSTANCE.getVersion();
+		this.tag = Minecraft.INSTANCE.getVersionTag();
 
 		this.clientName = "Rosepad";
 		this.flags = 0;
