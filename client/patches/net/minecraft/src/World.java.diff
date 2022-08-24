@@ -393,3 +393,10 @@
 +        this.unloadedEntityList.addAll(list);
      }
      
+@@ -1775,5 +1781,5 @@
+         }
+         if (!this.loadedEntityList.contains(entity)) {
+-            System.out.println("REINSERTING PLAYER!");
++            System.out.println("Player got unloaded, attempting to load again");
+             this.loadedEntityList.add(entity);
+         }

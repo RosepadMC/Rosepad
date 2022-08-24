@@ -272,7 +272,7 @@
 +            minecraft.session = new Session("Player" + System.currentTimeMillis() % 1000L, "");
          }
          if (server != null) {
-@@ -1145,10 +1176,10 @@
+@@ -1145,10 +1176,11 @@
          }
          frame.setVisible(true);
 -        frame.addWindowListener((WindowListener)new GameWindowListener(minecraft, thread));
@@ -282,10 +282,11 @@
      
      public static void main(final String[] args) {
 -        String string = new StringBuilder().append("Player").append(System.currentTimeMillis() % 1000L).toString();
++        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true"); //Fix `NOT THIS TIME TIMOTHY`
 +        String string = "Player" + System.currentTimeMillis() % 1000L;
          if (args.length > 0) {
              string = args[0];
-@@ -1160,3 +1191,8 @@
+@@ -1160,3 +1192,8 @@
          startMainThread(string, sessionID);
      }
 +
