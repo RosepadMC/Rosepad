@@ -112,7 +112,17 @@
 +        System.out.println(currentTask + ": " + percent + "%");
      }
      
-@@ -234,7 +263,7 @@
+@@ -223,9 +252,4 @@
+             return;
+         }
+-        finally {
+-            this.stop();
+-            this.serverStopped = true;
+-            System.exit(0);
+-        }
+         this.stop();
+         this.serverStopped = true;
+@@ -234,7 +258,7 @@
      
      private void doTick() throws IOException {
 -        final ArrayList arrayList1 = new ArrayList();
@@ -122,7 +132,7 @@
 +            final int i4 = MinecraftServer.playerList.get(string3);
              if (i4 > 0) {
                  MinecraftServer.playerList.put(string3, (i4 - 1));
-@@ -244,6 +273,6 @@
+@@ -244,6 +268,6 @@
              }
          }
 -        for (int i5 = 0; i5 < arrayList1.size(); ++i5) {
@@ -131,11 +141,11 @@
 +            MinecraftServer.playerList.remove(s);
          }
          AxisAlignedBB.clearBoundingBoxPool();
-@@ -254,11 +283,11 @@
+@@ -254,11 +278,11 @@
          }
          this.worldMngr.tick();
 -        while (this.worldMngr.updatingLighting()) {}
-+        // while (this.worldMngr.updatingLighting()) {}
++        while (this.worldMngr.updatingLighting()) doNothing();
          this.worldMngr.updateEntities();
          this.networkServer.handleNetworkListenThread();
          this.configManager.onTick();
@@ -146,14 +156,23 @@
 +            iUpdatePlayerListBox.addAllPlayers();
          }
          try {
-@@ -282,5 +311,5 @@
+@@ -269,5 +293,7 @@
+         }
+     }
+-    
++
++    private void doNothing() {}
++
+     public void addCommand(final String command, final ICommandListener commandListener) {
+         this.commands.add(new ServerCommand(command, commandListener));
+@@ -282,5 +308,5 @@
              if (!string2.toLowerCase().startsWith("help") && !string2.toLowerCase().startsWith("?")) {
                  if (string2.toLowerCase().startsWith("list")) {
 -                    iCommandListener3.addHelpCommandMessage(new StringBuilder("Connected players: ").append(this.configManager.getPlayerList()).toString());
 +                    iCommandListener3.addHelpCommandMessage("Connected players: " + this.configManager.getPlayerList());
                  }
                  else if (string2.toLowerCase().startsWith("stop")) {
-@@ -432,4 +461,77 @@
+@@ -432,4 +458,77 @@
                      iCommandListener3.addHelpCommandMessage("There's no player by that name online.");
                  }
 +                else if (string2.toLowerCase().startsWith("whitelist")) {
@@ -231,7 +250,7 @@
 +                }
                  else {
                      MinecraftServer.logger.info("Unknown console command. Type \"help\" for help.");
-@@ -457,4 +559,5 @@
+@@ -457,4 +556,5 @@
                  iCommandListener3.addHelpCommandMessage("   list                      lists all currently connected players");
                  iCommandListener3.addHelpCommandMessage("   say <message>             broadcasts a message to all players");
 +                iCommandListener3.addHelpCommandMessage("   whitelist                 manage server whitelist");

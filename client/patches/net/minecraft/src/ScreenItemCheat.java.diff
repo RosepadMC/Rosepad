@@ -1,10 +1,14 @@
 --- ScreenItemCheat.java
 +++ ScreenItemCheat.java
-@@ -4,7 +4,10 @@
+@@ -1,10 +1,14 @@
+ package net.minecraft.src;
+ 
++import org.lwjgl.input.Keyboard;
+ import org.lwjgl.opengl.GL11;
  import net.minecraft.client.Minecraft;
  
-+import java.util.ArrayList;
-+import java.util.List;
++import java.security.Key;
++import java.util.*;
 +
  public class ScreenItemCheat extends GuiScreen {
      public Minecraft mc;
@@ -12,14 +16,78 @@
 +    private final RenderBlocks blockRendererBlurryTroll;
      private boolean createButtons;
      private int lastCols;
-@@ -78,5 +81,5 @@
+@@ -15,4 +19,5 @@
+     private boolean resetButtons;
+     private int currentPage;
++    private String search = "";
+     
+     public ScreenItemCheat(final Minecraft minecraft) {
+@@ -55,5 +60,5 @@
+         int n = 0;
+         for (int i = 1; i != 256; ++i) {
+-            if (Block.BLOCKS_LIST[i] != null && i != 120) {
++            if (Block.BLOCKS_LIST[i] != null && i != 120 && isSearchedFor(Block.BLOCKS_LIST[i])) {
+                 ++n;
+             }
+@@ -68,5 +73,5 @@
+         int n = 0;
+         for (int i = 1; i != 256; ++i) {
+-            if (Block.BLOCKS_LIST[i] != null && i != 120) {
++            if (Block.BLOCKS_LIST[i] != null && i != 120 && isSearchedFor(Block.BLOCKS_LIST[i])) {
+                 ++n;
+             }
+@@ -74,9 +79,41 @@
+         return n;
+     }
+-    
++
++    private boolean isSearchedFor(Block block) {
++        return isSearchedFor(block.getName());
++    }
++    private boolean isSearchedFor(Item item) {
++        return isSearchedFor(item.getName());
++    }
++
++    private boolean isSearchedFor(String name) {
++        List<Character> chars = new ArrayList<>();
++        for (Character c : name.toLowerCase(Locale.ROOT).toCharArray()) {
++            chars.add(c);
++        }
++
++        for (Character c : search.toLowerCase(Locale.ROOT).toCharArray()) {
++            int i = 0;
++            for (Character c2 : chars) {
++                if (c2.equals(c)) {
++                    break;
++                }
++                i++;
++            }
++            if (i == chars.size()) {
++                return false;
++            }
++            chars.remove(i);
++        }
++
++        return true;
++    }
++
+     public int nthExistingItem(final int integer) {
          int n = 0;
          for (int i = 256; i != Item.ITEMS_LIST.length; ++i) {
 -            if (Item.ITEMS_LIST[i] != null) {
-+            if (Item.ITEMS_LIST[i] != null && (Item.ITEMS_LIST[i].getVanilla() || NetClientHandler.rosepadMeta != null)) {
++            if (
++                    Item.ITEMS_LIST[i] != null && (Item.ITEMS_LIST[i].getVanilla() || mc.theWorld.rosepadContentEnabled()
++                    && isSearchedFor(Item.ITEMS_LIST[i]))) {
                  ++n;
              }
-@@ -131,8 +134,10 @@
+@@ -91,5 +128,5 @@
+         int n = 0;
+         for (int i = 256; i != Item.ITEMS_LIST.length; ++i) {
+-            if (Item.ITEMS_LIST[i] != null) {
++            if (Item.ITEMS_LIST[i] != null && isSearchedFor(Item.ITEMS_LIST[i])) {
+                 ++n;
+             }
+@@ -131,8 +168,10 @@
          }
          if (button.id >= 4096) {
 -            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Item.ITEMS_LIST[button.id - 4096], 1), true);
@@ -32,17 +100,68 @@
 +            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Block.BLOCKS_LIST[button.id - 2048], this.mc.gameSettings.getCheatMenuItemAmount(0)), true);
          }
      }
-@@ -140,4 +145,6 @@
+@@ -140,4 +179,6 @@
      @Override
      public void drawScreen(final int mouseX, final int mouseY, final float renderPartialTick) {
 +        String itemName = null;
 +        List<String> itemInfo = new ArrayList<>();
          this.drawDefaultBackground();
          if (this.rotateTimer == -1L) {
-@@ -146,5 +153,5 @@
+@@ -146,5 +187,8 @@
          this.drawGradientRect(0, (int)(this.height * (1.0f - Math.min((System.currentTimeMillis() - this.rotateTimer) / 100.0f, 1.0f))), this.width, this.height, 1614823488, 1612718112);
          this.drawCenteredString(this.fontRenderer, "Palette", this.width / 2, 15, 16777215);
 -        this.drawCenteredString(this.fontRenderer, new StringBuilder().append("").append(this.currentPage).toString(), 208, 35, 16777215);
 +        this.drawCenteredString(this.fontRenderer, String.valueOf(this.currentPage), 208, 35, 16777215);
++        if (search.length() > 0) {
++            this.drawString(this.fontRenderer, "Search: " + search, 10, 10, 0xFFFFFFFF);
++        }
          GL11.glBindTexture(3553, this.mc.renderEngine.getTexture("/terrain.png"));
          final int lastCols = (this.width - 18) / 32;
+@@ -170,7 +214,7 @@
+             this.controlList.add(new GuiSelButton(4, 148, 30, "<<"));
+             this.controlList.add(new GuiSelButton(5, 218, 30, ">>"));
+-            ((GuiButton)this.controlList.get((int)(this.selectingBlocks ? 0 : 1))).enabled = false;
+-            final GuiButton guiButton = (GuiButton)this.controlList.get(2);
+-            final GuiButton guiButton2 = (GuiButton)this.controlList.get(3);
++            this.controlList.get(this.selectingBlocks ? 0 : 1).enabled = false;
++            final GuiButton guiButton = this.controlList.get(2);
++            final GuiButton guiButton2 = this.controlList.get(3);
+             final boolean b = i != 1;
+             guiButton2.enabled = b;
+@@ -178,4 +222,5 @@
+         }
+         final int n = this.currentPage * lastCols * lastRows;
++        int skipJ = 0;
+         for (int j = 0; j != lastCols * lastRows; ++j) {
+             if (this.selectingBlocks) {
+@@ -212,6 +257,10 @@
+                 }
+                 final Item di = Item.ITEMS_LIST[n2];
+-                final float n5 = 18.0f + 32.0f * (j % lastCols);
+-                final float n3 = 50.0f + 23.0f * (j / lastCols);
++                if (!isSearchedFor(di)) {
++                    skipJ++;
++                    continue;
++                }
++                final float n5 = 18.0f + 32.0f * ((j - skipJ) % lastCols);
++                final float n3 = 50.0f + 23.0f * ((j - skipJ) / lastCols);
+                 if (this.createButtons) {
+                     this.controlList.add(new GuiBlockButton(4096 + n2, (int)n5, (int)n3, "", n2, (GuiScreen)this));
+@@ -226,3 +275,17 @@
+         super.drawScreen(mouseX, mouseY, renderPartialTick);
+     }
++
++    @Override
++    protected void keyTyped(char character, int key) {
++        if (createButtons) return;
++        if (character >= 'a' && character <= 'z' || character >= 'A' && character <= 'Z' || character >= '0' && character <= '9') {
++            search += ((Character) character).toString().toLowerCase(Locale.ROOT);
++            this.resetButtons = true;
++        }
++        else if (key == Keyboard.KEY_ESCAPE) super.keyTyped(character, key);
++        else if (key == Keyboard.KEY_BACK) {
++            if (!search.isEmpty()) search = search.substring(0, search.length() - 1);
++            this.resetButtons = true;
++        }
++    }
+ }

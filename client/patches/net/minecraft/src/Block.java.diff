@@ -259,3 +259,10 @@
 +            if (!entityPlayer.canHarvestBlock(this, entityPlayer.worldObj)) {
                  return 1.0f / this.hardness / 100.0f;
              }
+@@ -512,5 +533,5 @@
+         }
+         Vec3D vec3D = null;
+-        if (intermediateWithXValue != null && (vec3D == null || vec1.distanceTo(intermediateWithXValue) < vec1.distanceTo(vec3D))) {
++        if (intermediateWithXValue != null) {
+             vec3D = intermediateWithXValue;
+         }

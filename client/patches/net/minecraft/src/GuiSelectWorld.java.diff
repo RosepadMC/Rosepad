@@ -1,0 +1,16 @@
+--- GuiSelectWorld.java
++++ GuiSelectWorld.java
+@@ -62,5 +62,12 @@
+         this.selected = true;
+         this.mc.playerController = new PlayerControllerSP(this.mc);
+-        this.mc.startWorld(new StringBuilder().append("World").append(worldNum).toString());
++        for (int i = 0; i < 6; i++) {
++            try {
++                this.mc.startWorld("World" + worldNum);
++                break;
++            } catch (Exception e) {
++                e.printStackTrace();
++            }
++        }
+         this.mc.displayGuiScreen(null);
+     }

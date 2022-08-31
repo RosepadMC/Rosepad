@@ -1,32 +1,7 @@
 --- RenderGlobal.java
 +++ RenderGlobal.java
-@@ -1,14 +1,14 @@
- package net.minecraft.src;
- 
--import java.util.Collections;
--import java.util.Comparator;
--import java.util.Arrays;
--import java.util.Random;
--import org.lwjgl.opengl.GL11;
-+import net.minecraft.client.Minecraft;
- import org.lwjgl.opengl.ARBOcclusionQuery;
--import java.util.ArrayList;
-+import org.lwjgl.opengl.GL11;
-+
- import java.nio.IntBuffer;
--import net.minecraft.client.Minecraft;
-+import java.util.ArrayList;
-+import java.util.Arrays;
- import java.util.List;
-+import java.util.Random;
-+import java.util.logging.Logger;
- 
- public class RenderGlobal implements IWorldAccess {
-@@ -58,8 +58,8 @@
-     public float damagePartialTime;
-     int frustumCheckOffset;
--    
-+
+@@ -60,6 +60,6 @@
+     
      public RenderGlobal(final Minecraft minecraft, final RenderEngine renderEngine) {
 -        this.tileEntities = (List<TileEntity>)new ArrayList();
 -        this.worldRenderersToUpdate = (List<WorldRenderer>)new ArrayList();
@@ -34,15 +9,13 @@
 +        this.worldRenderersToUpdate = new ArrayList<>();
          this.occlusionEnabled = false;
          this.cloudTickCounter = 0;
-@@ -68,6 +68,6 @@
+@@ -68,5 +68,5 @@
          this.dummyBuf50k = new int[50000];
          this.occlusionResult = GLAllocation.createDirectIntBuffer(64);
 -        this.glRenderLists = (List<WorldRenderer>)new ArrayList();
--        this.allRenderLists = new RenderList[] { new RenderList(), new RenderList(), new RenderList(), new RenderList() };
 +        this.glRenderLists = new ArrayList<>();
-+        this.allRenderLists = new RenderList[]{new RenderList(), new RenderList(), new RenderList(), new RenderList()};
+         this.allRenderLists = new RenderList[] { new RenderList(), new RenderList(), new RenderList(), new RenderList() };
          this.dummyRenderInt = 0;
-         this.unusedGLCallList = GLAllocation.generateDisplayLists(1);
 @@ -98,8 +98,8 @@
              for (int j = -384; j <= 384; j += 64) {
                  instance.startDrawingQuads();
@@ -66,27 +39,7 @@
 +                instance.addVertex(k, -16.0, l + 64);
                  instance.addVertex(k + 64, -16.0, l + 64);
              }
-@@ -119,5 +119,5 @@
-         GL11.glEndList();
-     }
--    
-+
-     private void renderStars() {
-         final Random random = new Random(10842L);
-@@ -160,5 +160,5 @@
-         instance.draw();
-     }
--    
-+
-     public void changeWorld(final World world) {
-         if (this.theWorld != null) {
-@@ -176,11 +176,11 @@
-         }
-     }
--    
-+
-     public void loadRenderers() {
-         Block.LEAVES.setGraphicsLevel(this.mc.gameSettings.fancyGraphics);
+@@ -181,6 +181,6 @@
          this.renderDistance = this.mc.gameSettings.renderDistance;
          if (this.worldRenderers != null) {
 -            for (int i = 0; i < this.worldRenderers.length; ++i) {
@@ -104,23 +57,18 @@
 +            worldRenderer.needsUpdate = false;
          }
          this.worldRenderersToUpdate.clear();
-@@ -228,9 +228,13 @@
+@@ -228,5 +228,9 @@
              final EntityPlayerSP thePlayer = this.mc.thePlayer;
              this.markRenderersForNewPosition(MathHelper.floor_double(thePlayer.posX), MathHelper.floor_double(thePlayer.posY), MathHelper.floor_double(thePlayer.posZ));
 -            Arrays.sort((Object[])this.sortedWorldRenderers, (Comparator)new EntitySorter(thePlayer));
 +            try {
 +                Arrays.sort(this.sortedWorldRenderers, new EntitySorter(thePlayer));
 +            } catch (IllegalArgumentException ignored) {
-+                Logger.getLogger(Minecraft.class.getName()).severe("Failed to sort WorldRenderers, use -Djava.util.Arrays.useLegacyMergeSort=true");
++                System.out.println("NOT THIS TIME TIMOTHY");
 +            }
          }
          this.renderEntitiesStartupCounter = 2;
-     }
--    
-+
-     public void renderEntities(final Vec3D vector, final ICamera camera, final float renderPartialTick) {
-         if (this.renderEntitiesStartupCounter > 0) {
-@@ -252,24 +256,25 @@
+@@ -252,22 +256,23 @@
          final List<Entity> loadedEntityList = this.theWorld.getLoadedEntityList();
          this.countEntitiesTotal = loadedEntityList.size();
 -        for (int i = 0; i < loadedEntityList.size(); ++i) {
@@ -139,31 +87,19 @@
 +            TileEntityRenderer.instance.renderTileEntity(tileEntity, renderPartialTick);
          }
      }
--    
-+
+     
      public String getDebugInfoRenders() {
 -        return new StringBuilder().append("C: ").append(this.renderersBeingRendered).append("/").append(this.renderersLoaded).append(". F: ").append(this.renderersBeingClipped).append(", O: ").append(this.renderersBeingOccluded).append(", E: ").append(this.renderersSkippingRenderPass).toString();
 +        return "C: §6" + this.renderersBeingRendered + "§r/§e" + this.renderersLoaded + "§r. F: §c"
 +                + this.renderersBeingClipped + "§r, O: §8" + this.renderersBeingOccluded + "§r, E: §7" + this.renderersSkippingRenderPass;
      }
--    
-+
+     
      public String getDebugInfoEntities() {
 -        return new StringBuilder().append("E: ").append(this.countEntitiesRendered).append("/").append(this.countEntitiesTotal).append(". B: ").append(this.countEntitiesHidden).append(", I: ").append(this.countEntitiesTotal - this.countEntitiesHidden - this.countEntitiesRendered).toString();
 +        return "E: §9" + this.countEntitiesRendered + "§r/§b" + this.countEntitiesTotal + "§r. B: §8"
 +                + this.countEntitiesHidden + "§r, I: §7" + (this.countEntitiesTotal - this.countEntitiesHidden - this.countEntitiesRendered);
      }
--    
-+
-     private void markRenderersForNewPosition(int x, int y, int z) {
-         x -= 8;
-@@ -328,5 +333,5 @@
-         }
-     }
--    
-+
-     public int sortAndRender(final EntityPlayer entityPlayer, final int integer, final double double3) {
-         if (this.mc.gameSettings.renderDistance != this.renderDistance) {
+     
 @@ -351,5 +356,9 @@
              this.prevSortZ = entityPlayer.posZ;
              this.markRenderersForNewPosition(MathHelper.floor_double(entityPlayer.posX), MathHelper.floor_double(entityPlayer.posY), MathHelper.floor_double(entityPlayer.posZ));
@@ -182,65 +118,14 @@
 +            n7 = this.renderSortedRenderers(0, i, integer, double3);
              do {
                  final int j = i;
-@@ -381,16 +390,15 @@
-                     if (this.sortedWorldRenderers[k].skipAllRenderPasses()) {
-                         this.sortedWorldRenderers[k].isInFrustum = false;
--                    }
--                    else {
-+                    } else {
-                         if (!this.sortedWorldRenderers[k].isInFrustum) {
-                             this.sortedWorldRenderers[k].isVisible = true;
-                         }
-                         if (this.sortedWorldRenderers[k].isInFrustum && !this.sortedWorldRenderers[k].isWaitingOnOcclusionQuery) {
--                            final int n11 = (int)(1.0f + MathHelper.sqrt_float(this.sortedWorldRenderers[k].distanceToEntitySquared(entityPlayer)) / 128.0f);
-+                            final int n11 = (int) (1.0f + MathHelper.sqrt_float(this.sortedWorldRenderers[k].distanceToEntitySquared(entityPlayer)) / 128.0f);
-                             if (this.cloudTickCounter % n11 == k % n11) {
-                                 final WorldRenderer worldRenderer = this.sortedWorldRenderers[k];
--                                final float n12 = (float)(worldRenderer.posXMinus - n);
--                                final float n13 = (float)(worldRenderer.posYMinus - n2);
--                                final float n14 = (float)(worldRenderer.posZMinus - n3);
-+                                final float n12 = (float) (worldRenderer.posXMinus - n);
-+                                final float n13 = (float) (worldRenderer.posYMinus - n2);
-+                                final float n14 = (float) (worldRenderer.posZMinus - n3);
-                                 final float n15 = n12 - n8;
-                                 final float n16 = n13 - n9;
-@@ -418,11 +426,10 @@
-                 n7 += this.renderSortedRenderers(j, i, integer, double3);
-             } while (i < this.sortedWorldRenderers.length);
-+        } else {
+@@ -420,5 +429,5 @@
+         }
+         else {
+-            n7 = 0 + this.renderSortedRenderers(0, this.sortedWorldRenderers.length, integer, double3);
 +            n7 = this.renderSortedRenderers(0, this.sortedWorldRenderers.length, integer, double3);
          }
--        else {
--            n7 = 0 + this.renderSortedRenderers(0, this.sortedWorldRenderers.length, integer, double3);
--        }
          return n7;
-     }
--    
-+
-     private void checkOcclusionQueryResult(final int integer1, final int integer2) {
-         for (int i = integer1; i < integer2; ++i) {
-@@ -439,5 +446,5 @@
-         }
-     }
--    
-+
-     private int renderSortedRenderers(final int integer1, final int integer2, final int integer3, final double double4) {
-         this.glRenderLists.clear();
-@@ -448,16 +455,14 @@
-                 if (this.sortedWorldRenderers[i].skipRenderPass[integer3]) {
-                     ++this.renderersSkippingRenderPass;
--                }
--                else if (!this.sortedWorldRenderers[i].isInFrustum) {
-+                } else if (!this.sortedWorldRenderers[i].isInFrustum) {
-                     ++this.renderersBeingClipped;
--                }
--                else if (this.occlusionEnabled && !this.sortedWorldRenderers[i].isVisible) {
-+                } else if (this.occlusionEnabled && !this.sortedWorldRenderers[i].isVisible) {
-                     ++this.renderersBeingOccluded;
--                }
--                else {
-+                } else {
-                     ++this.renderersBeingRendered;
+@@ -459,5 +468,6 @@
                  }
              }
 -            if (!this.sortedWorldRenderers[i].skipRenderPass[integer3] && this.sortedWorldRenderers[i].isInFrustum && this.sortedWorldRenderers[i].isVisible && this.sortedWorldRenderers[i].getGLCallListForPass(integer3) >= 0) {
@@ -248,7 +133,7 @@
 +                    this.sortedWorldRenderers[i].isVisible && this.sortedWorldRenderers[i].getGLCallListForPass(integer3) >= 0) {
                  this.glRenderLists.add(this.sortedWorldRenderers[i]);
                  ++n;
-@@ -469,12 +474,11 @@
+@@ -469,12 +479,11 @@
          final double playerZ = thePlayer.lastTickPosZ + (thePlayer.posZ - thePlayer.lastTickPosZ) * double4;
          int n2 = 0;
 -        for (int j = 0; j < this.allRenderLists.length; ++j) {
@@ -265,7 +150,7 @@
 +                if (this.allRenderLists[k].isRenderedAt(glRenderList.posXMinus, glRenderList.posYMinus, glRenderList.posZMinus)) {
                      n3 = k;
                  }
-@@ -482,28 +486,28 @@
+@@ -482,7 +491,7 @@
              if (n3 < 0) {
                  n3 = n2++;
 -                this.allRenderLists[n3].setLocation(worldRenderer.posXMinus, worldRenderer.posYMinus, worldRenderer.posZMinus, playerX, playerY, playerZ);
@@ -275,10 +160,8 @@
 +            this.allRenderLists[n3].render(glRenderList.getGLCallListForPass(integer3));
          }
          this.renderAllRenderLists(integer3, double4);
-         return n;
-     }
--    
-+
+@@ -491,6 +500,6 @@
+     
      public void renderAllRenderLists(final int integer, final double double2) {
 -        for (int i = 0; i < this.allRenderLists.length; ++i) {
 -            this.allRenderLists[i].render();
@@ -286,284 +169,29 @@
 +            allRenderList.render();
          }
      }
--    
-+
-     public void updateClouds() {
-         ++this.cloudTickCounter;
-     }
--    
-+
-     public void renderSky(final float renderPartialTick) {
-         GL11.glDisable(3553);
-         final Vec3D skyColor = this.theWorld.getSkyColor(renderPartialTick);
--        float n = (float)skyColor.xCoord;
--        float n2 = (float)skyColor.yCoord;
--        float n3 = (float)skyColor.zCoord;
-+        float n = (float) skyColor.xCoord;
-+        float n2 = (float) skyColor.yCoord;
-+        float n3 = (float) skyColor.zCoord;
-         if (this.mc.gameSettings.anaglyph) {
-             final float n4 = (n * 30.0f + n2 * 59.0f + n3 * 11.0f) / 100.0f;
-@@ -561,5 +565,5 @@
-         GL11.glDepthMask(true);
-     }
--    
-+
-     public void renderClouds(final float renderPartialTick) {
-         if (this.mc.gameSettings.fancyGraphics) {
-@@ -568,5 +572,5 @@
-         }
-         GL11.glDisable(2884);
--        final float n = (float)(this.mc.thePlayer.lastTickPosY + (this.mc.thePlayer.posY - this.mc.thePlayer.lastTickPosY) * renderPartialTick);
-+        final float n = (float) (this.mc.thePlayer.lastTickPosY + (this.mc.thePlayer.posY - this.mc.thePlayer.lastTickPosY) * renderPartialTick);
-         final Tessellator instance = Tessellator.instance;
-         GL11.glBindTexture(3553, this.renderEngine.getTexture("/clouds.png"));
-@@ -574,7 +578,7 @@
-         GL11.glBlendFunc(770, 771);
-         final Vec3D cloudColor = this.theWorld.getCloudColor(renderPartialTick);
--        float r = (float)cloudColor.xCoord;
--        float g = (float)cloudColor.yCoord;
--        float b = (float)cloudColor.zCoord;
-+        float r = (float) cloudColor.xCoord;
-+        float g = (float) cloudColor.yCoord;
-+        float b = (float) cloudColor.zCoord;
-         if (this.mc.gameSettings.anaglyph) {
-             final float n2 = (r * 30.0f + g * 59.0f + b * 11.0f) / 100.0f;
-@@ -592,6 +596,6 @@
-         final double n8 = n6 - floor_double2 * 2048;
-         final float n9 = 120.0f - n + 0.33f;
--        final float n10 = (float)(n7 * 4.8828125E-4);
--        final float n11 = (float)(n8 * 4.8828125E-4);
-+        final float n10 = (float) (n7 * 4.8828125E-4);
-+        final float n11 = (float) (n8 * 4.8828125E-4);
-         instance.startDrawingQuads();
-         instance.setColorRGBA_F(r, g, b, 0.8f);
-@@ -609,8 +613,8 @@
-         GL11.glEnable(2884);
-     }
--    
-+
-     public void renderCloudsFancy(final float renderPartialTick) {
-         GL11.glDisable(2884);
--        final float n = (float)(this.mc.thePlayer.lastTickPosY + (this.mc.thePlayer.posY - this.mc.thePlayer.lastTickPosY) * renderPartialTick);
-+        final float n = (float) (this.mc.thePlayer.lastTickPosY + (this.mc.thePlayer.posY - this.mc.thePlayer.lastTickPosY) * renderPartialTick);
-         final Tessellator instance = Tessellator.instance;
-         final double n2 = (this.mc.thePlayer.prevPosX + (this.mc.thePlayer.posX - this.mc.thePlayer.prevPosX) * renderPartialTick + (this.cloudTickCounter + renderPartialTick) * 0.03f) / 12.0;
-@@ -625,7 +629,7 @@
-         GL11.glBlendFunc(770, 771);
-         final Vec3D cloudColor = this.theWorld.getCloudColor(renderPartialTick);
--        float r = (float)cloudColor.xCoord;
--        float g = (float)cloudColor.yCoord;
--        float b = (float)cloudColor.zCoord;
-+        float r = (float) cloudColor.xCoord;
-+        float g = (float) cloudColor.yCoord;
-+        float b = (float) cloudColor.zCoord;
-         if (this.mc.gameSettings.anaglyph) {
-             final float n7 = (r * 30.0f + g * 59.0f + b * 11.0f) / 100.0f;
-@@ -638,12 +642,11 @@
-         final float n10 = MathHelper.floor_double(n5) * 0.00390625f;
-         final float n11 = MathHelper.floor_double(n6) * 0.00390625f;
--        final float n12 = (float)(n5 - MathHelper.floor_double(n5));
--        final float n13 = (float)(n6 - MathHelper.floor_double(n6));
-+        final float n12 = (float) (n5 - MathHelper.floor_double(n5));
-+        final float n13 = (float) (n6 - MathHelper.floor_double(n6));
-         GL11.glScalef(12.0f, 1.0f, 12.0f);
-         for (int i = 0; i < 2; ++i) {
-             if (i == 0) {
-                 GL11.glColorMask(false, false, false, false);
--            }
--            else {
-+            } else {
-                 GL11.glColorMask(true, true, true, true);
-             }
-@@ -651,6 +654,6 @@
-                 for (int k = -2; k <= 3; ++k) {
-                     instance.startDrawingQuads();
--                    final float n14 = (float)(j * 8);
--                    final float n15 = (float)(k * 8);
-+                    final float n14 = (float) (j * 8);
-+                    final float n15 = (float) (k * 8);
-                     final float n16 = n14 - n12;
-                     final float n17 = n15 - n13;
-@@ -717,15 +720,14 @@
-         GL11.glEnable(2884);
-     }
--    
-+
+@@ -720,5 +729,5 @@
      public boolean updateRenderers(final EntityPlayer entityPlayer, final boolean boolean2) {
          try {
 -            Collections.sort((List)this.worldRenderersToUpdate, (Comparator)new RenderSorter(entityPlayer));
--        }
--        catch (IllegalArgumentException ex) {
 +            this.worldRenderersToUpdate.sort(new RenderSorter(entityPlayer));
-+        } catch (IllegalArgumentException ex) {
-             System.out.println("NOT THIS TIME TIMOTHY");
          }
+         catch (IllegalArgumentException ex) {
+@@ -727,5 +736,5 @@
          final int n = this.worldRenderersToUpdate.size() - 1;
          for (int size = this.worldRenderersToUpdate.size(), i = 0; i < size; ++i) {
 -            final WorldRenderer worldRenderer = (WorldRenderer)this.worldRenderersToUpdate.get(n - i);
 +            final WorldRenderer worldRenderer = this.worldRenderersToUpdate.get(n - i);
              if (!boolean2) {
                  if (worldRenderer.distanceToEntitySquared(entityPlayer) > 1024.0f) {
-@@ -734,11 +736,9 @@
-                             return false;
-                         }
--                    }
--                    else if (i >= 1) {
-+                    } else if (i >= 1) {
-                         return false;
-                     }
-                 }
--            }
--            else if (!worldRenderer.isInFrustum) {
-+            } else if (!worldRenderer.isInFrustum) {
-                 continue;
-             }
-@@ -749,5 +749,5 @@
-         return this.worldRenderersToUpdate.size() == 0;
-     }
--    
-+
-     public void drawBlockBreaking(final EntityPlayer entityPlayer, final MovingObjectPosition movingObjectPosition, final int integer, final ItemStack ev, final float float5) {
-         final Tessellator instance = Tessellator.instance;
-@@ -773,5 +773,5 @@
-                     stone = Block.STONE;
-                 }
--                this.globalRenderBlocks.renderBlockUsingTexture(stone, movingObjectPosition.blockX, movingObjectPosition.blockY, movingObjectPosition.blockZ, 240 + (int)(this.damagePartialTime * 10.0f));
-+                this.globalRenderBlocks.renderBlockUsingTexture(stone, movingObjectPosition.blockX, movingObjectPosition.blockY, movingObjectPosition.blockZ, 240 + (int) (this.damagePartialTime * 10.0f));
-                 instance.draw();
-                 instance.setTranslationD(0.0, 0.0, 0.0);
-@@ -782,6 +782,5 @@
-                 GL11.glPopMatrix();
-             }
--        }
--        else if (ev != null) {
-+        } else if (ev != null) {
-             GL11.glBlendFunc(770, 771);
-             final float n = MathHelper.sin(System.currentTimeMillis() / 100.0f) * 0.2f + 0.8f;
-@@ -792,5 +791,5 @@
-         GL11.glDisable(3008);
-     }
--    
-+
-     public void drawSelectionBox(final EntityPlayer dm, final MovingObjectPosition mf, final int integer, final ItemStack ev, final float float5) {
-         if (integer == 0 && mf.typeOfHit == 0) {
-@@ -811,5 +810,5 @@
-         }
-     }
--    
-+
-     private void drawOutlinedBoundingBox(final AxisAlignedBB aabb) {
-         final Tessellator instance = Tessellator.instance;
-@@ -839,5 +838,5 @@
-         instance.draw();
-     }
--    
-+
-     public void markBlocksForUpdate(final int minX, final int minY, final int minZ, final int maxX, final int maxY, final int maxZ) {
-         final int bucketInt = MathHelper.bucketInt(minX, 16);
-@@ -871,13 +870,13 @@
-         }
-     }
--    
-+
-     public void markBlockAndNeighborsNeedsUpdate(final int x, final int y, final int z) {
-         this.markBlocksForUpdate(x - 1, y - 1, z - 1, x + 1, y + 1, z + 1);
-     }
--    
-+
-     public void markBlockRangeNeedsUpdate(final int minX, final int minY, final int minZ, final int maxX, final int maxY, final int maxZ) {
-         this.markBlocksForUpdate(minX - 1, minY - 1, minZ - 1, maxX + 1, maxY + 1, maxZ + 1);
-     }
--    
-+
-     public void clipRenderersByFrustum(final ICamera camera, final float float2) {
-         for (int i = 0; i < this.worldRenderers.length; ++i) {
-@@ -888,12 +887,12 @@
-         ++this.frustumCheckOffset;
-     }
--    
-+
+@@ -891,5 +900,5 @@
      public void playRecord(final String record, final int x, final int y, final int z) {
          if (record != null) {
 -            this.mc.ingameGUI.setRecordPlayingMessage(new StringBuilder("C418 - ").append(record).toString());
 +            this.mc.ingameGUI.setRecordPlayingMessage("[5] - " + record);
          }
--        this.mc.sndManager.playStreaming(record, (float)x, (float)y, (float)z, 1.0f, 1.0f);
-+        this.mc.sndManager.playStreaming(record, (float) x, (float) y, (float) z, 1.0f, 1.0f);
-     }
--    
-+
-     public void playSound(final String sound, final double posX, final double posY, final double posZ, final float volume, final float pitch) {
-         float n = 16.0f;
-@@ -902,8 +901,8 @@
-         }
-         if (this.mc.thePlayer.getDistanceSq(posX, posY, posZ) < n * n) {
--            this.mc.sndManager.playSound(sound, (float)posX, (float)posY, (float)posZ, volume, pitch);
-+            this.mc.sndManager.playSound(sound, (float) posX, (float) posY, (float) posZ, volume, pitch);
-         }
-     }
--    
-+
-     public void spawnParticle(final String particle, final double posX, final double posY, final double posZ, final double motionX, final double motionY, final double motionZ) {
-         final double n = this.mc.thePlayer.posX - posX;
-@@ -915,34 +914,25 @@
-         if (particle == "bubble") {
-             this.mc.effectRenderer.addEffect(new EntityBubbleFX(this.theWorld, posX, posY, posZ, motionX, motionY, motionZ));
--        }
--        else if (particle == "smoke") {
-+        } else if (particle == "smoke") {
-             this.mc.effectRenderer.addEffect(new EntitySmokeFX(this.theWorld, posX, posY, posZ));
--        }
--        else if (particle == "explode") {
-+        } else if (particle == "explode") {
-             this.mc.effectRenderer.addEffect(new EntityExplodeFX(this.theWorld, posX, posY, posZ, motionX, motionY, motionZ));
--        }
--        else if (particle == "flame") {
-+        } else if (particle == "flame") {
-             this.mc.effectRenderer.addEffect(new EntityFlameFX(this.theWorld, posX, posY, posZ, motionX, motionY, motionZ));
--        }
--        else if (particle == "lava") {
-+        } else if (particle == "lava") {
-             this.mc.effectRenderer.addEffect(new EntityLavaFX(this.theWorld, posX, posY, posZ));
--        }
--        else if (particle == "splash") {
-+        } else if (particle == "splash") {
-             this.mc.effectRenderer.addEffect(new EntitySplashFX(this.theWorld, posX, posY, posZ, motionX, motionY, motionZ));
--        }
--        else if (particle == "largesmoke") {
-+        } else if (particle == "largesmoke") {
-             this.mc.effectRenderer.addEffect(new EntitySmokeFX(this.theWorld, posX, posY, posZ, 2.5f));
--        }
--        else if (particle == "reddust") {
-+        } else if (particle == "reddust") {
-             this.mc.effectRenderer.addEffect(new EntityRedDustFX(this.theWorld, posX, posY, posZ));
--        }
--        else if (particle == "snowballpoof") {
-+        } else if (particle == "snowballpoof") {
-             this.mc.effectRenderer.addEffect(new EntitySlimeFX(this.theWorld, posX, posY, posZ, Item.SNOWBALL));
--        }
--        else if (particle == "slime") {
-+        } else if (particle == "slime") {
-             this.mc.effectRenderer.addEffect(new EntitySlimeFX(this.theWorld, posX, posY, posZ, Item.SLIMEBALL));
-         }
-     }
--    
-+
-     public void obtainEntitySkin(final Entity entity) {
-         if (entity.skinUrl != null) {
-@@ -950,5 +940,5 @@
-         }
-     }
--    
-+
-     public void releaseEntitySkin(final Entity entity) {
-         if (entity.skinUrl != null) {
-@@ -956,16 +946,16 @@
-         }
-     }
--    
-+
+         this.mc.sndManager.playStreaming(record, (float)x, (float)y, (float)z, 1.0f, 1.0f);
+@@ -958,10 +967,10 @@
+     
      public void updateAllRenderers() {
 -        for (int i = 0; i < this.worldRenderers.length; ++i) {
 -            if (this.worldRenderers[i].isChunkLit) {
@@ -578,8 +206,3 @@
 +                worldRenderer.markDirty();
              }
          }
-     }
--    
-+
-     public void doNothingWithTileEntity(final int integer1, final int integer2, final int integer3, final TileEntity ic) {
-     }

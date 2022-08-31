@@ -1,0 +1,74 @@
+--- ModelRenderer.java
++++ ModelRenderer.java
+@@ -30,33 +30,33 @@
+     }
+     
+-    public void addBox(final float float1, final float float2, final float float3, final int integer4, final int integer5, final int integer6) {
+-        this.addBox(float1, float2, float3, integer4, integer5, integer6, 0.0f);
++    public void addBox(final float posX, final float posY, final float posZ, final int width, final int height, final int depth) {
++        this.addBox(posX, posY, posZ, width, height,  depth, 0.0f);
+     }
+     
+-    public void addBox(float float1, float float2, float float3, final int integer4, final int integer5, final int integer6, final float float7) {
++    public void addBox(float posX, float posY, float posZ, final int width, final int height, final int depth, final float size) {
+         this.corners = new PositionTextureVertex[8];
+         this.faces = new TexturedQuad[6];
+-        float n = float1 + integer4;
+-        float n2 = float2 + integer5;
+-        float n3 = float3 + integer6;
+-        float1 -= float7;
+-        float2 -= float7;
+-        float3 -= float7;
+-        n += float7;
+-        n2 += float7;
+-        n3 += float7;
++        float n = posX + width;
++        float n2 = posY + height;
++        float n3 = posZ + depth;
++        posX -= size;
++        posY -= size;
++        posZ -= size;
++        n += size;
++        n2 += size;
++        n3 += size;
+         if (this.mirror) {
+             final float n4 = n;
+-            n = float1;
+-            float1 = n4;
++            n = posX;
++            posX = n4;
+         }
+-        final PositionTextureVertex positionTextureVertex = new PositionTextureVertex(float1, float2, float3, 0.0f, 0.0f);
+-        final PositionTextureVertex positionTextureVertex2 = new PositionTextureVertex(n, float2, float3, 0.0f, 8.0f);
+-        final PositionTextureVertex positionTextureVertex3 = new PositionTextureVertex(n, n2, float3, 8.0f, 8.0f);
+-        final PositionTextureVertex positionTextureVertex4 = new PositionTextureVertex(float1, n2, float3, 8.0f, 0.0f);
+-        final PositionTextureVertex positionTextureVertex5 = new PositionTextureVertex(float1, float2, n3, 0.0f, 0.0f);
+-        final PositionTextureVertex positionTextureVertex6 = new PositionTextureVertex(n, float2, n3, 0.0f, 8.0f);
++        final PositionTextureVertex positionTextureVertex = new PositionTextureVertex(posX, posY, posZ, 0.0f, 0.0f);
++        final PositionTextureVertex positionTextureVertex2 = new PositionTextureVertex(n, posY, posZ, 0.0f, 8.0f);
++        final PositionTextureVertex positionTextureVertex3 = new PositionTextureVertex(n, n2, posZ, 8.0f, 8.0f);
++        final PositionTextureVertex positionTextureVertex4 = new PositionTextureVertex(posX, n2, posZ, 8.0f, 0.0f);
++        final PositionTextureVertex positionTextureVertex5 = new PositionTextureVertex(posX, posY, n3, 0.0f, 0.0f);
++        final PositionTextureVertex positionTextureVertex6 = new PositionTextureVertex(n, posY, n3, 0.0f, 8.0f);
+         final PositionTextureVertex positionTextureVertex7 = new PositionTextureVertex(n, n2, n3, 8.0f, 8.0f);
+-        final PositionTextureVertex positionTextureVertex8 = new PositionTextureVertex(float1, n2, n3, 8.0f, 0.0f);
++        final PositionTextureVertex positionTextureVertex8 = new PositionTextureVertex(posX, n2, n3, 8.0f, 0.0f);
+         this.corners[0] = positionTextureVertex;
+         this.corners[1] = positionTextureVertex2;
+@@ -67,10 +67,10 @@
+         this.corners[6] = positionTextureVertex7;
+         this.corners[7] = positionTextureVertex8;
+-        this.faces[0] = new TexturedQuad(new PositionTextureVertex[] { positionTextureVertex6, positionTextureVertex2, positionTextureVertex3, positionTextureVertex7 }, this.textureOffsetX + integer6 + integer4, this.textureOffsetY + integer6, this.textureOffsetX + integer6 + integer4 + integer6, this.textureOffsetY + integer6 + integer5);
+-        this.faces[1] = new TexturedQuad(new PositionTextureVertex[] { positionTextureVertex, positionTextureVertex5, positionTextureVertex8, positionTextureVertex4 }, this.textureOffsetX + 0, this.textureOffsetY + integer6, this.textureOffsetX + integer6, this.textureOffsetY + integer6 + integer5);
+-        this.faces[2] = new TexturedQuad(new PositionTextureVertex[] { positionTextureVertex6, positionTextureVertex5, positionTextureVertex, positionTextureVertex2 }, this.textureOffsetX + integer6, this.textureOffsetY + 0, this.textureOffsetX + integer6 + integer4, this.textureOffsetY + integer6);
+-        this.faces[3] = new TexturedQuad(new PositionTextureVertex[] { positionTextureVertex3, positionTextureVertex4, positionTextureVertex8, positionTextureVertex7 }, this.textureOffsetX + integer6 + integer4, this.textureOffsetY + 0, this.textureOffsetX + integer6 + integer4 + integer4, this.textureOffsetY + integer6);
+-        this.faces[4] = new TexturedQuad(new PositionTextureVertex[] { positionTextureVertex2, positionTextureVertex, positionTextureVertex4, positionTextureVertex3 }, this.textureOffsetX + integer6, this.textureOffsetY + integer6, this.textureOffsetX + integer6 + integer4, this.textureOffsetY + integer6 + integer5);
+-        this.faces[5] = new TexturedQuad(new PositionTextureVertex[] { positionTextureVertex5, positionTextureVertex6, positionTextureVertex7, positionTextureVertex8 }, this.textureOffsetX + integer6 + integer4 + integer6, this.textureOffsetY + integer6, this.textureOffsetX + integer6 + integer4 + integer6 + integer4, this.textureOffsetY + integer6 + integer5);
++        this.faces[0] = new TexturedQuad(new PositionTextureVertex[] { positionTextureVertex6, positionTextureVertex2, positionTextureVertex3, positionTextureVertex7 }, this.textureOffsetX + depth + width, this.textureOffsetY + depth, this.textureOffsetX + depth + width + depth, this.textureOffsetY + depth + height);
++        this.faces[1] = new TexturedQuad(new PositionTextureVertex[] { positionTextureVertex, positionTextureVertex5, positionTextureVertex8, positionTextureVertex4 }, this.textureOffsetX + 0, this.textureOffsetY + depth, this.textureOffsetX + depth, this.textureOffsetY + depth + height);
++        this.faces[2] = new TexturedQuad(new PositionTextureVertex[] { positionTextureVertex6, positionTextureVertex5, positionTextureVertex, positionTextureVertex2 }, this.textureOffsetX + depth, this.textureOffsetY + 0, this.textureOffsetX + depth + width, this.textureOffsetY + depth);
++        this.faces[3] = new TexturedQuad(new PositionTextureVertex[] { positionTextureVertex3, positionTextureVertex4, positionTextureVertex8, positionTextureVertex7 }, this.textureOffsetX + depth + width, this.textureOffsetY + 0, this.textureOffsetX + depth + width + width, this.textureOffsetY + depth);
++        this.faces[4] = new TexturedQuad(new PositionTextureVertex[] { positionTextureVertex2, positionTextureVertex, positionTextureVertex4, positionTextureVertex3 }, this.textureOffsetX + depth, this.textureOffsetY + depth, this.textureOffsetX + depth + width, this.textureOffsetY + depth + height);
++        this.faces[5] = new TexturedQuad(new PositionTextureVertex[] { positionTextureVertex5, positionTextureVertex6, positionTextureVertex7, positionTextureVertex8 }, this.textureOffsetX + depth + width + depth, this.textureOffsetY + depth, this.textureOffsetX + depth + width + depth + width, this.textureOffsetY + depth + height);
+         if (this.mirror) {
+             for (int i = 0; i < this.faces.length; ++i) {

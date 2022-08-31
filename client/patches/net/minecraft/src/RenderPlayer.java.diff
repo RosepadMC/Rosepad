@@ -1,0 +1,93 @@
+--- RenderPlayer.java
++++ RenderPlayer.java
+@@ -27,5 +27,5 @@
+             final Item item5 = itemStack4.getItem();
+             if (item5 instanceof ItemArmor) {
+-                this.loadTexture(new StringBuilder("/armor/").append(RenderPlayer.armorFilenamePrefix[((ItemArmor)item5).renderIndex]).append("_").append((integer == 2) ? 2 : 1).append(".png").toString());
++                this.loadTexture("/armor/" + RenderPlayer.armorFilenamePrefix[((ItemArmor) item5).renderIndex] + "_" + ((integer == 2) ? 2 : 1) + ".png");
+                 final ModelBiped modelBiped7 = (integer == 2) ? this.modelArmor : this.modelArmorChestplate;
+                 modelBiped7.bipedHead.showModel = (integer == 0);
+@@ -44,5 +44,5 @@
+     
+     @Override
+-    public void doRender(final Entity entity, final double x, final double y, final double z, final float rotation, final float renderPartialTick) {
++    public void doRender(final Entity entity, final double x, final double y, final double z, final float rotation, final float renderPartialTick) { // This method is a lie
+         final EntityPlayer entityPlayer = (EntityPlayer)entity;
+         final ItemStack itemStack11 = entityPlayer.inventory.getCurrentItem();
+@@ -53,38 +53,42 @@
+         final FontRenderer fontRenderer13 = this.getFontRendererFromRenderManager();
+         float float15 = 0.02666667f;
+-        if (!entityPlayer.username.startsWith("\u0107") && !entityPlayer.username.startsWith("\u015b")) {
+-            GL11.glPushMatrix();
+-            GL11.glTranslatef((float)x + 0.0f, (float)y + 2.3f, (float)z);
+-            GL11.glNormal3f(0.0f, 1.0f, 0.0f);
+-            GL11.glRotatef(-this.renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
+-            GL11.glRotatef(this.renderManager.playerViewX, 1.0f, 0.0f, 0.0f);
+-            float15 *= (float)(Math.sqrt((double)entityPlayer.getDistanceToEntity(this.renderManager.player)) / 2.0);
+-            GL11.glScalef(-float15, -float15, float15);
+-            final String string17 = entityPlayer.username;
+-            GL11.glDisable(2896);
+-            GL11.glDepthMask(false);
+-            GL11.glDisable(2929);
+-            GL11.glEnable(3042);
+-            GL11.glBlendFunc(770, 771);
+-            final Tessellator tessellator18 = Tessellator.instance;
+-            GL11.glDisable(3553);
+-            tessellator18.startDrawingQuads();
+-            final int integer19 = fontRenderer13.getStringWidth(string17) / 2;
+-            tessellator18.setColorRGBA_F(0.0f, 0.0f, 0.0f, 0.25f);
+-            tessellator18.addVertex(-integer19 - 1, -1.0, 0.0);
+-            tessellator18.addVertex(-integer19 - 1, 8.0, 0.0);
+-            tessellator18.addVertex(integer19 + 1, 8.0, 0.0);
+-            tessellator18.addVertex(integer19 + 1, -1.0, 0.0);
+-            tessellator18.draw();
+-            GL11.glEnable(3553);
+-            fontRenderer13.drawString(string17, -fontRenderer13.getStringWidth(string17) / 2, 0, 553648127);
+-            GL11.glEnable(2929);
+-            GL11.glDepthMask(true);
+-            fontRenderer13.drawString(string17, -fontRenderer13.getStringWidth(string17) / 2, 0, -1);
+-            GL11.glEnable(2896);
+-            GL11.glDisable(3042);
+-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+-            GL11.glPopMatrix();
+-        }
++
++        if (entityPlayer.username.startsWith("\u0107") || entityPlayer.username.startsWith("\u015b")) return;
++
++        GL11.glPushMatrix();
++
++        // Render username
++        GL11.glTranslatef((float)x + 0.0f, (float)y + 2.3f, (float)z);
++        GL11.glNormal3f(0.0f, 1.0f, 0.0f);
++        GL11.glRotatef(-this.renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
++        GL11.glRotatef(this.renderManager.playerViewX, 1.0f, 0.0f, 0.0f);
++        float15 *= (float)(Math.sqrt(entityPlayer.getDistanceToEntity(this.renderManager.player)) / 2.0);
++        GL11.glScalef(-float15, -float15, float15);
++        final String username = entityPlayer.username;
++        GL11.glDisable(2896);
++        GL11.glDepthMask(false);
++        GL11.glDisable(2929);
++        GL11.glEnable(3042);
++        GL11.glBlendFunc(770, 771);
++        final Tessellator tessellator = Tessellator.instance;
++        GL11.glDisable(3553);
++        tessellator.startDrawingQuads();
++        final int integer19 = fontRenderer13.getStringWidth(username) / 2;
++        tessellator.setColorRGBA_F(0.0f, 0.0f, 0.0f, 0.25f);
++        tessellator.addVertex(-integer19 - 1, -1.0, 0.0);
++        tessellator.addVertex(-integer19 - 1, 8.0, 0.0);
++        tessellator.addVertex(integer19 + 1, 8.0, 0.0);
++        tessellator.addVertex(integer19 + 1, -1.0, 0.0);
++        tessellator.draw();
++        GL11.glEnable(3553);
++        fontRenderer13.drawString(username, -fontRenderer13.getStringWidth(username) / 2, 0, 553648127);
++        GL11.glEnable(2929);
++        GL11.glDepthMask(true);
++        fontRenderer13.drawString(username, -fontRenderer13.getStringWidth(username) / 2, 0, -1);
++        GL11.glEnable(2896);
++        GL11.glDisable(3042);
++        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++
++        GL11.glPopMatrix();
+     }
+     

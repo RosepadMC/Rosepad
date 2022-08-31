@@ -1,5 +1,12 @@
 --- EntityPlayerSP.java
 +++ EntityPlayerSP.java
+@@ -23,5 +23,5 @@
+         if (session != null && session.username != null && session.username.length() > 0) {
+             this.skinUrl = "skin:///" + session.username;
+-            System.out.println(new StringBuilder("Loading texture ").append(this.skinUrl).toString());
++            System.out.println("Loading texture " + this.skinUrl);
+         }
+         this.username = session.username;
 @@ -63,5 +63,4 @@
              }
          }

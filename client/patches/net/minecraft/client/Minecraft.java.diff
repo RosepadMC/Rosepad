@@ -71,7 +71,11 @@
 +            catch (InterruptedException ignore) {}
              Display.create();
          }
-@@ -271,4 +300,9 @@
+@@ -268,7 +297,12 @@
+             (this.downloadResourcesThread = new ThreadDownloadResources(this.mcDataDir, this)).start();
+         }
+-        catch (Exception ex4) {}
++        catch (Exception ignored) {}
          this.checkGLError("Post startup");
          this.ingameGUI = new GuiIngame(this);
 +        {
@@ -109,7 +113,11 @@
 +                file = new File(property, '.' + appDirName + '/');
                  break;
              }
-@@ -350,9 +380,9 @@
+@@ -347,12 +377,12 @@
+                 final String getenv = System.getenv("APPDATA");
+                 if (getenv != null) {
+-                    file = new File(getenv, new StringBuilder(".").append(appDirName).append('/').toString());
++                    file = new File(getenv, "." + appDirName + '/');
                      break;
                  }
 -                file = new File(property, String.valueOf('.') + appDirName + '/');
@@ -158,17 +166,13 @@
 +            catch (Exception ignored) {}
              this.sndManager.closeMinecraft();
              Mouse.destroy();
-@@ -497,7 +527,7 @@
-                 this.sndManager.setListener(this.thePlayer, this.timer.renderPartialTicks);
+@@ -498,5 +528,5 @@
                  GL11.glEnable(3553);
--                if (this.theWorld != null) {
+                 if (this.theWorld != null) {
 -                    while (this.theWorld.updatingLighting()) {}
--                }
-+                //if (this.theWorld != null) {
-+                //    while (this.theWorld.updatingLighting()) {}
-+                //}
++                    while (this.theWorld.updatingLighting()) doNothing();
+                 }
                  if (!this.skipRenderWorld) {
-                     if (this.playerController != null) {
 @@ -538,5 +568,5 @@
                  this.isGamePaused = (!this.isMultiplayerWorld() && this.currentScreen != null && this.currentScreen.doesGuiPauseGame());
                  while (System.currentTimeMillis() >= currentTimeMillis + 1000L) {
@@ -232,18 +236,28 @@
 +                world.spawnEntityInWorld(this.thePlayer);
              }
              if (!world.multiplayerWorld) {
-@@ -1051,5 +1082,5 @@
+@@ -1051,8 +1082,8 @@
                  this.loadingScreen.setLoadingProgress(n2++ * 100 / n3);
                  this.theWorld.getBlockID(spawnX + i, 64, spawnZ + j);
 -                while (this.theWorld.updatingLighting()) {}
-+                // while (this.theWorld.updatingLighting()) {}
              }
          }
+         this.loadingScreen.displayLoadingString("Simulating world for a bit");
++        while (this.theWorld.updatingLighting()) doNothing();
+         n3 = 2000;
+         this.theWorld.dropOldChunks();
 @@ -1093,5 +1124,5 @@
      
      public String debugLoadedEntities() {
 -        return new StringBuilder("P: ").append(this.effectRenderer.getStatistics()).append(". T: ").append(this.theWorld.getDebugLoadedEntities()).toString();
 +        return "P: §5" + this.effectRenderer.getStatistics() + "§f. T: " + this.theWorld.getDebugLoadedEntities();
+     }
+     
+@@ -1114,5 +1145,5 @@
+     
+     public static boolean isValidName(final String username) {
+-        return username.matches("[a-zA-Z0-9_ \\u0107 \\u015b]*");
++        return username.matches("[a-zA-Z\\d_ \\u0107\\u015b]*");
      }
      
 @@ -1124,19 +1155,19 @@
@@ -256,9 +270,10 @@
          canvas.setPreferredSize(new Dimension(854, 480));
          frame.pack();
 -        frame.setLocationRelativeTo((Component)null);
-+        frame.setLocationRelativeTo(null);
-         final MinecraftImpl minecraft = new MinecraftImpl((Component)frame, canvas, null, 854, 480, false, frame);
+-        final MinecraftImpl minecraft = new MinecraftImpl((Component)frame, canvas, null, 854, 480, false, frame);
 -        final Thread thread = new Thread((Runnable)minecraft, "Minecraft main thread");
++        frame.setLocationRelativeTo(null);
++        final MinecraftImpl minecraft = new MinecraftImpl(frame, canvas, null, 854, 480, false, frame);
 +        final Thread thread = new Thread(minecraft, "Minecraft main thread");
          thread.setPriority(10);
          minecraft.appletMode = false;
@@ -272,7 +287,7 @@
 +            minecraft.session = new Session("Player" + System.currentTimeMillis() % 1000L, "");
          }
          if (server != null) {
-@@ -1145,10 +1176,11 @@
+@@ -1145,10 +1176,10 @@
          }
          frame.setVisible(true);
 -        frame.addWindowListener((WindowListener)new GameWindowListener(minecraft, thread));
@@ -282,11 +297,10 @@
      
      public static void main(final String[] args) {
 -        String string = new StringBuilder().append("Player").append(System.currentTimeMillis() % 1000L).toString();
-+        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true"); //Fix `NOT THIS TIME TIMOTHY`
 +        String string = "Player" + System.currentTimeMillis() % 1000L;
          if (args.length > 0) {
              string = args[0];
-@@ -1160,3 +1192,8 @@
+@@ -1160,3 +1191,8 @@
          startMainThread(string, sessionID);
      }
 +

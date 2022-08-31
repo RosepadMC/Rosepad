@@ -50,14 +50,63 @@
 +        this.size = size;
          this.actionPerformed();
      }
-@@ -120,5 +121,5 @@
+@@ -120,44 +121,44 @@
      public void handleKeyboardInput() {
          if (Keyboard.getEventKeyState()) {
 -            if (this.hasInputHandler && InputHandler.cheatsEnabled) {
 +            if (this.hasInputHandler && InputHandler.cheatsEnabled && this.mc.gameSettings.cheatMenuMode != 4) {
                  if (Keyboard.getEventKey() == 79) {
                      GuiScreen.currentID = String.valueOf(GuiScreen.currentID) + '1';
-@@ -167,9 +168,12 @@
+-                    System.out.println(new StringBuilder("Current entered ID: ").append(GuiScreen.currentID).toString());
++                    System.out.println("Current entered ID: " + GuiScreen.currentID);
+                 }
+                 else if (Keyboard.getEventKey() == 80) {
+                     GuiScreen.currentID = String.valueOf(GuiScreen.currentID) + '2';
+-                    System.out.println(new StringBuilder("Current entered ID: ").append(GuiScreen.currentID).toString());
++                    System.out.println("Current entered ID: " + GuiScreen.currentID);
+                 }
+                 else if (Keyboard.getEventKey() == 81) {
+                     GuiScreen.currentID = String.valueOf(GuiScreen.currentID) + '3';
+-                    System.out.println(new StringBuilder("Current entered ID: ").append(GuiScreen.currentID).toString());
++                    System.out.println("Current entered ID: " + GuiScreen.currentID);
+                 }
+                 else if (Keyboard.getEventKey() == 75) {
+                     GuiScreen.currentID = String.valueOf(GuiScreen.currentID) + '4';
+-                    System.out.println(new StringBuilder("Current entered ID: ").append(GuiScreen.currentID).toString());
++                    System.out.println("Current entered ID: " + GuiScreen.currentID);
+                 }
+                 else if (Keyboard.getEventKey() == 76) {
+                     GuiScreen.currentID = String.valueOf(GuiScreen.currentID) + '5';
+-                    System.out.println(new StringBuilder("Current entered ID: ").append(GuiScreen.currentID).toString());
++                    System.out.println("Current entered ID: " + GuiScreen.currentID);
+                 }
+                 else if (Keyboard.getEventKey() == 77) {
+                     GuiScreen.currentID = String.valueOf(GuiScreen.currentID) + '6';
+-                    System.out.println(new StringBuilder("Current entered ID: ").append(GuiScreen.currentID).toString());
++                    System.out.println("Current entered ID: " + GuiScreen.currentID);
+                 }
+                 else if (Keyboard.getEventKey() == 71) {
+                     GuiScreen.currentID = String.valueOf(GuiScreen.currentID) + '7';
+-                    System.out.println(new StringBuilder("Current entered ID: ").append(GuiScreen.currentID).toString());
++                    System.out.println("Current entered ID: " + GuiScreen.currentID);
+                 }
+                 else if (Keyboard.getEventKey() == 72) {
+                     GuiScreen.currentID = String.valueOf(GuiScreen.currentID) + '8';
+-                    System.out.println(new StringBuilder("Current entered ID: ").append(GuiScreen.currentID).toString());
++                    System.out.println("Current entered ID: " + GuiScreen.currentID);
+                 }
+                 else if (Keyboard.getEventKey() == 73) {
+                     GuiScreen.currentID = String.valueOf(GuiScreen.currentID) + '9';
+-                    System.out.println(new StringBuilder("Current entered ID: ").append(GuiScreen.currentID).toString());
++                    System.out.println("Current entered ID: " + GuiScreen.currentID);
+                 }
+                 else if (Keyboard.getEventKey() == 82) {
+                     GuiScreen.currentID = String.valueOf(GuiScreen.currentID) + '0';
+-                    System.out.println(new StringBuilder("Current entered ID: ").append(GuiScreen.currentID).toString());
++                    System.out.println("Current entered ID: " + GuiScreen.currentID);
+                 }
+                 else if (Keyboard.getEventKey() == 74) {
+@@ -167,13 +168,16 @@
                      try {
                          if (Block.BLOCKS_LIST.length > Integer.parseInt(GuiScreen.currentID) && Block.BLOCKS_LIST[Integer.parseInt(GuiScreen.currentID)] != null) {
 -                            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Block.BLOCKS_LIST[Integer.parseInt(GuiScreen.currentID)], 64), true);
@@ -68,8 +117,13 @@
 -                        else if (Item.ITEMS_LIST[Integer.parseInt(GuiScreen.currentID)] != null) {
 -                            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Item.ITEMS_LIST[Integer.parseInt(GuiScreen.currentID)], 1), true);
 +                        else if (Item.ITEMS_LIST[Integer.parseInt(GuiScreen.currentID)] != null && (
-+                                Item.ITEMS_LIST[Integer.parseInt(GuiScreen.currentID)].getVanilla() || NetClientHandler.rosepadMeta != null)) {
++                                Item.ITEMS_LIST[Integer.parseInt(GuiScreen.currentID)].getVanilla() || mc.theWorld.rosepadContentEnabled())) {
 +                            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Item.ITEMS_LIST[Integer.parseInt(GuiScreen.currentID)],
 +                                    mc.gameSettings.getCheatMenuItemAmount(1)), true);
                              System.out.println("Given item to the player");
                          }
+                         else {
+-                            System.out.println(new StringBuilder("No block or item with ID ").append(GuiScreen.currentID).toString());
++                            System.out.println("No block or item with ID " + GuiScreen.currentID);
+                         }
+                     }

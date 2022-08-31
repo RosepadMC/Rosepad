@@ -1,0 +1,65 @@
+--- ImageBufferDownload.java
++++ ImageBufferDownload.java
+@@ -1,4 +1,6 @@
+ package net.minecraft.src;
+ 
++import net.minecraft.client.devtools.DevToolsEnableX64SkinSupportToggle;
++
+ import java.awt.Graphics;
+ import java.awt.image.DataBufferInt;
+@@ -17,8 +19,8 @@
+         }
+         this.imageWidth = 64;
+-        this.imageHeight = 32;
++        this.imageHeight = DevToolsEnableX64SkinSupportToggle.ENABLED ? 64 : 32;
+         final BufferedImage bufferedImage = new BufferedImage(this.imageWidth, this.imageHeight, 2);
+         final Graphics graphics = bufferedImage.getGraphics();
+-        graphics.drawImage((Image)image, 0, 0, (ImageObserver)null);
++        graphics.drawImage(image, 0, 0, null);
+         graphics.dispose();
+         this.imageData = ((DataBufferInt)bufferedImage.getRaster().getDataBuffer()).getData();
+@@ -26,5 +28,8 @@
+         this.setAreaTransparent(32, 0, 64, 32);
+         this.setAreaOpaque(0, 16, 64, 32);
+-        int n = 0;
++        if (DevToolsEnableX64SkinSupportToggle.ENABLED) {
++            this.setAreaTransparent(0, 32, 64, 64);
++        }
++        /*int n = 0; // Useless loop
+         for (int i = 32; i < 64; ++i) {
+             for (int j = 0; j < 16; ++j) {
+@@ -32,4 +37,5 @@
+                 if ((n2 >> 24 & 0xFF) < 128) {
+                     n = 1;
++                    break;
+                 }
+             }
+@@ -41,8 +47,9 @@
+                     if ((n2 >> 24 & 0xFF) < 128) {
+                         n = 1;
++                        break;
+                     }
+                 }
+             }
+-        }
++        }*/
+         return bufferedImage;
+     }
+@@ -56,7 +63,5 @@
+                 final int[] imageData = this.imageData;
+                 final int n = i + j * this.imageWidth;
+-                final int[] array = imageData;
+-                final int n2 = n;
+-                array[n2] &= 0xFFFFFF;
++                imageData[n] &= 0xFFFFFF;
+             }
+         }
+@@ -68,7 +73,5 @@
+                 final int[] imageData = this.imageData;
+                 final int n = i + j * this.imageWidth;
+-                final int[] array = imageData;
+-                final int n2 = n;
+-                array[n2] |= 0xFF000000;
++                imageData[n] |= 0xFF000000;
+             }
+         }

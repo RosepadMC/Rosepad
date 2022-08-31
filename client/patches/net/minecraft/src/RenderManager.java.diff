@@ -1,9 +1,41 @@
 --- RenderManager.java
 +++ RenderManager.java
-@@ -61,5 +61,5 @@
-         if (entityClassRendderObject == null && entityClass != Entity.class) {
-             entityClassRendderObject = this.getEntityClassRendderObject(entityClass.getSuperclass());
--            this.entityRenderMap.put(entityClass, entityClassRendderObject);
-+this.entityRenderMap.put((Class<? extends Entity>) entityClass, entityClassRendderObject);
+@@ -29,5 +29,6 @@
+     
+     private RenderManager() {
+-        (this.entityRenderMap = (Map<Class<? extends Entity>, Render>)new HashMap()).put(EntitySpider.class, new RenderSpider());
++        this.entityRenderMap = new HashMap<>();
++        this.entityRenderMap.put(EntitySpider.class, new RenderSpider());
+         this.entityRenderMap.put(EntityPig.class, new RenderPig(new ModelPig(), new ModelPig(0.5f), 0.7f));
+         this.entityRenderMap.put(EntitySheep.class, new RenderSheep(new ModelSheep(), new ModelSheepFur(), 0.7f));
+@@ -51,17 +52,21 @@
+         this.entityRenderMap.put(EntityBoat.class, new RenderBoat());
+         this.entityRenderMap.put(MobGiant.class, new RenderGiant(new ModelZombie(), 0.5f, 6.0f));
+-        final Iterator<Render> iterator = (Iterator<Render>)this.entityRenderMap.values().iterator();
+-        while (iterator.hasNext()) {
+-            ((Render)iterator.next()).setRenderManager(this);
++        for (Render render : this.entityRenderMap.values()) {
++            render.setRenderManager(this);
          }
-         return entityClassRendderObject;
+     }
+     
+-    public Render getEntityClassRendderObject(final Class<?> entityClass) {
+-        Render entityClassRendderObject = (Render)this.entityRenderMap.get(entityClass);
+-        if (entityClassRendderObject == null && entityClass != Entity.class) {
+-            entityClassRendderObject = this.getEntityClassRendderObject(entityClass.getSuperclass());
+-            this.entityRenderMap.put(entityClass, entityClassRendderObject);
++    public Render getEntityClassRendderObject(final Class<? extends Entity> entityClass) {
++        try {
++            Render entityClassRendderObject = this.entityRenderMap.get(entityClass);
++            if (entityClassRendderObject == null && entityClass != Entity.class) {
++                entityClassRendderObject = this.getEntityClassRendderObject((Class<? extends Entity>) entityClass.getSuperclass());
++                this.entityRenderMap.put(entityClass, entityClassRendderObject);
++            }
++            return entityClassRendderObject;
+         }
+-        return entityClassRendderObject;
++        catch (Exception e) {
++            return null;
++        }
+     }
+     

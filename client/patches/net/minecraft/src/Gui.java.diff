@@ -1,0 +1,11 @@
+--- Gui.java
++++ Gui.java
+@@ -63,6 +63,6 @@
+     }
+     
+-    public void drawString(final FontRenderer fontRenderer, final String string, final int integer3, final int integer4, final int integer5) {
+-        fontRenderer.drawStringWithShadow(string, integer3, integer4, integer5);
++    public void drawString(final FontRenderer fontRenderer, final String string, final int beginX, final int beginY, final int color) {
++        fontRenderer.drawStringWithShadow(string, beginX, beginY, color);
+     }
+     

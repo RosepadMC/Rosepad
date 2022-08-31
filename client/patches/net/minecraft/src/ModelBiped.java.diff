@@ -1,0 +1,152 @@
+--- ModelBiped.java
++++ ModelBiped.java
+@@ -1,12 +1,21 @@
+ package net.minecraft.src;
+ 
++import net.minecraft.client.devtools.DevToolsEnableX64SkinSupportToggle;
++import net.minecraft.client.devtools.DevToolsHeadTextureX;
++import net.minecraft.client.devtools.DevToolsHeadTextureY;
++
+ public class ModelBiped extends ModelBase {
+     public ModelRenderer bipedHead;
+     public ModelRenderer bipedHeadwear;
+     public ModelRenderer bipedBody;
++    public ModelRenderer bipedBodywear;
+     public ModelRenderer bipedRightArm;
++    public ModelRenderer bipedRightArmwear;
+     public ModelRenderer bipedLeftArm;
++    public ModelRenderer bipedLeftArmwear;
+     public ModelRenderer bipedRightLeg;
++    public ModelRenderer bipedRightLegwear;
+     public ModelRenderer bipedLeftLeg;
++    public ModelRenderer bipedLeftLegwear;
+     public boolean heldItemLeft;
+     public boolean heldItemRight;
+@@ -20,25 +29,45 @@
+     }
+     
+-    public ModelBiped(final float float1, final float float2) {
++    public ModelBiped(final float defaultSize, final float rotation) {
+         this.heldItemLeft = false;
+         this.heldItemRight = false;
+-        (this.bipedHead = new ModelRenderer(0, 0)).addBox(-4.0f, -8.0f, -4.0f, 8, 8, 8, float1);
+-        this.bipedHead.setRotationPoint(0.0f, 0.0f + float2, 0.0f);
+-        (this.bipedHeadwear = new ModelRenderer(32, 0)).addBox(-4.0f, -8.0f, -4.0f, 8, 8, 8, float1 + 0.5f);
+-        this.bipedHeadwear.setRotationPoint(0.0f, 0.0f + float2, 0.0f);
+-        (this.bipedBody = new ModelRenderer(16, 16)).addBox(-4.0f, 0.0f, -2.0f, 8, 12, 4, float1);
+-        this.bipedBody.setRotationPoint(0.0f, 0.0f + float2, 0.0f);
+-        (this.bipedRightArm = new ModelRenderer(40, 16)).addBox(-3.0f, -2.0f, -2.0f, 4, 12, 4, float1);
+-        this.bipedRightArm.setRotationPoint(-5.0f, 2.0f + float2, 0.0f);
++
++        (this.bipedHead = new ModelRenderer(DevToolsHeadTextureX.VALUE, DevToolsHeadTextureY.VALUE)).addBox(-4.0f, -8.0f, -4.0f, 8, 8, 8, defaultSize);
++        this.bipedHead.setRotationPoint(0.0f, 0.0f + rotation, 0.0f);
++        (this.bipedHeadwear = new ModelRenderer(32, 0)).addBox(-4.0f, -8.0f, -4.0f, 8, 8, 8, defaultSize + 0.5f);
++        this.bipedHeadwear.setRotationPoint(0.0f, 0.0f + rotation, 0.0f);
++
++        (this.bipedBody = new ModelRenderer(16, 16)).addBox(-4.0f, 0.0f, -2.0f, 8, 12, 4, defaultSize);
++        this.bipedBody.setRotationPoint(0.0f, 0.0f + rotation, 0.0f);
++        (this.bipedBodywear = new ModelRenderer(16, 16)).addBox(-4.0f, 0.0f, -2.0f, 8, 12, 4, defaultSize + 0.5f);
++        this.bipedBodywear.setRotationPoint(0.0f, 0.0f + rotation, 0.0f);
++
++        (this.bipedRightArm = new ModelRenderer(40, 16)).addBox(-3.0f, -2.0f, -2.0f, 4, 12, 4, defaultSize);
++        this.bipedRightArm.setRotationPoint(-5.0f, 2.0f + rotation, 0.0f);
++        (this.bipedRightArmwear = new ModelRenderer(40, 16)).addBox(-3.0f, -2.0f, -2.0f, 4, 12, 4, defaultSize + 0.5f);
++        this.bipedRightArmwear.setRotationPoint(-5.0f, 2.0f + rotation, 0.0f);
++
+         this.bipedLeftArm = new ModelRenderer(40, 16);
+         this.bipedLeftArm.mirror = true;
+-        this.bipedLeftArm.addBox(-1.0f, -2.0f, -2.0f, 4, 12, 4, float1);
+-        this.bipedLeftArm.setRotationPoint(5.0f, 2.0f + float2, 0.0f);
+-        (this.bipedRightLeg = new ModelRenderer(0, 16)).addBox(-2.0f, 0.0f, -2.0f, 4, 12, 4, float1);
+-        this.bipedRightLeg.setRotationPoint(-2.0f, 12.0f + float2, 0.0f);
++        this.bipedLeftArm.addBox(-1.0f, -2.0f, -2.0f, 4, 12, 4, defaultSize);
++        this.bipedLeftArm.setRotationPoint(5.0f, 2.0f + rotation, 0.0f);
++        this.bipedLeftArmwear = new ModelRenderer(40, 16);
++        this.bipedLeftArmwear.mirror = true;
++        this.bipedLeftArmwear.addBox(-1.0f, -2.0f, -2.0f, 4, 12, 4, defaultSize + 0.5f);
++        this.bipedLeftArmwear.setRotationPoint(5.0f, 2.0f + rotation, 0.0f);
++
++        (this.bipedRightLeg = new ModelRenderer(0, 16)).addBox(-2.0f, 0.0f, -2.0f, 4, 12, 4, defaultSize);
++        this.bipedRightLeg.setRotationPoint(-2.0f, 12.0f + rotation, 0.0f);
++        (this.bipedRightLegwear = new ModelRenderer(0, 16)).addBox(-2.0f, 0.0f, -2.0f, 4, 12, 4, defaultSize + 0.5f);
++        this.bipedRightLegwear.setRotationPoint(-2.0f, 12.0f + rotation, 0.0f);
++
+         this.bipedLeftLeg = new ModelRenderer(0, 16);
+         this.bipedLeftLeg.mirror = true;
+-        this.bipedLeftLeg.addBox(-2.0f, 0.0f, -2.0f, 4, 12, 4, float1);
+-        this.bipedLeftLeg.setRotationPoint(2.0f, 12.0f + float2, 0.0f);
++        this.bipedLeftLeg.addBox(-2.0f, 0.0f, -2.0f, 4, 12, 4, defaultSize);
++        this.bipedLeftLeg.setRotationPoint(2.0f, 12.0f + rotation, 0.0f);
++        this.bipedLeftLegwear = new ModelRenderer(0, 16);
++        this.bipedLeftLegwear.mirror = true;
++        this.bipedLeftLegwear.addBox(-2.0f, 0.0f, -2.0f, 4, 12, 4, defaultSize + 0.5f);
++        this.bipedLeftLegwear.setRotationPoint(2.0f, 12.0f + rotation, 0.0f);
+     }
+     
+@@ -53,4 +82,8 @@
+         this.bipedLeftLeg.render(renderPartialTick);
+         this.bipedHeadwear.render(renderPartialTick);
++
++        if (DevToolsEnableX64SkinSupportToggle.ENABLED) {
++            this.bipedBodywear.render(renderPartialTick);
++        }
+     }
+     
+@@ -63,19 +96,22 @@
+         this.bipedRightArm.rotateAngleX = MathHelper.cos(legRot * 0.6662f + 3.1415927f) * 2.0f * legRotPartialTick * 0.5f;
+         this.bipedLeftArm.rotateAngleX = MathHelper.cos(legRot * 0.6662f) * 2.0f * legRotPartialTick * 0.5f;
++        this.bipedRightArmwear.rotateAngleX = this.bipedRightArm.rotateAngleX;
++        this.bipedLeftArmwear.rotateAngleX = this.bipedLeftArm.rotateAngleX;
+         this.bipedRightArm.rotateAngleZ = 0.0f;
+         this.bipedLeftArm.rotateAngleZ = 0.0f;
++        this.bipedRightArmwear.rotateAngleZ = this.bipedRightArm.rotateAngleZ;
++        this.bipedLeftArmwear.rotateAngleZ = this.bipedLeftArm.rotateAngleZ;
+         this.bipedRightLeg.rotateAngleX = MathHelper.cos(legRot * 0.6662f) * 1.4f * legRotPartialTick;
+         this.bipedLeftLeg.rotateAngleX = MathHelper.cos(legRot * 0.6662f + 3.1415927f) * 1.4f * legRotPartialTick;
++        this.bipedRightLegwear.rotateAngleZ = this.bipedRightLeg.rotateAngleZ;
++        this.bipedLeftLegwear.rotateAngleZ = this.bipedLeftLeg.rotateAngleZ;
+         this.bipedRightLeg.rotateAngleY = 0.0f;
+         this.bipedLeftLeg.rotateAngleY = 0.0f;
++        this.bipedRightLegwear.rotateAngleY = this.bipedRightLeg.rotateAngleY;
++        this.bipedLeftLegwear.rotateAngleY = this.bipedLeftLeg.rotateAngleY;
++
+         if (this.isRiding) {
+-            final ModelRenderer bipedRightArm7;
+-            final ModelRenderer bipedRightArm = bipedRightArm7 = this.bipedRightArm;
+-            bipedRightArm7.rotateAngleX -= 0.62831855f;
+-            final ModelRenderer bipedLeftArm6;
+-            final ModelRenderer bipedLeftArm = bipedLeftArm6 = this.bipedLeftArm;
+-            bipedLeftArm6.rotateAngleX -= 0.62831855f;
+-            this.bipedRightLeg.rotateAngleX = -1.2566371f;
+-            this.bipedLeftLeg.rotateAngleX = -1.2566371f;
++            this.bipedRightArm.rotateAngleX -= 0.62831855f;
++            this.bipedLeftArm.rotateAngleX -= 0.62831855f;
+             this.bipedRightLeg.rotateAngleY = 0.31415927f;
+             this.bipedLeftLeg.rotateAngleY = -0.31415927f;
+@@ -83,7 +119,9 @@
+         if (this.heldItemLeft) {
+             this.bipedLeftArm.rotateAngleX = this.bipedLeftArm.rotateAngleX * 0.5f - 0.31415927f;
++            this.bipedLeftArmwear.rotateAngleX = this.bipedLeftArm.rotateAngleX;
+         }
+         if (this.heldItemRight) {
+             this.bipedRightArm.rotateAngleX = this.bipedRightArm.rotateAngleX * 0.5f - 0.31415927f;
++            this.bipedRightArmwear.rotateAngleX = this.bipedRightArm.rotateAngleX;
+         }
+         this.bipedRightArm.rotateAngleY = 0.0f;
+@@ -96,13 +134,7 @@
+             this.bipedLeftArm.rotationPointZ = -MathHelper.sin(this.bipedBody.rotateAngleY) * 5.0f;
+             this.bipedLeftArm.rotationPointX = MathHelper.cos(this.bipedBody.rotateAngleY) * 5.0f;
+-            final ModelRenderer bipedRightArm8;
+-            final ModelRenderer bipedRightArm2 = bipedRightArm8 = this.bipedRightArm;
+-            bipedRightArm8.rotateAngleY += this.bipedBody.rotateAngleY;
+-            final ModelRenderer bipedLeftArm7;
+-            final ModelRenderer bipedLeftArm2 = bipedLeftArm7 = this.bipedLeftArm;
+-            bipedLeftArm7.rotateAngleY += this.bipedBody.rotateAngleY;
+-            final ModelRenderer bipedLeftArm8;
+-            final ModelRenderer bipedLeftArm3 = bipedLeftArm8 = this.bipedLeftArm;
+-            bipedLeftArm8.rotateAngleX += this.bipedBody.rotateAngleY;
++            this.bipedRightArm.rotateAngleY += this.bipedBody.rotateAngleY;
++            this.bipedLeftArm.rotateAngleY += this.bipedBody.rotateAngleY;
++            this.bipedLeftArm.rotateAngleX += this.bipedBody.rotateAngleY;
+             swingProgress = 1.0f - this.swingProgress;
+             swingProgress *= swingProgress;

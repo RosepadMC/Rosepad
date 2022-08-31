@@ -1,6 +1,19 @@
 --- InputHandler.java
 +++ InputHandler.java
-@@ -78,8 +78,8 @@
+@@ -1,4 +1,5 @@
+ package net.minecraft.src;
+ 
++import net.minecraft.client.devtools.DevTools;
+ import org.lwjgl.input.Mouse;
+ import org.lwjgl.input.Keyboard;
+@@ -7,4 +8,6 @@
+ import org.lwjgl.input.Controller;
+ 
++import java.util.Objects;
++
+ public class InputHandler {
+     public static Controller[] gamepads;
+@@ -78,8 +81,8 @@
                  else {
                      InputHandler.activeGamepad = InputHandler.gamepads[i];
 -                    System.out.println(new StringBuilder("Captured: ").append(InputHandler.gamepads[i].getName()).toString());
@@ -11,27 +24,39 @@
 +            catch (NullPointerException ignored) {}
          }
          if (InputHandler.activeGamepad != null) {
-@@ -164,12 +164,15 @@
+@@ -149,4 +152,7 @@
+     
+     public static void KBEventInject() {
++        if (mc == null) return;
++        if (mc.thePlayer == null) return;
++        if (mc.theWorld == null) return;
+         if (InputHandler.KBEventKey == 26) {
+             InputHandler.lastX = InputHandler.mc.thePlayer.posX;
+@@ -164,12 +170,19 @@
              InputHandler.mc.thePlayer.setPosition(InputHandler.mc.thePlayer.posX, InputHandler.mc.thePlayer.posY, InputHandler.mc.thePlayer.posZ);
          }
 -        else if (InputHandler.KBEventKey == 47 && InputHandler.KBEventKeyState && InputHandler.cheatsEnabled && !(InputHandler.mc.currentScreen instanceof GuiChat)) {
 -            if (InputHandler.mc.thePlayer != null && !IsKeyDown(29)) {
 +        else if (InputHandler.KBEventKey == mc.gameSettings.keyBindOpenGMEnv.keyCode && InputHandler.KBEventKeyState && InputHandler.cheatsEnabled) {
-+        	if (InputHandler.mc.thePlayer != null && mc.currentScreen == null && mc.gameSettings.cheatMenuMode != 4) {
++        	if (mc.currentScreen == null && mc.gameSettings.cheatMenuMode != 4) {
                  InputHandler.mc.displayGuiScreen(new ScreenItemCheat(InputHandler.mc));
              }
          }
 -        else if (InputHandler.KBEventKey == 42 && InputHandler.KBEventKeyState) {
 -            InputDash();
++        else if (InputHandler.KBEventKey == Keyboard.KEY_HOME && !(mc.currentScreen instanceof DevTools)
++                && Objects.equals(Minecraft.INSTANCE.getVersionTag(), "dev")) {
++            InputHandler.mc.displayGuiScreen(new DevTools(DevTools.mainPage(), mc.currentScreen, mc));
+         }
 +        else if (InputHandler.KBEventKey == 61 && InputHandler.KBEventKeyState && mc.currentScreen == null) {
 +            mc.gameSettings.showFPS = !mc.gameSettings.showFPS;
-         }
++        }
 +        else if (InputHandler.KBEventKey == mc.gameSettings.keyBindDash.keyCode && InputHandler.KBEventKeyState) {
 +            if (mc.currentScreen == null) InputDash();
 +        }
      }
      
-@@ -178,13 +181,8 @@
+@@ -178,13 +191,8 @@
              InputHandler.mc.theWorld.playSoundEffect(InputHandler.mc.thePlayer.posX, InputHandler.mc.thePlayer.posY, InputHandler.mc.thePlayer.posZ, "ext.dash", 0.6f, 1.0f);
              InputHandler.mc.thePlayer.dashTimer = 30;
 -            final EntityPlayerSP thePlayer4;

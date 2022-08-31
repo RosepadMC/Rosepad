@@ -1,6 +1,28 @@
 --- GuiMainMenu.java
 +++ GuiMainMenu.java
-@@ -76,5 +76,5 @@
+@@ -1,8 +1,12 @@
+ package net.minecraft.src;
+ 
++import net.minecraft.client.Minecraft;
++import net.minecraft.client.devtools.DevTools;
++import org.lwjgl.input.Keyboard;
+ import org.lwjgl.util.glu.GLU;
+ import org.lwjgl.opengl.GL11;
+ import java.util.Date;
+ import java.util.Calendar;
++import java.util.Objects;
+ import java.util.Random;
+ 
+@@ -46,4 +50,8 @@
+     @Override
+     protected void keyTyped(final char character, final int key) {
++        if (key == Keyboard.KEY_HOME && !(mc.currentScreen instanceof DevTools)
++                && Objects.equals(Minecraft.INSTANCE.getVersionTag(), "dev")) {
++            mc.displayGuiScreen(new DevTools(DevTools.mainPage(), mc.currentScreen, mc));
++        }
+     }
+     
+@@ -76,5 +84,5 @@
      protected void actionPerformed(final GuiButton button) {
          if (button.id == 0) {
 -            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));

@@ -1,133 +1,47 @@
 --- ThreadDownloadImage.java
 +++ ThreadDownloadImage.java
-@@ -1,13 +1,18 @@
- package net.minecraft.src;
- 
-+import net.minecraft.client.Minecraft;
- import org.json.JSONArray;
--import java.io.File;
- import org.json.JSONException;
--import javax.imageio.ImageIO;
--import java.net.HttpURLConnection;
--import java.util.Base64;
- import org.json.JSONObject;
- import org.json.JSONTokener;
-+
-+import javax.imageio.ImageIO;
-+import java.io.File;
-+import java.io.IOException;
-+import java.net.HttpURLConnection;
-+import java.net.MalformedURLException;
- import java.net.URL;
-+import java.util.Base64;
-+import java.util.logging.Logger;
- 
- class ThreadDownloadImage extends Thread {
-@@ -15,5 +20,5 @@
-     private String buffer;
-     private IImageBuffer imageData;
--    
-+
-     ThreadDownloadImage(final ThreadDownloadImageData downloadImageData, final String location, final IImageBuffer image) {
-         this.location = downloadImageData;
-@@ -21,9 +26,26 @@
-         this.imageData = image;
+@@ -22,14 +22,31 @@
      }
--    
-+
+     
 +    public boolean checkUsername(String username) {
-+        if (username.length() < 2 || username.length() > 32) return false;
-+        String fine = "qwertyuiopasdfghjklzxcvbnnmQWERTYUIOPASDFGHJKLZXVBNM1234567890-_";
-+        for (int i = 0; i < username.length(); i++) {
-+            boolean good = false;
-+            for (int o = 0; o < fine.length(); o++) {
-+                if (username.charAt(i) == fine.charAt(o)) {
-+                    good = true;
-+                    break;
-+                }
-+            }
-+            if (!good) return false;
-+        }
-+        return true;
++    	if (username.length() < 2 || username.length() > 32) return false;
++    	String fine = "qwertyuiopasdfghjklzxcvbnnmQWERTYUIOPASDFGHJKLZXVBNM1234567890-_";
++    	for (int i = 0; i < username.length(); i++) {
++    		boolean good = false;
++    		for (int o = 0; o < fine.length(); o++) {
++    			if (username.charAt(i) == fine.charAt(o)) {
++    				good = true;
++    				break;
++    			}
++    		}
++    		if (!good) return false;
++    	}
++    	return true;
 +    }
-+
++    
      public void run() {
          if (this.buffer.startsWith("skin:///")) {
              HttpURLConnection skinURLConnection = null;
              final String skinUsername = this.buffer.substring(8);
 +            if (!checkUsername(skinUsername)) return;
              try {
-                 final URL uuidURL = new URL(new StringBuilder("https://api.mojang.com/users/profiles/minecraft/").append(skinUsername).toString());
-@@ -38,5 +60,5 @@
-                 final JSONObject decodedSkinURLJson = new JSONObject(new String(Base64.getDecoder().decode(texturesB64)));
-                 final URL skinURL = new URL(decodedSkinURLJson.getJSONObject("textures").getJSONObject("SKIN").getString("url"));
--                skinURLConnection = (HttpURLConnection)skinURL.openConnection();
-+                skinURLConnection = (HttpURLConnection) skinURL.openConnection();
-                 skinURLConnection.setDoInput(true);
+-                final URL uuidURL = new URL(new StringBuilder("https://api.mojang.com/users/profiles/minecraft/").append(skinUsername).toString());
++                final URL uuidURL = new URL("https://api.mojang.com/users/profiles/minecraft/" + skinUsername);
+                 final JSONTokener uuidTokener = new JSONTokener(uuidURL.openStream());
+                 final JSONObject uuidRoot = new JSONObject(uuidTokener);
+                 final String uuid = uuidRoot.getString("id");
+-                final URL profileURL = new URL(new StringBuilder("https://sessionserver.mojang.com/session/minecraft/profile/").append(uuid).toString());
++                final URL profileURL = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid);
+                 final JSONTokener profileTokener = new JSONTokener(profileURL.openStream());
+                 final JSONObject profileRoot = new JSONObject(profileTokener);
+@@ -42,6 +59,10 @@
                  skinURLConnection.setDoOutput(false);
-@@ -44,18 +66,18 @@
+                 skinURLConnection.connect();
++
++                System.out.println("Skin URI: " + skinURL);
++
                  if (this.buffer == null) {
                      this.location.image = ImageIO.read(skinURLConnection.getInputStream());
--                }
--                else {
-+                } else {
-                     this.location.image = this.imageData.parseUserSkin(ImageIO.read(skinURLConnection.getInputStream()));
++                    System.out.printf("X: %s, Y: %s\n", this.location.image.getWidth(), this.location.image.getHeight());
                  }
-                 return;
--            }
--            catch (JSONException jsonExcp) {
-+            } catch (JSONException jsonExcp) {
-+                Logger.getLogger(Minecraft.class.getName()).severe("Error while parsing profile's JSON. " + jsonExcp.getLocalizedMessage());
-                 return;
--            }
--            catch (Exception exception8) {
-+            } catch (MalformedURLException urlException) {
-+                Logger.getLogger(Minecraft.class.getName()).severe("Couldn't create a URL. " + urlException.getLocalizedMessage());
-+                return;
-+            } catch (IOException exception8) {
-                 exception8.printStackTrace();
-                 return;
--            }
--            finally {
-+            } finally {
-                 if (skinURLConnection != null) {
-                     skinURLConnection.disconnect();
-@@ -67,11 +89,9 @@
-                 if (this.imageData == null) {
-                     this.location.image = ImageIO.read(new File(this.buffer.substring(8)));
--                }
--                else {
-+                } else {
-                     this.location.image = this.imageData.parseUserSkin(ImageIO.read(new File(this.buffer.substring(8))));
-                 }
-                 System.out.println("Loaded from local file");
--            }
--            catch (Exception ex) {
-+            } catch (Exception ex) {
-                 ex.printStackTrace();
-             }
-@@ -80,5 +100,5 @@
-         HttpURLConnection httpURLConnection = null;
-         try {
--            httpURLConnection = (HttpURLConnection)new URL(this.buffer).openConnection();
-+            httpURLConnection = (HttpURLConnection) new URL(this.buffer).openConnection();
-             httpURLConnection.setDoInput(true);
-             httpURLConnection.setDoOutput(false);
-@@ -89,14 +109,11 @@
-             if (this.imageData == null) {
-                 this.location.image = ImageIO.read(httpURLConnection.getInputStream());
--            }
--            else {
-+            } else {
-                 this.location.image = this.imageData.parseUserSkin(ImageIO.read(httpURLConnection.getInputStream()));
-             }
--        }
--        catch (Exception ex2) {
-+        } catch (Exception ex2) {
-             ex2.printStackTrace();
-             return;
--        }
--        finally {
-+        } finally {
-             httpURLConnection.disconnect();
-         }
+                 else {
