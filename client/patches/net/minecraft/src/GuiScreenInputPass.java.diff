@@ -1,26 +1,23 @@
 --- GuiScreenInputPass.java
 +++ GuiScreenInputPass.java
-@@ -5,8 +5,13 @@
+@@ -1,8 +1,9 @@
+ package net.minecraft.src;
+ 
+-import java.io.Writer;
+ import java.io.IOException;
  import java.io.FileWriter;
  import java.io.FileNotFoundException;
-+import java.util.List;
 +import java.util.Objects;
 +import java.util.Random;
  import java.util.Scanner;
  import java.io.File;
- import net.minecraft.client.Minecraft;
- 
-+import static sun.management.Agent.error;
-+
- public class GuiScreenInputPass extends GuiScreen {
-     private GuiScreen screen;
-@@ -17,4 +22,5 @@
+@@ -17,4 +18,5 @@
      private String einval;
      public static String name;
 +    private String errorMessage = "";
      public static final int[] EndBytes;
      
-@@ -23,5 +29,97 @@
+@@ -23,5 +25,97 @@
          EndBytes = new int[] { 39, 86, 26, 72, 13, 91, 23 };
      }
 -    
@@ -119,21 +116,21 @@
 +
      public GuiScreenInputPass(final Minecraft minecraft) {
          this.starStr = "";
-@@ -30,5 +128,5 @@
+@@ -30,5 +124,5 @@
          this.curCode = "";
          this.mc = minecraft;
 -        final File file = new File(String.valueOf(System.getProperty("user.dir")) + "/v3_act");
 +        final File file = new File(System.getProperty("user.dir") + "/v3_act");
          if (file.exists()) {
              Scanner scanner = null;
-@@ -72,5 +170,5 @@
+@@ -72,5 +166,5 @@
              this.controlList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 12, "Input"));
              this.controlList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 96 + 36, "Clear"));
 -            ((GuiButton)this.controlList.get(0)).enabled = false;
 +            this.controlList.get(0).enabled = false;
          }
          else {
-@@ -88,9 +186,11 @@
+@@ -88,9 +182,11 @@
          }
          else if (button.id == 0) {
 -            if (YesThisIsEasyToCircumvent_howeverPleaseDont(this.curCode)) {
@@ -149,7 +146,7 @@
 +                    fileWriter.close();
                  }
                  catch (IOException ex) {
-@@ -101,5 +201,8 @@
+@@ -101,5 +197,8 @@
              }
              else {
 -                this.einval = "Invalid key";
@@ -159,7 +156,7 @@
 +                    this.einval = "Invalid key: " + this.errorMessage;
              }
          }
-@@ -121,9 +224,9 @@
+@@ -121,9 +220,9 @@
              }
              if (length > 0) {
 -                this.curCode = String.valueOf(this.curCode) + clipboardString.substring(0, length);
@@ -171,7 +168,7 @@
 +            this.actionPerformed(this.controlList.get(0));
          }
          if (key == 14 && this.curCode.length() > 0) {
-@@ -131,7 +234,7 @@
+@@ -131,7 +230,7 @@
          }
          if (" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~\u2302\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8?\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1???®¬???«»".indexOf((int)character) >= 0 && this.curCode.length() < 64) {
 -            this.curCode = String.valueOf(this.curCode) + character;
@@ -181,7 +178,7 @@
 +        this.controlList.get(0).enabled = (this.curCode.length() > 0);
      }
      
-@@ -145,6 +248,8 @@
+@@ -145,6 +244,8 @@
          if (!GuiMainMenu.shw) {
              this.drawCenteredString(this.fontRenderer, "Input key", this.width / 2, this.height / 4 - 60 + 20, -1593835521);
 -            this.drawString(this.fontRenderer, "Please enter your QA Preview key", this.width / 2 - 140, this.height / 4 - 60 + 60 + 0, 10526880);
