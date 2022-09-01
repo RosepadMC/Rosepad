@@ -11,6 +11,7 @@ import java.util.List;
 public class Packet130RosepadMeta extends Packet {
     public List<ULPPExtension> extensions = new ArrayList<>();
     public String clientName = "Rosepad";
+    public String host = "";
     public int[] version = MinecraftServer.INSTANCE.getVersion();
     public String tag = MinecraftServer.INSTANCE.getVersionTag();
     public long flags = 0;
@@ -19,6 +20,7 @@ public class Packet130RosepadMeta extends Packet {
     public void readPacketData(DataInputStream dataInputStream) throws IOException {
         clientName = dataInputStream.readUTF();
         tag = dataInputStream.readUTF();
+        host = dataInputStream.readUTF();
         short verLen = dataInputStream.readShort();
         version = new int[verLen];
         for (short i = 0; i < verLen; i++)
@@ -39,6 +41,7 @@ public class Packet130RosepadMeta extends Packet {
     public void writePacket(DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeUTF(clientName);
         dataOutputStream.writeUTF(tag);
+        dataOutputStream.writeUTF(host);
         dataOutputStream.writeShort(version.length);
         for (int i : version) {
             dataOutputStream.writeShort(i);
@@ -67,7 +70,7 @@ public class Packet130RosepadMeta extends Packet {
 
     @Override
     public void processPacket(NetHandler netHandler) {
-
+        netHandler.handleRosepadMeta(this);
     }
 
     @Override

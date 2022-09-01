@@ -26,14 +26,14 @@
          int n = 0;
          for (int i = 1; i != 256; ++i) {
 -            if (Block.BLOCKS_LIST[i] != null && i != 120) {
-+            if (Block.BLOCKS_LIST[i] != null && i != 120 && isSearchedFor(Block.BLOCKS_LIST[i])) {
++            if (Block.BLOCKS_LIST[i] != null && isSearchedFor(Block.BLOCKS_LIST[i])) {
                  ++n;
              }
 @@ -68,5 +73,5 @@
          int n = 0;
          for (int i = 1; i != 256; ++i) {
 -            if (Block.BLOCKS_LIST[i] != null && i != 120) {
-+            if (Block.BLOCKS_LIST[i] != null && i != 120 && isSearchedFor(Block.BLOCKS_LIST[i])) {
++            if (Block.BLOCKS_LIST[i] != null && isSearchedFor(Block.BLOCKS_LIST[i])) {
                  ++n;
              }
 @@ -74,9 +79,41 @@

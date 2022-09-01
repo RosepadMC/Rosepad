@@ -1,9 +1,17 @@
 --- BlockFence.java
 +++ BlockFence.java
-@@ -10,5 +10,5 @@
+@@ -10,10 +10,12 @@
      @Override
      public void getCollidingBoundingBoxes(final World world, final int x, final int y, final int z, final AxisAlignedBB aabb, final ArrayList<AxisAlignedBB> collidingBoundingBoxes) {
 -        collidingBoundingBoxes.add(AxisAlignedBB.getBoundingBoxFromPool(x, y, z, x + 1, y + 1.5, z + 1));
-+        collidingBoundingBoxes.add(AxisAlignedBB.getBoundingBoxFromPool(x, y, z, x + 1, y + 2, z + 1));
++        if (world.rosepadContentEnabled())
++            collidingBoundingBoxes.add(AxisAlignedBB.getBoundingBoxFromPool(x + 0.3, y, z + 0.3, x + 0.7, y + 1.5, z + 0.7));
++        else collidingBoundingBoxes.add(AxisAlignedBB.getBoundingBoxFromPool(x, y, z, x + 1, y + 2, z + 1));
+     }
+     
+     @Override
+     public boolean canPlaceBlockAt(final World world, final int x, final int y, final int z) {
+-        return world.getBlockID(x, y - 1, z) != this.blockID && world.getBlockMaterial(x, y - 1, z).isSolid() && super.canPlaceBlockAt(world, x, y, z);
++        return world.rosepadContentEnabled() || world.getBlockID(x, y - 1, z) != this.blockID && world.getBlockMaterial(x, y - 1, z).isSolid() && super.canPlaceBlockAt(world, x, y, z);
      }
      

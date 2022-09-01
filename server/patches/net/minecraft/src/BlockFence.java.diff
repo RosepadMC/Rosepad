@@ -1,0 +1,21 @@
+--- BlockFence.java
++++ BlockFence.java
+@@ -6,14 +6,11 @@
+     public BlockFence(final int id, final int blockIndex) {
+         super(id, blockIndex, Material.wood);
++        this.setBlockBounds(0.3f, 0f, 0.3f, 0.7f, 1.5f, 0.7f);
+     }
+-    
++
+     @Override
+-    public void getCollidingBoundingBoxes(final World world, final int x, final int y, final int z, final AxisAlignedBB aabb, final ArrayList arrayList) {
+-        arrayList.add(AxisAlignedBB.getBoundingBoxFromPool(x, y, z, x + 1, y + 1.5, z + 1));
+-    }
+-    
+-    @Override
+     public boolean canPlaceBlockAt(final World world, final int x, final int y, final int z) {
+-        return world.getBlockId(x, y - 1, z) != this.blockID && world.getBlockMaterial(x, y - 1, z).isSolid() && super.canPlaceBlockAt(world, x, y, z);
++        // return world.getBlockId(x, y - 1, z) != this.blockID && world.getBlockMaterial(x, y - 1, z).isSolid() && super.canPlaceBlockAt(world, x, y, z);
++        return true;
+     }
+     

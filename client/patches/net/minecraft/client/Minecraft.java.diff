@@ -71,6 +71,13 @@
 +            catch (InterruptedException ignore) {}
              Display.create();
          }
+@@ -233,5 +262,5 @@
+         Keyboard.create();
+         Mouse.create();
+-        this.mouseHelper = new MouseHelper((Component)this.mcCanvas);
++        this.mouseHelper = new MouseHelper(this.mcCanvas);
+         try {
+             Controllers.create();
 @@ -268,7 +297,12 @@
              (this.downloadResourcesThread = new ThreadDownloadResources(this.mcDataDir, this)).start();
          }

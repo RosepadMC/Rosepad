@@ -14,3 +14,12 @@
 +        return AxisAlignedBB.boundingBoxes.get(AxisAlignedBB.numBoundingBoxesInUse++).setBounds(minX, minY, minZ, maxX, maxY, maxZ);
      }
      
+@@ -156,5 +156,7 @@
+     
+     public boolean intersectsWith(final AxisAlignedBB aabb) {
+-        return aabb.maxX > this.minX && aabb.minX < this.maxX && aabb.maxY > this.minY && aabb.minY < this.maxY && aabb.maxZ > this.minZ && aabb.minZ < this.maxZ;
++        return aabb.maxX > this.minX && aabb.minX < this.maxX &&
++                aabb.maxY > this.minY && aabb.minY < this.maxY &&
++                aabb.maxZ > this.minZ && aabb.minZ < this.maxZ;
+     }
+     

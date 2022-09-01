@@ -20,13 +20,18 @@
 +    protected List<IWorldAccess> worldAccesses;
      private IChunkProvider chunkProvider;
      public File saveDirectory;
-@@ -53,5 +53,5 @@
+@@ -52,8 +52,8 @@
+     public final String levelName;
      public boolean worldChunkLoadOverride;
-     private ArrayList collidingBoundingBoxes;
+-    private ArrayList collidingBoundingBoxes;
 -    private Set positionsToUpdate;
++    private ArrayList<AxisAlignedBB> collidingBoundingBoxes;
 +    private Set<ChunkCoordIntPair> positionsToUpdate;
      private int soundCounter;
-     private List entitiesWithinAABBExcludingEntity;
+-    private List entitiesWithinAABBExcludingEntity;
++    private List<Entity> entitiesWithinAABBExcludingEntity;
+     public boolean multiplayerWorld;
+     public long milestone;
 @@ -100,10 +100,10 @@
          this.bossPeriod = 10L;
          this.numLightingUpdates = 0;
@@ -85,3 +90,80 @@
 +    }
      
      public void playSoundAtEntity(final Entity entity, final String soundName, final float f3, final float f4) {
+@@ -800,5 +810,5 @@
+     protected void releaseEntitySkin(final Entity entity) {
+         for (int i2 = 0; i2 < this.worldAccesses.size(); ++i2) {
+-            ((IWorldAccess)this.worldAccesses.get(i2)).releaseEntitySkin(entity);
++            this.worldAccesses.get(i2).releaseEntitySkin(entity);
+         }
+     }
+@@ -808,5 +818,5 @@
+         if (entity instanceof EntityPlayer) {
+             this.playerEntities.remove(entity);
+-            System.out.println(new StringBuilder("Player count: ").append(this.playerEntities.size()).toString());
++            System.out.println("Player count: " + this.playerEntities.size());
+         }
+     }
+@@ -816,19 +826,19 @@
+     }
+     
+-    public List getCollidingBoundingBoxes(final Entity entity, final AxisAlignedBB aabb) {
++    public List<AxisAlignedBB> getCollidingBoundingBoxes(final Entity entity, final AxisAlignedBB aabb) {
+         this.collidingBoundingBoxes.clear();
+-        final int i3 = MathHelper.floor_double(aabb.minX);
+-        final int i4 = MathHelper.floor_double(aabb.maxX + 1.0);
+-        final int i5 = MathHelper.floor_double(aabb.minY);
+-        final int i6 = MathHelper.floor_double(aabb.maxY + 1.0);
+-        final int i7 = MathHelper.floor_double(aabb.minZ);
+-        final int i8 = MathHelper.floor_double(aabb.maxZ + 1.0);
+-        for (int i9 = i3; i9 < i4; ++i9) {
+-            for (int i10 = i7; i10 < i8; ++i10) {
+-                if (this.blockExists(i9, 64, i10)) {
+-                    for (int i11 = i5 - 1; i11 < i6; ++i11) {
+-                        final Block block12 = Block.blocksList[this.getBlockId(i9, i11, i10)];
+-                        if (block12 != null) {
+-                            block12.getCollidingBoundingBoxes(this, i9, i11, i10, aabb, this.collidingBoundingBoxes);
++        final int minX = MathHelper.floor_double(aabb.minX);
++        final int maxX = MathHelper.floor_double(aabb.maxX + 1.0);
++        final int minY = MathHelper.floor_double(aabb.minY);
++        final int maxY = MathHelper.floor_double(aabb.maxY + 1.0);
++        final int minZ = MathHelper.floor_double(aabb.minZ);
++        final int maxZ = MathHelper.floor_double(aabb.maxZ + 1.0);
++        for (int i = minX; i < maxX; ++i) {
++            for (int j = minZ; j < maxZ; ++j) {
++                if (this.blockExists(i, 64, j)) {
++                    for (int k = minY - 1; k < maxY; ++k) {
++                        final Block block = Block.blocksList[this.getBlockId(i, k, j)];
++                        if (block != null) {
++                            block.getCollidingBoundingBoxes(this, i, k, j, aabb, this.collidingBoundingBoxes);
+                         }
+                     }
+@@ -837,16 +847,16 @@
+         }
+         final double d14 = 0.25;
+-        final List list15 = this.getEntitiesWithinAABBExcludingEntity(entity, aabb.expand(d14, d14, d14));
+-        for (int i12 = 0; i12 < list15.size(); ++i12) {
+-            AxisAlignedBB axisAlignedBB13 = ((Entity)list15.get(i12)).getBoundingBox();
++        final List<Entity> list15 = this.getEntitiesWithinAABBExcludingEntity(entity, aabb.expand(d14, d14, d14));
++        for (Entity value : list15) {
++            AxisAlignedBB axisAlignedBB13 = value.getBoundingBox();
+             if (axisAlignedBB13 != null && axisAlignedBB13.intersectsWith(aabb)) {
+                 this.collidingBoundingBoxes.add(axisAlignedBB13);
+             }
+-            axisAlignedBB13 = entity.getCollisionBox((Entity)list15.get(i12));
++            axisAlignedBB13 = entity.getCollisionBox(value);
+             if (axisAlignedBB13 != null && axisAlignedBB13.intersectsWith(aabb)) {
+                 this.collidingBoundingBoxes.add(axisAlignedBB13);
+             }
+         }
+-        return (List)this.collidingBoundingBoxes;
++        return this.collidingBoundingBoxes;
+     }
+     
+@@ -1379,5 +1389,5 @@
+     }
+     
+-    public List getEntitiesWithinAABBExcludingEntity(final Entity entity, final AxisAlignedBB aabb) {
++    public List<Entity> getEntitiesWithinAABBExcludingEntity(final Entity entity, final AxisAlignedBB aabb) {
+         this.entitiesWithinAABBExcludingEntity.clear();
+         final int i3 = MathHelper.floor_double((aabb.minX - 2.0) / 16.0);

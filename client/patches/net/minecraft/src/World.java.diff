@@ -218,6 +218,30 @@
 +            System.out.println("Player count: " + this.playerEntities.size());
          }
      }
+@@ -910,14 +909,14 @@
+     public List<AxisAlignedBB> getCollidingBoundingBoxes(final Entity entity, final AxisAlignedBB aabb) {
+         this.collidingBoundingBoxes.clear();
+-        final int floor_double = MathHelper.floor_double(aabb.minX);
+-        final int floor_double2 = MathHelper.floor_double(aabb.maxX + 1.0);
+-        final int floor_double3 = MathHelper.floor_double(aabb.minY);
+-        final int floor_double4 = MathHelper.floor_double(aabb.maxY + 1.0);
+-        final int floor_double5 = MathHelper.floor_double(aabb.minZ);
+-        final int floor_double6 = MathHelper.floor_double(aabb.maxZ + 1.0);
+-        for (int i = floor_double; i < floor_double2; ++i) {
+-            for (int j = floor_double5; j < floor_double6; ++j) {
++        final int minX = MathHelper.floor_double(aabb.minX);
++        final int maxX = MathHelper.floor_double(aabb.maxX + 1.0);
++        final int minY = MathHelper.floor_double(aabb.minY);
++        final int maxY = MathHelper.floor_double(aabb.maxY + 1.0);
++        final int minZ = MathHelper.floor_double(aabb.minZ);
++        final int maxZ = MathHelper.floor_double(aabb.maxZ + 1.0);
++        for (int i = minX; i < maxX; ++i) {
++            for (int j = minZ; j < maxZ; ++j) {
+                 if (this.blockExists(i, 64, j)) {
+-                    for (int k = floor_double3 - 1; k < floor_double4; ++k) {
++                    for (int k = minY - 1; k < maxY; ++k) {
+                         final Block block = Block.BLOCKS_LIST[this.getBlockID(i, k, j)];
+                         if (block != null) {
 @@ -928,20 +927,21 @@
              }
          }
