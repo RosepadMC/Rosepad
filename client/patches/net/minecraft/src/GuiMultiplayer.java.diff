@@ -1,19 +1,22 @@
 --- GuiMultiplayer.java
 +++ GuiMultiplayer.java
-@@ -2,5 +2,5 @@
+@@ -1,6 +1,8 @@
+ package net.minecraft.src;
  
++import org.lwjgl.input.Keyboard;
++
  public class GuiMultiplayer extends GuiScreen {
 -    private GuiScreen parentScreen;
 +    private final GuiScreen parentScreen;
      private int updateCounter;
      private String ipText;
-@@ -10,4 +10,5 @@
+@@ -10,4 +12,5 @@
          this.ipText = "";
          this.parentScreen = screen;
 +        NetClientHandler.rosepadMeta = null; // Feel free to make an RP to remove this
      }
      
-@@ -20,7 +21,9 @@
+@@ -20,7 +23,9 @@
      public void actionPerformed() {
          this.controlList.clear();
 -        this.controlList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 12, "Connect"));
@@ -26,15 +29,33 @@
 +        this.controlList.get(0).enabled = false;
      }
      
-@@ -51,17 +54,17 @@
+@@ -35,5 +40,9 @@
+         else if (button.id == 0) {
+             final String[] split = this.ipText.split(":");
+-            this.mc.displayGuiScreen(new GuiConnecting(this.mc, split[0], (split.length > 1) ? Integer.parseInt(split[1]) : 25565));
++            try {
++                this.mc.displayGuiScreen(new GuiConnecting(this.mc, split[0], (split.length > 1) ? Integer.parseInt(split[1]) : 25565));
++            } catch (NumberFormatException e) {
++                this.mc.displayGuiScreen(new GuiConnectFailed("Failed to parse URI", "Port number is invalid"));
++            }
+         }
+     }
+@@ -46,4 +55,5 @@
+                 clipboardString = "";
+             }
++            else clipboardString = Util.filterWith(clipboardString, "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~\u2302\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8£\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1ªº¿®¬½¼¡«»");
+             int length = 32 - this.ipText.length();
+             if (length > clipboardString.length()) {
+@@ -51,17 +61,17 @@
              }
              if (length > 0) {
 -                this.ipText = String.valueOf(this.ipText) + clipboardString.substring(0, length);
 +                this.ipText = this.ipText + clipboardString.substring(0, length);
              }
          }
-         if (character == '\r') {
+-        if (character == '\r') {
 -            this.actionPerformed((GuiButton)this.controlList.get(0));
++        if (key == Keyboard.KEY_RETURN) {
 +            this.actionPerformed(this.controlList.get(0));
          }
          if (key == 14 && this.ipText.length() > 0) {
@@ -42,14 +63,14 @@
          }
 -        if (" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~\u2302\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8£\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1ªº¿®¬½¼¡«»".indexOf((int)character) >= 0 && this.ipText.length() < 32) {
 -            this.ipText = String.valueOf(this.ipText) + character;
-+        if (" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~\u2302\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8£\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1ªº¿®¬½¼¡«»".indexOf(character) >= 0 && this.ipText.length() < 32) {
++        if ("!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~\u2302\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8£\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1ªº¿®¬½¼¡«»".indexOf(character) >= 0 && this.ipText.length() < 32) {
 +            this.ipText = this.ipText + character;
          }
 -        ((GuiButton)this.controlList.get(0)).enabled = (this.ipText.length() > 0);
 +        this.controlList.get(0).enabled = (this.ipText.length() > 0);
      }
      
-@@ -70,14 +73,12 @@
+@@ -70,14 +80,12 @@
          this.drawDefaultBackground();
          this.drawCenteredString(this.fontRenderer, "Play Multiplayer", this.width / 2, this.height / 4 - 60 + 20, 16777215);
 -        this.drawString(this.fontRenderer, "Minecraft Multiplayer is currently not finished, but there", this.width / 2 - 140, this.height / 4 - 60 + 60 + 0, 10526880);

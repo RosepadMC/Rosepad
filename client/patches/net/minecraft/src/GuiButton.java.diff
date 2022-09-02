@@ -1,0 +1,31 @@
+--- GuiButton.java
++++ GuiButton.java
+@@ -14,19 +14,19 @@
+     public boolean visible;
+     
+-    public GuiButton(final int integer1, final int integer2, final int integer3, final String message) {
+-        this(integer1, integer2, integer3, 200, 20, message);
++    public GuiButton(final int id, final int posX, final int posY, final String text) {
++        this(id, posX, posY, 200, 20, text);
+     }
+     
+-    protected GuiButton(final int integer1, final int integer2, final int integer3, final int integer4, final int integer5, final String string) {
++    protected GuiButton(final int id, final int posX, final int posY, final int width, final int height, final String text) {
+         this.width = 200;
+         this.height = 20;
+         this.enabled = true;
+         this.visible = true;
+-        this.id = integer1;
+-        this.xPosition = integer2;
+-        this.yPosition = integer3;
+-        this.width = integer4;
+-        this.height = integer5;
+-        this.displayString = string;
++        this.id = id;
++        this.xPosition = posX;
++        this.yPosition = posY;
++        this.width = width;
++        this.height = height;
++        this.displayString = text;
+     }
+     

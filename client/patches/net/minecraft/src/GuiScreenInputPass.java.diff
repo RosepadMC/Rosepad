@@ -17,27 +17,12 @@
 +    private String errorMessage = "";
      public static final int[] EndBytes;
      
-@@ -23,5 +25,97 @@
+@@ -23,5 +25,82 @@
          EndBytes = new int[] { 39, 86, 26, 72, 13, 91, 23 };
      }
 -    
 +
-+
 +    // Source: https://github.com/NexTre-dev/alphaver/blob/main/website/29.07.2022/avkeys.js
-+
-+    String reverse(String str) {
-+        StringBuilder out = new StringBuilder();
-+        for (int i = 0; i < str.length(); i++) {
-+            out.append(str.charAt(str.length() - 1 - i));
-+        }
-+        return out.toString();
-+    }
-+
-+    String pad(String str, int len) {
-+        if (len == 0) return str;
-+        if (str.length() == len) return str;
-+        return "0" + pad(str, len - 1);
-+    }
 +
 +    String GenerateKeyForName(String name) {
 +        Random random = new Random();
@@ -96,11 +81,11 @@
 +        int checkSumPart2 = checkSumPart1 - checksumFullName;
 +
 +        String retStr = "";
-+        retStr += pad("" + checkSumPart1, 3);
-+        retStr = reverse(retStr);
++        retStr += Util.pad("" + checkSumPart1, 3);
++        retStr = Util.reverse(retStr);
 +        retStr += fullNameStr;
-+        retStr += pad("" + checkSumPart2, 3);
-+        retStr += pad("" + checksumName, 2);
++        retStr += Util.pad("" + checkSumPart2, 3);
++        retStr += Util.pad("" + checksumName, 2);
 +
 +        System.out.println(fullNameStr);
 +        System.out.println(retStr);
@@ -116,21 +101,21 @@
 +
      public GuiScreenInputPass(final Minecraft minecraft) {
          this.starStr = "";
-@@ -30,5 +124,5 @@
+@@ -30,5 +109,5 @@
          this.curCode = "";
          this.mc = minecraft;
 -        final File file = new File(String.valueOf(System.getProperty("user.dir")) + "/v3_act");
 +        final File file = new File(System.getProperty("user.dir") + "/v3_act");
          if (file.exists()) {
              Scanner scanner = null;
-@@ -72,5 +166,5 @@
+@@ -72,5 +151,5 @@
              this.controlList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 12, "Input"));
              this.controlList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 96 + 36, "Clear"));
 -            ((GuiButton)this.controlList.get(0)).enabled = false;
 +            this.controlList.get(0).enabled = false;
          }
          else {
-@@ -88,9 +182,11 @@
+@@ -88,9 +167,11 @@
          }
          else if (button.id == 0) {
 -            if (YesThisIsEasyToCircumvent_howeverPleaseDont(this.curCode)) {
@@ -146,7 +131,7 @@
 +                    fileWriter.close();
                  }
                  catch (IOException ex) {
-@@ -101,5 +197,8 @@
+@@ -101,5 +182,8 @@
              }
              else {
 -                this.einval = "Invalid key";
@@ -156,7 +141,13 @@
 +                    this.einval = "Invalid key: " + this.errorMessage;
              }
          }
-@@ -121,9 +220,9 @@
+@@ -116,4 +200,5 @@
+                 clipboardString = "";
+             }
++            else clipboardString = Util.filterWith(clipboardString, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~\u2302\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8?\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1???®¬???«»");
+             int length = 64 - this.curCode.length();
+             if (length > clipboardString.length()) {
+@@ -121,9 +206,9 @@
              }
              if (length > 0) {
 -                this.curCode = String.valueOf(this.curCode) + clipboardString.substring(0, length);
@@ -168,7 +159,7 @@
 +            this.actionPerformed(this.controlList.get(0));
          }
          if (key == 14 && this.curCode.length() > 0) {
-@@ -131,7 +230,7 @@
+@@ -131,7 +216,7 @@
          }
          if (" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~\u2302\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8?\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1???®¬???«»".indexOf((int)character) >= 0 && this.curCode.length() < 64) {
 -            this.curCode = String.valueOf(this.curCode) + character;
@@ -178,7 +169,7 @@
 +        this.controlList.get(0).enabled = (this.curCode.length() > 0);
      }
      
-@@ -145,6 +244,8 @@
+@@ -145,6 +230,8 @@
          if (!GuiMainMenu.shw) {
              this.drawCenteredString(this.fontRenderer, "Input key", this.width / 2, this.height / 4 - 60 + 20, -1593835521);
 -            this.drawString(this.fontRenderer, "Please enter your QA Preview key", this.width / 2 - 140, this.height / 4 - 60 + 60 + 0, 10526880);
