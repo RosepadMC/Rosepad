@@ -1,0 +1,9 @@
+--- BlockStationary.java
++++ BlockStationary.java
+@@ -39,5 +39,5 @@
+                 if (i8 == 0) {
+                     if (this.isFlammable(world, x - 1, y, z) || this.isFlammable(world, x + 1, y, z) || this.isFlammable(world, x, y, z - 1) || this.isFlammable(world, x, y, z + 1) || this.isFlammable(world, x, y - 1, z) || this.isFlammable(world, x, y + 1, z)) {
+-                        world.setBlockWithNotify(x, y, z, Block.fire.blockID);
++                        world.setBlockWithNotify(x, y, z, Block.FIRE.blockID);
+                         return;
+                     }

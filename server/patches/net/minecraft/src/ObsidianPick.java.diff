@@ -1,9 +1,48 @@
 --- ObsidianPick.java
 +++ ObsidianPick.java
-@@ -24,5 +24,5 @@
+@@ -1,8 +1,4 @@
+ package net.minecraft.src;
+ 
+-import net.minecraft.src.Material;
+-import net.minecraft.src.Block;
+-import net.minecraft.src.ItemTool;
+-
+ public class ObsidianPick extends ItemTool {
+     private static Block[] blocksEffectiveAgainst;
+@@ -10,5 +6,5 @@
+     
+     static {
+-        ObsidianPick.blocksEffectiveAgainst = new Block[] { Block.cobblestone, Block.bedrock, Block.stairDouble, Block.stairSingle, Block.stone, Block.cobblestoneMossy, Block.oreIron, Block.blockSteel, Block.oreCoal, Block.blockGold, Block.oreGold, Block.oreDiamond, Block.blockDiamond, Block.ice };
++        ObsidianPick.blocksEffectiveAgainst = new Block[] { Block.COBBLESTONE, Block.BEDROCK, Block.STAIR_DOUBLE, Block.STAIR_SINGLE, Block.STONE, Block.COBBLESTONE_MOSSY, Block.ORE_IRON, Block.ORE_IRON, Block.ORE_COAL, Block.BLOCK_GOLD, Block.ORE_GOLD, Block.ORE_DIAMOND, Block.BLOCK_DIAMOND, Block.ICE};
+     }
+     
+@@ -20,18 +16,18 @@
+     @Override
+     public boolean canHarvestBlock(final Block block) {
+-        if (block == Block.bedrock) {
++        if (block == Block.BEDROCK) {
+             return true;
          }
-         if (block == Block.obsidian) {
+-        if (block == Block.obsidian) {
 -            return this.harvestLevel == 3;
++        if (block == Block.OBSIDIAN) {
 +            return this.harvestLevel >= 3;
          }
-         if (block != Block.blockDiamond) {
+-        if (block != Block.blockDiamond) {
+-            if (block != Block.oreDiamond) {
+-                if (block != Block.blockGold) {
+-                    if (block != Block.oreGold) {
+-                        if (block != Block.blockSteel) {
+-                            if (block != Block.oreIron) {
+-                                if (block != Block.oreRedstone) {
+-                                    if (block != Block.oreRedstoneGlowing) {
++        if (block != Block.BLOCK_DIAMOND) {
++            if (block != Block.ORE_DIAMOND) {
++                if (block != Block.BLOCK_GOLD) {
++                    if (block != Block.ORE_GOLD) {
++                        if (block != Block.ORE_IRON) {
++                            if (block != Block.ORE_IRON) {
++                                if (block != Block.ORE_REDSTONE) {
++                                    if (block != Block.ORE_REDSTONE_GLOWING) {
+                                         return block.material == Material.rock || block.material == Material.iron;
+                                     }

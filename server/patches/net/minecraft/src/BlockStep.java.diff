@@ -1,0 +1,36 @@
+--- BlockStep.java
++++ BlockStep.java
+@@ -26,16 +26,16 @@
+     @Override
+     public void onNeighborBlockChange(final World world, final int x, final int y, final int z, final int flag) {
+-        if (this == Block.stairSingle) {}
++        if (this == Block.STAIR_SINGLE) {}
+     }
+     
+     @Override
+     public void onBlockAdded(final World world, final int x, final int y, final int z) {
+-        if (this != Block.stairSingle) {
++        if (this != Block.STAIR_SINGLE) {
+             super.onBlockAdded(world, x, y, z);
+         }
+         final int i5 = world.getBlockId(x, y - 1, z);
+-        if (i5 == BlockStep.stairSingle.blockID) {
++        if (i5 == BlockStep.STAIR_SINGLE.blockID) {
+             world.setBlockWithNotify(x, y, z, 0);
+-            world.setBlockWithNotify(x, y - 1, z, Block.stairDouble.blockID);
++            world.setBlockWithNotify(x, y - 1, z, Block.STAIR_DOUBLE.blockID);
+         }
+     }
+@@ -43,10 +43,10 @@
+     @Override
+     public int idDropped(final int count, final Random random) {
+-        return Block.stairSingle.blockID;
++        return Block.STAIR_SINGLE.blockID;
+     }
+     
+     @Override
+     public boolean shouldSideBeRendered(final IBlockAccess blockAccess, final int x, final int y, final int z, final int side) {
+-        if (this != Block.stairSingle) {
++        if (this != Block.STAIR_SINGLE) {
+             super.shouldSideBeRendered(blockAccess, x, y, z, side);
+         }

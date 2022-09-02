@@ -1,0 +1,9 @@
+--- BlockObsidian.java
++++ BlockObsidian.java
+@@ -15,5 +15,5 @@
+     @Override
+     public int idDropped(final int count, final Random random) {
+-        return Block.obsidian.blockID;
++        return Block.OBSIDIAN.blockID;
+     }
+ }

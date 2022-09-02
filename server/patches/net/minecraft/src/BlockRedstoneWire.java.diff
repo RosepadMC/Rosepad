@@ -1,0 +1,9 @@
+--- BlockRedstoneWire.java
++++ BlockRedstoneWire.java
+@@ -273,5 +273,5 @@
+     public static boolean isPowerProviderOrWire(final IBlockAccess blockAccess, final int x, final int y, final int z) {
+         final int i4 = blockAccess.getBlockId(x, y, z);
+-        return i4 == Block.redstoneWire.blockID || (i4 != 0 && Block.blocksList[i4].canProvidePower());
++        return i4 == Block.REDSTONE_WIRE.blockID || (i4 != 0 && Block.blocksList[i4].canProvidePower());
+     }
+ }

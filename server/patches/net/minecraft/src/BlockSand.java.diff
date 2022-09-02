@@ -1,0 +1,9 @@
+--- BlockSand.java
++++ BlockSand.java
+@@ -53,5 +53,5 @@
+             return true;
+         }
+-        if (i4 == Block.fire.blockID) {
++        if (i4 == Block.FIRE.blockID) {
+             return true;
+         }

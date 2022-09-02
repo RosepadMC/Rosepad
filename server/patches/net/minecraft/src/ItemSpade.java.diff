@@ -1,0 +1,16 @@
+--- ItemSpade.java
++++ ItemSpade.java
+@@ -5,5 +5,5 @@
+     
+     static {
+-        ItemSpade.blocksEffectiveAgainst = new Block[] { Block.grass, Block.dirt, Block.sand, Block.gravel, Block.snow, Block.blockSnow, Block.blockClay };
++        ItemSpade.blocksEffectiveAgainst = new Block[] { Block.GRASS, Block.DIRT, Block.SAND, Block.GRAVEL, Block.SNOW, Block.BLOCK_SNOW, Block.BLOCK_CLAY};
+     }
+     
+@@ -14,5 +14,5 @@
+     @Override
+     public boolean canHarvestBlock(final Block block) {
+-        return block == Block.snow || block == Block.blockSnow;
++        return block == Block.SNOW || block == Block.BLOCK_SNOW;
+     }
+ }

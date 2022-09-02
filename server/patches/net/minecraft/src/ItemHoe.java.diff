@@ -1,0 +1,18 @@
+--- ItemHoe.java
++++ ItemHoe.java
+@@ -12,12 +12,12 @@
+         final int i8 = world.getBlockId(x, y, z);
+         final Material material9 = world.getBlockMaterial(x, y + 1, z);
+-        if ((material9.isSolid() || i8 != Block.grass.blockID) && i8 != Block.dirt.blockID) {
++        if ((material9.isSolid() || i8 != Block.GRASS.blockID) && i8 != Block.DIRT.blockID) {
+             return false;
+         }
+-        final Block block10 = Block.tilledField;
++        final Block block10 = Block.TILLED_FIELD;
+         world.playSoundEffect(x + 0.5f, y + 0.5f, z + 0.5f, block10.stepSound.getStepSound(), (block10.stepSound.getVolume() + 1.0f) / 2.0f, block10.stepSound.getPitch() * 0.8f);
+         world.setBlockWithNotify(x, y, z, block10.blockID);
+         stack.damageItem(1);
+-        if (world.rand.nextInt(8) == 0 && i8 == Block.grass.blockID) {
++        if (world.rand.nextInt(8) == 0 && i8 == Block.GRASS.blockID) {
+             final byte b11 = 1;
+             for (int i9 = 0; i9 < b11; ++i9) {

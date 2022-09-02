@@ -1,0 +1,20 @@
+--- ItemSwordFlameberge.java
++++ ItemSwordFlameberge.java
+@@ -1,10 +1,4 @@
+ package net.minecraft.src;
+ 
+-import net.minecraft.src.EntityPlayer;
+-import net.minecraft.src.ItemStack;
+-import net.minecraft.src.Block;
+-import net.minecraft.src.World;
+-import net.minecraft.src.ItemSword;
+-
+ public class ItemSwordFlameberge extends ItemSword {
+     int[] v2s;
+@@ -28,5 +22,5 @@
+         if (this.BlockIDFirable(n5)) {
+             if (!this.BlockIDFirable(n7)) {
+-                world.setBlockWithNotify(n, n2, n3, Block.fire.blockID);
++                world.setBlockWithNotify(n, n2, n3, Block.FIRE.blockID);
+             }
+             else {

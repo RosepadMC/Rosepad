@@ -1,0 +1,27 @@
+--- BlockFurnace.java
++++ BlockFurnace.java
+@@ -14,5 +14,5 @@
+     @Override
+     public int idDropped(final int count, final Random random) {
+-        return Block.stoneOvenIdle.blockID;
++        return Block.STONE_OVEN_IDLE.blockID;
+     }
+     
+@@ -46,5 +46,5 @@
+     @Override
+     public int getBlockTextureFromSide(final int side) {
+-        return (side == 1) ? Block.stone.blockID : ((side == 0) ? Block.stone.blockID : ((side == 3) ? (this.blockIndexInTexture - 1) : this.blockIndexInTexture));
++        return (side == 1) ? Block.STONE.blockID : ((side == 0) ? Block.STONE.blockID : ((side == 3) ? (this.blockIndexInTexture - 1) : this.blockIndexInTexture));
+     }
+     
+@@ -60,8 +60,8 @@
+         final TileEntity tileEntity6 = world.getBlockTileEntity(x, y, z);
+         if (isActive) {
+-            world.setBlockWithNotify(x, y, z, Block.stoneOvenActive.blockID);
++            world.setBlockWithNotify(x, y, z, Block.STONE_OVEN_ACTIVE.blockID);
+         }
+         else {
+-            world.setBlockWithNotify(x, y, z, Block.stoneOvenIdle.blockID);
++            world.setBlockWithNotify(x, y, z, Block.STONE_OVEN_IDLE.blockID);
+         }
+         world.setBlockMetadataWithNotify(x, y, z, i5);

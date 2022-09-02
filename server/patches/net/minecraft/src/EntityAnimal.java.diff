@@ -1,0 +1,16 @@
+--- EntityAnimal.java
++++ EntityAnimal.java
+@@ -8,5 +8,5 @@
+     @Override
+     protected float getBlockPathWeight(final int x, final int y, final int z) {
+-        return (this.worldObj.getBlockId(x, y - 1, z) == Block.grass.blockID) ? 10.0f : (this.worldObj.getBrightness(x, y, z) - 0.5f);
++        return (this.worldObj.getBlockId(x, y - 1, z) == Block.GRASS.blockID) ? 10.0f : (this.worldObj.getBrightness(x, y, z) - 0.5f);
+     }
+     
+@@ -26,5 +26,5 @@
+         final int i2 = MathHelper.floor_double(this.boundingBox.minY);
+         final int i3 = MathHelper.floor_double(this.posZ);
+-        return this.worldObj.getBlockId(i1, i2 - 1, i3) == Block.grass.blockID && this.worldObj.getBlockLightValue(i1, i2, i3) > 8 && super.getCanSpawnHere();
++        return this.worldObj.getBlockId(i1, i2 - 1, i3) == Block.GRASS.blockID && this.worldObj.getBlockLightValue(i1, i2, i3) > 8 && super.getCanSpawnHere();
+     }
+     

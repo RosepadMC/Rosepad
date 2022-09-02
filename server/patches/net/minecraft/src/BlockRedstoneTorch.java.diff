@@ -1,0 +1,23 @@
+--- BlockRedstoneTorch.java
++++ BlockRedstoneTorch.java
+@@ -88,5 +88,5 @@
+         if (this.torchActive) {
+             if (z2) {
+-                world.setBlockAndMetadataWithNotify(x, y, z, Block.torchRedstoneIdle.blockID, world.getBlockMetadata(x, y, z));
++                world.setBlockAndMetadataWithNotify(x, y, z, Block.TORCH_REDSTONE_IDLE.blockID, world.getBlockMetadata(x, y, z));
+                 if (this.checkForBurnout(world, x, y, z, true)) {
+                     world.playSoundEffect((double)(x + 0.5f), (double)(y + 0.5f), (double)(z + 0.5f), "random.fizz", 0.5f, 2.6f + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8f);
+@@ -101,5 +101,5 @@
+         }
+         else if (!z2 && !this.checkForBurnout(world, x, y, z, false)) {
+-            world.setBlockAndMetadataWithNotify(x, y, z, Block.torchRedstoneActive.blockID, world.getBlockMetadata(x, y, z));
++            world.setBlockAndMetadataWithNotify(x, y, z, Block.TORCH_REDSTONE_ACTIVE.blockID, world.getBlockMetadata(x, y, z));
+         }
+     }
+@@ -118,5 +118,5 @@
+     @Override
+     public int idDropped(final int count, final Random random) {
+-        return Block.torchRedstoneActive.blockID;
++        return Block.TORCH_REDSTONE_ACTIVE.blockID;
+     }
+     

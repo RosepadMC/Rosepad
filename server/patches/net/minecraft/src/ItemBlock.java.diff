@@ -1,0 +1,9 @@
+--- ItemBlock.java
++++ ItemBlock.java
+@@ -12,5 +12,5 @@
+     @Override
+     public boolean onItemUse(final ItemStack stack, final EntityPlayer entityPlayer, final World world, int x, int y, int z, int i7) {
+-        if (world.getBlockId(x, y, z) == Block.snow.blockID) {
++        if (world.getBlockId(x, y, z) == Block.SNOW.blockID) {
+             i7 = 0;
+         }

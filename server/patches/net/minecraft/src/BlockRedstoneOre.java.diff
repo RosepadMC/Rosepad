@@ -1,0 +1,20 @@
+--- BlockRedstoneOre.java
++++ BlockRedstoneOre.java
+@@ -39,6 +39,6 @@
+     private void glow(final World world, final int x, final int y, final int z) {
+         this.sparkle(world, x, y, z);
+-        if (this.blockID == Block.oreRedstone.blockID) {
+-            world.setBlockWithNotify(x, y, z, Block.oreRedstoneGlowing.blockID);
++        if (this.blockID == Block.ORE_REDSTONE.blockID) {
++            world.setBlockWithNotify(x, y, z, Block.ORE_REDSTONE_GLOWING.blockID);
+         }
+     }
+@@ -46,6 +46,6 @@
+     @Override
+     public void updateTick(final World world, final int x, final int y, final int z, final Random random) {
+-        if (this.blockID == Block.oreRedstoneGlowing.blockID) {
+-            world.setBlockWithNotify(x, y, z, Block.oreRedstone.blockID);
++        if (this.blockID == Block.ORE_REDSTONE_GLOWING.blockID) {
++            world.setBlockWithNotify(x, y, z, Block.ORE_REDSTONE.blockID);
+         }
+     }

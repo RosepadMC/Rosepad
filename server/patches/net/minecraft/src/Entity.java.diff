@@ -1,0 +1,11 @@
+--- Entity.java
++++ Entity.java
+@@ -359,6 +359,6 @@
+                     ++this.nextStepDistance;
+                     StepSound stepSound29 = Block.blocksList[i22].stepSound;
+-                    if (this.worldObj.getBlockId(i23, i24 + 1, i25) == Block.snow.blockID) {
+-                        stepSound29 = Block.snow.stepSound;
++                    if (this.worldObj.getBlockId(i23, i24 + 1, i25) == Block.SNOW.blockID) {
++                        stepSound29 = Block.SNOW.stepSound;
+                         this.worldObj.playSoundAtEntity(this, stepSound29.getStepSound(), stepSound29.getVolume() * 0.15f, stepSound29.getPitch());
+                     }

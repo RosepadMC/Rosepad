@@ -1,0 +1,11 @@
+--- WorldGenReed.java
++++ WorldGenReed.java
+@@ -12,6 +12,6 @@
+             if (world.getBlockId(i7, y, i9) == 0 && (world.getBlockMaterial(i7 - 1, y - 1, i9) == Material.water || world.getBlockMaterial(i7 + 1, y - 1, i9) == Material.water || world.getBlockMaterial(i7, y - 1, i9 - 1) == Material.water || world.getBlockMaterial(i7, y - 1, i9 + 1) == Material.water)) {
+                 for (int i10 = 2 + rand.nextInt(rand.nextInt(3) + 1), i11 = 0; i11 < i10; ++i11) {
+-                    if (Block.reed.canBlockStay(world, i7, i8 + i11, i9)) {
+-                        world.setBlock(i7, i8 + i11, i9, Block.reed.blockID);
++                    if (Block.REED.canBlockStay(world, i7, i8 + i11, i9)) {
++                        world.setBlock(i7, i8 + i11, i9, Block.REED.blockID);
+                     }
+                 }

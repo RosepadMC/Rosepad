@@ -1,0 +1,12 @@
+--- ItemRedstone.java
++++ ItemRedstone.java
+@@ -29,7 +29,7 @@
+             return false;
+         }
+-        if (Block.redstoneWire.canPlaceBlockAt(world, x, y, z)) {
++        if (Block.REDSTONE_WIRE.canPlaceBlockAt(world, x, y, z)) {
+             --stack.stackSize;
+-            world.setBlockWithNotify(x, y, z, Block.redstoneWire.blockID);
++            world.setBlockWithNotify(x, y, z, Block.REDSTONE_WIRE.blockID);
+         }
+         return true;

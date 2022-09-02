@@ -1,0 +1,9 @@
+--- ItemRecord.java
++++ ItemRecord.java
+@@ -12,5 +12,5 @@
+     @Override
+     public boolean onItemUse(final ItemStack stack, final EntityPlayer entityPlayer, final World world, final int x, final int y, final int z, final int i7) {
+-        if (world.getBlockId(x, y, z) == Block.jukebox.blockID && world.getBlockMetadata(x, y, z) == 0) {
++        if (world.getBlockId(x, y, z) == Block.JUKEBOX.blockID && world.getBlockMetadata(x, y, z) == 0) {
+             world.setBlockMetadataWithNotify(x, y, z, this.shiftedIndex - Item.record13.shiftedIndex + 1);
+             world.playRecord(this.recordName, x, y, z);

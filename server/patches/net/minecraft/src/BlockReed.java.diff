@@ -1,0 +1,9 @@
+--- BlockReed.java
++++ BlockReed.java
+@@ -33,5 +33,5 @@
+     public boolean canPlaceBlockAt(final World world, final int x, final int y, final int z) {
+         final int i5 = world.getBlockId(x, y - 1, z);
+-        return i5 == this.blockID || ((i5 == Block.grass.blockID || i5 == Block.dirt.blockID) && (world.getBlockMaterial(x - 1, y - 1, z) == Material.water || world.getBlockMaterial(x + 1, y - 1, z) == Material.water || world.getBlockMaterial(x, y - 1, z - 1) == Material.water || world.getBlockMaterial(x, y - 1, z + 1) == Material.water));
++        return i5 == this.blockID || ((i5 == Block.GRASS.blockID || i5 == Block.DIRT.blockID) && (world.getBlockMaterial(x - 1, y - 1, z) == Material.water || world.getBlockMaterial(x + 1, y - 1, z) == Material.water || world.getBlockMaterial(x, y - 1, z - 1) == Material.water || world.getBlockMaterial(x, y - 1, z + 1) == Material.water));
+     }
+     

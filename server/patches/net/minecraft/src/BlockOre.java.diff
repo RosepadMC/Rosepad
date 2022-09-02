@@ -1,0 +1,9 @@
+--- BlockOre.java
++++ BlockOre.java
+@@ -10,5 +10,5 @@
+     @Override
+     public int idDropped(final int count, final Random random) {
+-        return (this.blockID == Block.oreCoal.blockID) ? Item.coal.shiftedIndex : ((this.blockID == Block.oreDiamond.blockID) ? Item.diamond.shiftedIndex : this.blockID);
++        return (this.blockID == Block.ORE_COAL.blockID) ? Item.coal.shiftedIndex : ((this.blockID == Block.ORE_DIAMOND.blockID) ? Item.diamond.shiftedIndex : this.blockID);
+     }
+     

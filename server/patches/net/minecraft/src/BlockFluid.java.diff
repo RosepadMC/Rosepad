@@ -1,0 +1,13 @@
+--- BlockFluid.java
++++ BlockFluid.java
+@@ -198,8 +198,8 @@
+                 final int i6 = world.getBlockMetadata(x, y, z);
+                 if (i6 == 0) {
+-                    world.setBlockWithNotify(x, y, z, Block.obsidian.blockID);
++                    world.setBlockWithNotify(x, y, z, Block.OBSIDIAN.blockID);
+                 }
+                 else if (i6 <= 4) {
+-                    world.setBlockWithNotify(x, y, z, Block.cobblestone.blockID);
++                    world.setBlockWithNotify(x, y, z, Block.COBBLESTONE.blockID);
+                 }
+                 this.triggerLavaMixEffects(world, x, y, z);

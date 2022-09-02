@@ -1,0 +1,33 @@
+--- BlockFire.java
++++ BlockFire.java
+@@ -11,10 +11,10 @@
+         this.chanceToEncourageFire = new int[256];
+         this.abilityToCatchFire = new int[256];
+-        this.initializeBlock(Block.planks.blockID, 5, 20);
+-        this.initializeBlock(Block.wood.blockID, 5, 5);
+-        this.initializeBlock(Block.leaves.blockID, 30, 60);
+-        this.initializeBlock(Block.bookshelf.blockID, 30, 20);
+-        this.initializeBlock(Block.tnt.blockID, 15, 100);
+-        this.initializeBlock(Block.cloth.blockID, 30, 60);
++        this.initializeBlock(Block.PLANKS.blockID, 5, 20);
++        this.initializeBlock(Block.WOOD.blockID, 5, 5);
++        this.initializeBlock(Block.LEAVES.blockID, 30, 60);
++        this.initializeBlock(Block.BOOKSHELF.blockID, 30, 20);
++        this.initializeBlock(Block.TNT.blockID, 15, 100);
++        this.initializeBlock(Block.CLOTH.blockID, 30, 60);
+         this.setTickOnLoad(true);
+     }
+@@ -94,5 +94,5 @@
+         final int i7 = this.abilityToCatchFire[world.getBlockId(x, y, z)];
+         if (random.nextInt(chance) < i7) {
+-            final boolean z2 = world.getBlockId(x, y, z) == Block.tnt.blockID;
++            final boolean z2 = world.getBlockId(x, y, z) == Block.TNT.blockID;
+             if (random.nextInt(2) == 0) {
+                 world.setBlockWithNotify(x, y, z, this.blockID);
+@@ -102,5 +102,5 @@
+             }
+             if (z2) {
+-                Block.tnt.onBlockDestroyedByPlayer(world, x, y, z, 0);
++                Block.TNT.onBlockDestroyedByPlayer(world, x, y, z, 0);
+             }
+         }

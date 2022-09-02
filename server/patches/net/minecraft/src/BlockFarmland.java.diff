@@ -1,0 +1,37 @@
+--- BlockFarmland.java
++++ BlockFarmland.java
+@@ -34,5 +34,5 @@
+                 }
+                 else if (!this.isCropsNearby(world, x, y, z)) {
+-                    world.setBlockWithNotify(x, y, z, Block.dirt.blockID);
++                    world.setBlockWithNotify(x, y, z, Block.DIRT.blockID);
+                 }
+             }
+@@ -43,5 +43,5 @@
+     public void onEntityWalking(final World world, final int x, final int y, final int z, final Entity entity) {
+         if (world.rand.nextInt(4) == 0) {
+-            world.setBlockWithNotify(x, y, z, Block.dirt.blockID);
++            world.setBlockWithNotify(x, y, z, Block.DIRT.blockID);
+         }
+     }
+@@ -51,5 +51,5 @@
+         for (int i6 = x - b5; i6 <= x + b5; ++i6) {
+             for (int i7 = z - b5; i7 <= z + b5; ++i7) {
+-                if (world.getBlockId(i6, y + 1, i7) == Block.crops.blockID) {
++                if (world.getBlockId(i6, y + 1, i7) == Block.CROPS.blockID) {
+                     return true;
+                 }
+@@ -77,5 +77,5 @@
+         final Material material6 = world.getBlockMaterial(x, y + 1, z);
+         if (material6.isSolid()) {
+-            world.setBlockWithNotify(x, y, z, Block.dirt.blockID);
++            world.setBlockWithNotify(x, y, z, Block.DIRT.blockID);
+         }
+     }
+@@ -83,5 +83,5 @@
+     @Override
+     public int idDropped(final int count, final Random random) {
+-        return Block.dirt.idDropped(0, random);
++        return Block.DIRT.idDropped(0, random);
+     }
+ }

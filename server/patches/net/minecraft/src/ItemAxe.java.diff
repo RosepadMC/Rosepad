@@ -1,0 +1,9 @@
+--- ItemAxe.java
++++ ItemAxe.java
+@@ -5,5 +5,5 @@
+     
+     static {
+-        ItemAxe.blocksEffectiveAgainst = new Block[] { Block.planks, Block.bookshelf, Block.wood, Block.chest };
++        ItemAxe.blocksEffectiveAgainst = new Block[] { Block.PLANKS, Block.BOOKSHELF, Block.WOOD, Block.CHEST};
+     }
+     

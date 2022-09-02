@@ -1,0 +1,52 @@
+--- TileEntityFurnace.java
++++ TileEntityFurnace.java
+@@ -147,26 +147,26 @@
+     
+     private int getCookedItem(final int blockID) {
+-        if (blockID == Block.oreIron.blockID) {
++        if (blockID == Block.ORE_IRON.blockID) {
+             return Item.ingotIron.shiftedIndex;
+         }
+-        if (blockID == Block.oreGold.blockID) {
++        if (blockID == Block.ORE_GOLD.blockID) {
+             return Item.ingotGold.shiftedIndex;
+         }
+-        if (blockID == Block.oreDiamond.blockID) {
++        if (blockID == Block.ORE_DIAMOND.blockID) {
+             return Item.diamond.shiftedIndex;
+         }
+-        if (blockID == Block.sand.blockID) {
+-            return Block.glass.blockID;
++        if (blockID == Block.SAND.blockID) {
++            return Block.GLASS.blockID;
+         }
+         if (blockID == Item.porkRaw.shiftedIndex) {
+             return Item.porkCooked.shiftedIndex;
+         }
+-        if (blockID == Block.cobblestone.blockID) {
+-            return Block.stone.blockID;
++        if (blockID == Block.COBBLESTONE.blockID) {
++            return Block.STONE.blockID;
+         }
+         if (blockID == Item.clay.shiftedIndex) {
+             return Item.brick.shiftedIndex;
+         }
+-        if (blockID == Block.obsidian.blockID) {
++        if (blockID == Block.OBSIDIAN.blockID) {
+             return Item.obsidianIngot.shiftedIndex;
+         }
+@@ -177,11 +177,11 @@
+             return Item.greenDye.shiftedIndex;
+         }
+-        if (blockID == Block.plantYellow.blockID) {
++        if (blockID == Block.PLANT_YELLOW.blockID) {
+             return Item.blueDye.shiftedIndex;
+         }
+-        if (blockID == Block.mushroomBrown.blockID) {
++        if (blockID == Block.MUSHROOM_BROWN.blockID) {
+             return Item.pinkDye.shiftedIndex;
+         }
+-        if (blockID == Block.mushroomRed.blockID) {
++        if (blockID == Block.MUSHROOM_RED.blockID) {
+             return Item.fryshroom.shiftedIndex;
+         }

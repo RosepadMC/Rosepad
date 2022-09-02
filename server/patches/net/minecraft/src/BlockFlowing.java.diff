@@ -1,0 +1,9 @@
+--- BlockFlowing.java
++++ BlockFlowing.java
+@@ -196,5 +196,5 @@
+     private boolean blockBlocksFlow(final World world, final int x, final int y, final int z) {
+         final int i5 = world.getBlockId(x, y, z);
+-        if (i5 == Block.doorWood.blockID || i5 == Block.doorSteel.blockID || i5 == Block.signStanding.blockID || i5 == Block.ladder.blockID || i5 == Block.reed.blockID) {
++        if (i5 == Block.DOOR_WOOD.blockID || i5 == Block.DOOR_IRON.blockID || i5 == Block.SIGN_STANDING.blockID || i5 == Block.LADDER.blockID || i5 == Block.REED.blockID) {
+             return true;
+         }

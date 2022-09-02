@@ -1,0 +1,11 @@
+--- WorldGenCactus.java
++++ WorldGenCactus.java
+@@ -12,6 +12,6 @@
+             if (world.getBlockId(i7, i8, i9) == 0) {
+                 for (int i10 = 1 + rand.nextInt(rand.nextInt(3) + 1), i11 = 0; i11 < i10; ++i11) {
+-                    if (Block.cactus.canBlockStay(world, i7, i8 + i11, i9)) {
+-                        world.setBlock(i7, i8 + i11, i9, Block.cactus.blockID);
++                    if (Block.CACTUS.canBlockStay(world, i7, i8 + i11, i9)) {
++                        world.setBlock(i7, i8 + i11, i9, Block.CACTUS.blockID);
+                     }
+                 }

@@ -1,0 +1,188 @@
+--- ChunkProviderGenerate.java
++++ ChunkProviderGenerate.java
+@@ -83,12 +83,12 @@
+                                 if (i7 * 8 + i8 < b5) {
+                                     if (this.worldObj.snowCovered && i7 * 8 + i8 >= b5 - 1) {
+-                                        i12 = Block.ice.blockID;
++                                        i12 = Block.ICE.blockID;
+                                     }
+                                     else {
+-                                        i12 = Block.waterStill.blockID;
++                                        i12 = Block.WATER_STILL.blockID;
+                                     }
+                                 }
+                                 if (d27 > 0.0) {
+-                                    i12 = Block.stone.blockID;
++                                    i12 = Block.STONE.blockID;
+                                 }
+                                 b3[i10] = (byte)i12;
+@@ -121,10 +121,10 @@
+                 final int i5 = (int)(this.stoneNoise[i3 + i4 * 16] / 3.0 + 3.0 + this.rand.nextDouble() * 0.25);
+                 int i6 = -1;
+-                byte b5 = (byte)Block.grass.blockID;
+-                byte b6 = (byte)Block.dirt.blockID;
++                byte b5 = (byte)Block.GRASS.blockID;
++                byte b6 = (byte)Block.DIRT.blockID;
+                 for (int i7 = 127; i7 >= 0; --i7) {
+                     final int i8 = (i3 * 16 + i4) * 128 + i7;
+                     if (i7 <= 0 + this.rand.nextInt(6) - 1) {
+-                        b3[i8] = (byte)Block.bedrock.blockID;
++                        b3[i8] = (byte)Block.BEDROCK.blockID;
+                     }
+                     else {
+@@ -133,28 +133,28 @@
+                             i6 = -1;
+                         }
+-                        else if (b7 == Block.stone.blockID) {
++                        else if (b7 == Block.STONE.blockID) {
+                             if (i6 == -1) {
+                                 if (i5 <= 0) {
+                                     b5 = 0;
+-                                    b6 = (byte)Block.stone.blockID;
++                                    b6 = (byte)Block.STONE.blockID;
+                                 }
+                                 else if (i7 >= b4 - 4 && i7 <= b4 + 1) {
+-                                    b5 = (byte)Block.grass.blockID;
+-                                    b6 = (byte)Block.dirt.blockID;
++                                    b5 = (byte)Block.GRASS.blockID;
++                                    b6 = (byte)Block.DIRT.blockID;
+                                     if (z10) {
+                                         b5 = 0;
+                                     }
+                                     if (z10) {
+-                                        b6 = (byte)Block.gravel.blockID;
++                                        b6 = (byte)Block.GRAVEL.blockID;
+                                     }
+                                     if (z9) {
+-                                        b5 = (byte)Block.sand.blockID;
++                                        b5 = (byte)Block.SAND.blockID;
+                                     }
+                                     if (z9) {
+-                                        b6 = (byte)Block.sand.blockID;
++                                        b6 = (byte)Block.SAND.blockID;
+                                     }
+                                 }
+                                 if (i7 < b4 && b5 == 0) {
+-                                    b5 = (byte)Block.waterStill.blockID;
++                                    b5 = (byte)Block.WATER_STILL.blockID;
+                                 }
+                                 i6 = i5;
+@@ -310,5 +310,5 @@
+             final int i8 = this.rand.nextInt(128);
+             final int i9 = i5 + this.rand.nextInt(16);
+-            new WorldGenMinable(Block.dirt.blockID, 32).generate(this.worldObj, this.rand, i7, i8, i9);
++            new WorldGenMinable(Block.DIRT.blockID, 32).generate(this.worldObj, this.rand, i7, i8, i9);
+         }
+         for (int i6 = 0; i6 < 10; ++i6) {
+@@ -316,5 +316,5 @@
+             final int i8 = this.rand.nextInt(128);
+             final int i9 = i5 + this.rand.nextInt(16);
+-            new WorldGenMinable(Block.gravel.blockID, 32).generate(this.worldObj, this.rand, i7, i8, i9);
++            new WorldGenMinable(Block.GRAVEL.blockID, 32).generate(this.worldObj, this.rand, i7, i8, i9);
+         }
+         for (int i6 = 0; i6 < 20; ++i6) {
+@@ -322,5 +322,5 @@
+             final int i8 = this.rand.nextInt(128);
+             final int i9 = i5 + this.rand.nextInt(16);
+-            new WorldGenMinable(Block.oreCoal.blockID, 16).generate(this.worldObj, this.rand, i7, i8, i9);
++            new WorldGenMinable(Block.ORE_COAL.blockID, 16).generate(this.worldObj, this.rand, i7, i8, i9);
+         }
+         for (int i6 = 0; i6 < 20; ++i6) {
+@@ -328,5 +328,5 @@
+             final int i8 = this.rand.nextInt(64);
+             final int i9 = i5 + this.rand.nextInt(16);
+-            new WorldGenMinable(Block.oreIron.blockID, 8).generate(this.worldObj, this.rand, i7, i8, i9);
++            new WorldGenMinable(Block.ORE_IRON.blockID, 8).generate(this.worldObj, this.rand, i7, i8, i9);
+         }
+         for (int i6 = 0; i6 < 2; ++i6) {
+@@ -334,5 +334,5 @@
+             final int i8 = this.rand.nextInt(32);
+             final int i9 = i5 + this.rand.nextInt(16);
+-            new WorldGenMinable(Block.oreGold.blockID, 8).generate(this.worldObj, this.rand, i7, i8, i9);
++            new WorldGenMinable(Block.ORE_GOLD.blockID, 8).generate(this.worldObj, this.rand, i7, i8, i9);
+         }
+         for (int i6 = 0; i6 < 8; ++i6) {
+@@ -340,5 +340,5 @@
+             final int i8 = this.rand.nextInt(16);
+             final int i9 = i5 + this.rand.nextInt(16);
+-            new WorldGenMinable(Block.oreRedstone.blockID, 7).generate(this.worldObj, this.rand, i7, i8, i9);
++            new WorldGenMinable(Block.ORE_REDSTONE.blockID, 7).generate(this.worldObj, this.rand, i7, i8, i9);
+         }
+         for (int i6 = 0; i6 < 1; ++i6) {
+@@ -346,5 +346,5 @@
+             final int i8 = this.rand.nextInt(16);
+             final int i9 = i5 + this.rand.nextInt(16);
+-            new WorldGenMinable(Block.oreDiamond.blockID, 7).generate(this.worldObj, this.rand, i7, i8, i9);
++            new WorldGenMinable(Block.ORE_DIAMOND.blockID, 7).generate(this.worldObj, this.rand, i7, i8, i9);
+         }
+         d10 = 0.5;
+@@ -370,5 +370,5 @@
+             final int i10 = this.rand.nextInt(128);
+             final int i11 = i5 + this.rand.nextInt(16) + 8;
+-            new WorldGenFlowers(Block.plantYellow.blockID).generate(this.worldObj, this.rand, i9, i10, i11);
++            new WorldGenFlowers(Block.PLANT_YELLOW.blockID).generate(this.worldObj, this.rand, i9, i10, i11);
+         }
+         if (this.rand.nextInt(2) == 0) {
+@@ -376,5 +376,5 @@
+             final int i9 = this.rand.nextInt(128);
+             final int i10 = i5 + this.rand.nextInt(16) + 8;
+-            new WorldGenFlowers(Block.plantRed.blockID).generate(this.worldObj, this.rand, i8, i9, i10);
++            new WorldGenFlowers(Block.PLANT_RED.blockID).generate(this.worldObj, this.rand, i8, i9, i10);
+         }
+         if (this.rand.nextInt(4) == 0) {
+@@ -382,5 +382,5 @@
+             final int i9 = this.rand.nextInt(128);
+             final int i10 = i5 + this.rand.nextInt(16) + 8;
+-            new WorldGenFlowers(Block.mushroomBrown.blockID).generate(this.worldObj, this.rand, i8, i9, i10);
++            new WorldGenFlowers(Block.MUSHROOM_BROWN.blockID).generate(this.worldObj, this.rand, i8, i9, i10);
+         }
+         if (this.rand.nextInt(8) == 0) {
+@@ -388,5 +388,5 @@
+             final int i9 = this.rand.nextInt(128);
+             final int i10 = i5 + this.rand.nextInt(16) + 8;
+-            new WorldGenFlowers(Block.mushroomRed.blockID).generate(this.worldObj, this.rand, i8, i9, i10);
++            new WorldGenFlowers(Block.MUSHROOM_RED.blockID).generate(this.worldObj, this.rand, i8, i9, i10);
+         }
+         for (int i8 = 0; i8 < 3; ++i8) {
+@@ -394,5 +394,5 @@
+             final int i10 = this.rand.nextInt(128);
+             final int i11 = i5 + this.rand.nextInt(16) + 8;
+-            new PillarGen(Block.saltBlock.blockID).generate(this.worldObj, this.rand, i9, i10, i11);
++            new PillarGen(Block.SALT_BLOCK.blockID).generate(this.worldObj, this.rand, i9, i10, i11);
+         }
+         for (int i8 = 0; i8 < 3; ++i8) {
+@@ -400,5 +400,5 @@
+             final int i10 = this.rand.nextInt(128);
+             final int i11 = i5 + this.rand.nextInt(16) + 8;
+-            new OnWaterGen(Block.glowingFlower.blockID).generate(this.worldObj, this.rand, i9, i10, i11);
++            new OnWaterGen(Block.GLOWING_FLOWER.blockID).generate(this.worldObj, this.rand, i9, i10, i11);
+         }
+         for (int i8 = 0; i8 < 2; ++i8) {
+@@ -406,5 +406,5 @@
+             final int i10 = this.rand.nextInt(128);
+             final int i11 = i5 + this.rand.nextInt(16) + 8;
+-            new SkyGen(Block.blueFireIdk.blockID).generate(this.worldObj, this.rand, i9, i10, i11);
++            new SkyGen(Block.BLUE_FIRE_IDK.blockID).generate(this.worldObj, this.rand, i9, i10, i11);
+         }
+         for (int i8 = 0; i8 < 10; ++i8) {
+@@ -424,5 +424,5 @@
+             final int i10 = this.rand.nextInt(this.rand.nextInt(120) + 8);
+             final int i11 = i5 + this.rand.nextInt(16) + 8;
+-            new WorldGenLiquids(Block.waterMoving.blockID).generate(this.worldObj, this.rand, i9, i10, i11);
++            new WorldGenLiquids(Block.WATER_MOVING.blockID).generate(this.worldObj, this.rand, i9, i10, i11);
+         }
+         for (int i8 = 0; i8 < 20; ++i8) {
+@@ -430,5 +430,5 @@
+             final int i10 = this.rand.nextInt(this.rand.nextInt(this.rand.nextInt(112) + 8) + 8);
+             final int i11 = i5 + this.rand.nextInt(16) + 8;
+-            new WorldGenLiquids(Block.lavaMoving.blockID).generate(this.worldObj, this.rand, i9, i10, i11);
++            new WorldGenLiquids(Block.LAVA_MOVING.blockID).generate(this.worldObj, this.rand, i9, i10, i11);
+         }
+         for (int i8 = i4 + 8 + 0; i8 < i4 + 8 + 16; ++i8) {
+@@ -436,5 +436,5 @@
+                 final int i10 = this.worldObj.getTopSolidOrLiquidBlock(i8, i9);
+                 if (this.worldObj.snowCovered && i10 > 0 && i10 < 128 && this.worldObj.getBlockId(i8, i10, i9) == 0 && this.worldObj.getBlockMaterial(i8, i10 - 1, i9).getIsSolid() && this.worldObj.getBlockMaterial(i8, i10 - 1, i9) != Material.ice) {
+-                    this.worldObj.setBlockWithNotify(i8, i10, i9, Block.snow.blockID);
++                    this.worldObj.setBlockWithNotify(i8, i10, i9, Block.SNOW.blockID);
+                 }
+             }

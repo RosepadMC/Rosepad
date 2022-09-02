@@ -1,9 +1,113 @@
 --- Block.java
 +++ Block.java
-@@ -151,5 +151,26 @@
-     public static final Block blueFireIdk;
-     public static final Block safe;
+@@ -21,4 +21,23 @@
+     public static final boolean[] CAN_BLOCK_GRASS;
+     public static final int[] LIGHT_VALUE;
++    public int blockIndexInTexture;
++    public final int blockID;
++    protected float hardness;
++    protected float resistance;
++    public double minX;
++    public double minY;
++    public double minZ;
++    public double maxX;
++    public double maxY;
++    public double maxZ;
++    public StepSound stepSound;
++    public float blockParticleGravity;
++    public final Material material;
++    public float slipperiness;
++
++    // =================================
++    // Common API part
++    // =================================
++
+     public static final Block STONE;
+     public static final BlockGrass GRASS;
+@@ -106,50 +125,61 @@
+     public static Block JUKEBOX;
+     public static final Block FENCE;
+-    public int blockIndexInTexture;
+-    public final int blockID;
+-    protected float hardness;
+-    protected float resistance;
+-    public double minX;
+-    public double minY;
+-    public double minZ;
+-    public double maxX;
+-    public double maxY;
+-    public double maxZ;
+-    public StepSound stepSound;
+-    public float blockParticleGravity;
+-    public final Material material;
+-    public float slipperiness;
+-    public static final Block QuadWindowGlassBlock;
+-    public static final Block PillarBlock;
+-    public static final Block TileBlock;
+-    public static final Block TileBlock2;
+-    public static final Block TileBlock2NonFucked;
+-    public static final Block dimensionFloorBlock;
+-    public static final Block dimensionWallBlock;
+-    public static final Block dbgBlock;
+-    public static final Block TileBlock3;
+-    public static final Block TileBlock4;
+-    public static final Block fakeGrass;
+-    public static final Block AltMojangHypostasisAnemo;
+-    public static final Block imgur9F0A3un;
+-    public static final Block yeahWeHadFunWithThisAsYouCanSee;
+-    public static final Block BarrierBlock;
+-    public static final Block StairLadderBlock;
+-    public static final Block fakeDirt;
+-    public static final Block fakeRock;
+-    public static final Block fakeSand;
+-    public static final Block woolPink;
+-    public static final Block woolBlue;
+-    public static final Block woolGreen;
+-    public static final Block woolBlack;
+-    public static final Block dbg2Block;
+-    public static final Block saltBlock;
+-    public static final Block glowingFlower;
+-    public static final Block glowingFlowerInfBasic;
+-    public static final Block glowingFlowerInfGold;
+-    public static final Block glowingFlowerInfObsidian;
+-    public static final Block blueFireIdk;
+-    public static final Block safe;
 -    
++    public static final Block QUAD_WINDOW_GLASS_BLOCK;
++    public static final Block PILLAR_BLOCK;
++    public static final Block TILE_BLOCK;
++    public static final Block TILE_BLOCK_2;
++    public static final Block TILE_BLOCK_2_NON_FUCKED;
++    public static final Block DIMENSION_FLOOR_BLOCK;
++    public static final Block DIMENSION_WALL_BLOCK;
++    public static final Block DBG_BLOCK;
++    public static final Block TILE_BLOCK_3;
++    public static final Block TILE_BLOCK_4;
++    public static final Block FAKE_GRASS;
++    public static final Block ALT_MOJANG_HYPOSTASIS_ANEMO;
++    public static final Block IMGUR_9F0A3UN;
++    public static final Block YEAH_WE_HAD_FUN_WITH_THIS_AS_YOU_CAN_SEE;
++    public static final Block BARRIER_BLOCK;
++    public static final Block STAIR_LADDER_BLOCK;
++    public static final Block FAKE_DIRT;
++    public static final Block FAKE_ROCK;
++    public static final Block FAKE_SAND;
++    public static final Block WOOL_PINK;
++    public static final Block WOOL_BLUE;
++    public static final Block WOOL_GREEN;
++    public static final Block WOOL_BLACK;
++    public static final Block DBG_2_BLOCK;
++    public static final Block SALT_BLOCK;
++    public static final Block GLOWING_FLOWER;
++    public static final Block GLOWING_FLOWER_INF_BASIC;
++    public static final Block GLOWING_FLOWER_INF_GOLD;
++    public static final Block GLOWING_FLOWER_INF_OBSIDIAN;
++    public static final Block BLUE_FIRE_IDK;
++    public static final Block SAFE;
++
++    // ==============================
++    // Common API end
++    // ==============================
 +
 +    protected String itemName;
 +    protected int rarity = 0;
@@ -28,7 +132,7 @@
 +
      static {
          SOUND_POWDER_FOOTSTEP = new StepSound("stone", 1.0f, 1.0f);
-@@ -169,24 +190,24 @@
+@@ -169,24 +199,24 @@
          CAN_BLOCK_GRASS = new boolean[256];
          LIGHT_VALUE = new int[256];
 -        STONE = new BlockStone(1, 1).setHardness(1.5f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP);
@@ -73,7 +177,7 @@
 +        GLASS = new BlockGlass(20, 49, Material.GLASS, false).setHardness(0.3f).setStepSound(Block.SOUND_GLASS_FOOTSTEP).setName("Glass");
          CLOTH_RED = null;
          CLOTH_ORANGE = null;
-@@ -203,89 +224,89 @@
+@@ -203,89 +233,89 @@
          CLOTH_ROSE = null;
          CLOTH_DARK_GRAY = null;
 -        CLOTH = new Block(35, 64, Material.CLOTH).setHardness(0.8f).setStepSound(Block.SOUND_CLOTH_FOOTSTEP);
@@ -208,58 +312,58 @@
 +        REED = new BlockReed(83, 73).setHardness(0.0f).setStepSound(Block.SOUND_GRASS_FOOTSTEP).setName("Reeds");
 +        JUKEBOX = new BlockJukebox(84, 74).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Cassete player");
 +        FENCE = new BlockFence(85, 4).setHardness(2.0f).setResistance(5.0f).setStepSound(Block.SOUND_WOOD_FOOTSTEP).setName("Oak fence");
-+        QuadWindowGlassBlock = new BlockGlass(90, 145, Material.GLASS, false).setHardness(0.3f).setStepSound(Block.SOUND_GLASS_FOOTSTEP).setName("Window");
-+        PillarBlock = new Block(91, 144, Material.WOOD).setHardness(2.0f).setResistance(5.0f).setStepSound(Block.SOUND_WOOD_FOOTSTEP).setName("Pillar block");
-+        TileBlock = new Block(92, 146, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Tile");
-+        TileBlock2 = new Block(93, 147, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Tile 2");
-+        TileBlock2NonFucked = new BlockGlass(94, 147, Material.GLASS, false).setHardness(0.3f).setStepSound(Block.SOUND_GLASS_FOOTSTEP).setName("Tile 2 not fucked");
-+        dimensionFloorBlock = new Block(95, 148, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Dimension floor block");
-+        dimensionWallBlock = new Block(96, 149, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Dimension wall block");
-+        dbgBlock = new Block(97, 150, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Debug log").setRarity(3);
-+        TileBlock3 = new Block(98, 151, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Tile 3");
-+        TileBlock4 = new Block(99, 152, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Tile 4");
-+        fakeGrass = new BlockMultiSided(100, 153, 154, 155).setHardness(0.6f).setStepSound(Block.SOUND_GRASS_FOOTSTEP).setName("Grass block?");
-+        AltMojangHypostasisAnemo = new Block(101, 156, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Mojang hypostasis");
-+        imgur9F0A3un = new Block(102, 157, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("https://imgir.com/9FA3un");
-+        yeahWeHadFunWithThisAsYouCanSee = new Block(103, 158, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Yeah we had fun with this as you can see");
-+        BarrierBlock = new BlockHidable(104, 159, Material.GLASS, false).setHardness(0.3f).setStepSound(Block.SOUND_GLASS_FOOTSTEP).setName("Barrier block").setRarity(3);
-+        StairLadderBlock = new BlockLadder(105, 161).setHardness(0.4f).setStepSound(Block.SOUND_WOOD_FOOTSTEP).setName("Ladder?");
-+        fakeDirt = new Block(106, 162, Material.ROCK).setHardness(0.6f).setResistance(10.0f).setStepSound(Block.SOUND_GRASS_FOOTSTEP).setName("Dirt?");
-+        fakeRock = new Block(107, 163, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Stone?");
-+        fakeSand = new BlockSand(108, 164).setHardness(0.5f).setStepSound(Block.SOUND_SAND_FOOTSTEP).setName("Sand?");
-+        woolPink = new Block(109, 165, Material.CLOTH).setHardness(0.8f).setStepSound(Block.SOUND_CLOTH_FOOTSTEP).setName("Pink wool");
-+        woolBlue = new Block(110, 166, Material.CLOTH).setHardness(0.8f).setStepSound(Block.SOUND_CLOTH_FOOTSTEP).setName("Blue wool");
-+        woolGreen = new Block(111, 167, Material.CLOTH).setHardness(0.8f).setStepSound(Block.SOUND_CLOTH_FOOTSTEP).setName("Green wool");
-+        woolBlack = new Block(112, 168, Material.CLOTH).setHardness(0.8f).setStepSound(Block.SOUND_CLOTH_FOOTSTEP).setName("Black wool");
-+        dbg2Block = new BlockGlowing(113, 150, 1).setHardness(0.0f).setLightValue(0.9375f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Debug foliage").setRarity(3);
-+        saltBlock = new BlockMultiSided(114, 170, 169, 170).setHardness(0.6f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Salt");
-+        glowingFlower = new BlockGlowingFlower(115, 171, 1).setHardness(0.0f).setLightValue(0.9375f).setStepSound(Block.SOUND_GRASS_FOOTSTEP).setName("Glowing flower");
-+        blueFireIdk = new BlockGlowing(116, 172, 2).setHardness(0.0f).setLightValue(0.9375f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Blue fire");
-+        glowingFlowerInfBasic = new BlockGlowingFlowerInfused(117, 173, 1, 2).setHardness(0.0f).setLightValue(0.9375f).setStepSound(Block.SOUND_GRASS_FOOTSTEP).setName("Basic glowing flower");
-+        glowingFlowerInfGold = new BlockGlowingFlowerInfused(118, 174, 1, 4).setHardness(0.0f).setLightValue(0.9375f).setStepSound(Block.SOUND_GRASS_FOOTSTEP).setName("Golden glowing flower");
-+        glowingFlowerInfObsidian = new BlockGlowingFlowerInfused(119, 175, 1, 7).setHardness(0.0f).setLightValue(0.9375f).setStepSound(Block.SOUND_GRASS_FOOTSTEP).setName("Obsidian glowing flower");
-+        safe = new BlockSafe(120, 177, 176, 177).setHardness(1.5f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Safe").setRarity(3);
++        QUAD_WINDOW_GLASS_BLOCK = new BlockGlass(90, 145, Material.GLASS, false).setHardness(0.3f).setStepSound(Block.SOUND_GLASS_FOOTSTEP).setName("Window");
++        PILLAR_BLOCK = new Block(91, 144, Material.WOOD).setHardness(2.0f).setResistance(5.0f).setStepSound(Block.SOUND_WOOD_FOOTSTEP).setName("Pillar block");
++        TILE_BLOCK = new Block(92, 146, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Tile");
++        TILE_BLOCK_2 = new Block(93, 147, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Tile 2");
++        TILE_BLOCK_2_NON_FUCKED = new BlockGlass(94, 147, Material.GLASS, false).setHardness(0.3f).setStepSound(Block.SOUND_GLASS_FOOTSTEP).setName("Tile 2 not fucked");
++        DIMENSION_FLOOR_BLOCK = new Block(95, 148, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Dimension floor block");
++        DIMENSION_WALL_BLOCK = new Block(96, 149, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Dimension wall block");
++        DBG_BLOCK = new Block(97, 150, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Debug log").setRarity(3);
++        TILE_BLOCK_3 = new Block(98, 151, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Tile 3");
++        TILE_BLOCK_4 = new Block(99, 152, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Tile 4");
++        FAKE_GRASS = new BlockMultiSided(100, 153, 154, 155).setHardness(0.6f).setStepSound(Block.SOUND_GRASS_FOOTSTEP).setName("Grass block?");
++        ALT_MOJANG_HYPOSTASIS_ANEMO = new Block(101, 156, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Mojang hypostasis");
++        IMGUR_9F0A3UN = new Block(102, 157, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("https://imgir.com/9FA3un");
++        YEAH_WE_HAD_FUN_WITH_THIS_AS_YOU_CAN_SEE = new Block(103, 158, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Yeah we had fun with this as you can see");
++        BARRIER_BLOCK = new BlockHidable(104, 159, Material.GLASS, false).setHardness(0.3f).setStepSound(Block.SOUND_GLASS_FOOTSTEP).setName("Barrier block").setRarity(3);
++        STAIR_LADDER_BLOCK = new BlockLadder(105, 161).setHardness(0.4f).setStepSound(Block.SOUND_WOOD_FOOTSTEP).setName("Ladder?");
++        FAKE_DIRT = new Block(106, 162, Material.ROCK).setHardness(0.6f).setResistance(10.0f).setStepSound(Block.SOUND_GRASS_FOOTSTEP).setName("Dirt?");
++        FAKE_ROCK = new Block(107, 163, Material.ROCK).setHardness(2.0f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Stone?");
++        FAKE_SAND = new BlockSand(108, 164).setHardness(0.5f).setStepSound(Block.SOUND_SAND_FOOTSTEP).setName("Sand?");
++        WOOL_PINK = new Block(109, 165, Material.CLOTH).setHardness(0.8f).setStepSound(Block.SOUND_CLOTH_FOOTSTEP).setName("Pink wool");
++        WOOL_BLUE = new Block(110, 166, Material.CLOTH).setHardness(0.8f).setStepSound(Block.SOUND_CLOTH_FOOTSTEP).setName("Blue wool");
++        WOOL_GREEN = new Block(111, 167, Material.CLOTH).setHardness(0.8f).setStepSound(Block.SOUND_CLOTH_FOOTSTEP).setName("Green wool");
++        WOOL_BLACK = new Block(112, 168, Material.CLOTH).setHardness(0.8f).setStepSound(Block.SOUND_CLOTH_FOOTSTEP).setName("Black wool");
++        DBG_2_BLOCK = new BlockGlowing(113, 150, 1).setHardness(0.0f).setLightValue(0.9375f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Debug foliage").setRarity(3);
++        SALT_BLOCK = new BlockMultiSided(114, 170, 169, 170).setHardness(0.6f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Salt");
++        GLOWING_FLOWER = new BlockGlowingFlower(115, 171, 1).setHardness(0.0f).setLightValue(0.9375f).setStepSound(Block.SOUND_GRASS_FOOTSTEP).setName("Glowing flower");
++        BLUE_FIRE_IDK = new BlockGlowing(116, 172, 2).setHardness(0.0f).setLightValue(0.9375f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Blue fire");
++        GLOWING_FLOWER_INF_BASIC = new BlockGlowingFlowerInfused(117, 173, 1, 2).setHardness(0.0f).setLightValue(0.9375f).setStepSound(Block.SOUND_GRASS_FOOTSTEP).setName("Basic glowing flower");
++        GLOWING_FLOWER_INF_GOLD = new BlockGlowingFlowerInfused(118, 174, 1, 4).setHardness(0.0f).setLightValue(0.9375f).setStepSound(Block.SOUND_GRASS_FOOTSTEP).setName("Golden glowing flower");
++        GLOWING_FLOWER_INF_OBSIDIAN = new BlockGlowingFlowerInfused(119, 175, 1, 7).setHardness(0.0f).setLightValue(0.9375f).setStepSound(Block.SOUND_GRASS_FOOTSTEP).setName("Obsidian glowing flower");
++        SAFE = new BlockSafe(120, 177, 176, 177).setHardness(1.5f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP).setName("Safe").setRarity(3);
          for (int i = 0; i < 256; ++i) {
              if (Block.BLOCKS_LIST[i] != null) {
 -                Item.ITEMS_LIST[i] = new ItemBlock(i - 256);
 +                Item.ITEMS_LIST[i] = new ItemBlock(i - 256).setName(Block.BLOCKS_LIST[i].getName()).setRarity(Block.BLOCKS_LIST[i].getRarity());
              }
          }
-@@ -297,5 +318,5 @@
+@@ -297,5 +327,5 @@
          this.slipperiness = 0.6f;
          if (Block.BLOCKS_LIST[id] != null) {
 -            throw new IllegalArgumentException(new StringBuilder().append("Slot ").append(id).append(" is already occupied by ").append(Block.BLOCKS_LIST[id]).append(" when adding ").append(this).toString());
 +            throw new IllegalArgumentException("Slot " + id + " is already occupied by \"" + Block.BLOCKS_LIST[id].getName() + "\" when adding \"" + this.getName() + "\"");
          }
          this.material = material;
-@@ -452,5 +473,5 @@
+@@ -452,5 +482,5 @@
          }
          else {
 -            if (!entityPlayer.canHarvestBlock(this)) {
 +            if (!entityPlayer.canHarvestBlock(this, entityPlayer.worldObj)) {
                  return 1.0f / this.hardness / 100.0f;
              }
-@@ -512,5 +533,5 @@
+@@ -512,5 +542,5 @@
          }
          Vec3D vec3D = null;
 -        if (intermediateWithXValue != null && (vec3D == null || vec1.distanceTo(intermediateWithXValue) < vec1.distanceTo(vec3D))) {

@@ -1,0 +1,34 @@
+--- WorldGenTrees.java
++++ WorldGenTrees.java
+@@ -23,5 +23,5 @@
+                     if (i7 >= 0 && i7 < 128) {
+                         final int i10 = world.getBlockId(i8, i7, i9);
+-                        if (i10 != 0 && i10 != Block.leaves.blockID) {
++                        if (i10 != 0 && i10 != Block.LEAVES.blockID) {
+                             z2 = false;
+                         }
+@@ -37,6 +37,6 @@
+         }
+         int i7 = world.getBlockId(x, y - 1, z);
+-        if ((i7 == Block.grass.blockID || i7 == Block.dirt.blockID) && y < 128 - i6 - 1) {
+-            world.setBlock(x, y - 1, z, Block.dirt.blockID);
++        if ((i7 == Block.GRASS.blockID || i7 == Block.DIRT.blockID) && y < 128 - i6 - 1) {
++            world.setBlock(x, y - 1, z, Block.DIRT.blockID);
+             for (int i11 = y - 3 + i6; i11 <= y + i6; ++i11) {
+                 final int i8 = i11 - (y + i6);
+@@ -46,5 +46,5 @@
+                         final int i14 = i13 - z;
+                         if ((Math.abs(i12) != i9 || Math.abs(i14) != i9 || (rand.nextInt(2) != 0 && i8 != 0)) && !Block.opaqueCubeLookup[world.getBlockId(i10, i11, i13)]) {
+-                            world.setBlock(i10, i11, i13, Block.leaves.blockID);
++                            world.setBlock(i10, i11, i13, Block.LEAVES.blockID);
+                         }
+                     }
+@@ -53,6 +53,6 @@
+             for (int i11 = 0; i11 < i6; ++i11) {
+                 final int i8 = world.getBlockId(x, y + i11, z);
+-                if (i8 == 0 || i8 == Block.leaves.blockID) {
+-                    world.setBlock(x, y + i11, z, Block.wood.blockID);
++                if (i8 == 0 || i8 == Block.LEAVES.blockID) {
++                    world.setBlock(x, y + i11, z, Block.WOOD.blockID);
+                 }
+             }

@@ -1,0 +1,16 @@
+--- ItemPickaxe.java
++++ ItemPickaxe.java
+@@ -6,5 +6,5 @@
+     
+     static {
+-        ItemPickaxe.blocksEffectiveAgainst = new Block[] { Block.cobblestone, Block.stairDouble, Block.stairSingle, Block.stone, Block.cobblestoneMossy, Block.oreIron, Block.blockSteel, Block.oreCoal, Block.blockGold, Block.oreGold, Block.oreDiamond, Block.blockDiamond, Block.ice };
++        ItemPickaxe.blocksEffectiveAgainst = new Block[] { Block.COBBLESTONE, Block.STAIR_DOUBLE, Block.STAIR_SINGLE, Block.STONE, Block.COBBLESTONE_MOSSY, Block.ORE_IRON, Block.ORE_IRON, Block.ORE_COAL, Block.BLOCK_GOLD, Block.ORE_GOLD, Block.ORE_DIAMOND, Block.BLOCK_DIAMOND, Block.ICE};
+     }
+     
+@@ -16,5 +16,5 @@
+     @Override
+     public boolean canHarvestBlock(final Block block) {
+-        return (block == Block.obsidian) ? (this.harvestLevel == 3) : ((block != Block.blockDiamond && block != Block.oreDiamond) ? ((block != Block.blockGold && block != Block.oreGold) ? ((block != Block.blockSteel && block != Block.oreIron) ? ((block != Block.oreRedstone && block != Block.oreRedstoneGlowing) ? (block.material == Material.rock || block.material == Material.iron) : (this.harvestLevel >= 2)) : (this.harvestLevel >= 1)) : (this.harvestLevel >= 2)) : (this.harvestLevel >= 2));
++        return (block == Block.OBSIDIAN) ? (this.harvestLevel == 3) : ((block != Block.BLOCK_DIAMOND && block != Block.ORE_DIAMOND) ? ((block != Block.BLOCK_GOLD && block != Block.ORE_GOLD) ? ((block != Block.ORE_IRON && block != Block.ORE_IRON) ? ((block != Block.ORE_REDSTONE && block != Block.ORE_REDSTONE_GLOWING) ? (block.material == Material.rock || block.material == Material.iron) : (this.harvestLevel >= 2)) : (this.harvestLevel >= 1)) : (this.harvestLevel >= 2)) : (this.harvestLevel >= 2));
+     }
+ }

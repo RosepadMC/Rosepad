@@ -15,6 +15,29 @@
 +
      static {
          Item.rand = new Random();
+@@ -163,5 +166,5 @@
+         Item.hoeDiamond = new ItemHoe(37, 3).setIconIndex(131);
+         Item.hoeGold = new ItemHoe(38, 1).setIconIndex(132);
+-        Item.seeds = new ItemSeeds(39, Block.crops.blockID).setIconIndex(9);
++        Item.seeds = new ItemSeeds(39, Block.CROPS.blockID).setIconIndex(9);
+         Item.wheat = new Item(40).setIconIndex(25);
+         Item.bread = new ItemFood(41, 5).setIconIndex(41);
+@@ -194,6 +197,6 @@
+         Item.doorWood = new ItemDoor(68, Material.wood).setIconIndex(43);
+         Item.bucketEmpty = new ItemBucket(69, 0).setIconIndex(74);
+-        Item.bucketWater = new ItemBucket(70, Block.waterMoving.blockID).setIconIndex(75);
+-        Item.bucketLava = new ItemBucket(71, Block.lavaMoving.blockID).setIconIndex(76);
++        Item.bucketWater = new ItemBucket(70, Block.WATER_MOVING.blockID).setIconIndex(75);
++        Item.bucketLava = new ItemBucket(71, Block.LAVA_MOVING.blockID).setIconIndex(76);
+         Item.minecartEmpty = new ItemMinecart(72, 0).setIconIndex(135);
+         Item.saddle = new ItemSaddle(73).setIconIndex(104);
+@@ -206,5 +209,5 @@
+         Item.brick = new Item(80).setIconIndex(22);
+         Item.clay = new Item(81).setIconIndex(57);
+-        Item.reed = new ItemReed(82, Block.reed).setIconIndex(27);
++        Item.reed = new ItemReed(82, Block.REED).setIconIndex(27);
+         Item.paper = new Item(83).setIconIndex(58);
+         Item.book = new Item(84).setIconIndex(59);
 @@ -216,4 +219,6 @@
          Item.record13 = new ItemRecord(2000, "hidden_den").setIconIndex(240);
          Item.recordCat = new ItemRecord(2001, "lemuria").setIconIndex(241);

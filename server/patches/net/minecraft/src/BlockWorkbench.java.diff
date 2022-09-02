@@ -1,0 +1,9 @@
+--- BlockWorkbench.java
++++ BlockWorkbench.java
+@@ -9,5 +9,5 @@
+     @Override
+     public int getBlockTextureFromSide(final int side) {
+-        return (side == 1) ? (this.blockIndexInTexture - 16) : ((side == 0) ? Block.planks.getBlockTextureFromSide(0) : ((side != 2 && side != 4) ? this.blockIndexInTexture : (this.blockIndexInTexture + 1)));
++        return (side == 1) ? (this.blockIndexInTexture - 16) : ((side == 0) ? Block.PLANKS.getBlockTextureFromSide(0) : ((side != 2 && side != 4) ? this.blockIndexInTexture : (this.blockIndexInTexture + 1)));
+     }
+     

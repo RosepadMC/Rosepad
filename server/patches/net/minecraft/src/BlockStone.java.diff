@@ -1,0 +1,9 @@
+--- BlockStone.java
++++ BlockStone.java
+@@ -10,5 +10,5 @@
+     @Override
+     public int idDropped(final int count, final Random random) {
+-        return Block.cobblestone.blockID;
++        return Block.COBBLESTONE.blockID;
+     }
+ }

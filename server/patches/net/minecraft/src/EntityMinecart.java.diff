@@ -1,0 +1,38 @@
+--- EntityMinecart.java
++++ EntityMinecart.java
+@@ -78,8 +78,8 @@
+             this.entityDropItem(Item.minecartEmpty.shiftedIndex, 1, 0.0f);
+             if (this.minecartType == 1) {
+-                this.entityDropItem(Block.chest.blockID, 1, 0.0f);
++                this.entityDropItem(Block.CHEST.blockID, 1, 0.0f);
+             }
+             else if (this.minecartType == 2) {
+-                this.entityDropItem(Block.stoneOvenIdle.blockID, 1, 0.0f);
++                this.entityDropItem(Block.STONE_OVEN_IDLE.blockID, 1, 0.0f);
+             }
+             this.setEntityDead();
+@@ -157,5 +157,5 @@
+             int i2 = MathHelper.floor_double(this.posY);
+             final int i3 = MathHelper.floor_double(this.posZ);
+-            if (this.worldObj.getBlockId(i1, i2 - 1, i3) == Block.minecartTrack.blockID) {
++            if (this.worldObj.getBlockId(i1, i2 - 1, i3) == Block.MINECART_TRACK.blockID) {
+                 --i2;
+             }
+@@ -163,5 +163,5 @@
+             boolean z6 = false;
+             final double d44 = 0.0078125;
+-            if (this.worldObj.getBlockId(i1, i2, i3) == Block.minecartTrack.blockID) {
++            if (this.worldObj.getBlockId(i1, i2, i3) == Block.MINECART_TRACK.blockID) {
+                 final Vec3D vec3D9 = this.getPos(this.posX, this.posY, this.posZ);
+                 final int i4 = this.worldObj.getBlockMetadata(i1, i2, i3);
+@@ -376,8 +376,8 @@
+         int i8 = MathHelper.floor_double(y);
+         final int i9 = MathHelper.floor_double(z);
+-        if (this.worldObj.getBlockId(i7, i8 - 1, i9) == Block.minecartTrack.blockID) {
++        if (this.worldObj.getBlockId(i7, i8 - 1, i9) == Block.MINECART_TRACK.blockID) {
+             --i8;
+         }
+-        if (this.worldObj.getBlockId(i7, i8, i9) == Block.minecartTrack.blockID) {
++        if (this.worldObj.getBlockId(i7, i8, i9) == Block.MINECART_TRACK.blockID) {
+             final int i10 = this.worldObj.getBlockMetadata(i7, i8, i9);
+             y = i8;

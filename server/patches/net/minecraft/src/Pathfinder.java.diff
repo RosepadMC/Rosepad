@@ -1,0 +1,10 @@
+--- Pathfinder.java
++++ Pathfinder.java
+@@ -28,6 +28,5 @@
+         final PathPoint pathPoint10 = this.openPoint(MathHelper.floor_double(x - entity.width / 2.0f), MathHelper.floor_double(boundingBoxY), MathHelper.floor_double(z - entity.width / 2.0f));
+         final PathPoint pathPoint11 = new PathPoint(MathHelper.floor_float(entity.width + 1.0f), MathHelper.floor_float(entity.height + 1.0f), MathHelper.floor_float(entity.width + 1.0f));
+-        final PathEntity pathEntity12 = this.addToPath(entity, pathPoint9, pathPoint10, pathPoint11, f8);
+-        return pathEntity12;
++        return this.addToPath(entity, pathPoint9, pathPoint10, pathPoint11, f8);
+     }
+     

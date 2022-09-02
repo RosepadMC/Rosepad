@@ -1,0 +1,9 @@
+--- BlockLog.java
++++ BlockLog.java
+@@ -16,5 +16,5 @@
+     @Override
+     public int idDropped(final int count, final Random random) {
+-        return Block.wood.blockID;
++        return Block.WOOD.blockID;
+     }
+     

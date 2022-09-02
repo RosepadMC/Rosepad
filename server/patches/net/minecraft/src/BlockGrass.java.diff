@@ -1,0 +1,25 @@
+--- BlockGrass.java
++++ BlockGrass.java
+@@ -16,5 +16,5 @@
+                 return;
+             }
+-            world.setBlockWithNotify(x, y, z, Block.dirt.blockID);
++            world.setBlockWithNotify(x, y, z, Block.DIRT.blockID);
+         }
+         else if (world.getBlockLightValue(x, y + 1, z) >= 9) {
+@@ -22,6 +22,6 @@
+             final int i7 = y + random.nextInt(5) - 3;
+             final int i8 = z + random.nextInt(3) - 1;
+-            if (world.getBlockId(i6, i7, i8) == Block.dirt.blockID && world.getBlockLightValue(i6, i7 + 1, i8) >= 4 && !world.getBlockMaterial(i6, i7 + 1, i8).getCanBlockGrass()) {
+-                world.setBlockWithNotify(i6, i7, i8, Block.grass.blockID);
++            if (world.getBlockId(i6, i7, i8) == Block.DIRT.blockID && world.getBlockLightValue(i6, i7 + 1, i8) >= 4 && !world.getBlockMaterial(i6, i7 + 1, i8).getCanBlockGrass()) {
++                world.setBlockWithNotify(i6, i7, i8, Block.GRASS.blockID);
+             }
+         }
+@@ -30,5 +30,5 @@
+     @Override
+     public int idDropped(final int count, final Random random) {
+-        return Block.dirt.idDropped(0, random);
++        return Block.DIRT.idDropped(0, random);
+     }
+ }

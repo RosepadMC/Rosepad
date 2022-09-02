@@ -1,0 +1,17 @@
+--- ChunkProviderGenerate.java
++++ ChunkProviderGenerate.java
+@@ -334,11 +334,11 @@
+         }
+         for (int j = 0; j < 3; ++j) {
+-            new PillarGen(Block.saltBlock.blockID).generate(this.world, this.rand, n + this.rand.nextInt(16) + 8, this.rand.nextInt(128), n2 + this.rand.nextInt(16) + 8);
++            new PillarGen(Block.SALT_BLOCK.blockID).generate(this.world, this.rand, n + this.rand.nextInt(16) + 8, this.rand.nextInt(128), n2 + this.rand.nextInt(16) + 8);
+         }
+         for (int j = 0; j < 3; ++j) {
+-            new OnWaterGen(Block.glowingFlower.blockID).generate(this.world, this.rand, n + this.rand.nextInt(16) + 8, this.rand.nextInt(128), n2 + this.rand.nextInt(16) + 8);
++            new OnWaterGen(Block.GLOWING_FLOWER.blockID).generate(this.world, this.rand, n + this.rand.nextInt(16) + 8, this.rand.nextInt(128), n2 + this.rand.nextInt(16) + 8);
+         }
+         for (int j = 0; j < 2; ++j) {
+-            new SkyGen(Block.blueFireIdk.blockID).generate(this.world, this.rand, n + this.rand.nextInt(16) + 8, this.rand.nextInt(128), n2 + this.rand.nextInt(16) + 8);
++            new SkyGen(Block.BLUE_FIRE_IDK.blockID).generate(this.world, this.rand, n + this.rand.nextInt(16) + 8, this.rand.nextInt(128), n2 + this.rand.nextInt(16) + 8);
+         }
+         for (int j = 0; j < 10; ++j) {

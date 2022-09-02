@@ -1,0 +1,26 @@
+--- CraftingManager.java
++++ CraftingManager.java
+@@ -64,6 +64,6 @@
+         this.addRecipe(new ItemStack(Block.PRESSURE_PLATE_STONE, 1), "###", '#', Block.STONE);
+         this.addRecipe(new ItemStack(Block.PRESSURE_PLATE_WOOD, 1), "###", '#', Block.PLANKS);
+-        this.addRecipe(new ItemStack(Block.PillarBlock, 4), "#X#", "X X", "#X#", '#', Block.PLANKS, 'X', Item.STICK);
+-        this.addRecipe(new ItemStack(Block.QuadWindowGlassBlock, 1), " # ", "#X#", " # ", '#', Block.COBBLESTONE, 'X', Block.GLASS);
++        this.addRecipe(new ItemStack(Block.PILLAR_BLOCK, 4), "#X#", "X X", "#X#", '#', Block.PLANKS, 'X', Item.STICK);
++        this.addRecipe(new ItemStack(Block.QUAD_WINDOW_GLASS_BLOCK, 1), " # ", "#X#", " # ", '#', Block.COBBLESTONE, 'X', Block.GLASS);
+         this.addRecipe(new ItemStack(Item.obsidianSword), "#", "#", "$", '#', Item.obsidianIngot, '$', Item.STICK);
+         this.addRecipe(new ItemStack(Item.obsidianShovel), "#", "$", "$", '#', Item.obsidianIngot, '$', Item.STICK);
+@@ -77,9 +77,9 @@
+         this.addRecipe(new ItemStack(Item.obsidianArmor3), "# #", "# #", '#', Item.obsidianIngot);
+         this.addRecipe(new ItemStack(Item.obsidianArmor1), "# #", "###", "###", '#', Item.obsidianIngot);
+-        this.addRecipe(new ItemStack(Block.woolPink), "#X", '#', Block.CLOTH, 'X', Item.pinkDye);
+-        this.addRecipe(new ItemStack(Block.woolBlue), "#X", '#', Block.CLOTH, 'X', Item.blueDye);
+-        this.addRecipe(new ItemStack(Block.woolGreen), "#X", '#', Block.CLOTH, 'X', Item.greenDye);
+-        this.addRecipe(new ItemStack(Block.woolBlack), "#X", '#', Block.CLOTH, 'X', Item.blackDye);
+-        this.addRecipe(new ItemStack(Item.edibleFire), "#", '#', Block.blueFireIdk);
++        this.addRecipe(new ItemStack(Block.WOOL_PINK), "#X", '#', Block.CLOTH, 'X', Item.pinkDye);
++        this.addRecipe(new ItemStack(Block.WOOL_BLUE), "#X", '#', Block.CLOTH, 'X', Item.blueDye);
++        this.addRecipe(new ItemStack(Block.WOOL_GREEN), "#X", '#', Block.CLOTH, 'X', Item.greenDye);
++        this.addRecipe(new ItemStack(Block.WOOL_BLACK), "#X", '#', Block.CLOTH, 'X', Item.blackDye);
++        this.addRecipe(new ItemStack(Item.edibleFire), "#", '#', Block.BLUE_FIRE_IDK);
+         Collections.sort((List)this.recipes, (Comparator)new RecipeSorter(this));
+         System.out.println(new StringBuilder().append(this.recipes.size()).append(" recipes").toString());

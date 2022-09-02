@@ -1,0 +1,27 @@
+--- WorldGenDungeons.java
++++ WorldGenDungeons.java
+@@ -38,8 +38,8 @@
+                         else if (world.getBlockMaterial(i10, i11, i12).isSolid()) {
+                             if (i11 == y - 1 && rand.nextInt(4) != 0) {
+-                                world.setBlockWithNotify(i10, i11, i12, Block.cobblestoneMossy.blockID);
++                                world.setBlockWithNotify(i10, i11, i12, Block.COBBLESTONE_MOSSY.blockID);
+                             }
+                             else {
+-                                world.setBlockWithNotify(i10, i11, i12, Block.cobblestone.blockID);
++                                world.setBlockWithNotify(i10, i11, i12, Block.COBBLESTONE.blockID);
+                             }
+                         }
+@@ -66,5 +66,5 @@
+                         }
+                         if (i14 == 1) {
+-                            world.setBlockWithNotify(i12, y, i13, Block.chest.blockID);
++                            world.setBlockWithNotify(i12, y, i13, Block.CHEST.blockID);
+                             final TileEntityChest tileEntityChest16 = (TileEntityChest)world.getBlockTileEntity(i12, y, i13);
+                             for (int i15 = 0; i15 < 8; ++i15) {
+@@ -79,5 +79,5 @@
+                 }
+             }
+-            world.setBlockWithNotify(x, y, z, Block.mobSpawner.blockID);
++            world.setBlockWithNotify(x, y, z, Block.MOB_SPAWNER.blockID);
+             final TileEntityMobSpawner tileEntityMobSpawner19 = (TileEntityMobSpawner)world.getBlockTileEntity(x, y, z);
+             tileEntityMobSpawner19.mobID = this.pickMobSpawner(rand);

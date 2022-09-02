@@ -1,0 +1,16 @@
+--- WorldGenClay.java
++++ WorldGenClay.java
+@@ -8,5 +8,5 @@
+     
+     public WorldGenClay(final int numberOfBlocks) {
+-        this.clayBlockId = Block.blockClay.blockID;
++        this.clayBlockId = Block.BLOCK_CLAY.blockID;
+         this.numberOfBlocks = numberOfBlocks;
+     }
+@@ -39,5 +39,5 @@
+                         if (d19 * d19 + d20 * d20 + d21 * d21 < 1.0) {
+                             final int i23 = world.getBlockId(i20, i21, i22);
+-                            if (i23 == Block.sand.blockID) {
++                            if (i23 == Block.SAND.blockID) {
+                                 world.setBlock(i20, i21, i22, this.clayBlockId);
+                             }

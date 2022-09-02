@@ -1,0 +1,9 @@
+--- BlockCactus.java
++++ BlockCactus.java
+@@ -76,5 +76,5 @@
+         }
+         final int i5 = world.getBlockId(x, y - 1, z);
+-        return i5 == Block.cactus.blockID || i5 == Block.sand.blockID;
++        return i5 == Block.CACTUS.blockID || i5 == Block.SAND.blockID;
+     }
+     

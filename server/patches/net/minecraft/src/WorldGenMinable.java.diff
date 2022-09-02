@@ -1,0 +1,9 @@
+--- WorldGenMinable.java
++++ WorldGenMinable.java
+@@ -34,5 +34,5 @@
+                         final double d20 = (i21 + 0.5 - d14) / (d18 / 2.0);
+                         final double d21 = (i22 + 0.5 - d15) / (d17 / 2.0);
+-                        if (d19 * d19 + d20 * d20 + d21 * d21 < 1.0 && world.getBlockId(i20, i21, i22) == Block.stone.blockID) {
++                        if (d19 * d19 + d20 * d20 + d21 * d21 < 1.0 && world.getBlockId(i20, i21, i22) == Block.STONE.blockID) {
+                             world.setBlock(i20, i21, i22, this.minableBlockId);
+                         }

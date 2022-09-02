@@ -1,0 +1,16 @@
+--- BlockLeaves.java
++++ BlockLeaves.java
+@@ -61,5 +61,5 @@
+     private int getConnectionStrength(final World world, final int x, final int y, final int z, final int i5) {
+         final int i6 = world.getBlockId(x, y, z);
+-        if (i6 == Block.wood.blockID) {
++        if (i6 == Block.WOOD.blockID) {
+             return 16;
+         }
+@@ -100,5 +100,5 @@
+     @Override
+     public int idDropped(final int count, final Random random) {
+-        return Block.sapling.blockID;
++        return Block.SAPLING.blockID;
+     }
+     

@@ -1,0 +1,9 @@
+--- ItemSeeds.java
++++ ItemSeeds.java
+@@ -15,5 +15,5 @@
+         }
+         final int i8 = world.getBlockId(x, y, z);
+-        if (i8 == Block.tilledField.blockID) {
++        if (i8 == Block.TILLED_FIELD.blockID) {
+             world.setBlockWithNotify(x, y + 1, z, this.blockType);
+             --stack.stackSize;

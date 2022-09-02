@@ -1,0 +1,9 @@
+--- EntitySheep.java
++++ EntitySheep.java
+@@ -17,5 +17,5 @@
+             for (int i3 = 1 + this.rand.nextInt(3), i4 = 0; i4 < i3; ++i4) {
+                 final EntityItem entityDropItem;
+-                final EntityItem entityItem5 = entityDropItem = this.entityDropItem(Block.cloth.blockID, 1, 1.0f);
++                final EntityItem entityItem5 = entityDropItem = this.entityDropItem(Block.CLOTH.blockID, 1, 1.0f);
+                 entityDropItem.motionY += this.rand.nextFloat() * 0.05f;
+                 final EntityItem entityItem6 = entityItem5;

@@ -1,0 +1,16 @@
+--- EntityBoat.java
++++ EntityBoat.java
+@@ -46,5 +46,5 @@
+         if (this.damageTaken > 40) {
+             for (int i3 = 0; i3 < 3; ++i3) {
+-                this.entityDropItem(Block.planks.blockID, 1, 0.0f);
++                this.entityDropItem(Block.PLANKS.blockID, 1, 0.0f);
+             }
+             for (int i3 = 0; i3 < 2; ++i3) {
+@@ -130,5 +130,5 @@
+             this.setEntityDead();
+             for (int i6 = 0; i6 < 3; ++i6) {
+-                this.entityDropItem(Block.planks.blockID, 1, 0.0f);
++                this.entityDropItem(Block.PLANKS.blockID, 1, 0.0f);
+             }
+             for (int i6 = 0; i6 < 2; ++i6) {

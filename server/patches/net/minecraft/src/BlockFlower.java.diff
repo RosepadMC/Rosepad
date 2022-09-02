@@ -1,0 +1,9 @@
+--- BlockFlower.java
++++ BlockFlower.java
+@@ -18,5 +18,5 @@
+     
+     protected boolean canThisPlantGrowOnThisBlockID(final int id) {
+-        return id == Block.grass.blockID || id == Block.dirt.blockID || id == Block.tilledField.blockID;
++        return id == Block.GRASS.blockID || id == Block.DIRT.blockID || id == Block.TILLED_FIELD.blockID;
+     }
+     

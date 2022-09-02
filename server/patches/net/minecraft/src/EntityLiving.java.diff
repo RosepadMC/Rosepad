@@ -8,3 +8,10 @@
 -        }
          this.entityAge = 0;
          if (this.health <= 0) {
+@@ -457,5 +454,5 @@
+         final int i2 = MathHelper.floor_double(this.boundingBox.minY);
+         final int i3 = MathHelper.floor_double(this.posZ);
+-        return this.worldObj.getBlockId(i1, i2, i3) == Block.ladder.blockID || this.worldObj.getBlockId(i1, i2 + 1, i3) == Block.ladder.blockID;
++        return this.worldObj.getBlockId(i1, i2, i3) == Block.LADDER.blockID || this.worldObj.getBlockId(i1, i2 + 1, i3) == Block.LADDER.blockID;
+     }
+     

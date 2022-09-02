@@ -1,5 +1,16 @@
 --- ItemDoor.java
 +++ ItemDoor.java
+@@ -19,8 +19,8 @@
+         Block block8;
+         if (this.material == Material.wood) {
+-            block8 = Block.doorWood;
++            block8 = Block.DOOR_WOOD;
+         }
+         else {
+-            block8 = Block.doorSteel;
++            block8 = Block.DOOR_IRON;
+         }
+         if (!block8.canPlaceBlockAt(world, x, y, z)) {
 @@ -42,6 +42,6 @@
              b10 = 1;
          }
