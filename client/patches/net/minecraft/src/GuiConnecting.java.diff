@@ -1,0 +1,9 @@
+--- GuiConnecting.java
++++ GuiConnecting.java
+@@ -6,5 +6,5 @@
+     public NetworkManager clientManager;
+     public boolean cancelled;
+-    
++
+     public GuiConnecting(final Minecraft minecraft, final String string, final int integer) {
+         this.cancelled = false;

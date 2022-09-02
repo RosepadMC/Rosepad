@@ -1,6 +1,6 @@
 --- GuiMultiplayer.java
 +++ GuiMultiplayer.java
-@@ -1,6 +1,8 @@
+@@ -1,13 +1,16 @@
  package net.minecraft.src;
  
 +import org.lwjgl.input.Keyboard;
@@ -10,7 +10,10 @@
 +    private final GuiScreen parentScreen;
      private int updateCounter;
      private String ipText;
-@@ -10,4 +12,5 @@
+-    
++
+     public GuiMultiplayer(final GuiScreen screen) {
+         this.updateCounter = 0;
          this.ipText = "";
          this.parentScreen = screen;
 +        NetClientHandler.rosepadMeta = null; // Feel free to make an RP to remove this

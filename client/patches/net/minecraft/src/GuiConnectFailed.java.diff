@@ -1,0 +1,9 @@
+--- GuiConnectFailed.java
++++ GuiConnectFailed.java
+@@ -4,5 +4,5 @@
+     private String message;
+     private String description;
+-    
++
+     public GuiConnectFailed(final String message, final String description) {
+         this.message = message;
