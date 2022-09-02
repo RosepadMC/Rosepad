@@ -95,9 +95,9 @@
 +                    this.playerEntity.boundingBox.copy().removeCoord(zeroSixTwoFive, zeroSixTwoFive, zeroSixTwoFive)
 +            ).size() == 0;
 +            if (stuffWereInTheWay && (wrongMove || !stuffInTheWay)) { // Why tf it needs to be so complicated?
-+                double addX = lastPosX > 0 ? lastPosX - Math.floor(lastPosX) : 1 - (-lastPosX - Math.floor(-lastPosX));
-+                double addY = lastPosY > 0 ? lastPosY - Math.floor(lastPosY) : 1 - (-lastPosY - Math.floor(-lastPosY));
-+                double addZ = lastPosZ > 0 ? lastPosZ - Math.floor(lastPosZ) : 1 - (-lastPosZ - Math.floor(-lastPosZ));
++//              double addX = lastPosX > 0 ? lastPosX - Math.floor(lastPosX) : 1 - (-lastPosX - Math.floor(-lastPosX));
++//              double addY = lastPosY > 0 ? lastPosY - Math.floor(lastPosY) : 1 - (-lastPosY - Math.floor(-lastPosY));
++//              double addZ = lastPosZ > 0 ? lastPosZ - Math.floor(lastPosZ) : 1 - (-lastPosZ - Math.floor(-lastPosZ));
 +
 +                int blockX = (int) Math.floor(posX);
 +                int blockY = (int) Math.floor(posY);
@@ -106,33 +106,33 @@
 +                int lastBlockY = (int) Math.floor(lastPosY);
 +                int lastBlockZ = (int) Math.floor(lastPosZ);
 +
-+                if (addX < 0.3) addX = -0.5;
-+                else if (addX > 0.7) addX = 0.5;
-+                else addX = 0;
-+                if (addY < 0.3) addY = -0.5;
-+                else if (addY > 0.7) addY = 0.5;
-+                else addY = 0;
-+                if (addZ < 0.3) addZ = -0.5;
-+                else if (addZ > 0.7) addZ = 0.5;
-+                else addZ = 0;
++//              if (addX < 0.3) addX = -0.5;
++//              else if (addX > 0.7) addX = 0.5;
++//              else addX = 0;
++//              if (addY < 0.3) addY = -0.5;
++//              else if (addY > 0.7) addY = 0.5;
++//              else addY = 0;
++//              if (addZ < 0.3) addZ = -0.5;
++//              else if (addZ > 0.7) addZ = 0.5;
++//              else addZ = 0;
 +
-+                if (addX > 0 && this.mcServer.worldMngr.getBlockId(blockX + 1, blockY, blockZ) != 0) addX = 0;
-+                if (addX < 0 && this.mcServer.worldMngr.getBlockId(blockX - 1, blockY, blockZ) != 0) addX = 0;
-+                if (addY > 0 && this.mcServer.worldMngr.getBlockId(blockX, blockY + 1, blockZ) != 0) addY = 0;
-+                if (addY < 0 && this.mcServer.worldMngr.getBlockId(blockX, blockY - 1, blockZ) != 0) addY = 0;
-+                if (addZ > 0 && this.mcServer.worldMngr.getBlockId(blockX, blockY, blockZ + 1) != 0) addZ = 0;
-+                if (addZ < 0 && this.mcServer.worldMngr.getBlockId(blockX, blockY, blockZ - 1) != 0) addZ = 0;
++//              if (addX > 0 && this.mcServer.worldMngr.getBlockId(blockX + 1, blockY, blockZ) != 0) addX = 0;
++//              if (addX < 0 && this.mcServer.worldMngr.getBlockId(blockX - 1, blockY, blockZ) != 0) addX = 0;
++//              if (addY > 0 && this.mcServer.worldMngr.getBlockId(blockX, blockY + 1, blockZ) != 0) addY = 0;
++//              if (addY < 0 && this.mcServer.worldMngr.getBlockId(blockX, blockY - 1, blockZ) != 0) addY = 0;
++//              if (addZ > 0 && this.mcServer.worldMngr.getBlockId(blockX, blockY, blockZ + 1) != 0) addZ = 0;
++//              if (addZ < 0 && this.mcServer.worldMngr.getBlockId(blockX, blockY, blockZ - 1) != 0) addZ = 0;
 +
-+                if (addY == 0 && addX == 0 && addZ == 0) addY = 0.8; // Fallback if player is stuck
++//              if (addY == 0 && addX == 0 && addZ == 0) addY = 0.8; // Fallback if player is stuck
 +
-+                if (this.mcServer.worldMngr.getBlockId(blockX, blockY, blockZ) == 0) {
-+                    addX *= -1;
-+                    addY *= -1;
-+                    addZ *= -1;
-+                }
++//              if (this.mcServer.worldMngr.getBlockId(blockX, blockY, blockZ) == 0) {
++//                  addX *= -0.5;
++//                  addY *= -0.5;
++//                  addZ *= -0.5;
++//              }
 +
 +                this.sendPacket(new Packet53BlockChange(lastBlockX, lastBlockY, lastBlockZ, this.mcServer.worldMngr));
-+                this.teleportTo(lastPosX + addX, lastPosY + addY, lastPosZ + addZ, rotationYaw, rotationPitch);
++                this.teleportTo(lastPosX, lastPosY + 0.5, lastPosZ, rotationYaw, rotationPitch);
 +
                  return;
              }

@@ -8,15 +8,16 @@ import java.util.List;
 import java.util.Scanner;
 
 public class GuiMultiplayerList extends GuiScreen {
-    private File serverListFile = new File(System.getProperty("user.dir") + "/servers.txt");
-    private List<String> serverList = new ArrayList<>();
-    private GuiScreen parent;
-    private boolean deleting;
+    private final File serverListFile = new File(System.getProperty("user.dir") + "/servers.txt");
+    private final List<String> serverList = new ArrayList<>();
+    private final GuiScreen parent;
+    private int mode = 0;
     private int page = 0;
     private boolean lock = false;
 
     public void addToList(String server) {
         serverList.add(server);
+        this.actionPerformed();
         try {
             FileWriter writer = new FileWriter(serverListFile, true);
             writer.append(server).append('\n');
@@ -26,8 +27,20 @@ public class GuiMultiplayerList extends GuiScreen {
         }
     }
 
-    public GuiMultiplayerList(GuiScreen parent, boolean deleting) {
-        this.deleting = deleting;
+    public void setServerName(int i, String name) {
+        serverList.set(i, (serverList.get(i).split(" ")[0] + " " + name).trim());
+        try {
+            FileWriter writer = new FileWriter(serverListFile, false);
+            for (String server : serverList) {
+                writer.append(server).append("\n");
+            }
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public GuiMultiplayerList(GuiScreen parent) {
         this.parent = parent;
         try {
             if (!serverListFile.exists()) {
@@ -50,15 +63,15 @@ public class GuiMultiplayerList extends GuiScreen {
     public void actionPerformed() {
         this.controlList.clear();
 
-        if (!deleting) {
-            this.controlList.add(new GuiButton(0, this.width / 4 - 50, this.height / 8 * 7 - 25, 100, 20, "Remove"));
-            this.controlList.add(new GuiButton(1, this.width / 2 - 50, this.height / 8 * 7 - 25, 100, 20, "Add"));
-            this.controlList.add(new GuiButton(2, this.width / 4 * 3 - 50, this.height / 8 * 7 - 25, 100, 20, "Direct connect"));
+        if (this.mode == 0) {
+            this.controlList.add(new GuiButton(0, this.width / 2 - 200, this.height / 8 * 7 - 25, 100, 20, "Remove"));
+            this.controlList.add(new GuiButton(1, this.width / 2 - 100, this.height / 8 * 7 - 25, 100, 20, "Add"));
+            this.controlList.add(new GuiButton(6, this.width / 2, this.height / 8 * 7 - 25, 100, 20, "Rename"));
+            this.controlList.add(new GuiButton(2, this.width / 2 + 100, this.height / 8 * 7 - 25, 100, 20, "Direct connect"));
         }
         this.controlList.add(new GuiButton(3, this.width / 2 - 50, this.height / 8 * 7, 100, 20, "Back"));
 
         final int maxOnPage = (this.height - 120) / 25;
-        System.out.println(maxOnPage);
 
         if (page > 0) {
             this.controlList.add(new GuiButton(4, 8, this.height / 2, 25, 20, "<<<"));
@@ -69,7 +82,10 @@ public class GuiMultiplayerList extends GuiScreen {
 
         for (int i = page * maxOnPage; i < (page + 1) * maxOnPage; i++) {
             if (serverList.size() <= i) break;
-            this.controlList.add(new GuiButton(6 + i, this.width / 2 - 100, (i - page * maxOnPage) * 25 + 15 + 40, serverList.get(i)));
+            final String name = serverList.get(i).trim().contains(" ")
+                    ? serverList.get(i).substring(serverList.get(i).indexOf(" ")).trim()
+                    : serverList.get(i).trim();
+            this.controlList.add(new GuiButton(7 + i, this.width / 2 - 100, (i - page * maxOnPage) * 25 + 15 + 40, name));
         }
     }
 
@@ -83,7 +99,7 @@ public class GuiMultiplayerList extends GuiScreen {
     protected void actionPerformed(GuiButton button) {
         switch (button.id) {
             case 0:
-                this.deleting = true;
+                this.mode = 1;
                 this.actionPerformed();
                 break;
             case 1:
@@ -93,8 +109,8 @@ public class GuiMultiplayerList extends GuiScreen {
                 mc.displayGuiScreen(new GuiMultiplayer(this));
                 break;
             case 3:
-                if (deleting) {
-                    deleting = false;
+                if (this.mode > 0) {
+                    mode = 0;
                     lock = true;
                     actionPerformed();
                 }
@@ -114,12 +130,16 @@ public class GuiMultiplayerList extends GuiScreen {
                     this.actionPerformed();
                 }
                 break;
+            case 6:
+                this.mode = 2;
+                this.actionPerformed();
+                break;
             default:
-                if (deleting && !lock) {
+                if (this.mode == 1 && !lock) {
                     page = 0;
-                    deleting = false;
+                    mode = 0;
                     lock = true;
-                    serverList.remove(button.id - 6);
+                    serverList.remove(button.id - 7);
                     this.actionPerformed();
                     try {
                         FileWriter writer = new FileWriter(serverListFile, false);
@@ -131,8 +151,14 @@ public class GuiMultiplayerList extends GuiScreen {
                         e.printStackTrace();
                     }
                 }
+                else if (this.mode == 2 && !lock) {
+                    page = 0;
+                    mode = 0;
+                    lock = true;
+                    this.mc.displayGuiScreen(new GuiRenameServer(this, button.id - 7));
+                }
                 else if (!lock) {
-                    String host = serverList.get(button.id - 6);
+                    String host = serverList.get(button.id - 7).split(" ")[0];
                     final String[] split = host.split(":");
                     try {
                         this.mc.displayGuiScreen(new GuiConnecting(this.mc, split[0], (split.length > 1) ? Integer.parseInt(split[1]) : 25565));
@@ -147,7 +173,16 @@ public class GuiMultiplayerList extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float renderPartialTick) {
         this.drawDefaultBackground();
-        this.drawCenteredString(fontRenderer, deleting ? "Delete server" : "Multiplayer", this.width / 2, 30, 0xFFFFFFFF);
+        this.drawCenteredString(
+                fontRenderer,
+                mode == 1
+                        ? "Delete server" : mode == 2
+                        ? "Rename server"
+                        : "Multiplayer",
+                this.width / 2,
+                30,
+                0xFFFFFFFF
+        );
         if (serverList.isEmpty()) {
             this.drawCenteredString(fontRenderer, "Empty house", this.width / 2, this.height / 2, 0xFFFFFFFF);
         }

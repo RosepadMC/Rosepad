@@ -45,6 +45,6 @@
          }
          if (button.id == 2) {
 -            this.mc.displayGuiScreen(new GuiMultiplayer(this));
-+            this.mc.displayGuiScreen(new GuiMultiplayerList(this, false));
++            this.mc.displayGuiScreen(new GuiMultiplayerList(this));
          }
      }
