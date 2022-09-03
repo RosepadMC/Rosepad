@@ -1,0 +1,15 @@
+--- ThreadConnectToServer.java
++++ ThreadConnectToServer.java
+@@ -10,4 +10,5 @@
+     final int port;
+     final GuiConnecting connectingGui;
++    final Object threadSyncObject = new Object();
+     
+     ThreadConnectToServer(final GuiConnecting guiConnecting, final Minecraft minecraft, final String ip, final int port) {
+@@ -17,5 +18,5 @@
+         this.port = port;
+     }
+-    
++
+     public void run() {
+         try {

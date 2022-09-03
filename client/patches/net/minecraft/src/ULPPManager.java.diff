@@ -10,7 +10,7 @@
 +// TODO: Replace half of methods with better implementation
  public class ULPPManager {
      public static final boolean enabled = true;
-@@ -10,23 +13,22 @@
+@@ -10,31 +13,30 @@
      public static final int ULPP_VERSION = 1;
      
 -    public static String GetVersionString(final boolean online) {
@@ -46,10 +46,14 @@
 -        return ver.startsWith("ULPP");
 -    }
 -    
+-    public static NetHandler CreateClientHandler(final int version, final Minecraft mc, final NetworkManager netManager) {
 +
-     public static NetHandler CreateClientHandler(final int version, final Minecraft mc, final NetworkManager netManager) {
++    public static NetHandler CreateClientHandler(final int version, final Minecraft mc, final NetworkManager netManager, String ip, int port) {
          try {
-@@ -36,5 +38,5 @@
+             switch (version) {
+                 case 1: {
+-                    return new NetULPP1ClientHandler(mc, netManager);
++                    return new NetULPP1ClientHandler(mc, netManager, ip, port);
                  }
                  default: {
 -                    throw new RuntimeException(new StringBuilder("Unknown ULPP version ").append(Integer.toString(version)).toString());

@@ -9,18 +9,20 @@
 @@ -14,4 +15,10 @@
      protected boolean posUpdated;
      protected Random rand;
-+    private final String ip;
-+    private final int port;
++    protected final String ip;
++    protected final int port;
 +    public static RosepadMeta rosepadMeta  // This is absolutely terrible thing I've done,
 +                                           // and I have no idea how to fix that. Feel
 +                                           // free to make an RP
 +    = null;
      
      protected boolean shouldCreateNetManager() {
-@@ -23,10 +30,12 @@
+@@ -22,11 +29,13 @@
+         return 0;
      }
-     
+-    
 -    public NetClientHandler(final Minecraft minecraft, final String ip, final int port) throws UnknownHostException, IOException {
++
 +    public NetClientHandler(final Minecraft minecraft, final String ip, final int port) throws IOException {
 +        this.ip = ip;
 +        this.port = port;
@@ -32,13 +34,17 @@
 +            this.netManager = new NetworkManager(minecraft, new Socket(InetAddress.getByName(ip), port), "Client", this);
          }
      }
-@@ -38,5 +47,5 @@
+@@ -38,8 +47,8 @@
      @Override
      public void handleLogin(final Packet1Login packet) {
 -        System.out.println(new StringBuilder("Server is using ULPP version ").append(Integer.toString(packet.protocolVersion)).toString());
 +        System.out.println("Server is using ULPP version " + packet.protocolVersion);
          final int minVersion = Integer.min(packet.protocolVersion, 1);
          if (minVersion > this.GetULPPVer()) {
+-            final NetHandler newHandler = ULPPManager.CreateClientHandler(minVersion, this.mc, this.netManager);
++            final NetHandler newHandler = ULPPManager.CreateClientHandler(minVersion, this.mc, this.netManager, ip, port);
+             this.netManager.switchHandler(newHandler);
+             newHandler.handleLogin(packet);
 @@ -134,14 +143,13 @@
              return;
          }
