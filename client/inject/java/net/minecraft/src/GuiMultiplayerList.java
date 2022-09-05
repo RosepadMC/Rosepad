@@ -76,7 +76,7 @@ public class GuiMultiplayerList extends GuiScreen {
         if (page > 0) {
             this.controlList.add(new GuiButton(4, 8, this.height / 2, 25, 20, "<<<"));
         }
-        if (page * maxOnPage + 1 < serverList.size()) {
+        if ((page + 1) * maxOnPage + 1 < serverList.size()) {
             this.controlList.add(new GuiButton(5, this.width - 8 - 25, this.height / 2, 25, 20, ">>>"));
         }
 
