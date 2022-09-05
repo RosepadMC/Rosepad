@@ -1,0 +1,8 @@
+--- BlockDoor.java
++++ BlockDoor.java
+@@ -88,4 +88,5 @@
+     @Override
+     public boolean blockActivated(final World world, final int x, final int y, final int z, final EntityPlayer entityPlayer) {
++        if (world.multiplayerWorld) return true;
+         if (this.material == Material.IRON) {
+             return true;

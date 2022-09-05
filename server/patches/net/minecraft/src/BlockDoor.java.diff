@@ -1,0 +1,42 @@
+--- BlockDoor.java
++++ BlockDoor.java
+@@ -67,4 +67,13 @@
+             if (world.getBlockId(x, y - 1, z) == this.blockID) {
+                 this.blockActivated(world, x, y - 1, z, entityPlayer);
++                if (entityPlayer instanceof EntityPlayerMP) {
++                    Packet53BlockChange packet = new Packet53BlockChange();
++                    packet.xPosition = x;
++                    packet.yPosition = y - 1;
++                    packet.zPosition = z;
++                    packet.type = world.getBlockId(x, y - 1, z);
++                    packet.metadata = world.getBlockMetadata(x, y - 1, z);
++                    ((EntityPlayerMP) entityPlayer).playerNetServerHandler.sendPacket(packet);
++                }
+             }
+             return true;
+@@ -72,7 +81,25 @@
+         if (world.getBlockId(x, y + 1, z) == this.blockID) {
+             world.setBlockMetadataWithNotify(x, y + 1, z, (i6 ^ 0x4) + 8);
++            if (entityPlayer instanceof EntityPlayerMP) {
++                Packet53BlockChange packet = new Packet53BlockChange();
++                packet.xPosition = x;
++                packet.yPosition = y + 1;
++                packet.zPosition = z;
++                packet.type = world.getBlockId(x, y + 1, z);
++                packet.metadata = world.getBlockMetadata(x, y + 1, z);
++                ((EntityPlayerMP) entityPlayer).playerNetServerHandler.sendPacket(packet);
++            }
+         }
+         world.setBlockMetadataWithNotify(x, y, z, i6 ^ 0x4);
+         world.markBlocksDirty(x, y - 1, z, x, y, z);
++        if (entityPlayer instanceof EntityPlayerMP) {
++            Packet53BlockChange packet = new Packet53BlockChange();
++            packet.xPosition = x;
++            packet.yPosition = y;
++            packet.zPosition = z;
++            packet.type = world.getBlockId(x, y, z);
++            packet.metadata = world.getBlockMetadata(x, y, z);
++            ((EntityPlayerMP) entityPlayer).playerNetServerHandler.sendPacket(packet);
++        }
+         if (Math.random() < 0.5) {
+             world.playSoundEffect(x + 0.5, y + 0.5, z + 0.5, "random.door_open", 1.0f, world.rand.nextFloat() * 0.1f + 0.9f);
