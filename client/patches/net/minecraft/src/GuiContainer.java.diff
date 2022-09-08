@@ -254,16 +254,23 @@
 +                                inventory.draggedItemStack.stackSize += stackSize;
                                  stack.splitStack(stackSize);
                                  if (stack.stackSize == 0) {
-@@ -215,4 +337,12 @@
+@@ -215,4 +337,19 @@
              this.mc.displayGuiScreen(null);
          }
 +
 +        if (key == this.mc.gameSettings.keyBindDrop.keyCode && this.selectedInventory != null) {
 +            ItemStack stack = this.selectedInventory.getStackInSlot(this.selectedSlot);
-+            this.mc.thePlayer.dropPlayerItem(stack.splitStack(1));
-+            if (stack.stackSize <= 0) {
-+                selectedInventory.setInventorySlotContents(selectedSlot, null);
-+            }
++            if (stack != null)
++                if (stack.stackSize > 0) {
++                    this.mc.thePlayer.dropPlayerItem(stack.splitStack(1));
++                    if (stack.stackSize <= 0) {
++                        selectedInventory.setInventorySlotContents(selectedSlot, null);
++                    }
++                }
++                else {
++                    this.mc.thePlayer.dropPlayerItem(stack);
++                    selectedInventory.setInventorySlotContents(selectedSlot, null);
++                }
 +        }
      }
      
