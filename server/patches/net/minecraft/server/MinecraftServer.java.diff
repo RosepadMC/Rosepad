@@ -34,7 +34,7 @@
 +    public static MinecraftServer INSTANCE;
      
 +    public int[] getVersion() {
-+    	return new int[] { 1, 1, 0, 6 };
++    	return new int[] { 1, 1, 0, 7 };
 +    }
 +    
 +    public String getVersionTag() {
