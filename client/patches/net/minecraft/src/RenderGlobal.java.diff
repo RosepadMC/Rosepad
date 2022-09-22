@@ -1,6 +1,24 @@
 --- RenderGlobal.java
 +++ RenderGlobal.java
-@@ -60,6 +60,6 @@
+@@ -1,14 +1,11 @@
+ package net.minecraft.src;
+ 
+-import java.util.Collections;
+-import java.util.Comparator;
+-import java.util.Arrays;
+-import java.util.Random;
++import java.util.*;
++
+ import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.ARBOcclusionQuery;
+-import java.util.ArrayList;
++
+ import java.nio.IntBuffer;
+ import net.minecraft.client.Minecraft;
+-import java.util.List;
+ 
+ public class RenderGlobal implements IWorldAccess {
+@@ -60,6 +57,6 @@
      
      public RenderGlobal(final Minecraft minecraft, final RenderEngine renderEngine) {
 -        this.tileEntities = (List<TileEntity>)new ArrayList();
@@ -9,14 +27,14 @@
 +        this.worldRenderersToUpdate = new ArrayList<>();
          this.occlusionEnabled = false;
          this.cloudTickCounter = 0;
-@@ -68,5 +68,5 @@
+@@ -68,5 +65,5 @@
          this.dummyBuf50k = new int[50000];
          this.occlusionResult = GLAllocation.createDirectIntBuffer(64);
 -        this.glRenderLists = (List<WorldRenderer>)new ArrayList();
 +        this.glRenderLists = new ArrayList<>();
          this.allRenderLists = new RenderList[] { new RenderList(), new RenderList(), new RenderList(), new RenderList() };
          this.dummyRenderInt = 0;
-@@ -98,8 +98,8 @@
+@@ -98,8 +95,8 @@
              for (int j = -384; j <= 384; j += 64) {
                  instance.startDrawingQuads();
 -                instance.addVertex(i + 0, 16.0, j + 0);
@@ -28,7 +46,7 @@
 +                instance.addVertex(i, 16.0, j + 64);
                  instance.draw();
              }
-@@ -110,7 +110,7 @@
+@@ -110,7 +107,7 @@
          for (int k = -384; k <= 384; k += 64) {
              for (int l = -384; l <= 384; l += 64) {
 -                instance.addVertex(k + 64, -16.0, l + 0);
@@ -39,7 +57,7 @@
 +                instance.addVertex(k, -16.0, l + 64);
                  instance.addVertex(k + 64, -16.0, l + 64);
              }
-@@ -181,6 +181,6 @@
+@@ -181,6 +178,6 @@
          this.renderDistance = this.mc.gameSettings.renderDistance;
          if (this.worldRenderers != null) {
 -            for (int i = 0; i < this.worldRenderers.length; ++i) {
@@ -48,7 +66,7 @@
 +                worldRenderer.stopRendering();
              }
          }
-@@ -202,6 +202,6 @@
+@@ -202,6 +199,6 @@
          this.maxBlockY = this.renderChunksTall;
          this.maxBlockZ = this.renderChunksDeep;
 -        for (int j = 0; j < this.worldRenderersToUpdate.size(); ++j) {
@@ -57,7 +75,7 @@
 +            worldRenderer.needsUpdate = false;
          }
          this.worldRenderersToUpdate.clear();
-@@ -228,5 +228,9 @@
+@@ -228,5 +225,9 @@
              final EntityPlayerSP thePlayer = this.mc.thePlayer;
              this.markRenderersForNewPosition(MathHelper.floor_double(thePlayer.posX), MathHelper.floor_double(thePlayer.posY), MathHelper.floor_double(thePlayer.posZ));
 -            Arrays.sort((Object[])this.sortedWorldRenderers, (Comparator)new EntitySorter(thePlayer));
@@ -68,24 +86,30 @@
 +            }
          }
          this.renderEntitiesStartupCounter = 2;
-@@ -252,22 +256,23 @@
+@@ -252,22 +253,27 @@
          final List<Entity> loadedEntityList = this.theWorld.getLoadedEntityList();
          this.countEntitiesTotal = loadedEntityList.size();
 -        for (int i = 0; i < loadedEntityList.size(); ++i) {
 -            final Entity entity = (Entity)loadedEntityList.get(i);
 -            if (entity.isInRangeToRenderVec3D(vector) && camera.isBoundingBoxInFrustum(entity.boundingBox) && (entity != this.mc.thePlayer || this.mc.gameSettings.thirdPersonView)) {
-+        for (Entity value : loadedEntityList) {
-+            if (value.isInRangeToRenderVec3D(vector) && camera.isBoundingBoxInFrustum(value.boundingBox) && (value != this.mc.thePlayer || this.mc.gameSettings.thirdPersonView)) {
-                 ++this.countEntitiesRendered;
+-                ++this.countEntitiesRendered;
 -                RenderManager.instance.renderEntity(entity, renderPartialTick);
-+                RenderManager.instance.renderEntity(value, renderPartialTick);
++        try {
++            for (Entity value : loadedEntityList) {
++                if (value.isInRangeToRenderVec3D(vector) && camera.isBoundingBoxInFrustum(value.boundingBox) && (value != this.mc.thePlayer || this.mc.gameSettings.thirdPersonView)) {
++                    ++this.countEntitiesRendered;
++                    RenderManager.instance.renderEntity(value, renderPartialTick);
++                }
              }
++            for (TileEntity tileEntity : this.tileEntities) {
++                TileEntityRenderer.instance.renderTileEntity(tileEntity, renderPartialTick);
++            }
++        } catch (ConcurrentModificationException e) {
++            System.out.println("NOT THIS TIME TIMOTHY");
          }
 -        for (int i = 0; i < this.tileEntities.size(); ++i) {
 -            TileEntityRenderer.instance.renderTileEntity((TileEntity)this.tileEntities.get(i), renderPartialTick);
-+        for (TileEntity tileEntity : this.tileEntities) {
-+            TileEntityRenderer.instance.renderTileEntity(tileEntity, renderPartialTick);
-         }
+-        }
      }
      
      public String getDebugInfoRenders() {
@@ -100,7 +124,7 @@
 +                + this.countEntitiesHidden + "§r, I: §7" + (this.countEntitiesTotal - this.countEntitiesHidden - this.countEntitiesRendered);
      }
      
-@@ -351,5 +356,9 @@
+@@ -351,5 +357,9 @@
              this.prevSortZ = entityPlayer.posZ;
              this.markRenderersForNewPosition(MathHelper.floor_double(entityPlayer.posX), MathHelper.floor_double(entityPlayer.posY), MathHelper.floor_double(entityPlayer.posZ));
 -            Arrays.sort((Object[])this.sortedWorldRenderers, (Comparator)new EntitySorter(entityPlayer));
@@ -111,21 +135,21 @@
 +            }
          }
          int n7;
-@@ -360,5 +369,5 @@
+@@ -360,5 +370,5 @@
                  this.sortedWorldRenderers[j].isVisible = true;
              }
 -            n7 = 0 + this.renderSortedRenderers(0, i, integer, double3);
 +            n7 = this.renderSortedRenderers(0, i, integer, double3);
              do {
                  final int j = i;
-@@ -420,5 +429,5 @@
+@@ -420,5 +430,5 @@
          }
          else {
 -            n7 = 0 + this.renderSortedRenderers(0, this.sortedWorldRenderers.length, integer, double3);
 +            n7 = this.renderSortedRenderers(0, this.sortedWorldRenderers.length, integer, double3);
          }
          return n7;
-@@ -459,5 +468,6 @@
+@@ -459,5 +469,6 @@
                  }
              }
 -            if (!this.sortedWorldRenderers[i].skipRenderPass[integer3] && this.sortedWorldRenderers[i].isInFrustum && this.sortedWorldRenderers[i].isVisible && this.sortedWorldRenderers[i].getGLCallListForPass(integer3) >= 0) {
@@ -133,7 +157,7 @@
 +                    this.sortedWorldRenderers[i].isVisible && this.sortedWorldRenderers[i].getGLCallListForPass(integer3) >= 0) {
                  this.glRenderLists.add(this.sortedWorldRenderers[i]);
                  ++n;
-@@ -469,12 +479,11 @@
+@@ -469,12 +480,11 @@
          final double playerZ = thePlayer.lastTickPosZ + (thePlayer.posZ - thePlayer.lastTickPosZ) * double4;
          int n2 = 0;
 -        for (int j = 0; j < this.allRenderLists.length; ++j) {
@@ -150,7 +174,7 @@
 +                if (this.allRenderLists[k].isRenderedAt(glRenderList.posXMinus, glRenderList.posYMinus, glRenderList.posZMinus)) {
                      n3 = k;
                  }
-@@ -482,7 +491,7 @@
+@@ -482,7 +492,7 @@
              if (n3 < 0) {
                  n3 = n2++;
 -                this.allRenderLists[n3].setLocation(worldRenderer.posXMinus, worldRenderer.posYMinus, worldRenderer.posZMinus, playerX, playerY, playerZ);
@@ -160,7 +184,7 @@
 +            this.allRenderLists[n3].render(glRenderList.getGLCallListForPass(integer3));
          }
          this.renderAllRenderLists(integer3, double4);
-@@ -491,6 +500,6 @@
+@@ -491,6 +501,6 @@
      
      public void renderAllRenderLists(final int integer, final double double2) {
 -        for (int i = 0; i < this.allRenderLists.length; ++i) {
@@ -169,28 +193,88 @@
 +            allRenderList.render();
          }
      }
-@@ -720,5 +729,5 @@
+@@ -720,5 +730,5 @@
      public boolean updateRenderers(final EntityPlayer entityPlayer, final boolean boolean2) {
          try {
 -            Collections.sort((List)this.worldRenderersToUpdate, (Comparator)new RenderSorter(entityPlayer));
 +            this.worldRenderersToUpdate.sort(new RenderSorter(entityPlayer));
          }
          catch (IllegalArgumentException ex) {
-@@ -727,5 +736,5 @@
+@@ -727,5 +737,5 @@
          final int n = this.worldRenderersToUpdate.size() - 1;
          for (int size = this.worldRenderersToUpdate.size(), i = 0; i < size; ++i) {
 -            final WorldRenderer worldRenderer = (WorldRenderer)this.worldRenderersToUpdate.get(n - i);
 +            final WorldRenderer worldRenderer = this.worldRenderersToUpdate.get(n - i);
              if (!boolean2) {
                  if (worldRenderer.distanceToEntitySquared(entityPlayer) > 1024.0f) {
-@@ -891,5 +900,5 @@
+@@ -841,32 +851,36 @@
+     
+     public void markBlocksForUpdate(final int minX, final int minY, final int minZ, final int maxX, final int maxY, final int maxZ) {
+-        final int bucketInt = MathHelper.bucketInt(minX, 16);
+-        final int bucketInt2 = MathHelper.bucketInt(minY, 16);
+-        final int bucketInt3 = MathHelper.bucketInt(minZ, 16);
+-        final int bucketInt4 = MathHelper.bucketInt(maxX, 16);
+-        final int bucketInt5 = MathHelper.bucketInt(maxY, 16);
+-        final int bucketInt6 = MathHelper.bucketInt(maxZ, 16);
+-        for (int i = bucketInt; i <= bucketInt4; ++i) {
+-            int n = i % this.renderChunksWide;
+-            if (n < 0) {
+-                n += this.renderChunksWide;
+-            }
+-            for (int j = bucketInt2; j <= bucketInt5; ++j) {
+-                int n2 = j % this.renderChunksTall;
+-                if (n2 < 0) {
+-                    n2 += this.renderChunksTall;
++        try {
++            final int bucketInt = MathHelper.bucketInt(minX, 16);
++            final int bucketInt2 = MathHelper.bucketInt(minY, 16);
++            final int bucketInt3 = MathHelper.bucketInt(minZ, 16);
++            final int bucketInt4 = MathHelper.bucketInt(maxX, 16);
++            final int bucketInt5 = MathHelper.bucketInt(maxY, 16);
++            final int bucketInt6 = MathHelper.bucketInt(maxZ, 16);
++            for (int i = bucketInt; i <= bucketInt4; ++i) {
++                int n = i % this.renderChunksWide;
++                if (n < 0) {
++                    n += this.renderChunksWide;
+                 }
+-                for (int k = bucketInt3; k <= bucketInt6; ++k) {
+-                    int n3 = k % this.renderChunksDeep;
+-                    if (n3 < 0) {
+-                        n3 += this.renderChunksDeep;
++                for (int j = bucketInt2; j <= bucketInt5; ++j) {
++                    int n2 = j % this.renderChunksTall;
++                    if (n2 < 0) {
++                        n2 += this.renderChunksTall;
+                     }
+-                    final WorldRenderer worldRenderer = this.worldRenderers[(n3 * this.renderChunksTall + n2) * this.renderChunksWide + n];
+-                    if (!worldRenderer.needsUpdate) {
+-                        this.worldRenderersToUpdate.add(worldRenderer);
++                    for (int k = bucketInt3; k <= bucketInt6; ++k) {
++                        int n3 = k % this.renderChunksDeep;
++                        if (n3 < 0) {
++                            n3 += this.renderChunksDeep;
++                        }
++                        final WorldRenderer worldRenderer = this.worldRenderers[(n3 * this.renderChunksTall + n2) * this.renderChunksWide + n];
++                        if (!worldRenderer.needsUpdate) {
++                            this.worldRenderersToUpdate.add(worldRenderer);
++                        }
++                        worldRenderer.markDirty();
+                     }
+-                    worldRenderer.markDirty();
+                 }
+             }
++        } catch (ConcurrentModificationException e) {
++            System.out.println("NOT THIS TIME TIMOTHY");
+         }
+     }
+@@ -891,5 +905,5 @@
      public void playRecord(final String record, final int x, final int y, final int z) {
          if (record != null) {
 -            this.mc.ingameGUI.setRecordPlayingMessage(new StringBuilder("C418 - ").append(record).toString());
 +            this.mc.ingameGUI.setRecordPlayingMessage("[5] - " + record);
          }
          this.mc.sndManager.playStreaming(record, (float)x, (float)y, (float)z, 1.0f, 1.0f);
-@@ -958,10 +967,10 @@
+@@ -958,10 +972,10 @@
      
      public void updateAllRenderers() {
 -        for (int i = 0; i < this.worldRenderers.length; ++i) {

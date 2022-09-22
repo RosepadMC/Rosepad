@@ -1,0 +1,21 @@
+--- Material.java
++++ Material.java
+@@ -58,13 +58,13 @@
+         return true;
+     }
+-    
+-    public boolean getCanBlockGrass() {
++
++    public boolean getIsSolid() {
+         return true;
+     }
+-    
+-    public boolean getIsSolid() {
++
++    public boolean getCanBlockGrass() {
+         return true;
+     }
+-    
++
+     private Material setBurning() {
+         this.canBurn = true;

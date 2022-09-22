@@ -27,7 +27,7 @@
 +                        new Packet35EntityDamage().hit(
 +                                ((WorldClient) this.worldObj).getIDByEntity(this),
 +                                damage,
-+                                this.isDead
++                                true
 +                        )
 +                );
 +            }

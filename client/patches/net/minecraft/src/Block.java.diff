@@ -24,7 +24,7 @@
 +
      public static final Block STONE;
      public static final BlockGrass GRASS;
-@@ -106,50 +125,61 @@
+@@ -106,50 +125,66 @@
      public static Block JUKEBOX;
      public static final Block FENCE;
 -    public int blockIndexInTexture;
@@ -130,9 +130,14 @@
 +        return this;
 +    }
 +
++
++    public int getBlockID() {
++        return blockID;
++    }
++
      static {
          SOUND_POWDER_FOOTSTEP = new StepSound("stone", 1.0f, 1.0f);
-@@ -169,24 +199,24 @@
+@@ -169,24 +204,24 @@
          CAN_BLOCK_GRASS = new boolean[256];
          LIGHT_VALUE = new int[256];
 -        STONE = new BlockStone(1, 1).setHardness(1.5f).setResistance(10.0f).setStepSound(Block.SOUND_STONE_FOOTSTEP);
@@ -177,7 +182,7 @@
 +        GLASS = new BlockGlass(20, 49, Material.GLASS, false).setHardness(0.3f).setStepSound(Block.SOUND_GLASS_FOOTSTEP).setName("Glass");
          CLOTH_RED = null;
          CLOTH_ORANGE = null;
-@@ -203,89 +233,89 @@
+@@ -203,89 +238,89 @@
          CLOTH_ROSE = null;
          CLOTH_DARK_GRAY = null;
 -        CLOTH = new Block(35, 64, Material.CLOTH).setHardness(0.8f).setStepSound(Block.SOUND_CLOTH_FOOTSTEP);
@@ -349,21 +354,21 @@
 +                Item.ITEMS_LIST[i] = new ItemBlock(i - 256).setName(Block.BLOCKS_LIST[i].getName()).setRarity(Block.BLOCKS_LIST[i].getRarity());
              }
          }
-@@ -297,5 +327,5 @@
+@@ -297,5 +332,5 @@
          this.slipperiness = 0.6f;
          if (Block.BLOCKS_LIST[id] != null) {
 -            throw new IllegalArgumentException(new StringBuilder().append("Slot ").append(id).append(" is already occupied by ").append(Block.BLOCKS_LIST[id]).append(" when adding ").append(this).toString());
 +            throw new IllegalArgumentException("Slot " + id + " is already occupied by \"" + Block.BLOCKS_LIST[id].getName() + "\" when adding \"" + this.getName() + "\"");
          }
          this.material = material;
-@@ -452,5 +482,5 @@
+@@ -452,5 +487,5 @@
          }
          else {
 -            if (!entityPlayer.canHarvestBlock(this)) {
 +            if (!entityPlayer.canHarvestBlock(this, entityPlayer.worldObj)) {
                  return 1.0f / this.hardness / 100.0f;
              }
-@@ -512,5 +542,5 @@
+@@ -512,5 +547,5 @@
          }
          Vec3D vec3D = null;
 -        if (intermediateWithXValue != null && (vec3D == null || vec1.distanceTo(intermediateWithXValue) < vec1.distanceTo(vec3D))) {
