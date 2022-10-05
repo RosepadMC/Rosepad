@@ -268,7 +268,7 @@
 +        this.sendPacket(new Packet3Chat("§7" + helpCommandMessage));
      }
      
-@@ -389,3 +437,39 @@
+@@ -389,3 +437,28 @@
          }
      }
 +
@@ -277,17 +277,6 @@
 +        Entity entity = packet.entityId == -1
 +                ? this.playerEntity
 +                : this.mcServer.worldMngr.getEntityWithId(packet.entityId);
-+        {
-+            Packet3Chat chat = new Packet3Chat("[DEBUG] " + packet.entityId + " took " + packet.damage + " damage" + (
-+                    packet.dead ? " (dead)" : ""
-+            ) + (
-+                    entity == null
-+                            ? " (missing)"
-+                            : ""
-+                    ));
-+
-+            this.sendPacket(chat);
-+        }
 +        if (entity == null) {
 +            return;
 +        }
