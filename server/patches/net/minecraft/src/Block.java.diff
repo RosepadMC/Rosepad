@@ -1,8 +1,24 @@
 --- Block.java
 +++ Block.java
-@@ -21,89 +21,5 @@
-     public static final boolean[] canBlockGrass;
-     public static final int[] lightValue;
+@@ -5,105 +5,21 @@
+ 
+ public class Block {
+-    public static final StepSound soundPowderFootstep;
+-    public static final StepSound soundWoodFootstep;
+-    public static final StepSound soundGravelFootstep;
+-    public static final StepSound soundGrassFootstep;
+-    public static final StepSound soundStoneFootstep;
+-    public static final StepSound soundMetalFootstep;
+-    public static final StepSound soundGlassFootstep;
+-    public static final StepSound soundClothFootstep;
+-    public static final StepSound soundSandFootstep;
+-    public static final Block[] blocksList;
+-    public static final boolean[] tickOnLoad;
+-    public static final boolean[] opaqueCubeLookup;
+-    public static final boolean[] isBlockContainer;
+-    public static final int[] lightOpacity;
+-    public static final boolean[] canBlockGrass;
+-    public static final int[] lightValue;
 -    public static final Block stone;
 -    public static final BlockGrass grass;
 -    public static final Block dirt;
@@ -88,10 +104,26 @@
 -    public static final Block reed;
 -    public static final Block jukebox;
 -    public static final Block fence;
++    public static final Block[] blocksList = new Block[256];
++    public static StepSound soundPowderFootstep;
++    public static StepSound soundWoodFootstep;
++    public static StepSound soundGravelFootstep;
++    public static StepSound soundGrassFootstep;
++    public static StepSound soundStoneFootstep;
++    public static StepSound soundMetalFootstep;
++    public static StepSound soundGlassFootstep;
++    public static StepSound soundClothFootstep;
++    public static StepSound soundSandFootstep;
++    public static final boolean[] tickOnLoad = new boolean[256];
++    public static final boolean[] opaqueCubeLookup = new boolean[256];
++    public static final boolean[] isBlockContainer = new boolean[256];
++    public static final int[] lightOpacity = new int[256];
++    public static final boolean[] canBlockGrass = new boolean[256];
++    public static final int[] lightValue = new int[256];
 +    
      public int blockIndexInTexture;
      public final int blockID;
-@@ -120,35 +36,129 @@
+@@ -120,37 +36,131 @@
      public final Material material;
      public float slipperiness;
 -    public static final Block QuadWindowGlassBlock;
@@ -130,131 +162,141 @@
 +    // Common API part
 +    // =================================
 +
-+    public static final Block STONE;
-+    public static final BlockGrass GRASS;
-+    public static final Block DIRT;
-+    public static final Block COBBLESTONE;
-+    public static final Block PLANKS;
-+    public static final Block SAPLING;
-+    public static final Block BEDROCK;
-+    public static final Block WATER_MOVING;
-+    public static final Block WATER_STILL;
-+    public static final Block LAVA_MOVING;
-+    public static final Block LAVA_STILL;
-+    public static final Block SAND;
-+    public static final Block GRAVEL;
-+    public static final Block ORE_GOLD;
-+    public static final Block ORE_IRON;
-+    public static final Block ORE_COAL;
-+    public static final Block WOOD;
-+    public static final BlockLeaves LEAVES;
-+    public static final Block SPONGE;
-+    public static final Block GLASS;
-+    public static final Block CLOTH_RED;
-+    public static final Block CLOTH_ORANGE;
-+    public static final Block CLOTH_YELLOW;
-+    public static final Block CLOTH_CHARTREUSE;
-+    public static final Block CLOTH_GREEN;
-+    public static final Block CLOTH_SPRING_GREEN;
-+    public static final Block CLOTH_CYAN;
-+    public static final Block CLOTH_CAPRI;
-+    public static final Block CLOTH_ULTRAMARINE;
-+    public static final Block CLOTH_VIOLET;
-+    public static final Block CLOTH_PURPLE;
-+    public static final Block CLOTH_MAGENTA;
-+    public static final Block CLOTH_ROSE;
-+    public static final Block CLOTH_DARK_GRAY;
-+    public static final Block CLOTH;
-+    public static final Block CLOTH_WHITE;
-+    public static final BlockFlower PLANT_YELLOW;
-+    public static final BlockFlower PLANT_RED;
-+    public static final BlockFlower MUSHROOM_BROWN;
-+    public static final BlockFlower MUSHROOM_RED;
-+    public static final Block BLOCK_GOLD;
-+    public static final Block BLOCK_IRON;
-+    public static final Block STAIR_DOUBLE;
-+    public static final Block STAIR_SINGLE;
-+    public static final Block BRICK;
-+    public static final Block TNT;
-+    public static final Block BOOKSHELF;
-+    public static final Block COBBLESTONE_MOSSY;
-+    public static final Block OBSIDIAN;
-+    public static final Block TORCH;
-+    public static final BlockFire FIRE;
-+    public static final Block MOB_SPAWNER;
-+    public static final Block STAIR_COMPACT_WOOD;
-+    public static final Block CHEST;
-+    public static final Block REDSTONE_WIRE;
-+    public static final Block ORE_DIAMOND;
-+    public static final Block BLOCK_DIAMOND;
-+    public static final Block WORKBENCH;
-+    public static final Block CROPS;
-+    public static final Block TILLED_FIELD;
-+    public static final Block STONE_OVEN_IDLE;
-+    public static final Block STONE_OVEN_ACTIVE;
-+    public static final Block SIGN_STANDING;
-+    public static final Block DOOR_WOOD;
-+    public static final Block LADDER;
-+    public static final Block MINECART_TRACK;
-+    public static final Block STAIR_COMPACT_STONE;
-+    public static final Block SIGN_WALL;
-+    public static final Block LEVER;
-+    public static final Block PRESSURE_PLATE_STONE;
-+    public static final Block DOOR_IRON;
-+    public static final Block PRESSURE_PLATE_WOOD;
-+    public static final Block ORE_REDSTONE;
-+    public static final Block ORE_REDSTONE_GLOWING;
-+    public static final Block TORCH_REDSTONE_IDLE;
-+    public static final Block TORCH_REDSTONE_ACTIVE;
-+    public static final Block BUTTON;
-+    public static final Block SNOW;
-+    public static final Block ICE;
-+    public static final Block BLOCK_SNOW;
-+    public static final Block CACTUS;
-+    public static final Block BLOCK_CLAY;
-+    public static final Block REED;
++    public static Block STONE;
++    public static BlockGrass GRASS;
++    public static Block DIRT;
++    public static Block COBBLESTONE;
++    public static Block PLANKS;
++    public static Block SAPLING;
++    public static Block BEDROCK;
++    public static Block WATER_MOVING;
++    public static Block WATER_STILL;
++    public static Block LAVA_MOVING;
++    public static Block LAVA_STILL;
++    public static Block SAND;
++    public static Block GRAVEL;
++    public static Block ORE_GOLD;
++    public static Block ORE_IRON;
++    public static Block ORE_COAL;
++    public static Block WOOD;
++    public static BlockLeaves LEAVES;
++    public static Block SPONGE;
++    public static Block GLASS;
++    public static Block CLOTH_RED;
++    public static Block CLOTH_ORANGE;
++    public static Block CLOTH_YELLOW;
++    public static Block CLOTH_CHARTREUSE;
++    public static Block CLOTH_GREEN;
++    public static Block CLOTH_SPRING_GREEN;
++    public static Block CLOTH_CYAN;
++    public static Block CLOTH_CAPRI;
++    public static Block CLOTH_ULTRAMARINE;
++    public static Block CLOTH_VIOLET;
++    public static Block CLOTH_PURPLE;
++    public static Block CLOTH_MAGENTA;
++    public static Block CLOTH_ROSE;
++    public static Block CLOTH_DARK_GRAY;
++    public static Block CLOTH;
++    public static Block CLOTH_WHITE;
++    public static BlockFlower PLANT_YELLOW;
++    public static BlockFlower PLANT_RED;
++    public static BlockFlower MUSHROOM_BROWN;
++    public static BlockFlower MUSHROOM_RED;
++    public static Block BLOCK_GOLD;
++    public static Block BLOCK_IRON;
++    public static Block STAIR_DOUBLE;
++    public static Block STAIR_SINGLE;
++    public static Block BRICK;
++    public static Block TNT;
++    public static Block BOOKSHELF;
++    public static Block COBBLESTONE_MOSSY;
++    public static Block OBSIDIAN;
++    public static Block TORCH;
++    public static BlockFire FIRE;
++    public static Block MOB_SPAWNER;
++    public static Block STAIR_COMPACT_WOOD;
++    public static Block CHEST;
++    public static Block REDSTONE_WIRE;
++    public static Block ORE_DIAMOND;
++    public static Block BLOCK_DIAMOND;
++    public static Block WORKBENCH;
++    public static Block CROPS;
++    public static Block TILLED_FIELD;
++    public static Block STONE_OVEN_IDLE;
++    public static Block STONE_OVEN_ACTIVE;
++    public static Block SIGN_STANDING;
++    public static Block DOOR_WOOD;
++    public static Block LADDER;
++    public static Block MINECART_TRACK;
++    public static Block STAIR_COMPACT_STONE;
++    public static Block SIGN_WALL;
++    public static Block LEVER;
++    public static Block PRESSURE_PLATE_STONE;
++    public static Block DOOR_IRON;
++    public static Block PRESSURE_PLATE_WOOD;
++    public static Block ORE_REDSTONE;
++    public static Block ORE_REDSTONE_GLOWING;
++    public static Block TORCH_REDSTONE_IDLE;
++    public static Block TORCH_REDSTONE_ACTIVE;
++    public static Block BUTTON;
++    public static Block SNOW;
++    public static Block ICE;
++    public static Block BLOCK_SNOW;
++    public static Block CACTUS;
++    public static Block BLOCK_CLAY;
++    public static Block REED;
 +    public static Block JUKEBOX;
-+    public static final Block FENCE;
-+    public static final Block QUAD_WINDOW_GLASS_BLOCK;
-+    public static final Block PILLAR_BLOCK;
-+    public static final Block TILE_BLOCK;
-+    public static final Block TILE_BLOCK_2;
-+    public static final Block TILE_BLOCK_2_NON_FUCKED;
-+    public static final Block DIMENSION_FLOOR_BLOCK;
-+    public static final Block DIMENSION_WALL_BLOCK;
-+    public static final Block DBG_BLOCK;
-+    public static final Block TILE_BLOCK_3;
-+    public static final Block TILE_BLOCK_4;
-+    public static final Block FAKE_GRASS;
-+    public static final Block ALT_MOJANG_HYPOSTASIS_ANEMO;
-+    public static final Block IMGUR_9F0A3UN;
-+    public static final Block YEAH_WE_HAD_FUN_WITH_THIS_AS_YOU_CAN_SEE;
-+    public static final Block BARRIER_BLOCK;
-+    public static final Block STAIR_LADDER_BLOCK;
-+    public static final Block FAKE_DIRT;
-+    public static final Block FAKE_ROCK;
-+    public static final Block FAKE_SAND;
-+    public static final Block WOOL_PINK;
-+    public static final Block WOOL_BLUE;
-+    public static final Block WOOL_GREEN;
-+    public static final Block WOOL_BLACK;
-+    public static final Block DBG_2_BLOCK;
-+    public static final Block SALT_BLOCK;
-+    public static final Block GLOWING_FLOWER;
-+    public static final Block GLOWING_FLOWER_INF_BASIC;
-+    public static final Block GLOWING_FLOWER_INF_GOLD;
-+    public static final Block GLOWING_FLOWER_INF_OBSIDIAN;
-+    public static final Block BLUE_FIRE_IDK;
-+    public static final Block SAFE;
++    public static Block FENCE;
++    public static Block QUAD_WINDOW_GLASS_BLOCK;
++    public static Block PILLAR_BLOCK;
++    public static Block TILE_BLOCK;
++    public static Block TILE_BLOCK_2;
++    public static Block TILE_BLOCK_2_NON_FUCKED;
++    public static Block DIMENSION_FLOOR_BLOCK;
++    public static Block DIMENSION_WALL_BLOCK;
++    public static Block DBG_BLOCK;
++    public static Block TILE_BLOCK_3;
++    public static Block TILE_BLOCK_4;
++    public static Block FAKE_GRASS;
++    public static Block ALT_MOJANG_HYPOSTASIS_ANEMO;
++    public static Block IMGUR_9F0A3UN;
++    public static Block YEAH_WE_HAD_FUN_WITH_THIS_AS_YOU_CAN_SEE;
++    public static Block BARRIER_BLOCK;
++    public static Block STAIR_LADDER_BLOCK;
++    public static Block FAKE_DIRT;
++    public static Block FAKE_ROCK;
++    public static Block FAKE_SAND;
++    public static Block WOOL_PINK;
++    public static Block WOOL_BLUE;
++    public static Block WOOL_GREEN;
++    public static Block WOOL_BLACK;
++    public static Block DBG_2_BLOCK;
++    public static Block SALT_BLOCK;
++    public static Block GLOWING_FLOWER;
++    public static Block GLOWING_FLOWER_INF_BASIC;
++    public static Block GLOWING_FLOWER_INF_GOLD;
++    public static Block GLOWING_FLOWER_INF_OBSIDIAN;
++    public static Block BLUE_FIRE_IDK;
++    public static Block SAFE;
 +
 +    // ==============================
 +    // Common API end
 +    // ==============================
      
-     static {
-@@ -169,120 +179,120 @@
-         canBlockGrass = new boolean[256];
-         lightValue = new int[256];
+-    static {
++    public static void initAll() {
+         soundPowderFootstep = new StepSound("stone", 1.0f, 1.0f);
+         soundWoodFootstep = new StepSound("wood", 1.0f, 1.0f);
+@@ -162,127 +172,120 @@
+         soundClothFootstep = new StepSound("cloth", 1.0f, 1.0f);
+         soundSandFootstep = new StepSoundSand("sand", 1.0f, 1.0f);
+-        blocksList = new Block[256];
+-        tickOnLoad = new boolean[256];
+-        opaqueCubeLookup = new boolean[256];
+-        isBlockContainer = new boolean[256];
+-        lightOpacity = new int[256];
+-        canBlockGrass = new boolean[256];
+-        lightValue = new int[256];
 -        stone = new BlockStone(1, 1).setHardness(1.5f).setResistance(10.0f).setStepSound(Block.soundStoneFootstep);
 -        grass = (BlockGrass)new BlockGrass(2).setHardness(0.6f).setStepSound(Block.soundGrassFootstep);
 -        dirt = new BlockDirt(3, 2).setHardness(0.5f).setStepSound(Block.soundGravelFootstep);
@@ -489,7 +531,7 @@
 +        SAFE = new BlockSafe(120, 177, 176, 177).setHardness(1.5f).setResistance(10.0f).setStepSound(Block.soundStoneFootstep);
          for (int i0 = 0; i0 < 256; ++i0) {
              if (Block.blocksList[i0] != null) {
-@@ -379,8 +389,9 @@
+@@ -379,8 +382,9 @@
      }
      
 -    public void getCollidingBoundingBoxes(final World world, final int x, final int y, final int z, final AxisAlignedBB aabb, final ArrayList arrayList) {
@@ -503,7 +545,7 @@
 +            arrayList.add(collisionBoundingBoxFromPool);
          }
      }
-@@ -544,13 +555,16 @@
+@@ -544,13 +548,16 @@
      
      private boolean isVecInsideYZBounds(final Vec3D vector) {
 -        return vector != null && (vector.yCoord >= this.minY && vector.yCoord <= this.maxY && vector.zCoord >= this.minZ && vector.zCoord <= this.maxZ);

@@ -1,10 +1,12 @@
 --- Packet.java
 +++ Packet.java
-@@ -13,6 +13,6 @@
+@@ -12,7 +12,7 @@
+     public boolean isChunkDataPacket;
      
-     static {
+-    static {
 -        Packet.packetIDToClassMap = (Map<Integer, Class<? extends Packet>>)new HashMap();
 -        Packet.packetClassToIDMap = (Map<Class<? extends Packet>, Integer>)new HashMap();
++    public static void initAll() {
 +        Packet.packetIDToClassMap = new HashMap<>();
 +        Packet.packetClassToIDMap = new HashMap<>();
          addIDClassMapping(0, Packet0KeepAlive.class);

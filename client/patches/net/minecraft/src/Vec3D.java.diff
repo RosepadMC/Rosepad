@@ -1,0 +1,35 @@
+--- Vec3D.java
++++ Vec3D.java
+@@ -5,15 +5,10 @@
+ 
+ public class Vec3D {
+-    private static List<Vec3D> vectorList;
+-    private static int nextVector;
++    private static List<Vec3D> vectorList = new ArrayList<>();
++    private static int nextVector = 0;
+     public double xCoord;
+     public double yCoord;
+     public double zCoord;
+-    
+-    static {
+-        Vec3D.vectorList = (List<Vec3D>)new ArrayList();
+-        Vec3D.nextVector = 0;
+-    }
+-    
++
+     public static Vec3D createVectorHelper(final double x, final double y, final double z) {
+         return new Vec3D(x, y, z);
+@@ -28,5 +23,5 @@
+             Vec3D.vectorList.add(createVectorHelper(0.0, 0.0, 0.0));
+         }
+-        return ((Vec3D)Vec3D.vectorList.get(Vec3D.nextVector++)).setComponents(x, y, z);
++        return Vec3D.vectorList.get(Vec3D.nextVector++).setComponents(x, y, z);
+     }
+     
+@@ -141,5 +136,5 @@
+     
+     public String toString() {
+-        return new StringBuilder().append("(").append(this.xCoord).append(", ").append(this.yCoord).append(", ").append(this.zCoord).append(")").toString();
++        return "(" + this.xCoord + ", " + this.yCoord + ", " + this.zCoord + ")";
+     }
+     

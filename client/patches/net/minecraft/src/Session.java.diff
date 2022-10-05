@@ -1,0 +1,26 @@
+--- Session.java
++++ Session.java
+@@ -5,11 +5,11 @@
+ 
+ public class Session {
+-    public static List<Block> registeredBlocksList;
++    public static List<Block> registeredBlocksList = new ArrayList<Block>();
+     public String username;
+     public String sessionID;
+     public String mpPassParameter;
+     
+-    static {
+-        (Session.registeredBlocksList = (List<Block>)new ArrayList()).add(Block.STONE);
++    public static void initAll() {
++        Session.registeredBlocksList.add(Block.STONE);
+         Session.registeredBlocksList.add(Block.COBBLESTONE);
+         Session.registeredBlocksList.add(Block.BRICK);
+@@ -42,6 +42,6 @@
+     }
+     
+-    public Session(final String usrename, final String sessionID) {
+-        this.username = usrename;
++    public Session(final String username, final String sessionID) {
++        this.username = username;
+         this.sessionID = sessionID;
+     }

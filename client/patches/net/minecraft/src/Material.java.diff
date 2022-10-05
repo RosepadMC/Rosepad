@@ -1,5 +1,58 @@
 --- Material.java
 +++ Material.java
+@@ -2,29 +2,29 @@
+ 
+ public class Material {
+-    public static final Material AIR;
+-    public static final Material GRASS;
+-    public static final Material WOOD;
+-    public static final Material ROCK;
+-    public static final Material IRON;
+-    public static final Material WATER;
+-    public static final Material LAVA;
+-    public static final Material LEAVES;
+-    public static final Material PLANTS;
+-    public static final Material SPONGE;
+-    public static final Material CLOTH;
+-    public static final Material FIRE;
+-    public static final Material SAND;
+-    public static final Material CIRCUITS;
+-    public static final Material GLASS;
+-    public static final Material TNT;
+-    public static final Material UNUSED;
+-    public static final Material ICE;
+-    public static final Material SNOW;
+-    public static final Material CRAFTED_SNOW;
+-    public static final Material CACTUS;
+-    public static final Material CLAY;
++    public static Material AIR;
++    public static Material GRASS;
++    public static Material WOOD;
++    public static Material ROCK;
++    public static Material IRON;
++    public static Material WATER;
++    public static Material LAVA;
++    public static Material LEAVES;
++    public static Material PLANTS;
++    public static Material SPONGE;
++    public static Material CLOTH;
++    public static Material FIRE;
++    public static Material SAND;
++    public static Material CIRCUITS;
++    public static Material GLASS;
++    public static Material TNT;
++    public static Material UNUSED;
++    public static Material ICE;
++    public static Material SNOW;
++    public static Material CRAFTED_SNOW;
++    public static Material CACTUS;
++    public static Material CLAY;
+     private boolean canBurn;
+     
+-    static {
++    public static void initAll() {
+         AIR = new MaterialTransparent();
+         GRASS = new Material();
 @@ -58,13 +58,13 @@
          return true;
      }

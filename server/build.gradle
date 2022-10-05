@@ -162,6 +162,7 @@ tasks.register("ejectClasses", CreateInjectClasses) {
 task runServer (type: JavaExec) {
     mainClass = mainServerClass
     classpath = getLilypadClasspath(sourceSets.main.runtimeClasspath, libraryPath)
+    argsString = "nogui"
     jvmArgs = getRunJVMArgs("2048M")
     workingDir = makeAndGetDir("${projectDir}/run/")
 }

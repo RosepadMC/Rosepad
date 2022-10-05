@@ -1,15 +1,24 @@
 --- Item.java
 +++ Item.java
-@@ -5,6 +5,7 @@
- public class Item {
-     protected static Random rand;
+@@ -1,10 +1,13 @@
+ package net.minecraft.src;
+ 
++import net.buj.rml.items.ItemImpl;
 +
-     public static Item[] ITEMS_LIST;
+ import java.util.Random;
+ 
+-public class Item {
+-    protected static Random rand;
+-    public static Item[] ITEMS_LIST;
 -    public static Item SHOVEL;
++public class Item implements ItemImpl {
++    protected static Random rand = new Random();
++
++    public static Item[] ITEMS_LIST = new Item[32000];
 +    public static Item SHOVEL_IRON;
      public static Item PICKAXE_IRON;
      public static Item AXE_IRON;
-@@ -98,9 +99,6 @@
+@@ -98,9 +101,6 @@
      public static Item RECORD_HIDDEN_DEN;
      public static Item RECORD_LEMURIA;
 -    public final int shiftedIndex;
@@ -21,51 +30,13 @@
 +    public static Item RECORD_ESTONIAN_RELIQUARY;
      public static Item obsidianArmor0;
      public static Item obsidianArmor1;
-@@ -120,117 +118,156 @@
+@@ -120,118 +120,159 @@
      public static Item edibleFire;
      public static Item flameberge;
 -    
-+
-+    public final int shiftedIndex;
-+    protected int maxStackSize;
-+    protected int maxDamage;
-+    protected int iconIndex;
-+    protected boolean bFull3D;
-+    protected String itemName = null;
-+    protected int rarity = 0;
-+    protected boolean isVanilla = true;
-+
-+    public String getName() {
-+        if (itemName == null) return "item." + this.shiftedIndex + ".name";
-+        return itemName;
-+    }
-+
-+    public Item setName(String itemName) {
-+        this.itemName = itemName;
-+        return this;
-+    }
-+
-+    public int getRarity() {
-+        return this.rarity;
-+    }
-+
-+    public Item setRarity(int rarity) {
-+        this.rarity = rarity;
-+        return this;
-+    }
-+
-+    public boolean getVanilla() {
-+        return isVanilla;
-+    }
-+
-+    public Item setVanilla(boolean isVanilla) {
-+        this.isVanilla = isVanilla;
-+        return this;
-+    }
-+
-     static {
-         Item.rand = new Random();
-         Item.ITEMS_LIST = new Item[32000];
+-    static {
+-        Item.rand = new Random();
+-        Item.ITEMS_LIST = new Item[32000];
 -        Item.SHOVEL = new ItemShovel(0, 2).setIconIndex(82);
 -        Item.PICKAXE_IRON = new ItemPickaxe(1, 2).setIconIndex(98);
 -        Item.AXE_IRON = new ItemAxe(2, 2).setIconIndex(114);
@@ -175,6 +146,49 @@
 -        Item.fryshroom = new ItemFood(104, 6).setIconIndex(162);
 -        Item.edibleFire = new ItemFood(105, 2).setIconIndex(178);
 -        Item.flameberge = new ItemSwordFlameberge(106).setIconIndex(69);
++
++    public final int shiftedIndex;
++    protected int maxStackSize;
++    protected int maxDamage;
++    protected int iconIndex;
++    protected boolean bFull3D;
++    protected String itemName = null;
++    protected int rarity = 0;
++    protected boolean isVanilla = true;
++
++    public String getName() {
++        if (itemName == null) return "item." + this.shiftedIndex + ".name";
++        return itemName;
+     }
++
++    public Item setName(String itemName) {
++        this.itemName = itemName;
++        return this;
++    }
++
++    public int getRarity() {
++        return this.rarity;
++    }
++
++    public Item setRarity(int rarity) {
++        this.rarity = rarity;
++        return this;
++    }
++
++    public boolean getVanilla() {
++        return isVanilla;
++    }
++
++    public Item setVanilla(boolean isVanilla) {
++        this.isVanilla = isVanilla;
++        return this;
++    }
++
++    public int getID() {
++        return shiftedIndex;
++    }
++
++    public static void initAll() {
 +        Item.SHOVEL_IRON = new ItemShovel(0, 2).setIconIndex(82).setName("Iron shovel");
 +        Item.PICKAXE_IRON = new ItemPickaxe(1, 2).setIconIndex(98).setName("Iron pickaxe");
 +        Item.AXE_IRON = new ItemAxe(2, 2).setIconIndex(114).setName("Iron axe");
@@ -286,16 +300,17 @@
 +        Item.fryshroom = new ItemFood(104, 6).setIconIndex(162).setName("Fryshroom");
 +        Item.edibleFire = new ItemFood(105, 2).setIconIndex(178).setName("Fire but ediable");
 +        Item.flameberge = new ItemSwordFlameberge(106).setIconIndex(69).setName("Flameberge").setRarity(2);
-     }
++    }
      
-@@ -241,5 +278,5 @@
+     protected Item(final int id) {
+@@ -241,5 +282,5 @@
          this.shiftedIndex = 256 + id;
          if (Item.ITEMS_LIST[256 + id] != null) {
 -            System.out.println(new StringBuilder().append("CONFLICT @ ").append(id).toString());
 +            System.out.println("CONFLICT @ " + id);
          }
          Item.ITEMS_LIST[256 + id] = this;
-@@ -285,5 +322,5 @@
+@@ -285,5 +326,5 @@
      }
      
 -    public boolean canHarvestBlock(final Block block) {

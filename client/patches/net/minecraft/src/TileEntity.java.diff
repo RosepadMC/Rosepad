@@ -1,0 +1,20 @@
+--- TileEntity.java
++++ TileEntity.java
+@@ -5,6 +5,6 @@
+ 
+ public class TileEntity {
+-    private static Map<String, Class<? extends TileEntity>> nameToClassMap;
+-    private static Map<Class<? extends TileEntity>, String> classToNameMap;
++    private static Map<String, Class<? extends TileEntity>> nameToClassMap = new HashMap<>();
++    private static Map<Class<? extends TileEntity>, String> classToNameMap = new HashMap<>();
+     public World worldObj;
+     public int xCoord;
+@@ -12,7 +12,5 @@
+     public int zCoord;
+     
+-    static {
+-        TileEntity.nameToClassMap = (Map<String, Class<? extends TileEntity>>)new HashMap();
+-        TileEntity.classToNameMap = (Map<Class<? extends TileEntity>, String>)new HashMap();
++    public static void initAll() {
+         addMapping(TileEntityFurnace.class, "Furnace");
+         addMapping(TileEntityChest.class, "Chest");

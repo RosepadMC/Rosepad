@@ -1,0 +1,9 @@
+--- MathHelper.java
++++ MathHelper.java
+@@ -48,5 +48,5 @@
+             value2 = -value2;
+         }
+-        return (value1 > value2) ? value1 : value2;
++        return Math.max(value1, value2);
+     }
+     
