@@ -5,9 +5,9 @@
       <root url="jar://$PROJECT_DIR$/libs/codecwav-20101023.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/libraryjavasound-20101123.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/librarylwjglopenal-20100824.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-2.9.4-nightly-20150209.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl_util-2.9.4-nightly-20150209.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/soundsystem-20120107.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl_util-2.9.1-nightly-20130708.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-2.9.1-nightly-20130708.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

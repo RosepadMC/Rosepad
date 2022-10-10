@@ -1,24 +1,18 @@
 --- Item.java
 +++ Item.java
-@@ -1,10 +1,13 @@
- package net.minecraft.src;
+@@ -4,7 +4,8 @@
  
-+import net.buj.rml.items.ItemImpl;
-+
- import java.util.Random;
- 
--public class Item {
+ public class Item {
 -    protected static Random rand;
 -    public static Item[] ITEMS_LIST;
 -    public static Item SHOVEL;
-+public class Item implements ItemImpl {
 +    protected static Random rand = new Random();
 +
 +    public static Item[] ITEMS_LIST = new Item[32000];
 +    public static Item SHOVEL_IRON;
      public static Item PICKAXE_IRON;
      public static Item AXE_IRON;
-@@ -98,9 +101,6 @@
+@@ -98,9 +99,6 @@
      public static Item RECORD_HIDDEN_DEN;
      public static Item RECORD_LEMURIA;
 -    public final int shiftedIndex;
@@ -30,7 +24,7 @@
 +    public static Item RECORD_ESTONIAN_RELIQUARY;
      public static Item obsidianArmor0;
      public static Item obsidianArmor1;
-@@ -120,118 +120,159 @@
+@@ -120,118 +118,159 @@
      public static Item edibleFire;
      public static Item flameberge;
 -    
@@ -303,14 +297,14 @@
 +    }
      
      protected Item(final int id) {
-@@ -241,5 +282,5 @@
+@@ -241,5 +280,5 @@
          this.shiftedIndex = 256 + id;
          if (Item.ITEMS_LIST[256 + id] != null) {
 -            System.out.println(new StringBuilder().append("CONFLICT @ ").append(id).toString());
 +            System.out.println("CONFLICT @ " + id);
          }
          Item.ITEMS_LIST[256 + id] = this;
-@@ -285,5 +326,5 @@
+@@ -285,5 +324,5 @@
      }
      
 -    public boolean canHarvestBlock(final Block block) {

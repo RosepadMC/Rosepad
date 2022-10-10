@@ -25,15 +25,16 @@
 +    public static final String[] CHEAT_MENU_MODES;
      public boolean musicVolume;
      public boolean soundVolume;
-@@ -23,4 +20,7 @@
+@@ -23,4 +20,8 @@
      public boolean limitFramerate;
      public boolean fancyGraphics;
 +    public boolean acceptRemoteScripts;
 +    public boolean renderQAName;
 +    public boolean renderChunkName;
++    public boolean enableDiscordRPC;
      public KeyBinding keyBindForward;
      public KeyBinding keyBindLeft;
-@@ -32,9 +32,12 @@
+@@ -32,9 +33,12 @@
      public KeyBinding keyBindChat;
      public KeyBinding keyBindToggleFog;
 +    public KeyBinding keyBindDash;
@@ -48,13 +49,13 @@
 +    public int cheatMenuMode;
      public boolean thirdPersonView;
      
-@@ -42,4 +45,5 @@
+@@ -42,4 +46,5 @@
          RENDER_DISTANCES = new String[] { "FAR", "NORMAL", "SHORT", "TINY" };
          DIFFICULTY_LEVELS = new String[] { "Peaceful", "Easy", "Normal", "Hard", "Frail" };
 +        CHEAT_MENU_MODES = new String[] { "Default", "One", "Stack", "Inf", "Disabled" };
      }
      
-@@ -50,8 +54,12 @@
+@@ -50,8 +55,13 @@
          this.showFPS = false;
          this.renderDistance = 0;
 +        this.cheatMenuMode = 0;
@@ -65,9 +66,10 @@
 +        this.acceptRemoteScripts = false;
 +        this.renderQAName = true;
 +        this.renderChunkName = true;
++        this.enableDiscordRPC = false;
          this.keyBindForward = new KeyBinding("Forward", 17);
          this.keyBindLeft = new KeyBinding("Left", 30);
-@@ -60,9 +68,11 @@
+@@ -60,9 +70,11 @@
          this.keyBindJump = new KeyBinding("Jump", 57);
          this.keyBindInventory = new KeyBinding("Inventory", 23);
 +        this.keyBindDash = new KeyBinding("Dash", 42);
@@ -81,7 +83,7 @@
 +        this.keyBindings = new KeyBinding[] { this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog, this.keyBindOpenGMEnv, this.keyBindDash, this.keyBindHideGUI };
          this.difficulty = 2;
          this.thirdPersonView = false;
-@@ -78,8 +88,12 @@
+@@ -78,8 +90,13 @@
          this.showFPS = false;
          this.renderDistance = 0;
 +        this.cheatMenuMode = 0;
@@ -92,9 +94,10 @@
 +        this.acceptRemoteScripts = false;
 +        this.renderQAName = true;
 +        this.renderChunkName = true;
++        this.enableDiscordRPC = false;
          this.keyBindForward = new KeyBinding("Forward", 17);
          this.keyBindLeft = new KeyBinding("Left", 30);
-@@ -88,9 +102,11 @@
+@@ -88,9 +105,11 @@
          this.keyBindJump = new KeyBinding("Jump", 57);
          this.keyBindInventory = new KeyBinding("Inventory", 23);
 +        this.keyBindDash = new KeyBinding("Dash", 42);
@@ -108,7 +111,7 @@
 +        this.keyBindings = new KeyBinding[] { this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog, this.keyBindOpenGMEnv, this.keyBindDash, this.keyBindHideGUI };
          this.difficulty = 2;
          this.thirdPersonView = false;
-@@ -106,4 +122,82 @@
+@@ -106,4 +125,83 @@
      }
      
 +    public int getCheatMenuItemAmount(int type) {
@@ -183,7 +186,8 @@
 +    	context.topButtons.add(new RenderOptionsButton(this));
 +    	context.topButtons.add(new SoundOptionsButton(this));
 +    	context.topButtons.add(new GameOptionsButton(this));
-+    	
++        context.topButtons.add(new DiscordRPCButton(this));
++
 +    	context.bottomButtons.add(new ControlsOptionsButton(this));
 +    	
 +    	return context;
@@ -191,7 +195,7 @@
 +    
      public void setOptionValue(final int optionIndex, final int value) {
          if (optionIndex == 0) {
-@@ -141,4 +235,7 @@
+@@ -141,41 +239,10 @@
              this.mc.renderGlobal.loadRenderers();
          }
 +        if (optionIndex == 10) {
@@ -199,22 +203,52 @@
 +        }
          this.saveOptions();
      }
-@@ -175,4 +272,7 @@
-             return new StringBuilder().append("Graphics: ").append(this.fancyGraphics ? "FANCY" : "FAST").toString();
-         }
-+        if (optionIndex == 10) {
-+        	return "Remote Scripts: " + (this.acceptRemoteScripts ? "ASK" : "DENY");
-+        }
-         return "";
-     }
-@@ -183,5 +283,5 @@
+-    
+-    public String getOptionDisplayString(final int optionIndex) {
+-        if (optionIndex == 0) {
+-            return new StringBuilder().append("Music: ").append(this.musicVolume ? "ON" : "OFF").toString();
+-        }
+-        if (optionIndex == 1) {
+-            return new StringBuilder().append("Sound: ").append(this.soundVolume ? "ON" : "OFF").toString();
+-        }
+-        if (optionIndex == 2) {
+-            return new StringBuilder().append("Invert mouse: ").append(this.invertMouse ? "ON" : "OFF").toString();
+-        }
+-        if (optionIndex == 3) {
+-            return new StringBuilder().append("Show FPS: ").append(this.showFPS ? "ON" : "OFF").toString();
+-        }
+-        if (optionIndex == 4) {
+-            return new StringBuilder("Render distance: ").append(GameSettings.RENDER_DISTANCES[this.renderDistance]).toString();
+-        }
+-        if (optionIndex == 5) {
+-            return new StringBuilder().append("View bobbing: ").append(this.viewBobbing ? "ON" : "OFF").toString();
+-        }
+-        if (optionIndex == 6) {
+-            return new StringBuilder().append("3d anaglyph: ").append(this.anaglyph ? "ON" : "OFF").toString();
+-        }
+-        if (optionIndex == 7) {
+-            return new StringBuilder().append("Limit framerate: ").append(this.limitFramerate ? "ON" : "OFF").toString();
+-        }
+-        if (optionIndex == 8) {
+-            return new StringBuilder("Difficulty: ").append(GameSettings.DIFFICULTY_LEVELS[this.difficulty]).toString();
+-        }
+-        if (optionIndex == 9) {
+-            return new StringBuilder().append("Graphics: ").append(this.fancyGraphics ? "FANCY" : "FAST").toString();
+-        }
+-        return "";
+-    }
+-    
++
+     public void loadOptions() {
+         try {
+@@ -183,5 +250,5 @@
                  return;
              }
 -            final BufferedReader bufferedReader = new BufferedReader((Reader)new FileReader(this.optionsFile));
 +            final BufferedReader bufferedReader = new BufferedReader(new FileReader(this.optionsFile));
              String line;
              while ((line = bufferedReader.readLine()) != null) {
-@@ -217,4 +317,7 @@
+@@ -217,4 +284,7 @@
                      this.difficulty = Integer.parseInt(split[1]);
                  }
 +                if (split[0].equals("guiScaling")) {
@@ -222,7 +256,7 @@
 +                }
                  if (split[0].equals("a1605ext_gamepadSens")) {
                      InputHandler.lookSens = Integer.parseInt(split[1]);
-@@ -223,4 +326,13 @@
+@@ -223,4 +293,16 @@
                      this.fancyGraphics = split[1].equals("true");
                  }
 +                if (split[0].equals("acceptRemoteScripts")) {
@@ -234,9 +268,12 @@
 +                if (split[0].equals("renderChunkName")) {
 +                    this.renderChunkName = split[1].equals("true");
 +                }
++                if (split[0].equals("discordRPC")) {
++                    this.enableDiscordRPC = split[1].equals("true");
++                }
                  for (int i = 0; i < this.keyBindings.length; ++i) {
                      if (split[0].equals(new StringBuilder("key_").append(this.keyBindings[i].keyDescription).toString())) {
-@@ -238,6 +350,7 @@
+@@ -238,6 +320,7 @@
      
      public void saveOptions() {
 +        PrintWriter printWriter = null;
@@ -245,22 +282,23 @@
 +            printWriter = new PrintWriter(new FileWriter(this.optionsFile));
              printWriter.println(new StringBuilder().append("music:").append(this.musicVolume).toString());
              printWriter.println(new StringBuilder().append("sound:").append(this.soundVolume).toString());
-@@ -250,4 +363,8 @@
+@@ -250,4 +333,9 @@
              printWriter.println(new StringBuilder().append("limitFramerate:").append(this.limitFramerate).toString());
              printWriter.println(new StringBuilder().append("fancyGraphics:").append(this.fancyGraphics).toString());
 +            printWriter.println(new StringBuilder().append("acceptRemoteScripts:").append(this.acceptRemoteScripts).toString());
 +            printWriter.println(new StringBuilder().append("renderQAName:").append(this.renderQAName).toString());
 +            printWriter.println(new StringBuilder().append("renderChunkName:").append(this.renderChunkName).toString());
 +            printWriter.println(new StringBuilder().append("guiScaling:").append(ScaledResolution.guiScaling).toString());
++            printWriter.println(new StringBuilder().append("discordRPC:").append(this.enableDiscordRPC).toString());
              printWriter.println("# Settings below are specific to 1605 extension.");
              printWriter.println(new StringBuilder().append("a1605ext_difficulty:").append(this.difficulty).toString());
-@@ -256,5 +373,4 @@
+@@ -256,5 +344,4 @@
                  printWriter.println(new StringBuilder("key_").append(this.keyBindings[i].keyDescription).append(":").append(this.keyBindings[i].keyCode).toString());
              }
 -            printWriter.close();
          }
          catch (Exception ex) {
-@@ -262,4 +378,11 @@
+@@ -262,4 +349,11 @@
              ex.printStackTrace();
          }
 +        if (printWriter != null) {
