@@ -1,0 +1,18 @@
+--- TextureCompassFX.java
++++ TextureCompassFX.java
+@@ -3,4 +3,7 @@
+ import java.io.IOException;
+ import javax.imageio.ImageIO;
++
++import net.buj.rml.Game;
++import net.buj.rml.NamespacedKey;
+ import net.minecraft.client.Minecraft;
+ 
+@@ -14,5 +17,6 @@
+     
+     public TextureCompassFX(final Minecraft minecraft) {
+-        super(Item.COMPASS.getIconIndex(null));
++        //super(Item.COMPASS.getIconIndex(null));
++        super(Game.items.get(new NamespacedKey("minecraft", "compass")).iconIndex);
+         this.currentFireFrame = new float[320];
+         this.lastFireFrame = new float[320];

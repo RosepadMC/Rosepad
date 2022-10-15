@@ -11,7 +11,11 @@
 -
  public class ItemSwordFlameberge extends ItemSword {
      int[] v2s;
-@@ -28,5 +22,5 @@
+@@ -24,9 +18,8 @@
+         }
+         final int n5 = world.getBlockId(n, n2, n3);
+-        final int n6 = world.getBlockId(n, n2 + 1, n3);
+         final int n7 = world.getBlockId(n, n2 - 1, n3);
          if (this.BlockIDFirable(n5)) {
              if (!this.BlockIDFirable(n7)) {
 -                world.setBlockWithNotify(n, n2, n3, Block.fire.blockID);

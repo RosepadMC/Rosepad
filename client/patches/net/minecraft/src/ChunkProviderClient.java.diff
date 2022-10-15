@@ -1,0 +1,11 @@
+--- ChunkProviderClient.java
++++ ChunkProviderClient.java
+@@ -14,6 +14,6 @@
+     
+     public ChunkProviderClient(final World world) {
+-        this.chunkMapping = (Map<ChunkCoordinates, Chunk>)new HashMap();
+-        this.chunkListing = (List<Chunk>)new ArrayList();
++        this.chunkMapping = new HashMap<>();
++        this.chunkListing = new ArrayList<>();
+         this.blankChunk = new Chunk(world, new byte[32768], 0, 0);
+         this.blankChunk.isChunkRendered = true;

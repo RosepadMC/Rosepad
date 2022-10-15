@@ -1,0 +1,17 @@
+--- BlockGravel.java
++++ BlockGravel.java
+@@ -3,4 +3,7 @@
+ import java.util.Random;
+ 
++import net.buj.rml.Game;
++import net.buj.rml.NamespacedKey;
++
+ public class BlockGravel extends BlockSand {
+     public BlockGravel(final int blockID, final int texID) {
+@@ -11,5 +14,5 @@
+     public int idDropped(final int metadata, final Random rand) {
+         if (rand.nextInt(10) == 0) {
+-            return Item.FLINT.shiftedIndex;
++            return Game.items.get(new NamespacedKey("minecraft", "gravel")).id;
+         }
+         return this.blockID;

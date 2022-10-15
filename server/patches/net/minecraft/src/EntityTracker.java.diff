@@ -1,9 +1,29 @@
 --- EntityTracker.java
 +++ EntityTracker.java
-@@ -8,5 +8,5 @@
+@@ -2,5 +2,4 @@
+ 
+ import java.util.ArrayList;
+-import java.util.Iterator;
+ import java.util.HashSet;
+ import net.minecraft.server.MinecraftServer;
+@@ -8,5 +7,5 @@
  
  public class EntityTracker {
 -    private Set trackedEntitySet;
-+private Set<EntityTrackerEntry> trackedEntitySet;
++    private Set<EntityTrackerEntry> trackedEntitySet;
      private MCHashTable trackedEntityHashTable;
      private MinecraftServer mcServer;
+@@ -14,5 +13,5 @@
+     
+     public EntityTracker(final MinecraftServer minecraftServer) {
+-        this.trackedEntitySet = (Set)new HashSet();
++        this.trackedEntitySet = new HashSet<>();
+         this.trackedEntityHashTable = new MCHashTable();
+         this.mcServer = minecraftServer;
+@@ -63,5 +62,5 @@
+     
+     public void updateTrackedEntities() {
+-        final ArrayList arrayList1 = new ArrayList();
++        final ArrayList<Entity> arrayList1 = new ArrayList<>();
+         for (final EntityTrackerEntry entityTrackerEntry3 : this.trackedEntitySet) {
+             entityTrackerEntry3.updatePlayerList(this.mcServer.worldMngr.playerEntities);

@@ -1,8 +1,14 @@
 --- Block.java
 +++ Block.java
-@@ -5,105 +5,20 @@
+@@ -2,108 +2,26 @@
  
- public class Block {
+ import java.util.Random;
++
++import net.buj.rml.registry.Blocks;
++
+ import java.util.ArrayList;
+ 
+-public class Block {
 -    public static final StepSound SOUND_POWDER_FOOTSTEP;
 -    public static final StepSound SOUND_WOOD_FOOTSTEP;
 -    public static final StepSound SOUND_GRAVEL_FOOTSTEP;
@@ -104,6 +110,7 @@
 -    public static final Block REED;
 -    public static Block JUKEBOX;
 -    public static final Block FENCE;
++public class Block extends Blocks.Block {
 +    public static StepSound SOUND_POWDER_FOOTSTEP;
 +    public static StepSound SOUND_WOOD_FOOTSTEP;
 +    public static StepSound SOUND_GRAVEL_FOOTSTEP;
@@ -122,7 +129,7 @@
 +    public static final int[] LIGHT_VALUE = new int[256];
      public int blockIndexInTexture;
      public final int blockID;
-@@ -120,37 +35,157 @@
+@@ -120,37 +38,157 @@
      public final Material material;
      public float slipperiness;
 -    public static final Block QuadWindowGlassBlock;
@@ -313,7 +320,7 @@
 +    public static void initAll() {
          SOUND_POWDER_FOOTSTEP = new StepSound("stone", 1.0f, 1.0f);
          SOUND_WOOD_FOOTSTEP = new StepSound("wood", 1.0f, 1.0f);
-@@ -162,31 +197,24 @@
+@@ -162,31 +200,24 @@
          SOUND_CLOTH_FOOTSTEP = new StepSound("cloth", 1.0f, 1.0f);
          SOUND_SAND_FOOTSTEP = new StepSoundSand("sand", 1.0f, 1.0f);
 -        BLOCKS_LIST = new Block[256];
@@ -365,7 +372,7 @@
 +        GLASS = new BlockGlass(20, 49, Material.GLASS, false).setHardness(0.3f).setStepSound(Block.SOUND_GLASS_FOOTSTEP).setName("Glass");
          CLOTH_RED = null;
          CLOTH_ORANGE = null;
-@@ -203,89 +231,89 @@
+@@ -203,89 +234,89 @@
          CLOTH_ROSE = null;
          CLOTH_DARK_GRAY = null;
 -        CLOTH = new Block(35, 64, Material.CLOTH).setHardness(0.8f).setStepSound(Block.SOUND_CLOTH_FOOTSTEP);
@@ -537,21 +544,21 @@
 +                Item.ITEMS_LIST[i] = new ItemBlock(i - 256).setName(Block.BLOCKS_LIST[i].getName()).setRarity(Block.BLOCKS_LIST[i].getRarity());
              }
          }
-@@ -297,5 +325,5 @@
+@@ -297,5 +328,5 @@
          this.slipperiness = 0.6f;
          if (Block.BLOCKS_LIST[id] != null) {
 -            throw new IllegalArgumentException(new StringBuilder().append("Slot ").append(id).append(" is already occupied by ").append(Block.BLOCKS_LIST[id]).append(" when adding ").append(this).toString());
 +            throw new IllegalArgumentException("Slot " + id + " is already occupied by \"" + Block.BLOCKS_LIST[id].getName() + "\" when adding \"" + this.getName() + "\"");
          }
          this.material = material;
-@@ -452,5 +480,5 @@
+@@ -452,5 +483,5 @@
          }
          else {
 -            if (!entityPlayer.canHarvestBlock(this)) {
 +            if (!entityPlayer.canHarvestBlock(this, entityPlayer.worldObj)) {
                  return 1.0f / this.hardness / 100.0f;
              }
-@@ -512,5 +540,5 @@
+@@ -512,5 +543,5 @@
          }
          Vec3D vec3D = null;
 -        if (intermediateWithXValue != null && (vec3D == null || vec1.distanceTo(intermediateWithXValue) < vec1.distanceTo(vec3D))) {

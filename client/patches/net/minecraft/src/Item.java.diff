@@ -1,32 +1,131 @@
 --- Item.java
 +++ Item.java
-@@ -4,7 +4,8 @@
+@@ -1,302 +1,797 @@
+ package net.minecraft.src;
  
- public class Item {
++import net.buj.rml.Game;
++import net.buj.rml.NamespacedKey;
++import net.buj.rml.registry.Items;
++
+ import java.util.Random;
+ 
+-public class Item {
 -    protected static Random rand;
 -    public static Item[] ITEMS_LIST;
 -    public static Item SHOVEL;
-+    protected static Random rand = new Random();
-+
-+    public static Item[] ITEMS_LIST = new Item[32000];
-+    public static Item SHOVEL_IRON;
-     public static Item PICKAXE_IRON;
-     public static Item AXE_IRON;
-@@ -98,9 +99,6 @@
-     public static Item RECORD_HIDDEN_DEN;
-     public static Item RECORD_LEMURIA;
+-    public static Item PICKAXE_IRON;
+-    public static Item AXE_IRON;
+-    public static Item FLINT_AND_STEEL;
+-    public static Item APPLE;
+-    public static Item BOW;
+-    public static Item ARROW;
+-    public static Item COAL;
+-    public static Item DIAMOND;
+-    public static Item INGOT_IRON;
+-    public static Item INGOT_GOLD;
+-    public static Item SWORD_IRON;
+-    public static Item SWORD_WOOD;
+-    public static Item SHOVEL_WOOD;
+-    public static Item PICKAXE_WOOD;
+-    public static Item AXE_WOOD;
+-    public static Item SWORD_STONE;
+-    public static Item SHOVEL_STONE;
+-    public static Item PICKAXE_STONE;
+-    public static Item AXE_STONE;
+-    public static Item SWORD_DIAMOND;
+-    public static Item SHOVEL_DIAMOND;
+-    public static Item PICKAXE_DIAMOND;
+-    public static Item AXE_DIAMOND;
+-    public static Item STICK;
+-    public static Item BOWL_EMPTY;
+-    public static Item BOWL_SOUP;
+-    public static Item SWORD_GOLD;
+-    public static Item SHOVEL_GOLD;
+-    public static Item PICKAXE_GOLD;
+-    public static Item AXE_GOLD;
+-    public static Item STRING;
+-    public static Item FEATHER;
+-    public static Item GUNPOWDER;
+-    public static Item HOE_WOOD;
+-    public static Item HOE_STONE;
+-    public static Item HOE_IRON;
+-    public static Item HOE_DIAMOND;
+-    public static Item HOE_GOLD;
+-    public static Item SEEDS;
+-    public static Item WHEAT;
+-    public static Item BREAD;
+-    public static Item HELMET_LEATHER;
+-    public static Item PLATE_LEATHER;
+-    public static Item LEGS_LEATHER;
+-    public static Item BOOTS_LEATHER;
+-    public static Item HELMET_CHAIN;
+-    public static Item PLATE_CHAIN;
+-    public static Item LEGS_CHAIN;
+-    public static Item BOOTS_CHAIN;
+-    public static Item HELMET_IRON;
+-    public static Item PLATE_IRON;
+-    public static Item LEGS_IRON;
+-    public static Item BOOTS_IRON;
+-    public static Item HELMET_DIAMOND;
+-    public static Item PLATE_DIAMOND;
+-    public static Item LEGS_DIAMOND;
+-    public static Item BOOTS_DIAMOND;
+-    public static Item HELMET_GOLD;
+-    public static Item PLATE_GOLD;
+-    public static Item LEGS_GOLD;
+-    public static Item BOOTS_GOLD;
+-    public static Item FLINT;
+-    public static Item PORK_RAW;
+-    public static Item PORK_COOKED;
+-    public static Item PAINTING;
+-    public static Item APPLE_GOLD;
+-    public static Item SIGN;
+-    public static Item DOOR_WOOD;
+-    public static Item BUCKET_EMPTY;
+-    public static Item BUCKET_WATER;
+-    public static Item BUCKET_LAVA;
+-    public static Item MINECART_EMPTY;
+-    public static Item SADDLE;
+-    public static Item DOOR_IRON;
+-    public static Item REDSTONE;
+-    public static Item SNOWBALL;
+-    public static Item BOAT;
+-    public static Item LEATHER;
+-    public static Item BUCKET_MILK;
+-    public static Item BRICK;
+-    public static Item CLAY;
+-    public static Item REED;
+-    public static Item PAPER;
+-    public static Item BOOK;
+-    public static Item SLIMEBALL;
+-    public static Item MINECART_CHEST;
+-    public static Item MINECART_FURNACE;
+-    public static Item EGG;
+-    public static Item COMPASS;
+-    public static Item RECORD_HIDDEN_DEN;
+-    public static Item RECORD_LEMURIA;
 -    public final int shiftedIndex;
 -    protected int maxStackSize;
 -    protected int maxDamage;
 -    protected int iconIndex;
 -    protected boolean bFull3D;
-+    public static Item RECORD_43343138;
-+    public static Item RECORD_ESTONIAN_RELIQUARY;
-     public static Item obsidianArmor0;
-     public static Item obsidianArmor1;
-@@ -120,118 +118,159 @@
-     public static Item edibleFire;
-     public static Item flameberge;
+-    public static Item obsidianArmor0;
+-    public static Item obsidianArmor1;
+-    public static Item obsidianArmor2;
+-    public static Item obsidianArmor3;
+-    public static Item obsidianSword;
+-    public static Item obsidianShovel;
+-    public static Item obsidianPick;
+-    public static Item obsidianAxe;
+-    public static Item obsidianHoe;
+-    public static Item obsidianIngot;
+-    public static Item blackDye;
+-    public static Item greenDye;
+-    public static Item blueDye;
+-    public static Item pinkDye;
+-    public static Item fryshroom;
+-    public static Item edibleFire;
+-    public static Item flameberge;
 -    
 -    static {
 -        Item.rand = new Random();
@@ -140,47 +239,564 @@
 -        Item.fryshroom = new ItemFood(104, 6).setIconIndex(162);
 -        Item.edibleFire = new ItemFood(105, 2).setIconIndex(178);
 -        Item.flameberge = new ItemSwordFlameberge(106).setIconIndex(69);
++public class Item extends Items.Item {
++    protected static Random rand = new Random();
 +
-+    public final int shiftedIndex;
-+    protected int maxStackSize;
-+    protected int maxDamage;
-+    protected int iconIndex;
-+    protected boolean bFull3D;
-+    protected String itemName = null;
-+    protected int rarity = 0;
-+    protected boolean isVanilla = true;
-+
-+    public String getName() {
-+        if (itemName == null) return "item." + this.shiftedIndex + ".name";
-+        return itemName;
-     }
-+
-+    public Item setName(String itemName) {
-+        this.itemName = itemName;
-+        return this;
-+    }
-+
-+    public int getRarity() {
-+        return this.rarity;
-+    }
-+
-+    public Item setRarity(int rarity) {
-+        this.rarity = rarity;
-+        return this;
-+    }
-+
-+    public boolean getVanilla() {
-+        return isVanilla;
-+    }
-+
-+    public Item setVanilla(boolean isVanilla) {
-+        this.isVanilla = isVanilla;
-+        return this;
-+    }
-+
-+    public int getID() {
-+        return shiftedIndex;
-+    }
++    /**
++     * @deprecated Use {@link net.minecraft.client.rmlcompat.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SHOVEL_IRON;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PICKAXE_IRON;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item AXE_IRON;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item FLINT_AND_STEEL;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item APPLE;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BOW;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item ARROW;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item COAL;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item DIAMOND;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item INGOT_IRON;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item INGOT_GOLD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SWORD_IRON;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SWORD_WOOD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SHOVEL_WOOD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PICKAXE_WOOD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item AXE_WOOD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SWORD_STONE;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SHOVEL_STONE;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PICKAXE_STONE;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item AXE_STONE;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SWORD_DIAMOND;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SHOVEL_DIAMOND;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PICKAXE_DIAMOND;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item AXE_DIAMOND;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item STICK;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BOWL_EMPTY;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BOWL_SOUP;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SWORD_GOLD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SHOVEL_GOLD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PICKAXE_GOLD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item AXE_GOLD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item STRING;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item FEATHER;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item GUNPOWDER;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item HOE_WOOD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item HOE_STONE;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item HOE_IRON;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item HOE_DIAMOND;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item HOE_GOLD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SEEDS;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item WHEAT;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BREAD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item HELMET_LEATHER;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PLATE_LEATHER;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item LEGS_LEATHER;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BOOTS_LEATHER;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item HELMET_CHAIN;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PLATE_CHAIN;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item LEGS_CHAIN;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BOOTS_CHAIN;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item HELMET_IRON;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PLATE_IRON;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item LEGS_IRON;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BOOTS_IRON;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item HELMET_DIAMOND;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PLATE_DIAMOND;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item LEGS_DIAMOND;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BOOTS_DIAMOND;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item HELMET_GOLD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PLATE_GOLD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item LEGS_GOLD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BOOTS_GOLD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item FLINT;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PORK_RAW;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PORK_COOKED;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PAINTING;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item APPLE_GOLD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SIGN;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item DOOR_WOOD;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BUCKET_EMPTY;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BUCKET_WATER;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BUCKET_LAVA;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item MINECART_EMPTY;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SADDLE;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item DOOR_IRON;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item REDSTONE;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SNOWBALL;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BOAT;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item LEATHER;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BUCKET_MILK;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BRICK;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item CLAY;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item REED;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item PAPER;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item BOOK;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item SLIMEBALL;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item MINECART_CHEST;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item MINECART_FURNACE;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item EGG;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item COMPASS;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item RECORD_HIDDEN_DEN;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item RECORD_LEMURIA;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item RECORD_43343138;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item RECORD_ESTONIAN_RELIQUARY;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item obsidianArmor0;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item obsidianArmor1;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item obsidianArmor2;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item obsidianArmor3;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item obsidianSword;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item obsidianShovel;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item obsidianPick;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item obsidianAxe;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item obsidianHoe;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item obsidianIngot;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item blackDye;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item greenDye;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item blueDye;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item pinkDye;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item fryshroom;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item edibleFire;
++    /**
++     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
++     */
++    @Deprecated
++    public static Items.Item flameberge;
 +
 +    public static void initAll() {
 +        Item.SHOVEL_IRON = new ItemShovel(0, 2).setIconIndex(82).setName("Iron shovel");
@@ -294,20 +910,185 @@
 +        Item.fryshroom = new ItemFood(104, 6).setIconIndex(162).setName("Fryshroom");
 +        Item.edibleFire = new ItemFood(105, 2).setIconIndex(178).setName("Fire but ediable");
 +        Item.flameberge = new ItemSwordFlameberge(106).setIconIndex(69).setName("Flameberge").setRarity(2);
-+    }
++
++        Game.items.register(new NamespacedKey("minecraft", "shovel_iron"), Item.SHOVEL_IRON);
++        Game.items.register(new NamespacedKey("minecraft", "pickaxe_iron"), Item.PICKAXE_IRON);
++        Game.items.register(new NamespacedKey("minecraft", "axe_iron"), Item.AXE_IRON);
++        Game.items.register(new NamespacedKey("minecraft", "flint_and_steel"), Item.FLINT_AND_STEEL);
++        Game.items.register(new NamespacedKey("minecraft", "apple"), Item.APPLE);
++        Game.items.register(new NamespacedKey("minecraft", "bow"), Item.BOW);
++        Game.items.register(new NamespacedKey("minecraft", "arrow"), Item.ARROW);
++        Game.items.register(new NamespacedKey("minecraft", "coal"), Item.COAL);
++        Game.items.register(new NamespacedKey("minecraft", "diamond"), Item.DIAMOND);
++        Game.items.register(new NamespacedKey("minecraft", "ingot_iron"), Item.INGOT_IRON);
++        Game.items.register(new NamespacedKey("minecraft", "ingot_gold"), Item.INGOT_GOLD);
++        Game.items.register(new NamespacedKey("minecraft", "sword_iron"), Item.SWORD_IRON);
++        Game.items.register(new NamespacedKey("minecraft", "sword_wood"), Item.SWORD_WOOD);
++        Game.items.register(new NamespacedKey("minecraft", "shovel_wood"), Item.SHOVEL_WOOD);
++        Game.items.register(new NamespacedKey("minecraft", "pickaxe_wood"), Item.PICKAXE_WOOD);
++        Game.items.register(new NamespacedKey("minecraft", "axe_wood"), Item.AXE_WOOD);
++        Game.items.register(new NamespacedKey("minecraft", "sword_stone"), Item.SWORD_STONE);
++        Game.items.register(new NamespacedKey("minecraft", "shovel_stone"), Item.SHOVEL_STONE);
++        Game.items.register(new NamespacedKey("minecraft", "pickaxe_stone"), Item.PICKAXE_STONE);
++        Game.items.register(new NamespacedKey("minecraft", "axe_stone"), Item.AXE_STONE);
++        Game.items.register(new NamespacedKey("minecraft", "sword_diamond"), Item.SWORD_DIAMOND);
++        Game.items.register(new NamespacedKey("minecraft", "shovel_diamond"), Item.SHOVEL_DIAMOND);
++        Game.items.register(new NamespacedKey("minecraft", "pickaxe_diamond"), Item.PICKAXE_DIAMOND);
++        Game.items.register(new NamespacedKey("minecraft", "axe_diamond"), Item.AXE_DIAMOND);
++        Game.items.register(new NamespacedKey("minecraft", "stick"), Item.STICK);
++        Game.items.register(new NamespacedKey("minecraft", "bowl_empty"), Item.BOWL_EMPTY);
++        Game.items.register(new NamespacedKey("minecraft", "bowl_soup"), Item.BOWL_SOUP);
++        Game.items.register(new NamespacedKey("minecraft", "sword_gold"), Item.SWORD_GOLD);
++        Game.items.register(new NamespacedKey("minecraft", "shovel_gold"), Item.SHOVEL_GOLD);
++        Game.items.register(new NamespacedKey("minecraft", "pickaxe_gold"), Item.PICKAXE_GOLD);
++        Game.items.register(new NamespacedKey("minecraft", "axe_gold"), Item.AXE_GOLD);
++        Game.items.register(new NamespacedKey("minecraft", "string"), Item.STRING);
++        Game.items.register(new NamespacedKey("minecraft", "feather"), Item.FEATHER);
++        Game.items.register(new NamespacedKey("minecraft", "gunpowder"), Item.GUNPOWDER);
++        Game.items.register(new NamespacedKey("minecraft", "hoe_wood"), Item.HOE_WOOD);
++        Game.items.register(new NamespacedKey("minecraft", "hoe_stone"), Item.HOE_STONE);
++        Game.items.register(new NamespacedKey("minecraft", "hoe_iron"), Item.HOE_IRON);
++        Game.items.register(new NamespacedKey("minecraft", "hoe_diamond"), Item.HOE_DIAMOND);
++        Game.items.register(new NamespacedKey("minecraft", "hoe_gold"), Item.HOE_GOLD);
++        Game.items.register(new NamespacedKey("minecraft", "seeds"), Item.SEEDS);
++        Game.items.register(new NamespacedKey("minecraft", "wheat"), Item.WHEAT);
++        Game.items.register(new NamespacedKey("minecraft", "bread"), Item.BREAD);
++        Game.items.register(new NamespacedKey("minecraft", "helmet_leather"), Item.HELMET_LEATHER);
++        Game.items.register(new NamespacedKey("minecraft", "plate_leather"), Item.PLATE_LEATHER);
++        Game.items.register(new NamespacedKey("minecraft", "legs_leather"), Item.LEGS_LEATHER);
++        Game.items.register(new NamespacedKey("minecraft", "boots_leather"), Item.BOOTS_LEATHER);
++        Game.items.register(new NamespacedKey("minecraft", "helmet_chain"), Item.HELMET_CHAIN);
++        Game.items.register(new NamespacedKey("minecraft", "plate_chain"), Item.PLATE_CHAIN);
++        Game.items.register(new NamespacedKey("minecraft", "legs_chain"), Item.LEGS_CHAIN);
++        Game.items.register(new NamespacedKey("minecraft", "boots_chain"), Item.BOOTS_CHAIN);
++        Game.items.register(new NamespacedKey("minecraft", "helmet_iron"), Item.HELMET_IRON);
++        Game.items.register(new NamespacedKey("minecraft", "plate_iron"), Item.PLATE_IRON);
++        Game.items.register(new NamespacedKey("minecraft", "legs_iron"), Item.LEGS_IRON);
++        Game.items.register(new NamespacedKey("minecraft", "boots_iron"), Item.BOOTS_IRON);
++        Game.items.register(new NamespacedKey("minecraft", "helmet_diamond"), Item.HELMET_DIAMOND);
++        Game.items.register(new NamespacedKey("minecraft", "plate_diamond"), Item.PLATE_DIAMOND);
++        Game.items.register(new NamespacedKey("minecraft", "legs_diamond"), Item.LEGS_DIAMOND);
++        Game.items.register(new NamespacedKey("minecraft", "boots_diamond"), Item.BOOTS_DIAMOND);
++        Game.items.register(new NamespacedKey("minecraft", "helmet_gold"), Item.HELMET_GOLD);
++        Game.items.register(new NamespacedKey("minecraft", "plate_gold"), Item.PLATE_GOLD);
++        Game.items.register(new NamespacedKey("minecraft", "legs_gold"), Item.LEGS_GOLD);
++        Game.items.register(new NamespacedKey("minecraft", "boots_gold"), Item.BOOTS_GOLD);
++        Game.items.register(new NamespacedKey("minecraft", "flint"), Item.FLINT);
++        Game.items.register(new NamespacedKey("minecraft", "pork_raw"), Item.PORK_RAW);
++        Game.items.register(new NamespacedKey("minecraft", "pork_cooked"), Item.PORK_COOKED);
++        Game.items.register(new NamespacedKey("minecraft", "painting"), Item.PAINTING);
++        Game.items.register(new NamespacedKey("minecraft", "apple_gold"), Item.APPLE_GOLD);
++        Game.items.register(new NamespacedKey("minecraft", "sign"), Item.SIGN);
++        Game.items.register(new NamespacedKey("minecraft", "door_wood"), Item.DOOR_WOOD);
++        Game.items.register(new NamespacedKey("minecraft", "bucket_empty"), Item.BUCKET_EMPTY);
++        Game.items.register(new NamespacedKey("minecraft", "bucket_water"), Item.BUCKET_WATER);
++        Game.items.register(new NamespacedKey("minecraft", "bucket_lava"), Item.BUCKET_LAVA);
++        Game.items.register(new NamespacedKey("minecraft", "minecart_empty"), Item.MINECART_EMPTY);
++        Game.items.register(new NamespacedKey("minecraft", "saddle"), Item.SADDLE);
++        Game.items.register(new NamespacedKey("minecraft", "door_iron"), Item.DOOR_IRON);
++        Game.items.register(new NamespacedKey("minecraft", "redstone"), Item.REDSTONE);
++        Game.items.register(new NamespacedKey("minecraft", "snowball"), Item.SNOWBALL);
++        Game.items.register(new NamespacedKey("minecraft", "boat"), Item.BOAT);
++        Game.items.register(new NamespacedKey("minecraft", "leather"), Item.LEATHER);
++        Game.items.register(new NamespacedKey("minecraft", "bucket_milk"), Item.BUCKET_MILK);
++        Game.items.register(new NamespacedKey("minecraft", "brick"), Item.BRICK);
++        Game.items.register(new NamespacedKey("minecraft", "clay"), Item.CLAY);
++        Game.items.register(new NamespacedKey("minecraft", "reed"), Item.REED);
++        Game.items.register(new NamespacedKey("minecraft", "paper"), Item.PAPER);
++        Game.items.register(new NamespacedKey("minecraft", "book"), Item.BOOK);
++        Game.items.register(new NamespacedKey("minecraft", "slimeball"), Item.SLIMEBALL);
++        Game.items.register(new NamespacedKey("minecraft", "minecart_chest"), Item.MINECART_CHEST);
++        Game.items.register(new NamespacedKey("minecraft", "minecart_furnace"), Item.MINECART_FURNACE);
++        Game.items.register(new NamespacedKey("minecraft", "egg"), Item.EGG);
++        Game.items.register(new NamespacedKey("minecraft", "compass"), Item.COMPASS);
++        Game.items.register(new NamespacedKey("minecraft", "record_hidden_den"), Item.RECORD_HIDDEN_DEN);
++        Game.items.register(new NamespacedKey("minecraft", "record_lemuria"), Item.RECORD_LEMURIA);
++        Game.items.register(new NamespacedKey("minecraft", "record_43343138"), Item.RECORD_43343138);
++        Game.items.register(new NamespacedKey("minecraft", "record_estonian_reliquary"), Item.RECORD_ESTONIAN_RELIQUARY);
++        Game.items.register(new NamespacedKey("minecraft", "obsidianarmor0"), Item.obsidianArmor0);
++        Game.items.register(new NamespacedKey("minecraft", "obsidianarmor1"), Item.obsidianArmor1);
++        Game.items.register(new NamespacedKey("minecraft", "obsidianarmor2"), Item.obsidianArmor2);
++        Game.items.register(new NamespacedKey("minecraft", "obsidianarmor3"), Item.obsidianArmor3);
++        Game.items.register(new NamespacedKey("minecraft", "obsidiansword"), Item.obsidianSword);
++        Game.items.register(new NamespacedKey("minecraft", "obsidianshovel"), Item.obsidianShovel);
++        Game.items.register(new NamespacedKey("minecraft", "obsidianpick"), Item.obsidianPick);
++        Game.items.register(new NamespacedKey("minecraft", "obsidianaxe"), Item.obsidianAxe);
++        Game.items.register(new NamespacedKey("minecraft", "obsidianhoe"), Item.obsidianHoe);
++        Game.items.register(new NamespacedKey("minecraft", "obsidianingot"), Item.obsidianIngot);
++        Game.items.register(new NamespacedKey("minecraft", "blackdye"), Item.blackDye);
++        Game.items.register(new NamespacedKey("minecraft", "greendye"), Item.greenDye);
++        Game.items.register(new NamespacedKey("minecraft", "bluedye"), Item.blueDye);
++        Game.items.register(new NamespacedKey("minecraft", "pinkdye"), Item.pinkDye);
++        Game.items.register(new NamespacedKey("minecraft", "fryshroom"), Item.fryshroom);
++        Game.items.register(new NamespacedKey("minecraft", "ediblefire"), Item.edibleFire);
++        Game.items.register(new NamespacedKey("minecraft", "flameberge"), Item.flameberge);
+     }
      
-     protected Item(final int id) {
-@@ -241,5 +280,5 @@
-         this.shiftedIndex = 256 + id;
-         if (Item.ITEMS_LIST[256 + id] != null) {
+-    protected Item(final int id) {
+-        this.maxStackSize = 64;
+-        this.maxDamage = 32;
+-        this.bFull3D = false;
+-        this.shiftedIndex = 256 + id;
+-        if (Item.ITEMS_LIST[256 + id] != null) {
 -            System.out.println(new StringBuilder().append("CONFLICT @ ").append(id).toString());
-+            System.out.println("CONFLICT @ " + id);
-         }
-         Item.ITEMS_LIST[256 + id] = this;
-@@ -285,5 +324,5 @@
+-        }
+-        Item.ITEMS_LIST[256 + id] = this;
++    public Item(final int id) {
++        this.id = 256 + id;
      }
-     
+-    
+-    public Item setIconIndex(final int iconIndex) {
+-        this.iconIndex = iconIndex;
+-        return this;
+-    }
+-    
+-    public int getIconIndex(final ItemStack stack) {
+-        return this.iconIndex;
+-    }
+-    
+-    public boolean onItemUse(final ItemStack stack, final EntityPlayer entityPlayer, final World world, final int x, final int y, final int z, final int side) {
+-        return false;
+-    }
+-    
+-    public float getStrVsBlock(final ItemStack stack, final Block block) {
+-        return 1.0f;
+-    }
+-    
+-    public ItemStack onItemRightClick(final ItemStack itemStack, final World world, final EntityPlayer entityPlayer) {
+-        return itemStack;
+-    }
+-    
+-    public int getItemStackLimit() {
+-        return this.maxStackSize;
+-    }
+-    
+-    public int getMaxDamage() {
+-        return this.maxDamage;
+-    }
+-    
+-    public void hitEntity(final ItemStack stack, final EntityLiving entityLiving) {
+-    }
+-    
+-    public void onBlockDestroyed(final ItemStack stack, final int id, final int x, final int y, final int z) {
+-    }
+-    
+-    public int getDamageVsEntity(final Entity entity) {
+-        return 1;
+-    }
+-    
 -    public boolean canHarvestBlock(final Block block) {
-+    public boolean canHarvestBlock(final Block block, final World world) {
-         return false;
-     }
+-        return false;
+-    }
+-    
+-    public void saddleEntity(final ItemStack stack, final EntityLiving entityLiving) {
+-    }
+-    
+-    public Item setFull3D() {
+-        this.bFull3D = true;
+-        return this;
+-    }
+-    
+-    public boolean isFull3D() {
+-        return this.bFull3D;
+-    }
+ }

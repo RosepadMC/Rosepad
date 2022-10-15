@@ -24,3 +24,14 @@
 +                this.renderHand(renderPartialTick, i);
              if (!this.mc.gameSettings.anaglyph) {
                  return;
+@@ -523,10 +526,8 @@
+             GL11.glFogi(2917, 2048);
+             GL11.glFogf(2914, 0.1f);
+-            final boolean anaglyph = this.mc.gameSettings.anaglyph;
+         }
+         else if (thePlayer.isInsideOfMaterial(Material.LAVA)) {
+             GL11.glFogi(2917, 2048);
+             GL11.glFogf(2914, 2.0f);
+-            final boolean anaglyph2 = this.mc.gameSettings.anaglyph;
+         }
+         else {

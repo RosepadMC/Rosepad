@@ -1,0 +1,39 @@
+--- MouseHelper.java
++++ MouseHelper.java
+@@ -3,24 +3,23 @@
+ import org.lwjgl.input.Mouse;
+ import java.nio.IntBuffer;
+-import org.lwjgl.LWJGLException;
+-import org.lwjgl.input.Cursor;
+ import java.awt.Component;
+ 
+ public class MouseHelper {
+     private Component windowComponent;
+-    private Cursor cursor;
++    //private Cursor cursor;
+     public int deltaX;
+     public int deltaY;
+-    private int mouseInt;
++    //private int mouseInt;
+     private long lastUpdate;
+     
+     public MouseHelper(final Component component) {
+         this.lastUpdate = -1L;
+-        this.mouseInt = 10;
++        //this.mouseInt = 10;
+         this.windowComponent = component;
+         final IntBuffer directIntBuffer = GLAllocation.createDirectIntBuffer(1);
+         directIntBuffer.put(0);
+         directIntBuffer.flip();
+-        final IntBuffer directIntBuffer2 = GLAllocation.createDirectIntBuffer(1024);
++        //final IntBuffer directIntBuffer2 = GLAllocation.createDirectIntBuffer(1024);
++        /*
+         try {
+             this.cursor = new Cursor(32, 32, 16, 16, 1, directIntBuffer2, directIntBuffer);
+@@ -28,5 +27,5 @@
+         catch (LWJGLException ex) {
+             ex.printStackTrace();
+-        }
++        }*/
+     }
+     

@@ -1,0 +1,35 @@
+--- ItemInWorldManager.java
++++ ItemInWorldManager.java
+@@ -4,8 +4,6 @@
+     private World worldObj;
+     public EntityPlayer thisPlayer;
+-    private float removeProgressUnused;
+     private float removeProgress;
+     private int curBlockDurability;
+-    private float curblockDamage;
+     private int posX;
+     private int posY;
+@@ -15,5 +13,4 @@
+         this.removeProgress = 0.0f;
+         this.curBlockDurability = 0;
+-        this.curblockDamage = 0.0f;
+         this.worldObj = world;
+     }
+@@ -45,10 +42,7 @@
+             final Block block6 = Block.blocksList[i5];
+             this.removeProgress += block6.blockStrength(this.thisPlayer);
+-            ++this.curblockDamage;
+             if (this.removeProgress >= 1.0f) {
+                 this.tryHarvestBlock(i1, i2, i3);
+                 this.removeProgress = 0.0f;
+-                this.removeProgressUnused = 0.0f;
+-                this.curblockDamage = 0.0f;
+                 this.curBlockDurability = 5;
+             }
+@@ -56,6 +50,4 @@
+         else {
+             this.removeProgress = 0.0f;
+-            this.removeProgressUnused = 0.0f;
+-            this.curblockDamage = 0.0f;
+             this.posX = i1;
+             this.posY = i2;

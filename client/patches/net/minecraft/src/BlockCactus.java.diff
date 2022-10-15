@@ -1,0 +1,14 @@
+--- BlockCactus.java
++++ BlockCactus.java
+@@ -29,5 +29,4 @@
+     @Override
+     public AxisAlignedBB getCollisionBoundingBoxFromPool(final World world, final int x, final int y, final int z) {
+-        final float n = 0.0625f;
+         return AxisAlignedBB.getBoundingBoxFromPool(x + 0.0625f, y, z + 0.0625f, x + 1 - 0.0625f, y + 1 - 0.0625f, z + 1 - 0.0625f);
+     }
+@@ -35,5 +34,4 @@
+     @Override
+     public AxisAlignedBB getSelectedBoundingBoxFromPool(final World world, final int x, final int y, final int z) {
+-        final float n = 0.0625f;
+         return AxisAlignedBB.getBoundingBoxFromPool(x + 0.0625f, y, z + 0.0625f, x + 1 - 0.0625f, y + 1, z + 1 - 0.0625f);
+     }

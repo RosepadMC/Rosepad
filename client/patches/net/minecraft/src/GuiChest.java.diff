@@ -1,0 +1,8 @@
+--- GuiChest.java
++++ GuiChest.java
+@@ -13,5 +13,4 @@
+         this.lowerChestInventory = inv2;
+         this.allowUserInput = false;
+-        final int n = 114;
+         this.inventoryRows = inv2.getSizeInventory() / 9;
+         this.ySize = 114 + this.inventoryRows * 18;

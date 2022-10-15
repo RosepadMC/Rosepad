@@ -9,7 +9,7 @@
 +        this.addRecipe(new ItemStack(Block.QUAD_WINDOW_GLASS_BLOCK, 1), " # ", "#X#", " # ", '#', Block.COBBLESTONE, 'X', Block.GLASS);
          this.addRecipe(new ItemStack(Item.obsidianSword), "#", "#", "$", '#', Item.obsidianIngot, '$', Item.STICK);
          this.addRecipe(new ItemStack(Item.obsidianShovel), "#", "$", "$", '#', Item.obsidianIngot, '$', Item.STICK);
-@@ -77,9 +77,9 @@
+@@ -77,13 +77,19 @@
          this.addRecipe(new ItemStack(Item.obsidianArmor3), "# #", "# #", '#', Item.obsidianIngot);
          this.addRecipe(new ItemStack(Item.obsidianArmor1), "# #", "###", "###", '#', Item.obsidianIngot);
 -        this.addRecipe(new ItemStack(Block.woolPink), "#X", '#', Block.CLOTH, 'X', Item.pinkDye);
@@ -24,3 +24,21 @@
 +        this.addRecipe(new ItemStack(Item.edibleFire), "#", '#', Block.BLUE_FIRE_IDK);
          Collections.sort((List)this.recipes, (Comparator)new RecipeSorter(this));
          System.out.println(new StringBuilder().append(this.recipes.size()).append(" recipes").toString());
+     }
+-    
++
++    /**
++     *  Add a new recipe
++     *
++     *  Usage:
++     *  addRecipe(ItemStack result, ...String shape, ...[String, Item][] items);
++     */
+     void addRecipe(final ItemStack itemStack, final Object... args) {
+         String s = "";
+@@ -108,5 +114,5 @@
+             }
+         }
+-        final HashMap<Character, Integer> hashMap = (HashMap<Character, Integer>)new HashMap();
++        final HashMap<Character, Integer> hashMap = new HashMap<>();
+         while (i < args.length) {
+             final Character c = (Character)args[i];

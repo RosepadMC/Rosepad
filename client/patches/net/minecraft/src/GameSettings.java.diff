@@ -83,7 +83,15 @@
 +        this.keyBindings = new KeyBinding[] { this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog, this.keyBindOpenGMEnv, this.keyBindDash, this.keyBindHideGUI };
          this.difficulty = 2;
          this.thirdPersonView = false;
-@@ -78,8 +90,13 @@
+@@ -70,4 +82,7 @@
+         this.optionsFile = new File(optionsLocation, "options.txt");
+         this.loadOptions();
++        if (this.enableDiscordRPC) {
++            DiscordRPCManager.start();
++        }
+     }
+     
+@@ -78,8 +93,13 @@
          this.showFPS = false;
          this.renderDistance = 0;
 +        this.cheatMenuMode = 0;
@@ -97,7 +105,7 @@
 +        this.enableDiscordRPC = false;
          this.keyBindForward = new KeyBinding("Forward", 17);
          this.keyBindLeft = new KeyBinding("Left", 30);
-@@ -88,9 +105,11 @@
+@@ -88,9 +108,11 @@
          this.keyBindJump = new KeyBinding("Jump", 57);
          this.keyBindInventory = new KeyBinding("Inventory", 23);
 +        this.keyBindDash = new KeyBinding("Dash", 42);
@@ -111,7 +119,7 @@
 +        this.keyBindings = new KeyBinding[] { this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog, this.keyBindOpenGMEnv, this.keyBindDash, this.keyBindHideGUI };
          this.difficulty = 2;
          this.thirdPersonView = false;
-@@ -106,4 +125,83 @@
+@@ -106,4 +128,83 @@
      }
      
 +    public int getCheatMenuItemAmount(int type) {
@@ -195,7 +203,7 @@
 +    
      public void setOptionValue(final int optionIndex, final int value) {
          if (optionIndex == 0) {
-@@ -141,41 +239,10 @@
+@@ -141,41 +242,10 @@
              this.mc.renderGlobal.loadRenderers();
          }
 +        if (optionIndex == 10) {
@@ -241,14 +249,14 @@
 +
      public void loadOptions() {
          try {
-@@ -183,5 +250,5 @@
+@@ -183,5 +253,5 @@
                  return;
              }
 -            final BufferedReader bufferedReader = new BufferedReader((Reader)new FileReader(this.optionsFile));
 +            final BufferedReader bufferedReader = new BufferedReader(new FileReader(this.optionsFile));
              String line;
              while ((line = bufferedReader.readLine()) != null) {
-@@ -217,4 +284,7 @@
+@@ -217,4 +287,7 @@
                      this.difficulty = Integer.parseInt(split[1]);
                  }
 +                if (split[0].equals("guiScaling")) {
@@ -256,7 +264,7 @@
 +                }
                  if (split[0].equals("a1605ext_gamepadSens")) {
                      InputHandler.lookSens = Integer.parseInt(split[1]);
-@@ -223,4 +293,16 @@
+@@ -223,4 +296,16 @@
                      this.fancyGraphics = split[1].equals("true");
                  }
 +                if (split[0].equals("acceptRemoteScripts")) {
@@ -273,7 +281,7 @@
 +                }
                  for (int i = 0; i < this.keyBindings.length; ++i) {
                      if (split[0].equals(new StringBuilder("key_").append(this.keyBindings[i].keyDescription).toString())) {
-@@ -238,6 +320,7 @@
+@@ -238,6 +323,7 @@
      
      public void saveOptions() {
 +        PrintWriter printWriter = null;
@@ -282,7 +290,7 @@
 +            printWriter = new PrintWriter(new FileWriter(this.optionsFile));
              printWriter.println(new StringBuilder().append("music:").append(this.musicVolume).toString());
              printWriter.println(new StringBuilder().append("sound:").append(this.soundVolume).toString());
-@@ -250,4 +333,9 @@
+@@ -250,4 +336,9 @@
              printWriter.println(new StringBuilder().append("limitFramerate:").append(this.limitFramerate).toString());
              printWriter.println(new StringBuilder().append("fancyGraphics:").append(this.fancyGraphics).toString());
 +            printWriter.println(new StringBuilder().append("acceptRemoteScripts:").append(this.acceptRemoteScripts).toString());
@@ -292,13 +300,13 @@
 +            printWriter.println(new StringBuilder().append("discordRPC:").append(this.enableDiscordRPC).toString());
              printWriter.println("# Settings below are specific to 1605 extension.");
              printWriter.println(new StringBuilder().append("a1605ext_difficulty:").append(this.difficulty).toString());
-@@ -256,5 +344,4 @@
+@@ -256,5 +347,4 @@
                  printWriter.println(new StringBuilder("key_").append(this.keyBindings[i].keyDescription).append(":").append(this.keyBindings[i].keyCode).toString());
              }
 -            printWriter.close();
          }
          catch (Exception ex) {
-@@ -262,4 +349,11 @@
+@@ -262,4 +352,11 @@
              ex.printStackTrace();
          }
 +        if (printWriter != null) {

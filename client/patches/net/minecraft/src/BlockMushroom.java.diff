@@ -1,0 +1,8 @@
+--- BlockMushroom.java
++++ BlockMushroom.java
+@@ -4,5 +4,4 @@
+     protected BlockMushroom(final int blockID, final int tex) {
+         super(blockID, tex);
+-        final float n = 0.2f;
+         this.setBlockBounds(0.3f, 0.0f, 0.3f, 0.7f, 0.4f, 0.7f);
+     }

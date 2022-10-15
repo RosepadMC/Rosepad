@@ -150,3 +150,33 @@
 +            this.bipedLeftArm.rotateAngleX += this.bipedBody.rotateAngleY;
              swingProgress = 1.0f - this.swingProgress;
              swingProgress *= swingProgress;
+@@ -111,23 +143,17 @@
+             final float sin = MathHelper.sin(swingProgress * 3.1415927f);
+             final float n = MathHelper.sin(this.swingProgress * 3.1415927f) * -(this.bipedHead.rotateAngleX - 0.7f) * 0.75f;
+-            final ModelRenderer bipedRightArm9;
+-            final ModelRenderer bipedRightArm3 = bipedRightArm9 = this.bipedRightArm;
++            final ModelRenderer bipedRightArm9 = this.bipedRightArm;
+             bipedRightArm9.rotateAngleX -= (float)(sin * 1.2 + n);
+-            final ModelRenderer bipedRightArm10;
+-            final ModelRenderer bipedRightArm4 = bipedRightArm10 = this.bipedRightArm;
++            final ModelRenderer bipedRightArm10 = this.bipedRightArm;
+             bipedRightArm10.rotateAngleY += this.bipedBody.rotateAngleY * 2.0f;
+             this.bipedRightArm.rotateAngleZ = MathHelper.sin(this.swingProgress * 3.1415927f) * -0.4f;
+         }
+-        final ModelRenderer bipedRightArm11;
+-        final ModelRenderer bipedRightArm5 = bipedRightArm11 = this.bipedRightArm;
++        final ModelRenderer bipedRightArm11 = this.bipedRightArm;
+         bipedRightArm11.rotateAngleZ += MathHelper.cos(float3 * 0.09f) * 0.05f + 0.05f;
+-        final ModelRenderer bipedLeftArm9;
+-        final ModelRenderer bipedLeftArm4 = bipedLeftArm9 = this.bipedLeftArm;
++        final ModelRenderer bipedLeftArm9 = this.bipedLeftArm;
+         bipedLeftArm9.rotateAngleZ -= MathHelper.cos(float3 * 0.09f) * 0.05f + 0.05f;
+-        final ModelRenderer bipedRightArm12;
+-        final ModelRenderer bipedRightArm6 = bipedRightArm12 = this.bipedRightArm;
++        final ModelRenderer bipedRightArm12 = this.bipedRightArm;
+         bipedRightArm12.rotateAngleX += MathHelper.sin(float3 * 0.067f) * 0.05f;
+-        final ModelRenderer bipedLeftArm10;
+-        final ModelRenderer bipedLeftArm5 = bipedLeftArm10 = this.bipedLeftArm;
++        final ModelRenderer bipedLeftArm10 = this.bipedLeftArm;
+         bipedLeftArm10.rotateAngleX -= MathHelper.sin(float3 * 0.067f) * 0.05f;
+     }

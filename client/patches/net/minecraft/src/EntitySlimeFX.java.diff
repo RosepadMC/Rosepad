@@ -1,0 +1,8 @@
+--- EntitySlimeFX.java
++++ EntitySlimeFX.java
+@@ -5,5 +5,4 @@
+         super(world, x, y, z, 0.0, 0.0, 0.0);
+         this.particleTextureIndex = item.getIconIndex(null);
+-        final float particleBlue = 1.0f;
+         this.particleRed = 1.0f;
+         this.particleGreen = 1.0f;

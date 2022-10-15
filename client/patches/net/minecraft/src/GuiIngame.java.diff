@@ -1,26 +1,29 @@
 --- GuiIngame.java
 +++ GuiIngame.java
-@@ -3,8 +3,11 @@
+@@ -3,8 +3,14 @@
  import java.awt.Color;
  import java.util.ArrayList;
 +import java.util.List;
 +import java.util.Objects;
++import java.util.Optional;
 +import java.util.Random;
 +
  import org.lwjgl.opengl.GL11;
 +
++import net.buj.rml.Game;
++import net.buj.rml.registry.Items;
  import net.minecraft.client.Minecraft;
 -import java.util.Random;
 -import java.util.List;
  
  public class GuiIngame extends Gui {
-@@ -19,5 +22,4 @@
+@@ -19,5 +25,4 @@
      public float damageGuiPartialTime;
      float prevVignetteBrightness;
 -    public boolean renderQAName;
      public static String uqKey;
      private boolean initedArea;
-@@ -28,6 +30,10 @@
+@@ -28,6 +33,10 @@
      public long areaTimer;
      private static final String[] syllab;
 -    private static final String versionName = "Minecraft Alpha 1.0.16.05_13 Lilypad (LPUJ v106)";
@@ -32,7 +35,7 @@
 +    
      static {
          GuiIngame.uqKey = "";
-@@ -91,9 +97,8 @@
+@@ -91,9 +100,8 @@
      
      public GuiIngame(final Minecraft minecraft) {
 -        this.renderQAName = true;
@@ -43,7 +46,7 @@
 +        this.chatMessageList = new ArrayList<>();
          this.rand = new Random();
          this.testMessage = null;
-@@ -103,7 +108,9 @@
+@@ -103,7 +111,9 @@
          this.prevVignetteBrightness = 1.0f;
          this.mc = minecraft;
 +        this.showGUI = true;
@@ -53,20 +56,20 @@
 +    	if (!this.showGUI && this.mc.currentScreen == null) return;
          final ScaledResolution scaledResolution = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
          final int scaledWidth = scaledResolution.getScaledWidth();
-@@ -132,5 +139,5 @@
+@@ -132,5 +142,5 @@
          final int health = this.mc.thePlayer.health;
          final int prevHealth = this.mc.thePlayer.prevHealth;
 -        this.rand.setSeed((long)(this.updateCounter * 312871));
 +        this.rand.setSeed((long)(this.updateCounter * 312871L));
          if (this.mc.playerController.shouldDrawHUD()) {
              final int i = this.mc.thePlayer.getPlayerArmorValue();
-@@ -140,5 +147,4 @@
+@@ -140,5 +150,4 @@
                  final ItemStack armorItemInSlot = this.mc.thePlayer.inventory.armorItemInSlot(j);
                  if (armorItemInSlot != null && armorItemInSlot.getItem() instanceof ItemArmor) {
 -                    armorItemInSlot.getItem();
                      final int maxDamage = armorItemInSlot.getMaxDamage();
                      final int n3 = maxDamage - armorItemInSlot.itemDmg;
-@@ -242,40 +248,74 @@
+@@ -242,40 +251,74 @@
          GL11.glDisable(32826);
          if (this.mc.gameSettings.showFPS) {
 -            fontRenderer.drawStringWithShadow("Minecraft Alpha 1.0.16.05_13 Lilypad (LPUJ v106)", 2, 2, 16777215);
@@ -164,7 +167,7 @@
 -        GL11.glPopMatrix();
          GL11.glBindTexture(3553, this.mc.renderEngine.getTexture("/gui/icons.png"));
          if (this.recordPlayingUpFor > 0) {
-@@ -306,10 +346,12 @@
+@@ -306,10 +349,16 @@
          GL11.glPushMatrix();
          GL11.glTranslatef(0.0f, (float)(scaledHeight - 48), 0.0f);
 -        if (GuiScreen.currentID != "") {
@@ -175,12 +178,16 @@
              try {
                  final int int1 = Integer.parseInt(GuiScreen.currentID);
 -                if ((Block.BLOCKS_LIST.length <= int1 || Block.BLOCKS_LIST[int1] == null) && (Item.ITEMS_LIST.length <= int1 || Item.ITEMS_LIST[int1] == null)) {
-+                if ((Block.BLOCKS_LIST.length <= int1 || Block.BLOCKS_LIST[int1] == null) &&
-+                        (Item.ITEMS_LIST.length <= int1 || Item.ITEMS_LIST[int1] == null ||
-+                                !Item.ITEMS_LIST[int1].getVanilla() && NetClientHandler.rosepadMeta == null)) {
++                Optional<Items.Item> item = Game.items.byId(int1);
++                //if ((Block.BLOCKS_LIST.length <= int1 || Block.BLOCKS_LIST[int1] == null) &&
++                //        (Item.ITEMS_LIST.length <= int1 || Item.ITEMS_LIST[int1] == null ||
++                //                !Item.ITEMS_LIST[int1].getVanilla() && NetClientHandler.rosepadMeta == null)) {
++                //    fontRenderer.drawStringWithShadow("(INVALID)", 2, 30, 16711680);
++                //}
++                if (item.isEmpty() || (!item.get().isVanilla() && !mc.theWorld.rosepadContentEnabled())) {
                      fontRenderer.drawStringWithShadow("(INVALID)", 2, 30, 16711680);
                  }
-@@ -341,7 +383,7 @@
+@@ -341,7 +390,7 @@
              }
          }
 -        if (this.renderQAName) {
@@ -190,7 +197,7 @@
 +            fontRenderer.drawStringWithShadow("QA BUILD: " + GuiScreenInputPass.name, 5, 0, 553320302);
          }
          GL11.glPopMatrix();
-@@ -410,6 +452,5 @@
+@@ -410,6 +459,5 @@
          ++this.updateCounter;
          for (int i = 0; i < this.chatMessageList.size(); ++i) {
 -            final ChatLine chatLine2;
@@ -198,7 +205,7 @@
 +            final ChatLine chatLine2 = this.chatMessageList.get(i);
              ++chatLine2.updateCounter;
          }
-@@ -417,4 +458,5 @@
+@@ -417,4 +465,5 @@
      
      public void addChatMessage(String message) {
 +    	if (message.length() > 2000) message = message.substring(message.length() - 2000).trim();
