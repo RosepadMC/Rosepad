@@ -25,7 +25,7 @@ Since Minecraft is not licensed under a free software license, we can't share it
 must be stored in .patch files (at least until proper code injections will be implemented) Make sure to test your
 patches before making a pull request
 
-Build Rosepad use `TOOLKIT_JAVA17=/path/to/your/jdk17/home ./gradlew -Dorg.gradle.java.home=/path/to/your/java8/home ejectClasses createPatches shadowJar pack`
+Build Rosepad using `TOOLKIT_JAVA17=/path/to/your/jdk17/home ./gradlew -Dorg.gradle.java.home=/path/to/your/java8/home ejectClasses createPatches shadowJar pack`
 
 All tests should be done on an obfuscated build since obfuscation breaks some things in the code
 
