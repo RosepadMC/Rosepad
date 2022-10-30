@@ -1,6 +1,6 @@
 --- Item.java
 +++ Item.java
-@@ -1,302 +1,797 @@
+@@ -1,302 +1,361 @@
  package net.minecraft.src;
  
 +import net.buj.rml.Game;
@@ -240,565 +240,126 @@
 -        Item.edibleFire = new ItemFood(105, 2).setIconIndex(178);
 -        Item.flameberge = new ItemSwordFlameberge(106).setIconIndex(69);
 +public class Item extends Items.Item {
++    private static boolean vanillaInit = false;
++
 +    protected static Random rand = new Random();
 +
-+    /**
-+     * @deprecated Use {@link net.minecraft.client.rmlcompat.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SHOVEL_IRON;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PICKAXE_IRON;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item AXE_IRON;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item FLINT_AND_STEEL;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item APPLE;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BOW;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item ARROW;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item COAL;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item DIAMOND;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item INGOT_IRON;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item INGOT_GOLD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SWORD_IRON;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SWORD_WOOD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SHOVEL_WOOD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PICKAXE_WOOD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item AXE_WOOD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SWORD_STONE;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SHOVEL_STONE;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PICKAXE_STONE;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item AXE_STONE;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SWORD_DIAMOND;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SHOVEL_DIAMOND;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PICKAXE_DIAMOND;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item AXE_DIAMOND;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item STICK;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BOWL_EMPTY;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BOWL_SOUP;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SWORD_GOLD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SHOVEL_GOLD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PICKAXE_GOLD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item AXE_GOLD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item STRING;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item FEATHER;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item GUNPOWDER;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item HOE_WOOD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item HOE_STONE;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item HOE_IRON;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item HOE_DIAMOND;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item HOE_GOLD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SEEDS;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item WHEAT;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BREAD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item HELMET_LEATHER;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PLATE_LEATHER;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item LEGS_LEATHER;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BOOTS_LEATHER;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item HELMET_CHAIN;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PLATE_CHAIN;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item LEGS_CHAIN;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BOOTS_CHAIN;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item HELMET_IRON;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PLATE_IRON;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item LEGS_IRON;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BOOTS_IRON;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item HELMET_DIAMOND;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PLATE_DIAMOND;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item LEGS_DIAMOND;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BOOTS_DIAMOND;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item HELMET_GOLD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PLATE_GOLD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item LEGS_GOLD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BOOTS_GOLD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item FLINT;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PORK_RAW;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PORK_COOKED;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PAINTING;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item APPLE_GOLD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SIGN;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item DOOR_WOOD;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BUCKET_EMPTY;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BUCKET_WATER;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BUCKET_LAVA;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item MINECART_EMPTY;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SADDLE;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item DOOR_IRON;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item REDSTONE;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SNOWBALL;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BOAT;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item LEATHER;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BUCKET_MILK;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BRICK;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item CLAY;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item REED;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item PAPER;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item BOOK;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item SLIMEBALL;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item MINECART_CHEST;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item MINECART_FURNACE;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item EGG;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item COMPASS;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item RECORD_HIDDEN_DEN;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item RECORD_LEMURIA;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item RECORD_43343138;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item RECORD_ESTONIAN_RELIQUARY;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item obsidianArmor0;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item obsidianArmor1;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item obsidianArmor2;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item obsidianArmor3;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item obsidianSword;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item obsidianShovel;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item obsidianPick;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item obsidianAxe;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item obsidianHoe;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item obsidianIngot;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item blackDye;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item greenDye;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item blueDye;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item pinkDye;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item fryshroom;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
 +    public static Items.Item edibleFire;
-+    /**
-+     * @Deprecated Use {@link net.minecraft.client.rmlcompat.Items.Items} instead.
-+     */
-+    @Deprecated
++
 +    public static Items.Item flameberge;
 +
 +    public static void initAll() {
++        vanillaInit = true;
++
 +        Item.SHOVEL_IRON = new ItemShovel(0, 2).setIconIndex(82).setName("Iron shovel");
 +        Item.PICKAXE_IRON = new ItemPickaxe(1, 2).setIconIndex(98).setName("Iron pickaxe");
 +        Item.AXE_IRON = new ItemAxe(2, 2).setIconIndex(114).setName("Iron axe");
@@ -823,7 +384,7 @@
 +        Item.SHOVEL_DIAMOND = new ItemShovel(21, 3).setIconIndex(83).setName("Diamond shovel").setRarity(1);
 +        Item.PICKAXE_DIAMOND = new ItemPickaxe(22, 3).setIconIndex(99).setName("Diamond pickaxe").setRarity(1);
 +        Item.AXE_DIAMOND = new ItemAxe(23, 3).setIconIndex(115).setName("Diamond axe").setRarity(1);
-+        Item.STICK = new Item(24).setIconIndex(53).setFull3D().setName("Stick");
++        Item.STICK = new Item(24).setIconIndex(53).setFull3D(true).setName("Stick");
 +        Item.BOWL_EMPTY = new Item(25).setIconIndex(71).setName("Bowl");
 +        Item.BOWL_SOUP = new ItemSoup(26, 10).setIconIndex(72).setName("Soup");
 +        Item.SWORD_GOLD = new ItemSword(27, 0).setIconIndex(68).setName("Golden sword");
@@ -910,6 +471,8 @@
 +        Item.fryshroom = new ItemFood(104, 6).setIconIndex(162).setName("Fryshroom");
 +        Item.edibleFire = new ItemFood(105, 2).setIconIndex(178).setName("Fire but ediable");
 +        Item.flameberge = new ItemSwordFlameberge(106).setIconIndex(69).setName("Flameberge").setRarity(2);
++
++        vanillaInit = false;
 +
 +        Game.items.register(new NamespacedKey("minecraft", "shovel_iron"), Item.SHOVEL_IRON);
 +        Game.items.register(new NamespacedKey("minecraft", "pickaxe_iron"), Item.PICKAXE_IRON);
@@ -1034,7 +597,8 @@
 -        }
 -        Item.ITEMS_LIST[256 + id] = this;
 +    public Item(final int id) {
-+        this.id = 256 + id;
++        this.id = id;
++        if (vanillaInit) this.id += 256;
      }
 -    
 -    public Item setIconIndex(final int iconIndex) {

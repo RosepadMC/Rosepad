@@ -1,0 +1,12 @@
+--- MaterialTransparent.java
++++ MaterialTransparent.java
+@@ -3,9 +3,4 @@
+ public class MaterialTransparent extends Material {
+     @Override
+-    public boolean isSolid() {
+-        return false;
+-    }
+-    
+-    @Override
+     public boolean getCanBlockGrass() {
+         return false;

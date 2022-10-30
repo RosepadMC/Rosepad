@@ -8,6 +8,13 @@
 -import java.util.Collection;
  import java.io.IOException;
  import java.io.OutputStream;
+@@ -19,5 +17,5 @@
+ import java.util.List;
+ 
+-public class World implements IBlockAccess {
++public class World extends net.buj.rml.world.World implements IBlockAccess {
+     private List<MetadataChunkBlock> lightingToUpdate;
+     public List<Entity> loadedEntityList;
 @@ -38,5 +36,5 @@
      private final long lockTimestamp;
      protected int autosavePeriod;

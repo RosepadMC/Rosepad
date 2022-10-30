@@ -1,6 +1,11 @@
 --- ObsidianPick.java
 +++ ObsidianPick.java
-@@ -3,8 +3,10 @@
+@@ -1,10 +1,15 @@
+ package net.minecraft.src;
+ 
++import net.buj.rml.registry.Blocks;
++import net.buj.rml.world.World;
++
  public class ObsidianPick extends ItemTool {
      private static Block[] blocksEffectiveAgainst;
 -    private int harvestLevel;
@@ -13,16 +18,42 @@
 +                Block.ORE_COAL, Block.BLOCK_GOLD, Block.ORE_GOLD, Block.ORE_DIAMOND, Block.BLOCK_DIAMOND, Block.ICE };
      }
      
-@@ -15,10 +17,10 @@
+@@ -15,24 +20,29 @@
      
      @Override
 -    public boolean canHarvestBlock(final Block block) {
-+    public boolean canHarvestBlock(final Block block, final World world) {
-         if (block == Block.BEDROCK) {
+-        if (block == Block.BEDROCK) {
++    public boolean onBlockHarvest(final Blocks.Block block, final World world) {
++        if (block.getKey().equals("minecraft", "bedrock")) {
              return true;
          }
-         if (block == Block.OBSIDIAN) {
+-        if (block == Block.OBSIDIAN) {
 -            return this.harvestLevel == 3;
++        if (block.getKey().equals("minecraft", "obsidian")) {
 +            return world.rosepadContentEnabled();
          }
-         if (block == Block.BLOCK_DIAMOND || block == Block.ORE_DIAMOND) {
+-        if (block == Block.BLOCK_DIAMOND || block == Block.ORE_DIAMOND) {
++        if (block.getKey().equals("minecraft", "diamond_block")
++            || block.getKey().equals("minecraft", "diamond_ore")) {
+             return this.harvestLevel >= 2;
+         }
+-        if (block == Block.BLOCK_GOLD || block == Block.ORE_GOLD) {
++        if (block.getKey().equals("minecraft", "iron_block")
++            || block.getKey().equals("minecraft", "iron_ore")) {
+             return this.harvestLevel >= 2;
+         }
+-        if (block == Block.BLOCK_IRON || block == Block.ORE_IRON) {
++        if (block.getKey().equals("minecraft", "gold_block")
++            || block.getKey().equals("minecraft", "gold_ore")) {
+             return this.harvestLevel >= 1;
+         }
+-        if (block == Block.ORE_REDSTONE || block == Block.ORE_REDSTONE_GLOWING) {
++        if (block.getKey().equals("minecraft", "redstone_ore")
++            || block.getKey().equals("minecraft", "redstone_ore_glowing")) {
+             return this.harvestLevel >= 2;
+         }
+-        return block.material == Material.ROCK || block.material == Material.IRON;
++        return block.getMaterial().getKey().equals("minecraft", "stone") ||
++            block.getMaterial().getKey().equals("minecraft", "iron");
+     }
+ }

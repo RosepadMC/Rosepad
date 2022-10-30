@@ -1,6 +1,6 @@
 --- Block.java
 +++ Block.java
-@@ -2,108 +2,26 @@
+@@ -2,112 +2,29 @@
  
  import java.util.Random;
 +
@@ -120,6 +120,7 @@
 +    public static StepSound SOUND_GLASS_FOOTSTEP;
 +    public static StepSound SOUND_CLOTH_FOOTSTEP;
 +    public static StepSound SOUND_SAND_FOOTSTEP;
++    // TODO: Remove those arrays
 +    public static final Block[] BLOCKS_LIST = new Block[256];
 +    public static final boolean[] TICK_ON_LOAD = new boolean[256];
 +    public static final boolean[] OPAQUE_CUBE_LOOKUP = new boolean[256];
@@ -129,9 +130,15 @@
 +    public static final int[] LIGHT_VALUE = new int[256];
      public int blockIndexInTexture;
      public final int blockID;
-@@ -120,37 +38,157 @@
-     public final Material material;
-     public float slipperiness;
+-    protected float hardness;
+-    protected float resistance;
+     public double minX;
+     public double minY;
+@@ -118,39 +35,157 @@
+     public StepSound stepSound;
+     public float blockParticleGravity;
+-    public final Material material;
+-    public float slipperiness;
 -    public static final Block QuadWindowGlassBlock;
 -    public static final Block PillarBlock;
 -    public static final Block TileBlock;
@@ -171,7 +178,7 @@
 +    // =================================
 +
 +    public static Block STONE;
-+    public static BlockGrass GRASS;
++    public static Block GRASS;
 +    public static Block DIRT;
 +    public static Block COBBLESTONE;
 +    public static Block PLANKS;
@@ -187,7 +194,7 @@
 +    public static Block ORE_IRON;
 +    public static Block ORE_COAL;
 +    public static Block WOOD;
-+    public static BlockLeaves LEAVES;
++    public static Block LEAVES;
 +    public static Block SPONGE;
 +    public static Block GLASS;
 +    public static Block CLOTH_RED;
@@ -206,10 +213,10 @@
 +    public static Block CLOTH_DARK_GRAY;
 +    public static Block CLOTH;
 +    public static Block CLOTH_WHITE;
-+    public static BlockFlower PLANT_YELLOW;
-+    public static BlockFlower PLANT_RED;
-+    public static BlockFlower MUSHROOM_BROWN;
-+    public static BlockFlower MUSHROOM_RED;
++    public static Block PLANT_YELLOW;
++    public static Block PLANT_RED;
++    public static Block MUSHROOM_BROWN;
++    public static Block MUSHROOM_RED;
 +    public static Block BLOCK_GOLD;
 +    public static Block BLOCK_IRON;
 +    public static Block STAIR_DOUBLE;
@@ -220,7 +227,7 @@
 +    public static Block COBBLESTONE_MOSSY;
 +    public static Block OBSIDIAN;
 +    public static Block TORCH;
-+    public static BlockFire FIRE;
++    public static Block FIRE;
 +    public static Block MOB_SPAWNER;
 +    public static Block STAIR_COMPACT_WOOD;
 +    public static Block CHEST;
@@ -320,7 +327,7 @@
 +    public static void initAll() {
          SOUND_POWDER_FOOTSTEP = new StepSound("stone", 1.0f, 1.0f);
          SOUND_WOOD_FOOTSTEP = new StepSound("wood", 1.0f, 1.0f);
-@@ -162,31 +200,24 @@
+@@ -162,31 +197,24 @@
          SOUND_CLOTH_FOOTSTEP = new StepSound("cloth", 1.0f, 1.0f);
          SOUND_SAND_FOOTSTEP = new StepSoundSand("sand", 1.0f, 1.0f);
 -        BLOCKS_LIST = new Block[256];
@@ -372,7 +379,7 @@
 +        GLASS = new BlockGlass(20, 49, Material.GLASS, false).setHardness(0.3f).setStepSound(Block.SOUND_GLASS_FOOTSTEP).setName("Glass");
          CLOTH_RED = null;
          CLOTH_ORANGE = null;
-@@ -203,89 +234,89 @@
+@@ -203,92 +231,96 @@
          CLOTH_ROSE = null;
          CLOTH_DARK_GRAY = null;
 -        CLOTH = new Block(35, 64, Material.CLOTH).setHardness(0.8f).setStepSound(Block.SOUND_CLOTH_FOOTSTEP);
@@ -544,21 +551,31 @@
 +                Item.ITEMS_LIST[i] = new ItemBlock(i - 256).setName(Block.BLOCKS_LIST[i].getName()).setRarity(Block.BLOCKS_LIST[i].getRarity());
              }
          }
-@@ -297,5 +328,5 @@
+     }
++
++    public Block(final int id) {
++
++    }
+     
+     protected Block(final int id, final Material material) {
+@@ -296,9 +328,5 @@
+         this.blockParticleGravity = 1.0f;
          this.slipperiness = 0.6f;
-         if (Block.BLOCKS_LIST[id] != null) {
+-        if (Block.BLOCKS_LIST[id] != null) {
 -            throw new IllegalArgumentException(new StringBuilder().append("Slot ").append(id).append(" is already occupied by ").append(Block.BLOCKS_LIST[id]).append(" when adding ").append(this).toString());
-+            throw new IllegalArgumentException("Slot " + id + " is already occupied by \"" + Block.BLOCKS_LIST[id].getName() + "\" when adding \"" + this.getName() + "\"");
-         }
+-        }
          this.material = material;
-@@ -452,5 +483,5 @@
+-        Block.BLOCKS_LIST[id] = this;
+         this.blockID = id;
+         this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+@@ -452,5 +480,5 @@
          }
          else {
 -            if (!entityPlayer.canHarvestBlock(this)) {
 +            if (!entityPlayer.canHarvestBlock(this, entityPlayer.worldObj)) {
                  return 1.0f / this.hardness / 100.0f;
              }
-@@ -512,5 +543,5 @@
+@@ -512,5 +540,5 @@
          }
          Vec3D vec3D = null;
 -        if (intermediateWithXValue != null && (vec3D == null || vec1.distanceTo(intermediateWithXValue) < vec1.distanceTo(vec3D))) {

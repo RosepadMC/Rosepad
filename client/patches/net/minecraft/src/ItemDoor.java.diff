@@ -1,0 +1,34 @@
+--- ItemDoor.java
++++ ItemDoor.java
+@@ -1,4 +1,6 @@
+ package net.minecraft.src;
+ 
++import net.buj.rml.world.ItemStack;
++
+ public class ItemDoor extends Item {
+     private Material material;
+@@ -7,10 +9,14 @@
+         super(itemID);
+         this.material = material;
+-        this.maxDamage = 64;
+-        this.maxStackSize = 1;
++        setItemStackLimit(1);
++        setMaxDamage(64);
+     }
+     
+     @Override
+-    public boolean onItemUse(final ItemStack stack, final EntityPlayer entityPlayer, final World world, final int x, int y, final int z, final int side) {
++    public boolean onItemUse(
++                             final ItemStack stack,
++                             final EntityPlayer entityPlayer,
++                             final World world,
++                             final int x, int y, final int z, final int side) {
+         if (side != 1) {
+             return false;
+@@ -61,5 +67,5 @@
+         world.setBlockWithNotify(x, y + 1, z, block.blockID);
+         world.setBlockMetadataWithNotify(x, y + 1, z, metadata + 8);
+-        --stack.stackSize;
++        stack.remove(1);
+         return true;
+     }

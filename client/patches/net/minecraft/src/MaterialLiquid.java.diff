@@ -1,0 +1,11 @@
+--- MaterialLiquid.java
++++ MaterialLiquid.java
+@@ -11,8 +11,3 @@
+         return false;
+     }
+-    
+-    @Override
+-    public boolean isSolid() {
+-        return false;
+-    }
+ }

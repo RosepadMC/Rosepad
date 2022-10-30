@@ -1,0 +1,26 @@
+--- AdaptiveHandler.java
++++ AdaptiveHandler.java
+@@ -3,5 +3,4 @@
+ import adaptive.ds5java.DS5InstrTriggerUpdate;
+ import adaptive.ds5java.DS5InstrPlayerUpdate;
+-import adaptive.ds5java.DS5Instruction;
+ import adaptive.ds5java.DS5InstrRGBUpdate;
+ import adaptive.ds5java.DS5Packet;
+@@ -82,8 +81,7 @@
+             final DS5InstrRGBUpdate ds5InstrRGBUpdate3 = ds5InstrRGBUpdate;
+             final DS5InstrRGBUpdate ds5InstrRGBUpdate4 = ds5InstrRGBUpdate;
+-            final int r = n2;
+-            ds5InstrRGBUpdate4.b = r;
+-            ds5InstrRGBUpdate3.g = r;
+-            ds5InstrRGBUpdate2.r = r;
++            ds5InstrRGBUpdate4.b = n2;
++            ds5InstrRGBUpdate3.g = n2;
++            ds5InstrRGBUpdate2.r = n2;
+             return;
+         }
+@@ -92,5 +90,4 @@
+             final DS5InstrRGBUpdate ds5InstrRGBUpdate6 = ds5InstrRGBUpdate;
+             final DS5InstrRGBUpdate ds5InstrRGBUpdate7 = ds5InstrRGBUpdate;
+-            final int r2 = 0;
+             ds5InstrRGBUpdate7.b = 0;
+             ds5InstrRGBUpdate6.g = 0;

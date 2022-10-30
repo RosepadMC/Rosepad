@@ -1,8 +1,9 @@
 --- Material.java
 +++ Material.java
-@@ -2,29 +2,29 @@
+@@ -1,77 +1,78 @@
+ package net.minecraft.src;
  
- public class Material {
+-public class Material {
 -    public static final Material AIR;
 -    public static final Material GRASS;
 -    public static final Material WOOD;
@@ -25,50 +26,118 @@
 -    public static final Material CRAFTED_SNOW;
 -    public static final Material CACTUS;
 -    public static final Material CLAY;
-+    public static Material AIR;
-+    public static Material GRASS;
-+    public static Material WOOD;
-+    public static Material ROCK;
-+    public static Material IRON;
-+    public static Material WATER;
-+    public static Material LAVA;
-+    public static Material LEAVES;
-+    public static Material PLANTS;
-+    public static Material SPONGE;
-+    public static Material CLOTH;
-+    public static Material FIRE;
-+    public static Material SAND;
-+    public static Material CIRCUITS;
-+    public static Material GLASS;
-+    public static Material TNT;
-+    public static Material UNUSED;
-+    public static Material ICE;
-+    public static Material SNOW;
-+    public static Material CRAFTED_SNOW;
-+    public static Material CACTUS;
-+    public static Material CLAY;
-     private boolean canBurn;
-     
+-    private boolean canBurn;
+-    
 -    static {
+-        AIR = new MaterialTransparent();
++import net.buj.rml.Game;
++import net.buj.rml.NamespacedKey;
++import net.buj.rml.registry.Materials;
++
++public class Material extends Materials.Material {
++    public static Materials.Material AIR;
++    public static Materials.Material GRASS;
++    public static Materials.Material WOOD;
++    public static Materials.Material ROCK;
++    public static Materials.Material IRON;
++    public static Materials.Material WATER;
++    public static Materials.Material LAVA;
++    public static Materials.Material LEAVES;
++    public static Materials.Material PLANTS;
++    public static Materials.Material SPONGE;
++    public static Materials.Material CLOTH;
++    public static Materials.Material FIRE;
++    public static Materials.Material SAND;
++    public static Materials.Material CIRCUITS;
++    public static Materials.Material GLASS;
++    public static Materials.Material TNT;
++    public static Materials.Material UNUSED;
++    public static Materials.Material ICE;
++    public static Materials.Material SNOW;
++    public static Materials.Material CRAFTED_SNOW;
++    public static Materials.Material CACTUS;
++    public static Materials.Material CLAY;
++
 +    public static void initAll() {
-         AIR = new MaterialTransparent();
++        AIR = new Material().setCanBlockGrass(false).setIsSolid(false);
          GRASS = new Material();
-@@ -58,13 +58,13 @@
-         return true;
+-        WOOD = new Material().setBurning();
++        WOOD = new Material().setCanBurn(true);
+         ROCK = new Material();
+         IRON = new Material();
+-        WATER = new MaterialLiquid();
+-        LAVA = new MaterialLiquid();
+-        LEAVES = new Material().setBurning();
+-        PLANTS = new MaterialLogic();
++        WATER = new Material().setIsLiquid(true);
++        LAVA = new Material().setIsLiquid(true);
++        LEAVES = new Material().setCanBurn(true);
++        PLANTS = new Material().setCanBlockGrass(false).setIsSolid(false);
+         SPONGE = new Material();
+-        CLOTH = new Material().setBurning();
+-        FIRE = new MaterialTransparent();
++        CLOTH = new Material().setCanBurn(true);
++        FIRE = new Material().setCanBlockGrass(false).setIsSolid(false);
+         SAND = new Material();
+-        CIRCUITS = new MaterialLogic();
++        CIRCUITS = new Material().setCanBlockGrass(false).setIsSolid(false);
+         GLASS = new Material();
+-        TNT = new Material().setBurning();
++        TNT = new Material().setCanBurn(true);
+         UNUSED = new Material();
+         ICE = new Material();
+-        SNOW = new MaterialLogic();
++        SNOW = new Material().setCanBlockGrass(false).setIsSolid(false);
+         CRAFTED_SNOW = new Material();
+         CACTUS = new Material();
+         CLAY = new Material();
++
++        Game.materials.register(new NamespacedKey("minecraft", "air"), AIR);
++        Game.materials.register(new NamespacedKey("minecraft", "grass"), GRASS);
++        Game.materials.register(new NamespacedKey("minecraft", "wood"), WOOD);
++        Game.materials.register(new NamespacedKey("minecraft", "rock"), ROCK);
++        Game.materials.register(new NamespacedKey("minecraft", "iron"), IRON);
++        Game.materials.register(new NamespacedKey("minecraft", "water"), WATER);
++        Game.materials.register(new NamespacedKey("minecraft", "lava"), LAVA);
++        Game.materials.register(new NamespacedKey("minecraft", "leaves"), LEAVES);
++        Game.materials.register(new NamespacedKey("minecraft", "plants"), PLANTS);
++        Game.materials.register(new NamespacedKey("minecraft", "sponge"), SPONGE);
++        Game.materials.register(new NamespacedKey("minecraft", "cloth"), CLOTH);
++        Game.materials.register(new NamespacedKey("minecraft", "fire"), FIRE);
++        Game.materials.register(new NamespacedKey("minecraft", "sand"), SAND);
++        Game.materials.register(new NamespacedKey("minecraft", "circuits"), CIRCUITS);
++        Game.materials.register(new NamespacedKey("minecraft", "glass"), GLASS);
++        Game.materials.register(new NamespacedKey("minecraft", "tnt"), TNT);
++        Game.materials.register(new NamespacedKey("minecraft", "unused"), UNUSED);
++        Game.materials.register(new NamespacedKey("minecraft", "ice"), ICE);
++        Game.materials.register(new NamespacedKey("minecraft", "snow"), SNOW);
++        Game.materials.register(new NamespacedKey("minecraft", "crafted_snow"), CRAFTED_SNOW);
++        Game.materials.register(new NamespacedKey("minecraft", "cactus"), CACTUS);
++        Game.materials.register(new NamespacedKey("minecraft", "clay"), CLAY);
      }
+-    
+-    public boolean getIsLiquid() {
+-        return false;
+-    }
+-    
+-    public boolean isSolid() {
+-        return true;
+-    }
 -    
 -    public boolean getCanBlockGrass() {
-+
-+    public boolean getIsSolid() {
-         return true;
-     }
+-        return true;
+-    }
 -    
 -    public boolean getIsSolid() {
-+
-+    public boolean getCanBlockGrass() {
-         return true;
-     }
+-        return true;
+-    }
 -    
-+
-     private Material setBurning() {
-         this.canBurn = true;
+-    private Material setBurning() {
+-        this.canBurn = true;
+-        return this;
+-    }
+-    
+-    public boolean getCanBurn() {
+-        return this.canBurn;
+-    }
+ }
