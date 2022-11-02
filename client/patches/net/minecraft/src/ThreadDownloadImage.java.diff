@@ -5,7 +5,7 @@
      
 +    public boolean checkUsername(String username) {
 +    	if (username.length() < 2 || username.length() > 32) return false;
-+    	String fine = "qwertyuiopasdfghjklzxcvbnnmQWERTYUIOPASDFGHJKLZXVBNM1234567890-_";
++    	String fine = "qwertyuiopasdfghjklzxcvbnnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890-_";
 +    	for (int i = 0; i < username.length(); i++) {
 +    		boolean good = false;
 +    		for (int o = 0; o < fine.length(); o++) {
