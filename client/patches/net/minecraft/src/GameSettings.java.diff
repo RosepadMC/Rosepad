@@ -63,7 +63,7 @@
          this.anaglyph = false;
          this.limitFramerate = false;
          this.fancyGraphics = true;
-+        this.acceptRemoteScripts = false;
++        this.acceptRemoteScripts = true;
 +        this.renderQAName = true;
 +        this.renderChunkName = true;
 +        this.enableDiscordRPC = false;
@@ -91,7 +91,7 @@
          this.anaglyph = false;
          this.limitFramerate = false;
          this.fancyGraphics = true;
-+        this.acceptRemoteScripts = false;
++        this.acceptRemoteScripts = true;
 +        this.renderQAName = true;
 +        this.renderChunkName = true;
 +        this.enableDiscordRPC = false;
