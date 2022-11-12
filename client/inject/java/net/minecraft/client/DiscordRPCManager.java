@@ -58,7 +58,7 @@ public class DiscordRPCManager {
                 })
                 .build();
         DiscordRPC.discordInitialize(
-                "671756796939206679",
+                "678178584439029760",
                 handlers,
                 true
         );
