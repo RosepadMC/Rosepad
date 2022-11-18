@@ -6,7 +6,7 @@ import groovy.json.JsonSlurper
 group 'net.buj'
 version '1.1-SNAPSHOT'
 
-def java17path = System.getenv("TOOLKIT_JAVA17")
+Utils.java17path = System.getenv("TOOLKIT_JAVA17")
 
 String getDownloadURL(String arch, String os) { // No autocomplete :sad_face:
     def json$1 = new URL("https://api.github.com/repos/adoptium/temurin17-binaries/releases?per_page=1").getText()
@@ -23,9 +23,9 @@ String getDownloadURL(String arch, String os) { // No autocomplete :sad_face:
     return null
 }
 
-if (java17path == null) {
+if (Utils.java17path == null) {
     def jdkpath = Paths.get(project.rootDir.toString(), "tools/jdk17")
-    java17path = jdkpath.toAbsolutePath()
+    Utils.java17path = jdkpath.toAbsolutePath()
 
     if (!Files.exists(jdkpath)) {
         println "Downloading JDK17..."
@@ -70,6 +70,7 @@ if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
 }
 
 class Utils {
+    static String java17path = null;
 
     private Utils() {}
 
@@ -142,7 +143,7 @@ class Utils {
         List<String> command = new ArrayList<>()
         command.add(shell)
         command.add(cmd)
-        command.add("-Dorg.gradle.java.home=" + java17path)
+        command.add("-Dorg.gradle.java.home=" + Utils.java17path.toString())
         command.addAll(Arrays.asList(tasks))
         Process process = new ProcessBuilder(command).directory(new File(root.toString())).start()
         StreamGobbler out = new StreamGobbler(process.inputStream)
@@ -157,7 +158,7 @@ class Utils {
 
     static def enigma(Path jar, Path source, Path dest, Path tiny2map) {
         new File(dest.toString()).mkdirs() // JIC directory does not exists
-        Path jre = Paths.get(java17path, "bin", "java")
+        Path jre = Paths.get(Utils.java17path.toString(), "bin", "java")
 
         List<String> command = new ArrayList<String>()
         command.add(jre.toAbsolutePath().normalize().toString())
@@ -241,7 +242,7 @@ class Utils {
 
     static def tiny(Path jar, Path source, Path dest, Path tiny2map, String from, String to) {
         new File(dest.parent.toString()).mkdirs() // JIC directory does not exists
-        Path jre = Paths.get(java17path, "bin", "java")
+        Path jre = Paths.get(Utils.java17path.toString(), "bin", "java")
 
         List<String> command = new ArrayList<String>()
         command.add(jre.toAbsolutePath().normalize().toString())
