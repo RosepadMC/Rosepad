@@ -1,12 +1,60 @@
 import java.nio.file.*
 import java.util.zip.*
 
+import groovy.json.JsonSlurper
+
 group 'net.buj'
 version '1.1-SNAPSHOT'
 
-if (System.getenv("TOOLKIT_JAVA17") == null) {
-    throw new RuntimeException("Running Rosepad toolchain requires JDK 17. Set TOOLKIT_JAVA17 environment variable " +
-        "to your JDK 17 installation")
+def java17path = System.getenv("TOOLKIT_JAVA17")
+
+String getDownloadURL(String arch, String os) { // No autocomplete :sad_face:
+    def json$1 = new URL("https://api.github.com/repos/adoptium/temurin17-binaries/releases?per_page=1").getText()
+    def js     = new JsonSlurper()
+    def json   = js.parseText(json$1)[0].assets
+    def name   = "OpenJDK17U-jdk_${arch}_${os}_".toString()
+
+    for (def object : json) {
+        if (!object.name.startsWith(name)) continue
+
+        return object.browser_download_url
+    }
+
+    return null
+}
+
+if (java17path == null) {
+    def jdkpath = Paths.get(project.rootDir.toString(), "tools/jdk17")
+    java17path = jdkpath.toAbsolutePath()
+
+    if (!Files.exists(jdkpath)) {
+        println "Downloading JDK17..."
+
+        String url = getDownloadURL(
+            System.properties['os.arch'].replace("amd64", "x64"),
+            System.properties['os.name'].toLowerCase()
+        )
+
+        if (url == null) throw new RuntimeException("Running Rosepad toolchain requires JDK 17. " +
+                                                    "Set TOOLKIT_JAVA17 environment variable " +
+                                                    "to your JDK 17 installation")
+        Utils.fetch(url, Paths.get(project.rootDir.toString(), "tools/jdk17.tar.gz"))
+
+        println "Unpacking JDK17..."
+
+        try {
+            copy {
+                from(tarTree(Paths.get(project.rootDir.toString(), "tools/jdk17.tar.gz")))
+                into(jdkpath)
+            }
+        } catch (Exception ignored) {
+            println "Error while unpacking JDK, ignoring"
+        }
+
+        Files.list(Files.list(Paths.get(project.rootDir.toString(), "tools/jdk17")).findAny().get()).forEach(e -> {
+            Files.move(e, jdkpath.resolve(e.fileName));
+        })
+    }
 }
 
 if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
@@ -87,7 +135,7 @@ class Utils {
     static def gradlew(Path root, String... tasks) { // Leftover from development phase
         String shell = System.properties['os.name'].toLowerCase().contains('windows')
                 ? "cmd.exe" // Because windows
-                : "/usr/bin/bash"
+                : "/usr/bin/sh"
         String cmd = System.properties['os.name'].toLowerCase().contains('windows')
                 ? "gradlew.bat" // Because windows
                 : "gradlew"
@@ -133,62 +181,62 @@ class Utils {
     }
     
     static def decompile(Path jar, Path source, Path dest, Path tiny2map) {
-    	enigma(jar, source, dest, tiny2map)
-    	
-    	LoopFunction loop1 = (Path p) -> {}
-    	loop1 = (Path p) -> {
-    		File file = p.toFile()
-    		if (file.isDirectory()) {
- 				for (String sf : file.list()) {
- 					if (loop1(p.resolve(sf))) {
- 						return true;
- 					}
- 				}
-    		}
-    		else if (file.isFile()) {
-    			FileInputStream stream = new FileInputStream(file)
-    			Scanner scanner = new Scanner(stream)
-    			if (scanner.nextLine().startsWith("java.lang.ArrayIndexOutOfBoundsException")) {
-    				stream.close()
-    				scanner.close()
-    				return true
-    			}
-    			while (scanner.hasNextLine()) {
-    				String line = scanner.nextLine()
-    				if (line.contains('throw new IllegalStateException("An error occurred while decompiling this method.");')) {
-    					stream.close()
-    					scanner.close()
-    					return true
-    				}
-    			}
-    			stream.close()
-    			scanner.close()
-    		}
-    		return false
-    	}
-    	if (!loop1(dest)) return
+        enigma(jar, source, dest, tiny2map)
+
+        LoopFunction loop1 = (Path p) -> {}
+        loop1 = (Path p) -> {
+            File file = p.toFile()
+            if (file.isDirectory()) {
+                 for (String sf : file.list()) {
+                     if (loop1(p.resolve(sf))) {
+                         return true;
+                     }
+                 }
+            }
+            else if (file.isFile()) {
+                FileInputStream stream = new FileInputStream(file)
+                Scanner scanner = new Scanner(stream)
+                if (scanner.nextLine().startsWith("java.lang.ArrayIndexOutOfBoundsException")) {
+                    stream.close()
+                    scanner.close()
+                    return true
+                }
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine()
+                    if (line.contains('throw new IllegalStateException("An error occurred while decompiling this method.");')) {
+                        stream.close()
+                        scanner.close()
+                        return true
+                    }
+                }
+                stream.close()
+                scanner.close()
+            }
+            return false
+        }
+        if (!loop1(dest)) return
    
-   		Path fix = dest.parent.resolve(".java-tmp")
-    	rm(fix)
-    	
-    	LoopFunction2 loop2 = (Path p1, Path p2) -> {}
-    	loop2 = (Path p1, Path p2) -> {
- 			File file = p1.toFile()
- 			if (file.isDirectory()) {
- 				for (String sf : file.list()) {
- 					loop2(p1.resolve(sf), p2.resolve(sf))
- 				}
- 			}
- 			else if (file.isFile() && loop1(p1)) {
- 				cp(p2, p1)
- 			}
-    	}
-    	do {
-    		println "Detected damaged files, re-running enigma..."
-    		enigma(jar, source, fix, tiny2map)
-    		loop2(dest, fix)
-    		rm(fix)
-    	} while (loop1(dest))
+        Path fix = dest.parent.resolve(".java-tmp")
+        rm(fix)
+
+        LoopFunction2 loop2 = (Path p1, Path p2) -> {}
+        loop2 = (Path p1, Path p2) -> {
+             File file = p1.toFile()
+             if (file.isDirectory()) {
+                 for (String sf : file.list()) {
+                     loop2(p1.resolve(sf), p2.resolve(sf))
+                 }
+             }
+             else if (file.isFile() && loop1(p1)) {
+                 cp(p2, p1)
+             }
+        }
+        do {
+            println "Detected damaged files, re-running enigma..."
+            enigma(jar, source, fix, tiny2map)
+            loop2(dest, fix)
+            rm(fix)
+        } while (loop1(dest))
     }
 
     static def tiny(Path jar, Path source, Path dest, Path tiny2map, String from, String to) {
