@@ -142,7 +142,7 @@ class Utils {
         List<String> command = new ArrayList<>()
         command.add(shell)
         command.add(cmd)
-        command.add("-Dorg.gradle.java.home=" + System.getenv("TOOLKIT_JAVA17"))
+        command.add("-Dorg.gradle.java.home=" + java17path)
         command.addAll(Arrays.asList(tasks))
         Process process = new ProcessBuilder(command).directory(new File(root.toString())).start()
         StreamGobbler out = new StreamGobbler(process.inputStream)
@@ -157,7 +157,7 @@ class Utils {
 
     static def enigma(Path jar, Path source, Path dest, Path tiny2map) {
         new File(dest.toString()).mkdirs() // JIC directory does not exists
-        Path jre = Paths.get(System.getenv("TOOLKIT_JAVA17"), "bin", "java")
+        Path jre = Paths.get(java17path, "bin", "java")
 
         List<String> command = new ArrayList<String>()
         command.add(jre.toAbsolutePath().normalize().toString())
@@ -241,7 +241,7 @@ class Utils {
 
     static def tiny(Path jar, Path source, Path dest, Path tiny2map, String from, String to) {
         new File(dest.parent.toString()).mkdirs() // JIC directory does not exists
-        Path jre = Paths.get(System.getenv("TOOLKIT_JAVA17"), "bin", "java")
+        Path jre = Paths.get(java17path, "bin", "java")
 
         List<String> command = new ArrayList<String>()
         command.add(jre.toAbsolutePath().normalize().toString())
