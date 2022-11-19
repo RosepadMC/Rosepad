@@ -18,7 +18,7 @@ focused on adding new features to the game.
 ## Running
 
 Download the jar from the [Releases Page](https://github.com/RosepadMC/Rosepad/releases/tag/beta) or
-the lastest [Dev Build](https://nightly.link/RosepadMC/Rosepad/workflows/main/master) if you want to
+the latest [Dev Build](https://nightly.link/RosepadMC/Rosepad/workflows/main/master) if you want to
 help testing Rosepad
 
 Installation help
