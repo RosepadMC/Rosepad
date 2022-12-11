@@ -32,7 +32,7 @@ if (Utils.java17path == null) {
 
         String url = getDownloadURL(
             System.properties['os.arch'].replace("amd64", "x64"),
-            System.properties['os.name'].toLowerCase()
+            System.properties['os.name'].toLowerCase().split(" ")[0]
         )
 
         if (url == null) throw new RuntimeException("Running Rosepad toolchain requires JDK 17. " +
