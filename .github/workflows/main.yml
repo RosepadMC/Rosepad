@@ -59,10 +59,10 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: RosepadClient
-          path: build/RosepadClient.jar
+          path: loader/build/libs/clientLoader.jar
 
       - name: capture server
         uses: actions/upload-artifact@v3
         with:
           name: RosepadServer
-          path: build/RosepadServer.jar
+          path: loader/build/libs/serverLoader.jar
