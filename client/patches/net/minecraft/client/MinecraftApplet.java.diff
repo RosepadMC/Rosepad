@@ -1,0 +1,63 @@
+--- MinecraftApplet.java
++++ MinecraftApplet.java
+@@ -14,9 +14,9 @@
+     private Minecraft mc;
+     private Thread mcThread;
+-    
++
+     public MinecraftApplet() {
+         this.mcThread = null;
+     }
+-    
++
+     public void init() {
+         if (!Minecraft.isValidName(this.getParameter("username"))) {
+@@ -53,17 +53,17 @@
+         }
+         this.mc.appletMode = true;
+-        this.setLayout((LayoutManager)new BorderLayout());
+-        this.add((Component)this.mcCanvas, "Center");
++        this.setLayout(new BorderLayout());
++        this.add(this.mcCanvas, "Center");
+         this.mcCanvas.setFocusable(true);
+         this.validate();
+     }
+-    
++
+     public void startMainThread() {
+         if (this.mcThread != null) {
+             return;
+         }
+-        (this.mcThread = new Thread((Runnable)this.mc, "Minecraft main thread")).start();
++        (this.mcThread = new Thread(this.mc, "Minecraft main thread")).start();
+     }
+-    
++
+     public void start() {
+         if (this.mc != null) {
+@@ -71,5 +71,5 @@
+         }
+     }
+-    
++
+     public void stop() {
+         if (this.mc != null) {
+@@ -77,9 +77,9 @@
+         }
+     }
+-    
++
+     public void destroy() {
+         this.shutdown();
+     }
+-    
++
+     public void shutdown() {
+         if (this.mcThread == null) {
+@@ -100,5 +100,5 @@
+         this.mcThread = null;
+     }
+-    
++
+     public void clearApplet() {
+         this.mcCanvas = null;

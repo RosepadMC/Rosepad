@@ -1,15 +1,34 @@
 --- ThreadConnectToServer.java
 +++ ThreadConnectToServer.java
-@@ -10,4 +10,5 @@
-     final int port;
+@@ -7,18 +7,17 @@
+ class ThreadConnectToServer extends Thread {
+     final Minecraft mc;
+-    final String ip;
+-    final int port;
      final GuiConnecting connectingGui;
 +    final Object threadSyncObject = new Object();
++    final ConnectionChannelAdapter adapter;
      
-     ThreadConnectToServer(final GuiConnecting guiConnecting, final Minecraft minecraft, final String ip, final int port) {
-@@ -17,5 +18,5 @@
-         this.port = port;
+-    ThreadConnectToServer(final GuiConnecting guiConnecting, final Minecraft minecraft, final String ip, final int port) {
++    ThreadConnectToServer(final GuiConnecting guiConnecting, final Minecraft minecraft, final ConnectionChannelAdapter adapter) {
+         this.connectingGui = guiConnecting;
+         this.mc = minecraft;
+-        this.ip = ip;
+-        this.port = port;
++        this.adapter = adapter;
      }
 -    
 +
      public void run() {
          try {
+-            this.connectingGui.clientManager = new NetClientHandler(this.mc, this.ip, this.port).netManager;
++            this.connectingGui.clientManager = new NetClientHandler(this.mc, this.adapter).netManager;
+             if (this.connectingGui.cancelled) {
+                 return;
+@@ -30,5 +29,5 @@
+                 return;
+             }
+-            this.mc.displayGuiScreen(new GuiConnectFailed("Failed to connect to the server", new StringBuilder("Unknown host '").append(this.ip).append("'").toString()));
++            this.mc.displayGuiScreen(new GuiConnectFailed("Failed to connect to the server", new StringBuilder("Unknown host '").append(adapter.displayHost()).append("'").toString()));
+         }
+         catch (ConnectException ex) {

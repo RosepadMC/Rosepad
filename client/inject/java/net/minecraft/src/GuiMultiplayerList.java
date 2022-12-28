@@ -3,6 +3,12 @@ package net.minecraft.src;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -161,9 +167,22 @@ public class GuiMultiplayerList extends GuiScreen {
                     String host = serverList.get(button.id - 7).split(" ")[0];
                     final String[] split = host.split(":");
                     try {
-                        this.mc.displayGuiScreen(new GuiConnecting(this.mc, split[0], (split.length > 1) ? Integer.parseInt(split[1]) : 25565));
+                        ConnectionChannelAdapter adapter;
+                        if (split[0].equals("ws") || split[0].equals("wss")) {
+                            adapter = new WebSocketConnectionChannelAdapter(new URI(host));
+                        }
+                        else {
+                            adapter = new JSockConnectionChannelAdapter(new Socket(InetAddress.getByName(split[0]), split.length > 1 ? Integer.parseInt(split[1]) : 25565));
+                        }
+                        this.mc.displayGuiScreen(new GuiConnecting(this.mc, adapter));
+                    } catch (URISyntaxException e) {
+                        this.mc.displayGuiScreen(new GuiConnectFailed("Failed to connect to the server", "Failed to parse URI"));
                     } catch (NumberFormatException e) {
-                        this.mc.displayGuiScreen(new GuiConnectFailed("Failed to parse URI", "Port number is invalid"));
+                        this.mc.displayGuiScreen(new GuiConnectFailed("Failed to connect to the server", "Failed to parse port"));
+                    } catch (UnknownHostException e) {
+                        this.mc.displayGuiScreen(new GuiConnectFailed("Failed to connect to the server", "Unknown host"));
+                    } catch (IOException e) {
+                        this.mc.displayGuiScreen(new GuiConnectFailed("Failed to connect to the server", "Unknown error"));
                     }
                 }
                 break;

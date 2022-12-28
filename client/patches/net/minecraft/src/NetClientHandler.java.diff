@@ -1,18 +1,19 @@
 --- NetClientHandler.java
 +++ NetClientHandler.java
-@@ -5,4 +5,7 @@
- import java.net.Socket;
- import java.net.InetAddress;
+@@ -2,7 +2,6 @@
+ 
+ import java.io.IOException;
+-import java.net.UnknownHostException;
+-import java.net.Socket;
+-import java.net.InetAddress;
 +import java.util.ArrayList;
-+import java.util.Arrays;
 +import java.util.List;
  import java.util.Random;
  import net.minecraft.client.Minecraft;
-@@ -14,4 +17,11 @@
+@@ -14,4 +13,10 @@
      protected boolean posUpdated;
      protected Random rand;
-+    protected final String ip;
-+    protected final int port;
++    protected final ConnectionChannelAdapter adapter;
 +    public static RosepadMeta rosepadMeta  // This is absolutely terrible thing I've done,
 +                                           // and I have no idea how to fix that. Feel
 +                                           // free to make an RP
@@ -20,24 +21,27 @@
 +    private final List<Packet> deferredPacketList = new ArrayList<>();
      
      protected boolean shouldCreateNetManager() {
-@@ -22,11 +32,13 @@
+@@ -22,11 +27,16 @@
          return 0;
      }
 -    
 -    public NetClientHandler(final Minecraft minecraft, final String ip, final int port) throws UnknownHostException, IOException {
 +
-+    public NetClientHandler(final Minecraft minecraft, final String ip, final int port) throws IOException {
-+        this.ip = ip;
-+        this.port = port;
++    public NetClientHandler(final Minecraft minecraft, final ConnectionChannelAdapter adapter) throws IOException {
++        this.adapter = adapter;
          this.posUpdated = false;
          this.rand = new Random();
          this.mc = minecraft;
          if (this.shouldCreateNetManager()) {
 -            this.netManager = new NetworkManager(new Socket(InetAddress.getByName(ip), port), "Client", (NetHandler)this);
-+            this.netManager = new NetworkManager(minecraft, new Socket(InetAddress.getByName(ip), port), "Client", this);
++            this.netManager = new NetworkManager(
++                                                 minecraft,
++                                                 adapter,
++                                                 "Client",
++                                                 this);
          }
      }
-@@ -38,8 +50,8 @@
+@@ -38,8 +48,8 @@
      @Override
      public void handleLogin(final Packet1Login packet) {
 -        System.out.println(new StringBuilder("Server is using ULPP version ").append(Integer.toString(packet.protocolVersion)).toString());
@@ -45,10 +49,10 @@
          final int minVersion = Integer.min(packet.protocolVersion, 1);
          if (minVersion > this.GetULPPVer()) {
 -            final NetHandler newHandler = ULPPManager.CreateClientHandler(minVersion, this.mc, this.netManager);
-+            final NetHandler newHandler = ULPPManager.CreateClientHandler(minVersion, this.mc, this.netManager, ip, port);
++            final NetHandler newHandler = ULPPManager.CreateClientHandler(minVersion, this.mc, this.netManager, this.adapter);
              this.netManager.switchHandler(newHandler);
              newHandler.handleLogin(packet);
-@@ -49,4 +61,7 @@
+@@ -49,4 +59,7 @@
          this.worldClient = new WorldClient(this);
          this.worldClient.multiplayerWorld = true;
 +        for (Packet $packet : deferredPacketList) {
@@ -56,7 +60,7 @@
 +        }
          this.mc.changeWorld1(this.worldClient);
          this.mc.displayGuiScreen(new GuiDownloadTerrain(this));
-@@ -134,14 +149,13 @@
+@@ -134,14 +147,13 @@
              return;
          }
 -        final Entity entity4;
@@ -80,7 +84,7 @@
 +        );
      }
      
-@@ -169,11 +183,7 @@
+@@ -169,11 +181,7 @@
          }
          thePlayer.ySize = 0.0f;
 -        final EntityPlayerSP entityPlayerSP = thePlayer;
@@ -95,7 +99,7 @@
 +        thePlayer.motionX = 0.0;
          thePlayer.setPositionAndRotation(posX, posY, posZ, rotationYaw, rotationPitch);
          packet.xPosition = thePlayer.posX;
-@@ -193,4 +203,8 @@
+@@ -193,4 +201,8 @@
      @Override
      public void handlePreChunk(final Packet50PreChunk packet) {
 +        if (this.worldClient == null) {
@@ -104,21 +108,21 @@
 +        }
          this.worldClient.doPreChunk(packet.xPos, packet.zPos, packet.mode);
      }
-@@ -256,5 +270,5 @@
+@@ -256,5 +268,5 @@
          }
          if (entityItem != null) {
 -            this.worldClient.playSoundAtEntity((Entity)entityItem, "random.pop", 0.2f, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7f + 1.0f) * 2.0f);
 +            this.worldClient.playSoundAtEntity(entityItem, "random.pop", 0.2f, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7f + 1.0f) * 2.0f);
              this.mc.effectRenderer.addEffect(new EntityPickupFX(this.mc.theWorld, entityItem, thePlayer, -0.5f));
              this.worldClient.removeEntityFromWorld(packet.collectedEntityID);
-@@ -300,5 +314,5 @@
+@@ -300,5 +312,5 @@
      public void handleHandshake(final Packet2Handshake packet) {
          final boolean online = this.mc.session.sessionID.startsWith("token");
 -        final String usedPassword = ULPPManager.GetVersionString(online);
 +        final String usedPassword = ULPPManager.GetVersionString(online, this.mc.gameSettings.acceptRemoteScripts);
          this.addToSendQueue(new Packet1Login(this.mc.session.username, usedPassword, 2));
      }
-@@ -358,3 +372,34 @@
+@@ -358,3 +370,34 @@
          this.worldClient.spawnZ = packet.zPos;
      }
 +
@@ -145,7 +149,7 @@
 +        System.out.println("Remote server is running Rosepad, enabling Rosepad-specific features...");
 +
 +        Packet130RosepadMeta meta = new Packet130RosepadMeta().Default();
-+        meta.host = ip + ":" + port;
++        meta.host = adapter.displayHost();
 +        this.addToSendQueue(meta);
 +
 +        // TODO: Check meta flags

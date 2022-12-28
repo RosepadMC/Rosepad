@@ -11,8 +11,8 @@
      
 -    public NetULPP1ClientHandler(final Minecraft minecraft, final NetworkManager netManager) throws IOException {
 -        super(minecraft, "", 0);
-+    public NetULPP1ClientHandler(final Minecraft minecraft, final NetworkManager netManager, String ip, int port) throws IOException {
-+        super(minecraft, ip, port);
++    public NetULPP1ClientHandler(final Minecraft minecraft, final NetworkManager netManager, ConnectionChannelAdapter adapter) throws IOException {
++        super(minecraft, adapter);
          this.posUpdated = false;
          this.rand = new Random();
 @@ -48,5 +49,6 @@

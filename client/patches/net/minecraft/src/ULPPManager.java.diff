@@ -48,12 +48,12 @@
 -    
 -    public static NetHandler CreateClientHandler(final int version, final Minecraft mc, final NetworkManager netManager) {
 +
-+    public static NetHandler CreateClientHandler(final int version, final Minecraft mc, final NetworkManager netManager, String ip, int port) {
++    public static NetHandler CreateClientHandler(final int version, final Minecraft mc, final NetworkManager netManager, ConnectionChannelAdapter adapter) {
          try {
              switch (version) {
                  case 1: {
 -                    return new NetULPP1ClientHandler(mc, netManager);
-+                    return new NetULPP1ClientHandler(mc, netManager, ip, port);
++                    return new NetULPP1ClientHandler(mc, netManager, adapter);
                  }
                  default: {
 -                    throw new RuntimeException(new StringBuilder("Unknown ULPP version ").append(Integer.toString(version)).toString());

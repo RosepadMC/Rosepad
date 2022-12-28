@@ -9,12 +9,6 @@ focused on adding new features to the game.
 2. Clone this repository `$ git clone https://github.com/RosepadMC/Rosepad --recursive`
 3. Run `./gradlew prepare injectClasses processPatches shadowJar pack` and wait for build to finish
 
-> /!\\ Caution! /!\\
->
-> If you have multiple JDKs installed, use `-Dorg.gradle.java.home`
-> JVM argument to force use of JDK8. A warning will be displayed if
-> building with JDK9 and above
-
 ## Running
 
 Download the jar from the [Releases Page](https://github.com/RosepadMC/Rosepad/releases/tag/beta) or
@@ -24,7 +18,7 @@ help testing Rosepad
 Installation help
 - [MultiMC/PrismLauncher](docs/installing/multimc.md)
 
-Rosepad can generate keys, therefore no online registation required
+Rosepad can generate keys, therefore no online registration required
 
 ## Contributing
 

@@ -9,12 +9,16 @@ plugins {
 group 'net.buj'
 version '1.1-SNAPSHOT'
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
 repositories {
     mavenCentral()
     maven { url "https://jitpack.io" }
 }
-
-project.configurations.implementation.canBeResolved(true)
 
 dependencies {
     implementation files('../libs/codecjorbis-20101023.jar')
@@ -27,6 +31,7 @@ dependencies {
     implementation group: 'org.json', name: 'json', version: '20220320'
     implementation 'com.github.Vatuu:discord-rpc:1.6.2'
     implementation project(':rml')
+    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
 }
 
 jar {
@@ -49,7 +54,7 @@ abstract class DeletePatches extends DefaultTask {
         }
         file.delete()
     }
-	
+
 	@TaskAction
 	def delete() {
 		rm(Paths.get(rmPath))
@@ -57,12 +62,12 @@ abstract class DeletePatches extends DefaultTask {
 }
 
 abstract class InjectClasses extends DefaultTask {
-	
+
 	@Input
 	String source = "none";
 	@Input
 	String dest = "none";
-	
+
     static def cp(Path source, Path dest) {
         File file = new File(source.toString())
         if (file.isDirectory()) {
@@ -75,7 +80,7 @@ abstract class InjectClasses extends DefaultTask {
         	Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING)
         }
     }
-	
+
 	@TaskAction
 	def copy() {
 		cp(Paths.get(source), Paths.get(dest))
@@ -90,7 +95,7 @@ abstract class CreateInjectClasses extends DefaultTask {
 	String orig = "none";
 	@Input
 	String dest = "none";
-	
+
     static def cpIfMissing(Path source, Path check, Path dest) {
         File file = source.toFile()
         if (file.isDirectory()) {
@@ -103,7 +108,7 @@ abstract class CreateInjectClasses extends DefaultTask {
         	Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING)
         }
     }
-    
+
     static def rm(Path path) {
         File file = new File(path.toString())
         if (file.isDirectory()) {
@@ -113,7 +118,7 @@ abstract class CreateInjectClasses extends DefaultTask {
         }
         file.delete()
     }
-	
+
 	@TaskAction
 	def copy() {
 		rm(Paths.get(dest))
@@ -185,6 +190,8 @@ task runClient (type: JavaExec) {
     jvmArgs = getRunJVMArgs("1024M", libraryPath)
     environment("HOME", "${projectDir}/run/")
     workingDir = makeAndGetDir("${projectDir}/run/")
+
+    dependsOn "shadowJar"
 }
 
 processPatches {
@@ -201,7 +208,8 @@ createPatches {
 }
 
 shadowJar {
-    configurations = [project.configurations.implementation]
+    dependsOn "processPatches"
+    dependsOn "injectClasses"
 }
 
 sourceSets {

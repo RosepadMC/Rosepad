@@ -3,76 +3,97 @@ import java.util.zip.*
 
 import groovy.json.JsonSlurper
 
+plugins {
+    id "java"
+}
+
 group 'net.buj'
 version '1.1-SNAPSHOT'
 
-Utils.java17path = System.getenv("TOOLKIT_JAVA17")
-
-String getDownloadURL(String arch, String os) { // No autocomplete :sad_face:
-    def json$1 = new URL("https://api.github.com/repos/adoptium/temurin17-binaries/releases?per_page=1").getText()
-    def js     = new JsonSlurper()
-    def json   = js.parseText(json$1)[0].assets
-    def name   = "OpenJDK17U-jdk_${arch}_${os}_".toString()
-
-    for (def object : json) {
-        if (!object.name.startsWith(name)) continue
-
-        return object.browser_download_url
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
     }
-
-    return null
 }
 
-if (Utils.java17path == null) {
-    def jdkpath = Paths.get(project.rootDir.toString(), "tools/jdk17")
-    Utils.java17path = jdkpath.toAbsolutePath()
+//if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+//    System.err.println("/!\\ Warning! /!\\")
+//    System.err.println("Rosepad ONLY supports Java 8")
+//    System.err.println("")
+//    System.err.println("Compiling Rosepad with anything other than JDK 8 might result in " +
+//            "broken jar file. Use -Dorg.gradle.java.home=/path/to/your/java8/home to change your JDK version " +
+//            "for this build")
+//    System.err.println("")
+//    System.err.println("Build will resume in 10 seconds")
+//    Thread.sleep(10000)
+//}
 
-    if (!Files.exists(jdkpath)) {
-        println "Downloading JDK17..."
+tasks.register("setupJDK") {
+    doLast {
+        Utils.java17path = System.getenv("TOOLKIT_JAVA17")
 
+<<<<<<< HEAD
         String url = getDownloadURL(
             System.properties['os.arch'].replace("amd64", "x64"),
             System.properties['os.name'].toLowerCase().split(" ")[0]
         )
+=======
+        if (Utils.java17path == null) {
+            def jdkpath = Paths.get(project.rootDir.toString(), "tools/jdk17")
+            Utils.java17path = jdkpath.toAbsolutePath()
+>>>>>>> 41fc2dd (RosepadLoader n stuff)
 
-        if (url == null) throw new RuntimeException("Running Rosepad toolchain requires JDK 17. " +
-                                                    "Set TOOLKIT_JAVA17 environment variable " +
-                                                    "to your JDK 17 installation")
-        Utils.fetch(url, Paths.get(project.rootDir.toString(), "tools/jdk17.tar.gz"))
+            if (!Files.exists(jdkpath)) {
+                println "Downloading JDK17..."
 
-        println "Unpacking JDK17..."
+                String url = Utils.getDownloadURL(
+                    System.properties['os.arch'].replace("amd64", "x64"),
+                    System.properties['os.name'].toLowerCase()
+                )
 
-        try {
-            copy {
-                from(tarTree(Paths.get(project.rootDir.toString(), "tools/jdk17.tar.gz")))
-                into(jdkpath)
+                if (url == null) throw new RuntimeException("Running Rosepad toolchain requires JDK 17. " +
+                    "Set TOOLKIT_JAVA17 environment variable " +
+                    "to your JDK 17 installation")
+                Utils.fetch(url, Paths.get(project.rootDir.toString(), "tools/jdk17.tar.gz"))
+
+                println "Unpacking JDK17..."
+
+                try {
+                    copy {
+                        from(tarTree(Paths.get(project.rootDir.toString(), "tools/jdk17.tar.gz")))
+                        into(jdkpath)
+                    }
+                } catch (Exception ignored) {
+                    println "Error while unpacking JDK, ignoring"
+                }
+
+                Files.list(Files.list(Paths.get(project.rootDir.toString(), "tools/jdk17")).findAny().get()).forEach(e -> {
+                    Files.move(e, jdkpath.resolve(e.fileName));
+                })
             }
-        } catch (Exception ignored) {
-            println "Error while unpacking JDK, ignoring"
         }
-
-        Files.list(Files.list(Paths.get(project.rootDir.toString(), "tools/jdk17")).findAny().get()).forEach(e -> {
-            Files.move(e, jdkpath.resolve(e.fileName));
-        })
     }
-}
-
-if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-    System.err.println("/!\\ Warning! /!\\")
-    System.err.println("Rosepad ONLY supports Java 8")
-    System.err.println("")
-    System.err.println("Compiling Rosepad with anything other than JDK 8 might result in " +
-            "broken jar file. Use -Dorg.gradle.java.home=/path/to/your/java8/home to change your JDK version " +
-            "for this build")
-    System.err.println("")
-    System.err.println("Build will resume in 10 seconds")
-    Thread.sleep(10000)
 }
 
 class Utils {
     static String java17path = null;
 
     private Utils() {}
+
+    static String getDownloadURL(String arch, String os) { // No autocomplete :sad_face:
+        def json$1 = new URL("https://api.github.com/repos/adoptium/temurin17-binaries/releases?per_page=1").getText()
+        def js     = new JsonSlurper()
+        def json   = js.parseText(json$1)[0].assets
+        def name   = "OpenJDK17U-jdk_${arch}_${os}_".toString()
+
+        for (def object : json) {
+            if (!object.name.startsWith(name)) continue
+
+            return object.browser_download_url
+        }
+
+        return null
+    }
 
     static def fetch(String file, Path path) {
         if (new File(path.toString()).isFile()) return
@@ -111,51 +132,6 @@ class Utils {
         zis.close()
     }
 
-    static def zip(Path dir, Path zip) {
-        ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(zip.toString()))
-        LoopFunction3 loop = (Path path, String entry) -> {}
-        loop = (Path path, String entry) -> {
-            for (File it : path.toFile().listFiles()) {
-                if (it.isFile()) {
-                    zipFile.putNextEntry(new ZipEntry(entry + it.name))
-                    def buffer = new byte[it.size()]
-                    it.withInputStream { str ->
-                        zipFile.write(buffer, 0, str.read(buffer))
-                    }
-                    zipFile.closeEntry()
-                }
-                else if (it.isDirectory()) {
-                    loop.run(it.toPath(), entry + it.name + "/")
-                }
-            }
-        }
-        loop.run(dir, "")
-        zipFile.close()
-    }
-
-    static def gradlew(Path root, String... tasks) { // Leftover from development phase
-        String shell = System.properties['os.name'].toLowerCase().contains('windows')
-                ? "cmd.exe" // Because windows
-                : "/usr/bin/sh"
-        String cmd = System.properties['os.name'].toLowerCase().contains('windows')
-                ? "gradlew.bat" // Because windows
-                : "gradlew"
-        List<String> command = new ArrayList<>()
-        command.add(shell)
-        command.add(cmd)
-        command.add("-Dorg.gradle.java.home=" + Utils.java17path.toString())
-        command.addAll(Arrays.asList(tasks))
-        Process process = new ProcessBuilder(command).directory(new File(root.toString())).start()
-        StreamGobbler out = new StreamGobbler(process.inputStream)
-        StreamGobbler err = new StreamGobbler(process.errorStream)
-        out.start()
-        err.start()
-
-        if (process.waitFor() != 0) {
-            throw new RuntimeException("Failed to build enigma")
-        }
-    }
-
     static def enigma(Path jar, Path source, Path dest, Path tiny2map) {
         new File(dest.toString()).mkdirs() // JIC directory does not exists
         Path jre = Paths.get(Utils.java17path.toString(), "bin", "java")
@@ -180,7 +156,7 @@ class Utils {
             throw new RuntimeException("Failed to decompile source")
         }
     }
-    
+
     static def decompile(Path jar, Path source, Path dest, Path tiny2map) {
         enigma(jar, source, dest, tiny2map)
 
@@ -190,7 +166,7 @@ class Utils {
             if (file.isDirectory()) {
                  for (String sf : file.list()) {
                      if (loop1(p.resolve(sf))) {
-                         return true;
+                         return true
                      }
                  }
             }
@@ -216,7 +192,7 @@ class Utils {
             return false
         }
         if (!loop1(dest)) return
-   
+
         Path fix = dest.parent.resolve(".java-tmp")
         rm(fix)
 
@@ -286,105 +262,6 @@ class Utils {
         else if (file.isFile()) {
             Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING)
         }
-    }
-
-    static class Patch {
-        boolean remove
-        int line
-        String text
-        int patchFileLine
-
-        Patch(boolean remove, int line, String text, int patchFileLine) {
-            this.remove = remove
-            this.line = line
-            this.text = text
-            this.patchFileLine = patchFileLine
-        }
-    }
-
-    static class PatchFile {
-        Path filename
-        List<Patch> patches
-
-        PatchFile(Path filename, List<Patch> patches) {
-            this.filename = filename
-            this.patches = patches
-        }
-    }
-
-    static PatchFile readPatchFile(Path mainDir, Path patchFile) {
-        FileReader reader = new FileReader(patchFile.toFile())
-        Scanner scanner = new Scanner(reader)
-        List<Paths> patches = new ArrayList<>()
-
-        Path filename = Paths.get(mainDir.toString(), scanner.nextLine())
-
-        int li = 0
-        while (scanner.hasNextLine()) {
-            li++
-            String[] line = scanner.nextLine().trim().split(" ")
-            if (line.length < 3) continue
-            StringBuilder path = new StringBuilder()
-            for (int i = 2; i < line.length; i++) path.append(" ").append(line[i])
-            int lineNum = Integer.parseUnsignedInt(line[0]) - 1
-            boolean remove = line[1] == "-"
-
-            patches.add(new Patch(remove, lineNum, path.toString().trim(), li))
-        }
-
-        scanner.close()
-        reader.close()
-
-        return new PatchFile(filename, patches)
-    }
-
-    static def applyPath(Path mainDir, Path patchFile) {
-        PatchFile file = readPatchFile(mainDir, patchFile)
-        FileReader reader = new FileReader(file.filename.toFile())
-        Scanner scanner = new Scanner(reader)
-        List<String> lines = new ArrayList<>()
-
-        while (scanner.hasNextLine()) {
-            lines.add(scanner.nextLine())
-        }
-
-        scanner.close()
-        reader.close()
-
-        for (Patch patch : file.patches) {
-            if (patch.remove) {
-                StringBuilder strs = new StringBuilder()
-                for (int _i = patch.line - 2; _i < patch.line + 2; _i++) {
-                    if (_i < 0) continue
-                    if (_i >= lines.size()) continue
-                    if (_i == patch.line) strs.append("> ")
-                    else strs.append("  ")
-                    strs.append(lines.get(_i)).append("\n")
-                }
-                if (lines.get(patch.line).trim() != patch.text)
-                    throw new RuntimeException("Incorrect line " + (patch.line + 1) + "\nExpected: " + patch.text
-                            + "\nGot: " + lines.get(patch.line).trim() + "\nFile: " + file.filename.toString() + ":" +
-                            (patch.line + 1) + "\nPatch: " + patchFile.toString() + ":" + patch.patchFileLine + "\n\n"
-                            + strs)
-                if (patch.line >= lines.size())
-                    throw new RuntimeException("Incorrect line " + (patch.line + 1) + "\nExpected: " + patch.text
-                            + "\nGot: <EMPTY>\nFile: " + file.filename.toString() + ":" + (patch.line + 1) +
-                            "\nPatch: " + patchFile.toString() + ":" + patch.patchFileLine + "\n\n" + strs)
-                lines.remove(patch.line)
-            }
-            else {
-                lines.add(patch.line, patch.text)
-            }
-        }
-
-        FileWriter writer = new FileWriter(file.filename.toFile())
-
-        for (String line : lines) {
-            writer.write(line)
-            writer.write('\n')
-        }
-
-        writer.close()
     }
 }
 
@@ -531,7 +408,19 @@ interface LoopFunction3 {
     void run(Path dir, String entry)
 }
 
-tasks.register("prepare", JarEarlyPatcher)
-tasks.register("pack", ObfuscateTask)
+tasks.register("prepare", JarEarlyPatcher) {
+    dependsOn "setupJDK"
+}
+tasks.register("obfuscate", ObfuscateTask) {
+    dependsOn "setupJDK"
+    dependsOn ":client:shadowJar"
+    dependsOn ":server:shadowJar"
+}
 
-
+subprojects {
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(8)
+        }
+    }
+}
