@@ -37,7 +37,7 @@
 +        try {
 +            Render entityClassRendderObject = this.entityRenderMap.get(entityClass);
 +            if (entityClassRendderObject == null && entityClass != Entity.class) {
-+                entityClassRendderObject = this.getEntityClassRendderObject((Class<? extends Entity>) ((Object) entityClass.getSuperclass()));
++                entityClassRendderObject = this.getEntityClassRendderObject((Class<? extends Entity>) entityClass.getSuperclass());
 +                this.entityRenderMap.put(entityClass, entityClassRendderObject);
 +            }
 +            return entityClassRendderObject;

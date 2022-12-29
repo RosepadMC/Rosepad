@@ -7,7 +7,7 @@ focused on adding new features to the game.
 
 1. Install [JDK8](https://adoptium.net/temurin/releases/?version=8)
 2. Clone this repository `$ git clone https://github.com/RosepadMC/Rosepad --recursive`
-3. Run `./gradlew prepare injectClasses processPatches shadowJar pack` and wait for build to finish
+3. Run `./gradlew prepare injectClasses processPatches pack` and wait for build to finish
 
 ## Running
 
