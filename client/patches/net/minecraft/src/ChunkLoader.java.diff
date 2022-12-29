@@ -1,9 +1,65 @@
 --- ChunkLoader.java
 +++ ChunkLoader.java
+@@ -12,10 +12,10 @@
+     private File saveDir;
+     private boolean createIfNecessary;
+-    
++
+     public ChunkLoader(final File saveDir, final boolean createIfNecessary) {
+         this.saveDir = saveDir;
+         this.createIfNecessary = createIfNecessary;
+     }
+-    
++
+     private File chunkFileForXZ(final int x, final int z) {
+         final String string = new StringBuilder("c.").append(Integer.toString(x, 36)).append(".").append(Integer.toString(z, 36)).append(".dat").toString();
+@@ -42,5 +42,5 @@
+         return file3;
+     }
+-    
++
+     public Chunk loadChunk(final World world, final int x, final int z) {
+         final File chunkFileForXZ = this.chunkFileForXZ(x, z);
+@@ -71,5 +71,5 @@
+         return null;
+     }
+-    
++
+     public void saveChunk(final World world, final Chunk chunk) {
+         world.checkSessionLock();
+@@ -97,5 +97,5 @@
+         }
+     }
+-    
++
+     public void storeChunkInCompound(final Chunk chunk, final World world, final NBTTagCompound compoundTag) {
+         world.checkSessionLock();
 @@ -112,5 +112,5 @@
          final NBTTagList tag = new NBTTagList();
          for (int i = 0; i < chunk.entities.size(); ++i) {
 -            for (final Entity entity : (List)chunk.entities.get(i)) {
-+for (final Entity entity : chunk.entities.get(i)) {
++            for (final Entity entity : chunk.entities.get(i)) {
                  chunk.hasEntities = true;
                  final NBTTagCompound nbtTagCompound = new NBTTagCompound();
+@@ -129,5 +129,5 @@
+         compoundTag.setTag("TileEntities", (NBTBase)tag2);
+     }
+-    
++
+     public static Chunk loadChunkIntoWorldFromCompound(final World world, final NBTTagCompound compoundTag) {
+         final Chunk chunk = new Chunk(world, compoundTag.getInteger("xPos"), compoundTag.getInteger("zPos"));
+@@ -171,11 +171,11 @@
+         return chunk;
+     }
+-    
++
+     public void chunkTick() {
+     }
+-    
++
+     public void saveExtraData() {
+     }
+-    
++
+     public void saveExtraChunkData(final World world, final Chunk chunk) {
+     }

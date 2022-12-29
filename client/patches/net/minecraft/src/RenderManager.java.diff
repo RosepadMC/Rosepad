@@ -1,14 +1,22 @@
 --- RenderManager.java
 +++ RenderManager.java
-@@ -29,5 +29,6 @@
-     
+@@ -23,11 +23,12 @@
+     public double viewerPosY;
+     public double viewerPosZ;
+-    
++
+     static {
+         RenderManager.instance = new RenderManager();
+     }
+-    
++
      private RenderManager() {
 -        (this.entityRenderMap = (Map<Class<? extends Entity>, Render>)new HashMap()).put(EntitySpider.class, new RenderSpider());
 +        this.entityRenderMap = new HashMap<>();
 +        this.entityRenderMap.put(EntitySpider.class, new RenderSpider());
          this.entityRenderMap.put(EntityPig.class, new RenderPig(new ModelPig(), new ModelPig(0.5f), 0.7f));
          this.entityRenderMap.put(EntitySheep.class, new RenderSheep(new ModelSheep(), new ModelSheepFur(), 0.7f));
-@@ -51,17 +52,21 @@
+@@ -51,23 +52,27 @@
          this.entityRenderMap.put(EntityBoat.class, new RenderBoat());
          this.entityRenderMap.put(MobGiant.class, new RenderGiant(new ModelZombie(), 0.5f, 6.0f));
 -        final Iterator<Render> iterator = (Iterator<Render>)this.entityRenderMap.values().iterator();
@@ -18,17 +26,18 @@
 +            render.setRenderManager(this);
          }
      }
-     
+-    
 -    public Render getEntityClassRendderObject(final Class<?> entityClass) {
 -        Render entityClassRendderObject = (Render)this.entityRenderMap.get(entityClass);
 -        if (entityClassRendderObject == null && entityClass != Entity.class) {
 -            entityClassRendderObject = this.getEntityClassRendderObject(entityClass.getSuperclass());
 -            this.entityRenderMap.put(entityClass, entityClassRendderObject);
++
 +    public Render getEntityClassRendderObject(final Class<? extends Entity> entityClass) {
 +        try {
 +            Render entityClassRendderObject = this.entityRenderMap.get(entityClass);
 +            if (entityClassRendderObject == null && entityClass != Entity.class) {
-+                entityClassRendderObject = this.getEntityClassRendderObject((Class<? extends Entity>) entityClass.getSuperclass());
++                entityClassRendderObject = this.getEntityClassRendderObject((Class<? extends Entity>) ((Object) entityClass.getSuperclass()));
 +                this.entityRenderMap.put(entityClass, entityClassRendderObject);
 +            }
 +            return entityClassRendderObject;
@@ -38,4 +47,45 @@
 +            return null;
 +        }
      }
-     
+-    
++
+     public Render getEntityRenderObject(final Entity entity) {
+         return this.getEntityClassRendderObject(entity.getClass());
+     }
+-    
++
+     public void cacheActiveRenderInfo(final World world, final RenderEngine renderEngine, final FontRenderer fontRenderer, final EntityPlayer entityPlayer, final GameSettings gameSettings, final float renderPartialTick) {
+         this.worldObj = world;
+@@ -82,5 +87,5 @@
+         this.viewerPosZ = entityPlayer.lastTickPosZ + (entityPlayer.posZ - entityPlayer.lastTickPosZ) * renderPartialTick;
+     }
+-    
++
+     public void renderEntity(final Entity entity, final float renderPartialTick) {
+         final double n = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * renderPartialTick;
+@@ -92,5 +97,5 @@
+         this.renderEntityWithPosYaw(entity, n - RenderManager.renderPosX, n2 - RenderManager.renderPosY, n3 - RenderManager.renderPosZ, yaw, renderPartialTick);
+     }
+-    
++
+     public void renderEntityWithPosYaw(final Entity entity, final double x, final double y, final double z, final float yaw, final float pitch) {
+         final Render entityRenderObject = this.getEntityRenderObject(entity);
+@@ -100,9 +105,9 @@
+         }
+     }
+-    
++
+     public void set(final World world) {
+         this.worldObj = world;
+     }
+-    
++
+     public double getDistanceToCamera(final double x, final double y, final double z) {
+         final double n = x - this.viewerPosX;
+@@ -111,5 +116,5 @@
+         return n * n + n2 * n2 + n3 * n3;
+     }
+-    
++
+     public FontRenderer getFontRenderer() {
+         return this.fontRenderer;
