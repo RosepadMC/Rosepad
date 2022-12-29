@@ -35,7 +35,7 @@ jobs:
       - name: build
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: prepare injectClasses processPatches shadowJar pack
+          arguments: prepare pack
 
       #- name: setup jdk ${{ matrix.java1 }}
       #  uses: actions/setup-java@v3
