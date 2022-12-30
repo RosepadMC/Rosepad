@@ -1,0 +1,23 @@
+--- MinecraftImpl.java
++++ MinecraftImpl.java
+@@ -2,4 +2,6 @@
+ 
+ import net.minecraft.client.MinecraftApplet;
++
++import java.applet.Applet;
+ import java.awt.Canvas;
+ import java.awt.Component;
+@@ -9,10 +11,10 @@
+ public final class MinecraftImpl extends Minecraft {
+     final Frame mcFrame;
+-    
+-    public MinecraftImpl(final Component component, final Canvas canvas, final MinecraftApplet minecraftApplet, final int width, final int height, final boolean fullscreen, final Frame frame) {
++
++    public MinecraftImpl(final Component component, final Canvas canvas, final Applet minecraftApplet, final int width, final int height, final boolean fullscreen, final Frame frame) {
+         super(component, canvas, minecraftApplet, width, height, fullscreen);
+         this.mcFrame = frame;
+     }
+-    
++
+     @Override
+     public void displayUnexpectedThrowable(final UnexpectedThrowable unexpectedThrowable) {

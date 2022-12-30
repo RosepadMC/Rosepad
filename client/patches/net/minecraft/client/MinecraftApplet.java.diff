@@ -1,6 +1,23 @@
 --- MinecraftApplet.java
 +++ MinecraftApplet.java
-@@ -14,9 +14,9 @@
+@@ -1,32 +1,48 @@
+ package net.minecraft.client;
+ 
+-import java.awt.LayoutManager;
+-import java.awt.BorderLayout;
++import java.awt.*;
++
+ import net.minecraft.src.Session;
+-import java.awt.Component;
+ import net.minecraft.src.MinecraftAppletImpl;
+ import net.minecraft.src.CanvasMinecraftApplet;
+-import java.awt.Canvas;
++
+ import java.applet.Applet;
+ 
+ public class MinecraftApplet extends Applet {
+-    private Canvas mcCanvas;
++    private CanvasMinecraftApplet mcCanvas;
      private Minecraft mc;
      private Thread mcThread;
 -    
@@ -10,9 +27,47 @@
      }
 -    
 +
++    @Override
++    public void resize(int width, int height) {
++        super.resize(width, height);
++        if (mcCanvas != null) {
++            mcCanvas.setSize(width, height);
++        }
++    }
++
++    @Override
++    public void resize(Dimension d) {
++        super.resize(d);
++        if (mcCanvas != null) {
++            mcCanvas.setSize(d.width, d.height);
++        }
++    }
++
      public void init() {
          if (!Minecraft.isValidName(this.getParameter("username"))) {
-@@ -53,17 +53,17 @@
+             throw new RuntimeException("Your username has invalid characters!");
+         }
+-        this.mcCanvas = new CanvasMinecraftApplet(this);
+         boolean equalsIgnoreCase = false;
+         if (this.getParameter("fullscreen") != null) {
+             equalsIgnoreCase = this.getParameter("fullscreen").equalsIgnoreCase("true");
+         }
+-        this.mc = new MinecraftAppletImpl(this, (Component)this, this.mcCanvas, this, this.getWidth(), this.getHeight(), equalsIgnoreCase);
++        this.mcCanvas = new CanvasMinecraftApplet(mc);
++        this.mc = new MinecraftAppletImpl(this, this, this.mcCanvas, this, this.getWidth(), this.getHeight(), equalsIgnoreCase);
++        mcCanvas.mc = mc;
+         this.mc.minecraftUri = this.getDocumentBase().getHost();
+         if (this.getDocumentBase().getPort() > 0) {
+@@ -37,6 +53,6 @@
+         if (this.getParameter("username") != null && this.getParameter("sessionid") != null) {
+             this.mc.session = new Session(this.getParameter("username"), this.getParameter("sessionid"));
+-            System.out.println(new StringBuilder("Setting user: ").append(this.mc.session.username).append(", ").append(this.mc.session.sessionID).toString());
+-            if (this.getParameter("mppass") != null) {
++            System.out.println("Setting user: " + this.mc.session.username);
++            if (this.getParameter("pass") != null) {
+                 this.mc.session.mpPassParameter = this.getParameter("mppass");
+             }
+@@ -53,17 +69,17 @@
          }
          this.mc.appletMode = true;
 -        this.setLayout((LayoutManager)new BorderLayout());
@@ -35,14 +90,14 @@
 +
      public void start() {
          if (this.mc != null) {
-@@ -71,5 +71,5 @@
+@@ -71,5 +87,5 @@
          }
      }
 -    
 +
      public void stop() {
          if (this.mc != null) {
-@@ -77,9 +77,9 @@
+@@ -77,9 +93,9 @@
          }
      }
 -    
@@ -54,7 +109,7 @@
 +
      public void shutdown() {
          if (this.mcThread == null) {
-@@ -100,5 +100,5 @@
+@@ -100,5 +116,5 @@
          this.mcThread = null;
      }
 -    

@@ -1,20 +1,39 @@
 --- CanvasMinecraftApplet.java
 +++ CanvasMinecraftApplet.java
-@@ -6,14 +6,14 @@
+@@ -1,21 +1,27 @@
+ package net.minecraft.src;
+ 
+-import net.minecraft.client.MinecraftApplet;
++import net.minecraft.client.Minecraft;
+ import java.awt.Canvas;
+ 
  public class CanvasMinecraftApplet extends Canvas {
-     final MinecraftApplet mcApplet;
+-    final MinecraftApplet mcApplet;
 -    
+-    public CanvasMinecraftApplet(final MinecraftApplet minecraftApplet) {
+-        this.mcApplet = minecraftApplet;
++    public Runnable mc;
++    boolean startedMainThread = false;
 +
-     public CanvasMinecraftApplet(final MinecraftApplet minecraftApplet) {
-         this.mcApplet = minecraftApplet;
++    public CanvasMinecraftApplet(final Runnable runnable) {
++        mc = runnable;
      }
 -    
 +
      public synchronized void addNotify() {
          super.addNotify();
-         this.mcApplet.startMainThread();
+-        this.mcApplet.startMainThread();
++        if (!startedMainThread) {
++            new Thread(mc, "Minecraft main thread").start();
++            startedMainThread = true;
++        }
      }
 -    
 +
      public synchronized void removeNotify() {
-         this.mcApplet.shutdown();
+-        this.mcApplet.shutdown();
++        if (mc instanceof Minecraft) {
++            ((Minecraft) this.mc).shutdownMinecraftApplet();
++        }
+         super.removeNotify();
+     }
