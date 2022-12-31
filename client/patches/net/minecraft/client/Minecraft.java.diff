@@ -392,8 +392,8 @@
 +                    redoResize = 2;
 +                }
 +                if (this.mcCanvas != null && redoResize > 0) {
-+                    this.displayWidth = this.mcCanvas.getParent().getParent().getWidth();
-+                    this.displayHeight = this.mcCanvas.getParent().getParent().getHeight();
++                    this.displayWidth = this.mcCanvas.getParent().getWidth();
++                    this.displayHeight = this.mcCanvas.getParent().getHeight();
                      if (this.displayWidth <= 0) {
                          this.displayWidth = 1;
 @@ -529,5 +528,7 @@
