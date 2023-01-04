@@ -1,0 +1,45 @@
+--- GuiYesNo.java
++++ GuiYesNo.java
+@@ -1,17 +1,19 @@
+ package net.minecraft.src;
+ 
++import net.minecraft.client.Minecraft;
++
+ public class GuiYesNo extends GuiScreen {
+-    private GuiScreen parentScreen;
++    private GuiSelectWorld parentScreen;
+     private String message1;
+     private String message2;
+-    private int worldNumber;
+-    
+-    public GuiYesNo(final GuiScreen guiScreen, final String message1, final String message2, final int worldNumber) {
++    private String dirname;
++
++    public GuiYesNo(final GuiSelectWorld guiScreen, final String message1, final String message2, final String dirname) {
+         this.parentScreen = guiScreen;
+         this.message1 = message1;
+         this.message2 = message2;
+-        this.worldNumber = worldNumber;
++        this.dirname = dirname;
+     }
+-    
++
+     @Override
+     public void actionPerformed() {
+@@ -19,10 +21,13 @@
+         this.controlList.add(new GuiSmallButton(1, this.width / 2 - 155 + 160, this.height / 6 + 96, "No"));
+     }
+-    
++
+     @Override
+     protected void actionPerformed(final GuiButton button) {
+-        this.parentScreen.deleteWorld(button.id == 0, this.worldNumber);
++        if (button.id == 0)
++            World.deleteWorld(Minecraft.getMinecraftDir(), dirname);
++        parentScreen.refresh();
++        mc.displayGuiScreen(parentScreen);
+     }
+-    
++
+     @Override
+     public void drawScreen(final int mouseX, final int mouseY, final float renderPartialTick) {
