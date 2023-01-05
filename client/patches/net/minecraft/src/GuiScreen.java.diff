@@ -6,7 +6,7 @@
 +    public ScaledResolution size;
      protected List<GuiButton> controlList;
      public boolean allowUserInput;
-@@ -20,27 +21,26 @@
+@@ -20,27 +21,27 @@
      public static String currentID;
      private boolean hasInputHandler;
 -    
@@ -36,19 +36,20 @@
 -            ((GuiButton)this.controlList.get(i)).drawButton(this.mc, mouseX, mouseY);
 +        	this.controlList.get(i).drawButton(this.mc, mouseX, mouseY);
          }
++        drawRect(mouseX - 1, mouseY - 1, mouseX + 1, mouseY + 1, 0xFFFF0000);
      }
 -    
 +
      protected void keyTyped(final char character, final int key) {
          if (key == 1) {
-@@ -49,5 +49,5 @@
+@@ -49,5 +50,5 @@
          }
      }
 -    
 +
      public static String getClipboardString() {
          try {
-@@ -60,9 +60,10 @@
+@@ -60,9 +61,10 @@
          return null;
      }
 -    
@@ -61,15 +62,20 @@
 +                final GuiButton button = this.controlList.get(i);
                  if (button.mousePressed(x, y)) {
                      this.mc.sndManager.playSoundFX("random.click", 1.0f, 1.0f);
-@@ -72,12 +73,13 @@
+@@ -72,12 +74,17 @@
          }
      }
 -    
+-    protected void mouseMovedOrUp(final int x, final int y, final int mouseButton) {
 +
-     protected void mouseMovedOrUp(final int x, final int y, final int mouseButton) {
++    protected void mouseUp(final int x, final int y, final int mouseButton) {
 +        System.out.println("mouse post X: " + x + ", Y: " + y + ", B: " + mouseButton + ", S: false");
      }
 -    
++
++    protected void mouseMoved(final int x, final int y) {
++        System.out.println("mouse post X: " + x + ", Y: " + y + ", move");
++    }
 +
      protected void actionPerformed(final GuiButton button) {
      }
@@ -79,7 +85,7 @@
 +    public void setWorldAndResolution(final Minecraft minecraft, final ScaledResolution size) {
          this.mc = minecraft;
          if (this.hasInputHandler) {
-@@ -85,14 +87,16 @@
+@@ -85,14 +92,16 @@
          }
          this.fontRenderer = minecraft.fontRenderer;
 -        this.width = width;
@@ -100,14 +106,24 @@
 +            System.out.println("mouse pre X: " + Mouse.getEventX() + ", Y: " + Mouse.getEventY() + ", B: " + Mouse.getEventButton() + ", S: " + Mouse.getEventButtonState());
              this.handleMouseInput();
          }
-@@ -108,5 +112,5 @@
+@@ -108,56 +117,61 @@
          }
      }
 -    
 +
      public void handleMouseInput() {
          if (Mouse.getEventButtonState()) {
-@@ -117,47 +121,47 @@
+-            this.mouseClicked(Mouse.getEventX() * this.width / this.mc.displayWidth, this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1, Mouse.getEventButton());
++            mouseClicked(Mouse.getEventX() * this.width / this.mc.displayWidth, this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1, Mouse.getEventButton());
+         }
+         else {
+-            this.mouseMovedOrUp(Mouse.getEventX() * this.width / this.mc.displayWidth, this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1, Mouse.getEventButton());
++            if (Mouse.getEventButton() == -1) {
++                mouseMoved(Mouse.getEventX() * this.width / this.mc.displayWidth, this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1);
++            }
++            else {
++                mouseUp(Mouse.getEventX() * this.width / this.mc.displayWidth, this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1, Mouse.getEventButton());
++            }
          }
      }
 -    
@@ -167,7 +183,7 @@
 +                    System.out.println("Current entered ID: " + GuiScreen.currentID);
                  }
                  else if (Keyboard.getEventKey() == 74) {
-@@ -167,13 +171,16 @@
+@@ -167,13 +181,16 @@
                      try {
                          if (Block.BLOCKS_LIST.length > Integer.parseInt(GuiScreen.currentID) && Block.BLOCKS_LIST[Integer.parseInt(GuiScreen.currentID)] != null) {
 -                            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Block.BLOCKS_LIST[Integer.parseInt(GuiScreen.currentID)], 64), true);
@@ -188,7 +204,7 @@
 +                            System.out.println("No block or item with ID " + GuiScreen.currentID);
                          }
                      }
-@@ -190,15 +197,15 @@
+@@ -190,15 +207,15 @@
          }
      }
 -    
@@ -208,14 +224,14 @@
 +
      public void drawWorldBackground(final int integer) {
          if (this.mc.theWorld != null) {
-@@ -209,5 +216,5 @@
+@@ -209,5 +226,5 @@
          }
      }
 -    
 +
      public void drawBackground(final int integer) {
          GL11.glDisable(2896);
-@@ -224,9 +231,9 @@
+@@ -224,9 +241,9 @@
          instance.draw();
      }
 -    

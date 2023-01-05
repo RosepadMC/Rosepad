@@ -1,6 +1,6 @@
 --- GuiButton.java
 +++ GuiButton.java
-@@ -13,20 +13,20 @@
+@@ -13,22 +13,24 @@
      public boolean enabled;
      public boolean visible;
 -    
@@ -12,10 +12,10 @@
      }
 -    
 -    protected GuiButton(final int integer1, final int integer2, final int integer3, final int integer4, final int integer5, final String string) {
+-        this.width = 200;
+-        this.height = 20;
 +
 +    public GuiButton(final int id, final int posX, final int posY, final int width, final int height, final String text) {
-         this.width = 200;
-         this.height = 20;
          this.enabled = true;
          this.visible = true;
 -        this.id = integer1;
@@ -31,4 +31,26 @@
 +        this.height = height;
 +        this.displayString = text;
      }
-     
+-    
++
++    public boolean listensForMouseEvents() {
++        return false;
++    }
++
+     public void drawButton(final Minecraft minecraft, final int mouseX, final int mouseY) {
+         if (!this.visible) {
+@@ -58,7 +60,11 @@
+         }
+     }
+-    
+-    public boolean mousePressed(final int integer1, final int integer2) {
+-        return this.enabled && integer1 >= this.xPosition && integer2 >= this.yPosition && integer1 < this.xPosition + this.width && integer2 < this.yPosition + this.height;
++
++    public boolean mousePressed(final int mouseX, final int mouseY) {
++        return this.enabled && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
+     }
++
++    public void mouseMoved(final int mouseX, final int mouseY) {}
++
++    public void mouseReleased(final int mouseX, final int mouseY) {}
+ }

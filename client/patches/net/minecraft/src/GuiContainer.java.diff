@@ -1,13 +1,18 @@
 --- GuiContainer.java
 +++ GuiContainer.java
-@@ -10,4 +10,6 @@
+@@ -10,17 +10,108 @@
      protected int ySize;
      protected List<SlotInventory> inventorySlots;
+-    
 +    protected int selectedSlot = 0;
 +    protected IInventory selectedInventory = null;
-     
++
      static {
-@@ -18,9 +20,98 @@
+         GuiContainer.itemRenderer = new RenderItem();
+     }
+-    
++
+     public GuiContainer() {
          this.xSize = 176;
          this.ySize = 166;
 -        this.inventorySlots = (List<SlotInventory>)new ArrayList();
@@ -151,7 +156,7 @@
 +            );
          }
          GL11.glDisable(32826);
-@@ -59,4 +167,12 @@
+@@ -59,14 +167,22 @@
          GL11.glDisable(2929);
          this.drawGuiContainerForegroundLayer();
 +        if (renderItemName != null) {
@@ -164,6 +169,19 @@
 +        }
          GL11.glEnable(2896);
          GL11.glEnable(2929);
+         GL11.glPopMatrix();
+     }
+-    
++
+     protected void drawGuiContainerForegroundLayer() {
+     }
+-    
++
+     protected abstract void drawGuiContainerBackgroundLayer(final float renderPartialTick);
+-    
++
+     private void drawSlotInventory(final SlotInventory slotInventory) {
+         final IInventory inventory = slotInventory.inventory;
 @@ -80,16 +196,25 @@
                  GL11.glDisable(2896);
                  this.mc.renderEngine.bindTexture(this.mc.renderEngine.getTexture("/gui/items.png"));
@@ -188,13 +206,21 @@
 +                xDisplayPosition, yDisplayPosition
 +        );
      }
-     
+-    
++
      private Slot getSlotAtPosition(final int integer1, final int integer2) {
 -        for (int i = 0; i < this.inventorySlots.size(); ++i) {
 -            final SlotInventory slotInventory = (SlotInventory)this.inventorySlots.get(i);
 +        for (final SlotInventory slotInventory : this.inventorySlots) {
              if (slotInventory.getIsMouseOverSlot(integer1, integer2)) {
                  return slotInventory;
+@@ -98,5 +223,5 @@
+         return null;
+     }
+-    
++
+     @Override
+     protected void mouseClicked(final int x, final int y, final int mouseButton) {
 @@ -109,5 +234,7 @@
                      if (stack != null && inventory.draggedItemStack == null) {
                          final int stackSize = (mouseButton == 0) ? stack.stackSize : ((stack.stackSize + 1) / 2);
@@ -254,7 +280,18 @@
 +                                inventory.draggedItemStack.stackSize += stackSize;
                                  stack.splitStack(stackSize);
                                  if (stack.stackSize == 0) {
-@@ -215,4 +337,19 @@
+@@ -205,16 +327,27 @@
+         }
+     }
+-    
++
+     @Override
+-    protected void mouseMovedOrUp(final int x, final int y, final int mouseButton) {
+-    }
+-    
+-    @Override
+     protected void keyTyped(final char character, final int key) {
+         if (key == 1 || key == this.mc.gameSettings.keyBindInventory.keyCode) {
              this.mc.displayGuiScreen(null);
          }
 +
@@ -273,4 +310,14 @@
 +                }
 +        }
      }
-     
+-    
++
+     @Override
+     public void onGuiClosed() {
+@@ -225,5 +358,5 @@
+         }
+     }
+-    
++
+     @Override
+     public boolean doesGuiPauseGame() {

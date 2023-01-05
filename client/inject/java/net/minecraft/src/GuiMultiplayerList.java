@@ -96,9 +96,9 @@ public class GuiMultiplayerList extends GuiScreen {
     }
 
     @Override
-    protected void mouseMovedOrUp(int x, int y, int mouseButton) {
+    protected void mouseMoved(int x, int y) {
         lock = false;
-        super.mouseMovedOrUp(x, y, mouseButton);
+        super.mouseMoved(x, y);
     }
 
     @Override
