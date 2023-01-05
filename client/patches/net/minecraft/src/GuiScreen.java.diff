@@ -6,41 +6,80 @@
 +    public ScaledResolution size;
      protected List<GuiButton> controlList;
      public boolean allowUserInput;
-@@ -23,5 +24,4 @@
+@@ -20,27 +21,26 @@
+     public static String currentID;
+     private boolean hasInputHandler;
+-    
++
      static {
          GuiScreen.currentID = "";
 -        GuiScreen.currentID = "";
      }
-     
-@@ -32,5 +32,5 @@
+-    
++
+     private boolean InputHandlerLoaded() {
+         return true;
+     }
+-    
++
      public GuiScreen() {
          this.hasInputHandler = false;
 -        this.controlList = (List<GuiButton>)new ArrayList();
 +        this.controlList = new ArrayList<>();
          this.allowUserInput = false;
          this.hasInputHandler = this.InputHandlerLoaded();
-@@ -39,5 +39,5 @@
+     }
+-    
++
      public void drawScreen(final int mouseX, final int mouseY, final float renderPartialTick) {
          for (int i = 0; i < this.controlList.size(); ++i) {
 -            ((GuiButton)this.controlList.get(i)).drawButton(this.mc, mouseX, mouseY);
 +        	this.controlList.get(i).drawButton(this.mc, mouseX, mouseY);
          }
      }
-@@ -64,5 +64,5 @@
+-    
++
+     protected void keyTyped(final char character, final int key) {
+         if (key == 1) {
+@@ -49,5 +49,5 @@
+         }
+     }
+-    
++
+     public static String getClipboardString() {
+         try {
+@@ -60,9 +60,10 @@
+         return null;
+     }
+-    
++
+     protected void mouseClicked(final int x, final int y, final int mouseButton) {
++        System.out.println("mouse post X: " + x + ", Y: " + y + ", B: " + mouseButton + ", S: true");
          if (mouseButton == 0) {
              for (int i = 0; i < this.controlList.size(); ++i) {
 -                final GuiButton button = (GuiButton)this.controlList.get(i);
 +                final GuiButton button = this.controlList.get(i);
                  if (button.mousePressed(x, y)) {
                      this.mc.sndManager.playSoundFX("random.click", 1.0f, 1.0f);
-@@ -79,5 +79,5 @@
+@@ -72,12 +73,13 @@
+         }
      }
-     
+-    
++
+     protected void mouseMovedOrUp(final int x, final int y, final int mouseButton) {
++        System.out.println("mouse post X: " + x + ", Y: " + y + ", B: " + mouseButton + ", S: false");
+     }
+-    
++
+     protected void actionPerformed(final GuiButton button) {
+     }
+-    
 -    public void setWorldAndResolution(final Minecraft minecraft, final int width, final int height) {
++
 +    public void setWorldAndResolution(final Minecraft minecraft, final ScaledResolution size) {
          this.mc = minecraft;
          if (this.hasInputHandler) {
-@@ -85,6 +85,7 @@
+@@ -85,14 +87,16 @@
          }
          this.fontRenderer = minecraft.fontRenderer;
 -        this.width = width;
@@ -50,7 +89,29 @@
 +        this.size = size;
          this.actionPerformed();
      }
-@@ -120,44 +121,44 @@
+-    
++
+     public void actionPerformed() {
+     }
+-    
++
+     public void handleInput() {
+         while (Mouse.next()) {
++            System.out.println("mouse pre X: " + Mouse.getEventX() + ", Y: " + Mouse.getEventY() + ", B: " + Mouse.getEventButton() + ", S: " + Mouse.getEventButtonState());
+             this.handleMouseInput();
+         }
+@@ -108,5 +112,5 @@
+         }
+     }
+-    
++
+     public void handleMouseInput() {
+         if (Mouse.getEventButtonState()) {
+@@ -117,47 +121,47 @@
+         }
+     }
+-    
++
      public void handleKeyboardInput() {
          if (Keyboard.getEventKeyState()) {
 -            if (this.hasInputHandler && InputHandler.cheatsEnabled) {
@@ -106,7 +167,7 @@
 +                    System.out.println("Current entered ID: " + GuiScreen.currentID);
                  }
                  else if (Keyboard.getEventKey() == 74) {
-@@ -167,13 +168,16 @@
+@@ -167,13 +171,16 @@
                      try {
                          if (Block.BLOCKS_LIST.length > Integer.parseInt(GuiScreen.currentID) && Block.BLOCKS_LIST[Integer.parseInt(GuiScreen.currentID)] != null) {
 -                            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Block.BLOCKS_LIST[Integer.parseInt(GuiScreen.currentID)], 64), true);
@@ -127,3 +188,42 @@
 +                            System.out.println("No block or item with ID " + GuiScreen.currentID);
                          }
                      }
+@@ -190,15 +197,15 @@
+         }
+     }
+-    
++
+     public void updateScreen() {
+     }
+-    
++
+     public void onGuiClosed() {
+     }
+-    
++
+     public void drawDefaultBackground() {
+         this.drawWorldBackground(0);
+     }
+-    
++
+     public void drawWorldBackground(final int integer) {
+         if (this.mc.theWorld != null) {
+@@ -209,5 +216,5 @@
+         }
+     }
+-    
++
+     public void drawBackground(final int integer) {
+         GL11.glDisable(2896);
+@@ -224,9 +231,9 @@
+         instance.draw();
+     }
+-    
++
+     public boolean doesGuiPauseGame() {
+         return true;
+     }
+-    
++
+     public void deleteWorld(final boolean actuallyDelete, final int worldNum) {
+     }
