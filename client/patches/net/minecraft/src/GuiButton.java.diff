@@ -46,11 +46,11 @@
 -    public boolean mousePressed(final int integer1, final int integer2) {
 -        return this.enabled && integer1 >= this.xPosition && integer2 >= this.yPosition && integer1 < this.xPosition + this.width && integer2 < this.yPosition + this.height;
 +
-+    public boolean mousePressed(final int mouseX, final int mouseY) {
++    public boolean isHovered(final int mouseX, final int mouseY) {
 +        return this.enabled && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
      }
 +
++    public void mousePressed(final int mouseX, final int mouseY) {}
 +    public void mouseMoved(final int mouseX, final int mouseY) {}
-+
 +    public void mouseReleased(final int mouseX, final int mouseY) {}
  }

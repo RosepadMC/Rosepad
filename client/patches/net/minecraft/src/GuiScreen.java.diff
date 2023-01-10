@@ -49,7 +49,7 @@
 +
      public static String getClipboardString() {
          try {
-@@ -60,9 +61,10 @@
+@@ -60,10 +61,11 @@
          return null;
      }
 -    
@@ -59,9 +59,11 @@
          if (mouseButton == 0) {
              for (int i = 0; i < this.controlList.size(); ++i) {
 -                final GuiButton button = (GuiButton)this.controlList.get(i);
+-                if (button.mousePressed(x, y)) {
 +                final GuiButton button = this.controlList.get(i);
-                 if (button.mousePressed(x, y)) {
++                if (button.isHovered(x, y)) {
                      this.mc.sndManager.playSoundFX("random.click", 1.0f, 1.0f);
+                     this.actionPerformed(button);
 @@ -72,12 +74,17 @@
          }
      }
