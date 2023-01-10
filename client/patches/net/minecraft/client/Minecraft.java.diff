@@ -396,7 +396,7 @@
 @@ -529,5 +527,7 @@
                          this.displayHeight = 1;
                      }
-+                    GL11.glViewport(0, 0, displayWidth, displayHeight);
++                    //GL11.glViewport(0, 0, displayWidth, displayHeight);
                      this.resize(this.displayWidth, this.displayHeight);
 +                    redoResize--;
                  }
