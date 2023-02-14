@@ -37,7 +37,7 @@
 +        for (GuiButton guiButton : this.controlList) {
 +            guiButton.drawButton(this.mc, mouseX, mouseY);
          }
-+        drawRect(mouseX - 1, mouseY - 1, mouseX + 1, mouseY + 1, 0xFFFF0000);
++        //drawRect(mouseX - 1, mouseY - 1, mouseX + 1, mouseY + 1, 0xFFFF0000);
      }
 -    
 +

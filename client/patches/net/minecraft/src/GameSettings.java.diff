@@ -272,7 +272,7 @@
 +        setKeyBinding("right", "Right", Keyboard.KEY_D);
 +        setKeyBinding("back", "Back", Keyboard.KEY_S);
 +
-+        setKeyBinding("jump", "Just", Keyboard.KEY_SPACE);
++        setKeyBinding("jump", "Jump", Keyboard.KEY_SPACE);
 +        setKeyBinding("dash", "Dash", Keyboard.KEY_LSHIFT);
 +
 +        setKeyBinding("inventory", "Inventory", Keyboard.KEY_E);
