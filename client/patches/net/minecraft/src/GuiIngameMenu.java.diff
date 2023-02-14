@@ -18,6 +18,6 @@
      protected void actionPerformed(final GuiButton button) {
          if (button.id == 0) {
 -            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
-+            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings.getMainOptionsMenuContext()));
++            this.mc.displayGuiScreen(new GuiOptions(this, new String[0]));
          }
          if (button.id == 1) {

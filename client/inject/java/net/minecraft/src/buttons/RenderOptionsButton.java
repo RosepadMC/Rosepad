@@ -16,12 +16,12 @@ public class RenderOptionsButton implements GuiOptionsButton {
 
 	@Override
 	public void run(GuiButton button, GuiScreen parent) {
-    	settings.mc.displayGuiScreen(
-    			new GuiOptions(
-    					parent,
-    					settings.getRenderOptionsMenuContext()
-    			)
-    	);
+//  	settings.mc.displayGuiScreen(
+//  			new GuiOptions(
+//  					parent,
+//  					settings.getRenderOptionsMenuContext()
+//  			)
+//  	);
 	}
 
 }

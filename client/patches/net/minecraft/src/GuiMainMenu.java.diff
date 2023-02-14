@@ -38,7 +38,7 @@
      protected void actionPerformed(final GuiButton button) {
          if (button.id == 0) {
 -            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
-+            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings.getMainOptionsMenuContext()));
++            this.mc.displayGuiScreen(new GuiOptions(this, new String[0]));
          }
          if (button.id == 1) {
 @@ -82,5 +98,5 @@
@@ -48,3 +48,10 @@
 +            this.mc.displayGuiScreen(new GuiMultiplayerList(this));
          }
      }
+@@ -130,5 +146,5 @@
+         GL11.glLoadIdentity();
+         int i = 120 * new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight).scaleFactor;
+-        GLU.gluPerspective(70.0f, this.mc.displayWidth / (float)i, 0.05f, 100.0f);
++        GLU.gluPerspective(mc.gameSettings.fov, this.mc.displayWidth / (float)i, 0.05f, 100.0f);
+         GL11.glViewport(0, this.mc.displayHeight - i, this.mc.displayWidth, i);
+         GL11.glMatrixMode(5888);

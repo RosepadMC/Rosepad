@@ -16,12 +16,12 @@ public class SoundOptionsButton implements GuiOptionsButton {
 
 	@Override
 	public void run(GuiButton button, GuiScreen parent) {
-    	settings.mc.displayGuiScreen(
-    			new GuiOptions(
-    					parent,
-    					settings.getSoundOptionsMenuContext()
-    			)
-    	);
+//  	settings.mc.displayGuiScreen(
+//  			new GuiOptions(
+//  					parent,
+//  					settings.getSoundOptionsMenuContext()
+//  			)
+//  	);
 	}
 
 }

@@ -1,6 +1,48 @@
 --- EntityRenderer.java
 +++ EntityRenderer.java
-@@ -316,5 +316,6 @@
+@@ -27,4 +27,5 @@
+     private float prevFogColor;
+     private float fogColor;
++    public boolean thirdPersonView = false;
+     
+     public EntityRenderer(final Minecraft minecraft) {
+@@ -98,7 +99,7 @@
+     private float getFOVModifier(final float renderPartialTick) {
+         final EntityPlayerSP thePlayer = this.mc.thePlayer;
+-        float n = 70.0f;
++        float n = mc.gameSettings.fov;
+         if (thePlayer.isInsideOfMaterial(Material.WATER)) {
+-            n = 60.0f;
++            n -= 10;
+         }
+         if (thePlayer.health <= 0) {
+@@ -126,5 +127,5 @@
+     
+     private void setupViewBobbing(final float renderPartialTick) {
+-        if (this.mc.gameSettings.thirdPersonView) {
++        if (thirdPersonView) {
+             return;
+         }
+@@ -144,5 +145,5 @@
+         final double y = thePlayer.prevPosY + (thePlayer.posY - thePlayer.prevPosY) * renderPartialTick;
+         final double z = thePlayer.prevPosZ + (thePlayer.posZ - thePlayer.prevPosZ) * renderPartialTick;
+-        if (this.mc.gameSettings.thirdPersonView) {
++        if (thirdPersonView) {
+             double n = 4.0;
+             final float n2 = thePlayer.rotationYaw - 10.0f;
+@@ -209,9 +210,9 @@
+             this.setupViewBobbing(renderPartialTick);
+         }
+-        if (!this.mc.gameSettings.thirdPersonView) {
++        if (!thirdPersonView) {
+             this.itemRenderer.renderItemInFirstPerson(renderPartialTick);
+         }
+         GL11.glPopMatrix();
+-        if (!this.mc.gameSettings.thirdPersonView) {
++        if (!thirdPersonView) {
+             this.itemRenderer.renderOverlays(renderPartialTick);
+             this.hurtCameraEffect(renderPartialTick);
+@@ -316,5 +317,6 @@
                  GL11.glDisable(3008);
                  renderGlobal.drawBlockBreaking(thePlayer, this.mc.objectMouseOver, 0, thePlayer.inventory.getCurrentItem(), renderPartialTick);
 -                renderGlobal.drawSelectionBox(thePlayer, this.mc.objectMouseOver, 0, thePlayer.inventory.getCurrentItem(), renderPartialTick);
@@ -8,7 +50,7 @@
 +                    renderGlobal.drawSelectionBox(thePlayer, this.mc.objectMouseOver, 0, thePlayer.inventory.getCurrentItem(), renderPartialTick);
                  GL11.glEnable(3008);
              }
-@@ -349,5 +350,6 @@
+@@ -349,5 +351,6 @@
                  GL11.glDisable(3008);
                  renderGlobal.drawBlockBreaking(thePlayer, this.mc.objectMouseOver, 0, thePlayer.inventory.getCurrentItem(), renderPartialTick);
 -                renderGlobal.drawSelectionBox(thePlayer, this.mc.objectMouseOver, 0, thePlayer.inventory.getCurrentItem(), renderPartialTick);
@@ -16,7 +58,7 @@
 +                    renderGlobal.drawSelectionBox(thePlayer, this.mc.objectMouseOver, 0, thePlayer.inventory.getCurrentItem(), renderPartialTick);
                  GL11.glEnable(3008);
              }
-@@ -362,5 +364,6 @@
+@@ -362,5 +365,6 @@
              this.setupFog(1);
              GL11.glClear(256);
 -            this.renderHand(renderPartialTick, i);

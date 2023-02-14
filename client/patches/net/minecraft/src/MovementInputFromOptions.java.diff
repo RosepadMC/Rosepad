@@ -1,0 +1,32 @@
+--- MovementInputFromOptions.java
++++ MovementInputFromOptions.java
+@@ -1,4 +1,6 @@
+ package net.minecraft.src;
+ 
++import net.buj.rml.Game;
++
+ public class MovementInputFromOptions extends MovementInput {
+     private boolean[] movementKeyStates;
+@@ -14,17 +16,17 @@
+     public void checkKeyForMovementInput(final int key, final boolean state) {
+         int n = -1;
+-        if (key == this.gameSettings.keyBindForward.keyCode) {
++        if (key == Game.options.keyCodeFor("forward")) {
+             n = 0;
+         }
+-        if (key == this.gameSettings.keyBindBack.keyCode) {
++        if (key == Game.options.keyCodeFor("back")) {
+             n = 1;
+         }
+-        if (key == this.gameSettings.keyBindLeft.keyCode) {
++        if (key == Game.options.keyCodeFor("left")) {
+             n = 2;
+         }
+-        if (key == this.gameSettings.keyBindRight.keyCode) {
++        if (key == Game.options.keyCodeFor("right")) {
+             n = 3;
+         }
+-        if (key == this.gameSettings.keyBindJump.keyCode) {
++        if (key == Game.options.keyCodeFor("jump")) {
+             n = 4;
+         }

@@ -1,11 +1,13 @@
 --- GuiButton.java
 +++ GuiButton.java
-@@ -13,22 +13,24 @@
+@@ -13,22 +13,22 @@
      public boolean enabled;
      public boolean visible;
 -    
 -    public GuiButton(final int integer1, final int integer2, final int integer3, final String message) {
 -        this(integer1, integer2, integer3, 200, 20, message);
++
++    private Runnable onClick = null;
 +
 +    public GuiButton(final int id, final int posX, final int posY, final String text) {
 +        this(id, posX, posY, 200, 20, text);
@@ -33,13 +35,9 @@
      }
 -    
 +
-+    public boolean listensForMouseEvents() {
-+        return false;
-+    }
-+
      public void drawButton(final Minecraft minecraft, final int mouseX, final int mouseY) {
          if (!this.visible) {
-@@ -58,7 +60,11 @@
+@@ -58,7 +58,22 @@
          }
      }
 -    
@@ -50,7 +48,18 @@
 +        return this.enabled && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
      }
 +
-+    public void mousePressed(final int mouseX, final int mouseY) {}
++    public boolean listensForMouseEvents() {
++        return false;
++    }
++
++    public void mousePressed(final int mouseX, final int mouseY) {
++        if (onClick != null) onClick.run();
++    }
 +    public void mouseMoved(final int mouseX, final int mouseY) {}
 +    public void mouseReleased(final int mouseX, final int mouseY) {}
++
++    public GuiButton setOnClickListener(Runnable r) {
++        onClick = r;
++        return this;
++    }
  }

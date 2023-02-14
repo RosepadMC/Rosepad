@@ -1,6 +1,14 @@
 --- GuiContainer.java
 +++ GuiContainer.java
-@@ -10,17 +10,108 @@
+@@ -2,4 +2,7 @@
+ 
+ import org.lwjgl.opengl.GL11;
++
++import net.buj.rml.Game;
++
+ import java.util.ArrayList;
+ import java.util.List;
+@@ -10,17 +13,108 @@
      protected int ySize;
      protected List<SlotInventory> inventorySlots;
 -    
@@ -113,7 +121,7 @@
 +        List<String> additionalInfo = new ArrayList<>();
          this.drawDefaultBackground();
          final int n = (this.width - this.xSize) / 2;
-@@ -35,13 +126,24 @@
+@@ -35,13 +129,24 @@
          GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
          GL11.glEnable(32826);
 -        for (int i = 0; i < this.inventorySlots.size(); ++i) {
@@ -141,7 +149,7 @@
 +                );
                  GL11.glEnable(2896);
                  GL11.glEnable(2929);
-@@ -51,6 +153,12 @@
+@@ -51,6 +156,12 @@
          if (inventory.draggedItemStack != null) {
              GL11.glTranslatef(0.0f, 0.0f, 32.0f);
 -            GuiContainer.itemRenderer.renderItemIntoGUI(this.fontRenderer, this.mc.renderEngine, inventory.draggedItemStack, mouseX - n - 8, mouseY - n2 - 8);
@@ -156,7 +164,7 @@
 +            );
          }
          GL11.glDisable(32826);
-@@ -59,14 +167,22 @@
+@@ -59,14 +170,22 @@
          GL11.glDisable(2929);
          this.drawGuiContainerForegroundLayer();
 +        if (renderItemName != null) {
@@ -182,7 +190,7 @@
 +
      private void drawSlotInventory(final SlotInventory slotInventory) {
          final IInventory inventory = slotInventory.inventory;
-@@ -80,16 +196,25 @@
+@@ -80,16 +199,25 @@
                  GL11.glDisable(2896);
                  this.mc.renderEngine.bindTexture(this.mc.renderEngine.getTexture("/gui/items.png"));
 -                this.drawTexturedModalRect(xDisplayPosition, yDisplayPosition, backgroundIconIndex % 16 * 16, backgroundIconIndex / 16 * 16, 16, 16);
@@ -214,14 +222,14 @@
 +        for (final SlotInventory slotInventory : this.inventorySlots) {
              if (slotInventory.getIsMouseOverSlot(integer1, integer2)) {
                  return slotInventory;
-@@ -98,5 +223,5 @@
+@@ -98,5 +226,5 @@
          return null;
      }
 -    
 +
      @Override
      protected void mouseClicked(final int x, final int y, final int mouseButton) {
-@@ -109,5 +234,7 @@
+@@ -109,5 +237,7 @@
                      if (stack != null && inventory.draggedItemStack == null) {
                          final int stackSize = (mouseButton == 0) ? stack.stackSize : ((stack.stackSize + 1) / 2);
 -                        inventory.draggedItemStack = slotAtPosition.inventory.decrStackSize(slotAtPosition.slotIndex, stackSize);
@@ -230,14 +238,14 @@
 +                        );
                          if (stack.stackSize == 0) {
                              slotAtPosition.putStack(null);
-@@ -115,5 +242,5 @@
+@@ -115,5 +245,5 @@
                          slotAtPosition.onPickupFromSlot();
                      }
 -                    else if (stack == null && inventory.draggedItemStack != null && slotAtPosition.isItemValid(inventory.draggedItemStack)) {
 +                    else if (stack == null && slotAtPosition.isItemValid(inventory.draggedItemStack)) {
                          int stackSize = (mouseButton == 0) ? inventory.draggedItemStack.stackSize : 1;
                          if (stackSize > slotAtPosition.inventory.getInventoryStackLimit()) {
-@@ -125,14 +252,13 @@
+@@ -125,14 +255,13 @@
                          }
                      }
 -                    else if (stack != null && inventory.draggedItemStack != null) {
@@ -255,14 +263,14 @@
 +                            else {
                                  if (mouseButton == 0) {
                                      int stackSize = inventory.draggedItemStack.stackSize;
-@@ -151,5 +277,5 @@
+@@ -151,5 +280,5 @@
                                      itemStack3.stackSize += stackSize;
                                  }
 -                                else if (mouseButton == 1) {
 +                                else {
                                      int stackSize = 1;
                                      if (stackSize > slotAtPosition.inventory.getInventoryStackLimit() - stack.stackSize) {
-@@ -163,7 +289,5 @@
+@@ -163,7 +292,5 @@
                                          inventory.draggedItemStack = null;
                                      }
 -                                    final ItemStack itemStack4;
@@ -271,7 +279,7 @@
 +                                    stack.stackSize += stackSize;
                                  }
                              }
-@@ -172,7 +296,5 @@
+@@ -172,7 +299,5 @@
                              final int stackSize = stack.stackSize;
                              if (stackSize > 0 && stackSize + inventory.draggedItemStack.stackSize <= inventory.draggedItemStack.getMaxStackSize()) {
 -                                final ItemStack draggedItemStack3;
@@ -280,7 +288,7 @@
 +                                inventory.draggedItemStack.stackSize += stackSize;
                                  stack.splitStack(stackSize);
                                  if (stack.stackSize == 0) {
-@@ -205,16 +327,27 @@
+@@ -205,16 +330,27 @@
          }
      }
 -    
@@ -291,11 +299,12 @@
 -    
 -    @Override
      protected void keyTyped(final char character, final int key) {
-         if (key == 1 || key == this.mc.gameSettings.keyBindInventory.keyCode) {
+-        if (key == 1 || key == this.mc.gameSettings.keyBindInventory.keyCode) {
++        if (key == 1 || key == Game.options.keyCodeFor("inventory")) {
              this.mc.displayGuiScreen(null);
          }
 +
-+        if (key == this.mc.gameSettings.keyBindDrop.keyCode && this.selectedInventory != null) {
++        if (key == Game.options.keyCodeFor("drop") && this.selectedInventory != null) {
 +            ItemStack stack = this.selectedInventory.getStackInSlot(this.selectedSlot);
 +            if (stack != null)
 +                if (stack.stackSize > 0) {
@@ -314,7 +323,7 @@
 +
      @Override
      public void onGuiClosed() {
-@@ -225,5 +358,5 @@
+@@ -225,5 +361,5 @@
          }
      }
 -    

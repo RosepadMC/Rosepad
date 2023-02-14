@@ -17,7 +17,7 @@ public class ControlsOptionsButton implements GuiOptionsButton {
 	@Override
 	public void run(GuiButton button, GuiScreen parent) {
     	settings.mc.displayGuiScreen(
-    			new GuiControls(parent, settings)
+    			new GuiControls(parent)
     	);
 	}
 

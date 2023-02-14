@@ -1,9 +1,105 @@
 --- GuiControls.java
 +++ GuiControls.java
-@@ -26,5 +26,5 @@
-     protected void actionPerformed(final GuiButton button) {
-         for (int i = 0; i < this.gameSettings.keyBindings.length; ++i) {
--            ((GuiButton)this.controlList.get(i)).displayString = this.gameSettings.getKeyBindingDescription(i);
-+            this.controlList.get(i).displayString = this.gameSettings.getKeyBindingDescription(i);
+@@ -1,57 +1,67 @@
+ package net.minecraft.src;
+ 
++import java.util.ArrayList;
++import java.util.List;
++
++import org.lwjgl.input.Keyboard;
++
++import net.buj.rml.Game;
++import net.buj.rml.options.KeyBinding;
++
+ public class GuiControls extends GuiScreen {
+-    private GuiScreen parentScreen;
+     protected String screenTitle;
+-    private GameSettings gameSettings;
+-    private int buttonID;
+-    
+-    public GuiControls(final GuiScreen guiScreen, final GameSettings gameSettings) {
++    private GuiScreen screen;
++    private List<KeyBinding> bindings;
++    private int selectedOption = -1;
++
++    public GuiControls(final GuiScreen guiScreen) {
+         this.screenTitle = "Controls";
+-        this.buttonID = -1;
+-        this.parentScreen = guiScreen;
+-        this.gameSettings = gameSettings;
++        screen = guiScreen;
++
++        bindings = new ArrayList<>();
++
++        for (KeyBinding binding : Game.options.bindings()) {
++            bindings.add(binding);
++        }
+     }
++
++    private String nameFor(KeyBinding binding, int i) {
++        if (i == selectedOption) {
++            return binding.description + ": >>" + Keyboard.getKeyName(binding.code) + "<<";
++        }
++        return binding.description + ": " + Keyboard.getKeyName(binding.code);
++    }
+     
+     @Override
+     public void actionPerformed() {
+-        for (int i = 0; i < this.gameSettings.keyBindings.length; ++i) {
+-            this.controlList.add(new GuiSmallButton(i, this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), this.gameSettings.getKeyBindingDescription(i)));
++        controlList.clear();
++        int i = 0;
++        for (KeyBinding binding : bindings) {
++            controlList.add(new GuiButton(i, width / 2 + 2 - 154 * ((i + 1) % 2), 60 + i / 2 * 25, 150, 20, nameFor(binding, i++)));
          }
-         if (button.id == 200) {
+-        this.controlList.add(new GuiButton(201, this.width / 2 - 100, this.height / 6 + 140, new StringBuilder().append("Gamepad sensitivity: ").append(InputHandler.lookSens).toString()));
+-        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, "Done"));
++
++        this.controlList.add(new GuiButton(i, this.width / 2 - 100, this.height - 60, "Done"));
+     }
+     
+     @Override
+     protected void actionPerformed(final GuiButton button) {
+-        for (int i = 0; i < this.gameSettings.keyBindings.length; ++i) {
+-            ((GuiButton)this.controlList.get(i)).displayString = this.gameSettings.getKeyBindingDescription(i);
++        if (button.id == bindings.size()) {
++            this.mc.displayGuiScreen(this.screen);
++            return;
+         }
+-        if (button.id == 200) {
+-            this.mc.displayGuiScreen(this.parentScreen);
+-        }
+-        else if (button.id == 201) {
+-            ++InputHandler.lookSens;
+-            if (InputHandler.lookSens == 11) {
+-                InputHandler.lookSens = 1;
+-            }
+-            button.displayString = new StringBuilder().append("Gamepad sensitivity: ").append(InputHandler.lookSens).toString();
+-        }
+-        else {
+-            this.buttonID = button.id;
+-            button.displayString = new StringBuilder("> ").append(this.gameSettings.getKeyBindingDescription(button.id)).append(" <").toString();
+-        }
++        selectedOption = button.id;
++        actionPerformed();
+     }
+     
+     @Override
+     protected void keyTyped(final char character, final int key) {
+-        if (this.buttonID >= 0) {
+-            this.gameSettings.setKeyBinding(this.buttonID, key);
+-            ((GuiButton)this.controlList.get(this.buttonID)).displayString = this.gameSettings.getKeyBindingDescription(this.buttonID);
+-            this.buttonID = -1;
++        if (selectedOption >= 0) {
++            if (key <= 1) bindings.get(selectedOption).code = 0;
++            else bindings.get(selectedOption).code = key;
++            Game.options.save();
++            selectedOption = -1;
++            actionPerformed();
+         }
+-        else {
+-            super.keyTyped(character, key);
+-        }
++        else super.keyTyped(character, key);
+     }
+     

@@ -6,14 +6,29 @@
 -import java.util.Iterator;
  import java.io.Writer;
  import java.io.PrintWriter;
-@@ -19,5 +18,5 @@
+@@ -9,15 +8,16 @@
+ import java.io.FileReader;
+ import java.io.IOException;
+-import java.util.HashSet;
+-import java.util.ArrayList;
++import java.util.*;
+ import java.io.File;
+-import java.util.Set;
++
++import net.buj.rml.options.GameOption;
++import net.buj.rml.options.GameOptions;
+ import net.minecraft.server.MinecraftServer;
+-import java.util.List;
++
+ import java.util.logging.Logger;
+ 
  public class ServerConfigurationManager {
      public static Logger logger;
 -    public List playerEntities;
 +    public List<EntityPlayerMP> playerEntities;
      private MinecraftServer mcServer;
      private PlayerManager playerManagerObj;
-@@ -27,8 +26,14 @@
+@@ -27,20 +27,32 @@
      private Set<String> ops;
      private Set<String> authenticatedPlayers;
 +    private Set<String> whitelistedPlayers;
@@ -27,9 +42,16 @@
 +    private File whitelistFile;
 +    private File whitelistIPsFile;
      private PlayerNBTManager playerNBTManagerObj;
-     
-@@ -38,9 +43,12 @@
-     
+-    
++
++
++    private Map<String, GameOption<?>> options = new HashMap<>();
++
+     static {
+         ServerConfigurationManager.logger = Logger.getLogger("Minecraft");
+     }
+-    
++
      public ServerConfigurationManager(final MinecraftServer minecraftServer) {
 -        this.playerEntities = (List)new ArrayList();
 -        this.bannedPlayers = (Set<String>)new HashSet();
@@ -46,15 +68,16 @@
 +        this.whitelistEnabled = false;
          this.mcServer = minecraftServer;
          this.bannedPlayersFile = minecraftServer.getFile("banned-players.txt");
-@@ -48,14 +56,22 @@
+@@ -48,24 +60,32 @@
          this.opFile = minecraftServer.getFile("ops.txt");
          this.authFile = minecraftServer.getFile("authed-players.txt");
 +        this.whitelistFile = minecraftServer.getFile("whitelist.txt");
 +        this.whitelistIPsFile = minecraftServer.getFile("whitelist-ips.txt");
          this.playerManagerObj = new PlayerManager(minecraftServer);
-         this.maxPlayers = minecraftServer.propertyManagerObj.getIntProperty("max-players", 20);
-+        this.whitelistEnabled = minecraftServer.propertyManagerObj.getBooleanProperty("whitelist", false);
-+        this.enforceRosepad = minecraftServer.propertyManagerObj.getBooleanProperty("enforce-rosepad", true);
+-        this.maxPlayers = minecraftServer.propertyManagerObj.getIntProperty("max-players", 20);
++        this.maxPlayers = minecraftServer.propertyManagerObj.<Integer>getOption("max-players").getValue();
++        this.whitelistEnabled = minecraftServer.propertyManagerObj.<Boolean>getOption("whitelist").getValue();
++        this.enforceRosepad = minecraftServer.propertyManagerObj.<Boolean>getOption("enforce-rosepad").getValue();
          this.readBannedPlayers();
          this.loadBannedList();
          this.loadOps();
@@ -68,15 +91,46 @@
 +        this.saveWhitelistedPlayers();
 +        this.saveWhitelistedIPs();
      }
-     
-@@ -91,5 +107,5 @@
-     
+-    
++
+     public void setPlayerManager(final WorldServer worldServer1) {
+         this.playerNBTManagerObj = new PlayerNBTManager(new File(worldServer1.saveDirectory, "players"));
+     }
+-    
++
+     public int getMaxTrackingDistance() {
+         return this.playerManagerObj.getMaxTrackingDistance();
+     }
+-    
++
+     public void playerLoggedIn(final EntityPlayerMP entityPlayerMP1) {
+         this.playerEntities.add(entityPlayerMP1);
+@@ -78,9 +98,9 @@
+         this.playerManagerObj.addPlayer(entityPlayerMP1);
+     }
+-    
++
+     public void serverUpdateMountedMovingPlayer(final EntityPlayerMP entityPlayerMP1) {
+         this.playerManagerObj.updateMountedMovingPlayer(entityPlayerMP1);
+     }
+-    
++
+     public void playerLoggedOut(final EntityPlayerMP entityPlayerMP1) {
+         this.playerManagerObj.removePlayer(entityPlayerMP1);
+@@ -89,9 +109,9 @@
+         this.playerEntities.remove(entityPlayerMP1);
+     }
+-    
++
      private static boolean isValidName(final String username) {
 -        return username.matches("[a-zA-Z0-9_ \\u0107 \\u015b]*");
 +        return username.matches("[a-zA-Z\\d_ \\u0107 \\u015b]{2,32}");
      }
-     
-@@ -99,11 +115,19 @@
+-    
++
+     public EntityPlayerMP login(final NetLoginHandler netLoginHandler1, final String username, final String password, final boolean authed) {
+         if (this.bannedPlayers.contains(username.trim())) {
+@@ -99,11 +119,19 @@
              return null;
          }
 -        String string4 = netLoginHandler1.netManager.getRemoteAddress().toString();
@@ -100,7 +154,7 @@
 +        }
          if (this.playerEntities.size() >= this.maxPlayers) {
              netLoginHandler1.kickUser("The server is full!");
-@@ -114,10 +138,28 @@
+@@ -114,10 +142,28 @@
              return null;
          }
 +        {
@@ -131,21 +185,33 @@
 +            final EntityPlayerMP entityPlayerMP6 = this.playerEntities.get(i5);
              if (entityPlayerMP6.username.equals(username)) {
                  if (!this.mcServer.ULPPOnlineMode) {
-@@ -131,4 +173,5 @@
+@@ -131,47 +177,48 @@
              this.authPlayer(username);
          }
 +        netLoginHandler1.netManager.addToSendQueue(new Packet130RosepadMeta().Default());
          return new EntityPlayerMP(this.mcServer, this.mcServer.worldMngr, username, new ItemInWorldManager(this.mcServer.worldMngr));
      }
-@@ -144,5 +187,5 @@
+-    
++
+     public void onTick() throws IOException {
+         this.playerManagerObj.updatePlayerInstances();
+     }
+-    
++
+     public void markBlockNeedsUpdate(final int i1, final int i2, final int i3) {
+         this.playerManagerObj.markBlockNeedsUpdate(i1, i2, i3);
+     }
+-    
++
      public void sendPacketToAllPlayers(final Packet packet1) {
          for (int i2 = 0; i2 < this.playerEntities.size(); ++i2) {
 -            final EntityPlayerMP entityPlayerMP3 = (EntityPlayerMP)this.playerEntities.get(i2);
 +            final EntityPlayerMP entityPlayerMP3 = this.playerEntities.get(i2);
              entityPlayerMP3.playerNetServerHandler.sendPacket(packet1);
          }
-@@ -150,12 +193,12 @@
-     
+     }
+-    
++
      public String getPlayerList() {
 -        String string1 = "";
 +        StringBuilder string1 = new StringBuilder();
@@ -160,36 +226,51 @@
 -        return string1;
 +        return string1.toString();
      }
-     
-@@ -173,5 +216,5 @@
+-    
++
+     public void banPlayer(final String string1) {
+         this.bannedPlayers.add(string1);
+         this.writeBannedPlayers();
+     }
+-    
++
+     public void pardonPlayer(final String string1) {
+         this.bannedPlayers.remove(string1);
+         this.writeBannedPlayers();
+     }
+-    
++
+     private void readBannedPlayers() {
          try {
              this.bannedPlayers.clear();
 -            final BufferedReader bufferedReader1 = new BufferedReader((Reader)new FileReader(this.bannedPlayersFile));
 +            BufferedReader bufferedReader1 = new BufferedReader(new FileReader(this.bannedPlayersFile));
              String string2 = "";
              while ((string2 = bufferedReader1.readLine()) != null) {
-@@ -181,5 +224,5 @@
+@@ -181,11 +228,11 @@
          }
          catch (Exception exception3) {
 -            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to load ban list: ").append(exception3).toString());
 +            ServerConfigurationManager.logger.warning("Failed to load ban list: " + exception3);
          }
      }
-@@ -187,5 +230,5 @@
+-    
++
      private void writeBannedPlayers() {
          try {
 -            final PrintWriter printWriter1 = new PrintWriter((Writer)new FileWriter(this.bannedPlayersFile, false));
 +            final PrintWriter printWriter1 = new PrintWriter(new FileWriter(this.bannedPlayersFile, false));
              for (final String string3 : this.bannedPlayers) {
                  printWriter1.println(string3);
-@@ -194,8 +237,92 @@
+@@ -194,18 +241,102 @@
          }
          catch (Exception exception4) {
 -            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to save ban list: ").append(exception4).toString());
 +            ServerConfigurationManager.logger.warning("Failed to save ban list: " + exception4);
          }
      }
-     
+-    
++
 +    private void loadWhitelistedPlayers() {
 +    	try {
 +    		this.whitelistedPlayers.clear();
@@ -204,7 +285,7 @@
 +    		ServerConfigurationManager.logger.warning("Failed to load player whitelist: " + exception3);
 +    	}
 +    }
-+    
++
 +    private void saveWhitelistedPlayers() {
 +    	try {
 +    		final PrintWriter printWriter1 = new PrintWriter(new FileWriter(this.whitelistFile, false));
@@ -217,17 +298,17 @@
 +    		ServerConfigurationManager.logger.warning("Failed to save player whitelist: " + exception4);
 +    	}
 +    }
-+    
++
 +    public void whitelistPlayer(final String string1) {
 +    	this.whitelistedPlayers.add(string1.toLowerCase());
 +    	this.saveWhitelistedPlayers();
 +    }
-+    
++
 +    public void unwhitelistPlayer(final String string1) {
 +    	this.whitelistedPlayers.remove(string1.toLowerCase());
 +    	this.saveWhitelistedPlayers();
 +    }
-+    
++
 +    private void loadWhitelistedIPs() {
 +    	try {
 +    		this.whitelistedIPs.clear();
@@ -242,7 +323,7 @@
 +    		ServerConfigurationManager.logger.warning("Failed to load ip whitelist: " + exception3);
 +    	}
 +    }
-+    
++
 +    private void saveWhitelistedIPs() {
 +    	try {
 +    		final PrintWriter printWriter1 = new PrintWriter(new FileWriter(this.whitelistIPsFile, false));
@@ -255,66 +336,167 @@
 +    		ServerConfigurationManager.logger.warning("Failed to save ip whitelist: " + exception4);
 +    	}
 +    }
-+    
++
 +    public void whitelistIP(final String string1) {
 +    	this.whitelistedIPs.add(string1.toLowerCase());
 +    	this.saveWhitelistedIPs();
 +    }
-+    
++
 +    public void unwhitelistIP(final String string1) {
 +    	this.whitelistedIPs.remove(string1.toLowerCase());
 +    	this.saveWhitelistedIPs();
 +    }
-+    
++
 +    public void enableWhitelist() {
 +    	this.whitelistEnabled = true;
 +    }
-+    
++
 +    public void disableWhitelist() {
 +    	this.whitelistEnabled = false;
 +    }
-+    
++
      public void banIP(final String string1) {
          this.bannedIPs.add(string1);
-@@ -219,5 +346,5 @@
+         this.saveBannedList();
+     }
+-    
++
+     public void pardonIP(final String string1) {
+         this.bannedIPs.remove(string1);
+         this.saveBannedList();
+     }
+-    
++
+     private void loadBannedList() {
+         try {
+@@ -219,8 +350,8 @@
          }
          catch (Exception exception3) {
 -            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to load ip ban list: ").append(exception3).toString());
 +            ServerConfigurationManager.logger.warning("Failed to load ip ban list: " + exception3);
          }
      }
-@@ -232,5 +359,5 @@
+-    
++
+     private void saveBannedList() {
+         try {
+@@ -232,27 +363,27 @@
          }
          catch (Exception exception4) {
 -            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to save ip ban list: ").append(exception4).toString());
 +            ServerConfigurationManager.logger.warning("Failed to save ip ban list: " + exception4);
          }
      }
-@@ -266,5 +393,5 @@
+-    
++
+     public void opPlayer(final String string1) {
+         this.ops.add(string1);
+         this.saveOps();
+     }
+-    
++
+     public void deopPlayer(final String string1) {
+         this.ops.remove(string1);
+         this.saveOps();
+     }
+-    
++
+     public void authPlayer(final String username) {
+         this.authenticatedPlayers.add(username);
+         this.saveAuthedPlayers();
+     }
+-    
++
+     public boolean isAuthed(final String username) {
+         return this.authenticatedPlayers.contains(username.trim());
+     }
+-    
++
+     private void loadOps() {
+         try {
+@@ -266,11 +397,11 @@
          }
          catch (Exception exception3) {
 -            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to load op list: ").append(exception3).toString());
 +            ServerConfigurationManager.logger.warning("Failed to load op list: " + exception3);
          }
      }
-@@ -279,5 +406,5 @@
+-    
++
+     private void saveOps() {
+         try {
+-            final PrintWriter printWriter1 = new PrintWriter((Writer)new FileWriter(this.opFile, false));
++            final PrintWriter printWriter1 = new PrintWriter(new FileWriter(this.opFile, false));
+             for (final String string3 : this.ops) {
+                 printWriter1.println(string3);
+@@ -279,8 +410,8 @@
          }
          catch (Exception exception4) {
 -            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to save op list: ").append(exception4).toString());
 +            ServerConfigurationManager.logger.warning("Failed to save op list: " + exception4);
          }
      }
-@@ -294,5 +421,5 @@
+-    
++
+     private void loadAuthedPlayers() {
+         try {
+@@ -294,8 +425,8 @@
          }
          catch (Exception exception3) {
 -            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to load authenticated player list: ").append(exception3).toString());
 +            ServerConfigurationManager.logger.warning("Failed to load authenticated player list: " + exception3);
          }
      }
-@@ -307,5 +434,5 @@
+-    
++
+     private void saveAuthedPlayers() {
+         try {
+@@ -307,12 +438,12 @@
          }
          catch (Exception exception4) {
 -            ServerConfigurationManager.logger.warning(new StringBuilder("Failed to save authenticated player list: ").append(exception4).toString());
 +            ServerConfigurationManager.logger.warning("Failed to save authenticated player list: " + exception4);
          }
      }
+-    
++
+     public boolean isOp(final String string1) {
+         return this.ops.contains(string1.trim());
+     }
+-    
++
+     public EntityPlayerMP getPlayerEntity(final String string1) {
+         for (int i2 = 0; i2 < this.playerEntities.size(); ++i2) {
+@@ -324,5 +455,5 @@
+         return null;
+     }
+-    
++
+     public void sendChatMessageToPlayer(final String string1, final String string2) {
+         final EntityPlayerMP entityPlayerMP3 = this.getPlayerEntity(string1);
+@@ -331,5 +462,5 @@
+         }
+     }
+-    
++
+     public void sendChatMessageToAllOps(final String string1) {
+         final Packet3Chat packet3Chat2 = new Packet3Chat(string1);
+@@ -341,5 +472,5 @@
+         }
+     }
+-    
++
+     public boolean sendPacketToPlayer(final String string1, final Packet packet2) {
+         final EntityPlayerMP entityPlayerMP3 = this.getPlayerEntity(string1);
+@@ -350,9 +481,9 @@
+         return false;
+     }
+-    
++
+     public void sentTileEntityToPlayer(final int i1, final int i2, final int i3, final TileEntity tileEntity4) {
+         this.playerManagerObj.sendTileEntity(new Packet59ComplexEntity(i1, i2, i3, tileEntity4), i1, i2, i3);
+     }
+-    
++
+     public void savePlayerStates() {
+         for (int i1 = 0; i1 < this.playerEntities.size(); ++i1) {

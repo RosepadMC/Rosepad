@@ -1,0 +1,101 @@
+--- PropertyManager.java
++++ PropertyManager.java
+@@ -1,81 +1,25 @@
+ package net.minecraft.src;
+ 
+-import java.io.OutputStream;
+-import java.io.FileOutputStream;
+-import java.util.logging.Level;
+-import java.io.InputStream;
+-import java.io.FileInputStream;
++import net.buj.rml.options.GameOption;
++import net.buj.rml.options.GameOptions;
++
+ import java.io.File;
+-import java.util.Properties;
+-import java.util.logging.Logger;
+ 
+-public class PropertyManager {
+-    public static Logger logger;
+-    private Properties serverProperties;
+-    private File propertiesFile;
+-    
+-    static {
+-        PropertyManager.logger = Logger.getLogger("Minecraft");
+-    }
+-    
++public class PropertyManager extends GameOptions {
+     public PropertyManager(final File propertiesFile) {
+-        this.serverProperties = new Properties();
+-        this.propertiesFile = propertiesFile;
+-        if (propertiesFile.exists()) {
+-            try {
+-                this.serverProperties.load((InputStream)new FileInputStream(propertiesFile));
+-            }
+-            catch (Exception exception3) {
+-                PropertyManager.logger.log(Level.WARNING, new StringBuilder("Failed to load ").append(propertiesFile).toString(), (Throwable)exception3);
+-                this.generateAndSaveProperties();
+-            }
+-        }
+-        else {
+-            PropertyManager.logger.log(Level.WARNING, new StringBuilder().append(propertiesFile).append(" does not exist").toString());
+-            this.generateAndSaveProperties();
+-        }
++        super(propertiesFile);
++        loadDefaults();
+     }
+-    
+-    public void generateAndSaveProperties() {
+-        PropertyManager.logger.log(Level.INFO, "Generating new properties file");
+-        this.saveProperties();
++
++    private void loadDefaults() {
++        String[] category = new String[] { "Server Properties" };
++        setOption(new GameOption.StringGameOption("server-ip", category, ""));
++        setOption(new GameOption.BooleanGameOption("online-mode", category, true, "YES", "NO"));
++        setOption(new GameOption.IntegerGameOption("server-port", category, 25565));
++        setOption(new GameOption.StringGameOption("level-name", category, "world"));
++        setOption(new GameOption.BooleanGameOption("monsters", category, false, "YES", "NO"));
++        setOption(new GameOption.IntegerGameOption("max-players", category, 20));
++        setOption(new GameOption.BooleanGameOption("whitelist", category, false, "YES", "NO"));
++        setOption(new GameOption.BooleanGameOption("enforce-rosepad", category, true, "YES", "NO"));
+     }
+-    
+-    public void saveProperties() {
+-        try {
+-            this.serverProperties.store((OutputStream)new FileOutputStream(this.propertiesFile), "Minecraft server properties");
+-        }
+-        catch (Exception exception2) {
+-            PropertyManager.logger.log(Level.WARNING, new StringBuilder("Failed to save ").append(this.propertiesFile).toString(), (Throwable)exception2);
+-            this.generateAndSaveProperties();
+-        }
+-    }
+-    
+-    public String getStringProperty(final String key, final String value) {
+-        if (!this.serverProperties.containsKey(key)) {
+-            this.serverProperties.setProperty(key, value);
+-            this.saveProperties();
+-        }
+-        return this.serverProperties.getProperty(key, value);
+-    }
+-    
+-    public int getIntProperty(final String key, final int value) {
+-        try {
+-            return Integer.parseInt(this.getStringProperty(key, new StringBuilder().append(value).toString()));
+-        }
+-        catch (Exception exception4) {
+-            this.serverProperties.setProperty(key, new StringBuilder().append(value).toString());
+-            return value;
+-        }
+-    }
+-    
+-    public boolean getBooleanProperty(final String key, final boolean value) {
+-        try {
+-            return Boolean.parseBoolean(this.getStringProperty(key, new StringBuilder().append(value).toString()));
+-        }
+-        catch (Exception exception4) {
+-            this.serverProperties.setProperty(key, new StringBuilder().append(value).toString());
+-            return value;
+-        }
+-    }
+ }

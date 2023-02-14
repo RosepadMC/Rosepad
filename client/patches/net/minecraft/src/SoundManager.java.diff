@@ -1,6 +1,84 @@
 --- SoundManager.java
 +++ SoundManager.java
-@@ -132,7 +132,7 @@
+@@ -19,4 +19,7 @@
+     private Random rand;
+     private int ticksBeforeMusic;
++
++    private int soundVolume = 100;
++    private int musicVolume = 100;
+     
+     public SoundManager() {
+@@ -33,5 +36,5 @@
+         this.soundPoolStreaming.isGetRandomSound = false;
+         this.gameSettings = gameSettings;
+-        if (!this.loaded && (gameSettings == null || gameSettings.soundVolume || gameSettings.musicVolume)) {
++        if (!this.loaded && (gameSettings == null || soundVolume > 0 || musicVolume > 0)) {
+             this.tryToSetLibraryAndCodecs();
+         }
+@@ -40,17 +43,17 @@
+     private void tryToSetLibraryAndCodecs() {
+         try {
+-            final boolean soundVolume = this.gameSettings.soundVolume;
+-            final boolean musicVolume = this.gameSettings.musicVolume;
+-            this.gameSettings.soundVolume = false;
+-            this.gameSettings.musicVolume = false;
+-            this.gameSettings.saveOptions();
++            //final boolean soundVolume = this.gameSettings.soundVolume;
++            //final boolean musicVolume = this.gameSettings.musicVolume;
++            //this.gameSettings.soundVolume = false;
++            //this.gameSettings.musicVolume = false;
++            //this.gameSettings.saveOptions();
+             SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
+-            SoundSystemConfig.setCodec("ogg", (Class)CodecJOrbis.class);
+-            SoundSystemConfig.setCodec("mus", (Class)CodecMus.class);
+-            SoundSystemConfig.setCodec("wav", (Class)CodecWav.class);
++            SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
++            SoundSystemConfig.setCodec("mus", CodecMus.class);
++            SoundSystemConfig.setCodec("wav", CodecWav.class);
+             this.sndSystem = new SoundSystem();
+-            this.gameSettings.soundVolume = soundVolume;
+-            this.gameSettings.musicVolume = musicVolume;
+-            this.gameSettings.saveOptions();
++            //this.gameSettings.soundVolume = soundVolume;
++            //this.gameSettings.musicVolume = musicVolume;
++            //this.gameSettings.saveOptions();
+         }
+         catch (Throwable t) {
+@@ -62,10 +65,13 @@
+     
+     public void onSoundOptionsChanged() {
+-        if (!this.loaded && (this.gameSettings.soundVolume || this.gameSettings.musicVolume)) {
++        if (!this.loaded && (soundVolume > 0 || musicVolume > 0)) {
+             this.tryToSetLibraryAndCodecs();
+         }
+-        if (!this.gameSettings.musicVolume) {
++        if (musicVolume == 0) {
+             this.sndSystem.stop("BgMusic");
+         }
++        else {
++            this.sndSystem.setVolume("BgMusic", musicVolume / 100.0f);
++        }
+     }
+     
+@@ -89,5 +95,5 @@
+     
+     public void playRandomMusicIfReady() {
+-        if (!this.loaded || !this.gameSettings.musicVolume) {
++        if (!this.loaded || musicVolume == 0) {
+             return;
+         }
+@@ -107,5 +113,5 @@
+     
+     public void setListener(final EntityLiving ge, final float float2) {
+-        if (!this.loaded || !this.gameSettings.soundVolume) {
++        if (!this.loaded || soundVolume == 0) {
+             return;
+         }
+@@ -129,10 +135,10 @@
+     
+     public void playStreaming(final String string, final float float2, final float float3, final float float4, final float float5, final float float6) {
+-        if (!this.loaded || !this.gameSettings.soundVolume) {
++        if (!this.loaded || soundVolume == 0) {
              return;
          }
 -        final String string2 = "streaming";
@@ -11,14 +89,60 @@
 +            this.sndSystem.stop(name);
          }
          if (string == null) {
-@@ -144,7 +144,7 @@
+@@ -144,12 +150,12 @@
                  this.sndSystem.stop("BgMusic");
              }
 -            this.sndSystem.newStreamingSource(true, "streaming", randomSoundFromSoundPool.soundUrl, randomSoundFromSoundPool.soundName, false, float2, float3, float4, 2, 64.0f);
 -            this.sndSystem.setVolume("streaming", 0.5f);
 -            this.sndSystem.play("streaming");
 +            this.sndSystem.newStreamingSource(true, name, randomSoundFromSoundPool.soundUrl, randomSoundFromSoundPool.soundName, false, float2, float3, float4, 2, 64.0f);
-+            this.sndSystem.setVolume(name, 0.5f);
++            this.sndSystem.setVolume(name, 0.5f * (musicVolume / 100.0f));
 +            this.sndSystem.play(name);
          }
      }
+     
+     public void playSound(final String string, final float float2, final float float3, final float float4, float float5, final float float6) {
+-        if (!this.loaded || !this.gameSettings.soundVolume) {
++        if (!this.loaded || soundVolume == 0) {
+             return;
+         }
+@@ -167,11 +173,11 @@
+                 float5 = 1.0f;
+             }
+-            this.sndSystem.setVolume(string2, float5);
++            this.sndSystem.setVolume(string2, float5 * (soundVolume / 100.0f));
+             this.sndSystem.play(string2);
+         }
+     }
+     
+-    public void playSoundFX(final String string, float float2, final float float3) {
+-        if (!this.loaded || !this.gameSettings.soundVolume) {
++    public void playSoundFX(final String string, float volume, final float float3) {
++        if (!this.loaded || soundVolume == 0) {
+             return;
+         }
+@@ -181,12 +187,20 @@
+             final String string2 = new StringBuilder().append("sound_").append(this.playerSoundsCount).toString();
+             this.sndSystem.newSource(false, string2, randomSoundFromSoundPool.soundUrl, randomSoundFromSoundPool.soundName, false, 0.0f, 0.0f, 0.0f, 0, 0.0f);
+-            if (float2 > 1.0f) {
+-                float2 = 1.0f;
++            if (volume > 1.0f) {
++                volume = 1.0f;
+             }
+-            float2 *= 0.25f;
++            volume *= 0.25f;
+             this.sndSystem.setPitch(string2, float3);
+-            this.sndSystem.setVolume(string2, float2);
++            this.sndSystem.setVolume(string2, volume * (soundVolume / 100.0f));
+             this.sndSystem.play(string2);
+         }
+     }
++
++    public void setSoundVolume(int volume) {
++        soundVolume = volume;
++    }
++
++    public void setMusicVolume(int volume) {
++        musicVolume = volume;
++    }
+ }

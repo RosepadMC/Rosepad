@@ -1,0 +1,136 @@
+--- GuiScreenKeyInput.java
++++ GuiScreenKeyInput.java
+@@ -18,10 +18,10 @@
+     String[] md5s;
+     String[] sha256s;
+-    
++
+     static {
+         GuiScreenKeyInput.name = "";
+         GuiScreenKeyInput.str = "/X*Y).)W/''[YX-Y('\\,''[W&.\\,/Z+.Z(+Z/+&',+.'-X+/X[\\Z[\\(/-.\\&'X\\&-";
+     }
+-    
++
+     public GuiScreenKeyInput(final Minecraft minecraft, final int keyIndex) {
+         this.starStr = "";
+@@ -34,5 +34,5 @@
+         this.keyIndex = keyIndex;
+     }
+-    
++
+     public static int playerIndex() {
+         int n = 0;
+@@ -43,30 +43,26 @@
+         return n % 5;
+     }
+-    
++
+     public static String calcString(final long long1, final int integer) {
+-        final long n = ~(~(~(~(~(~(~(~long1))))))) >> ~(~(~(~(~(~(~(~(64 - (GuiScreenKeyInput.str.toCharArray()[GuiScreenKeyInput.str.length() - 1] - "+".toCharArray()[0] + 6)))))))));
++        final long n = long1 >> (64 - (GuiScreenKeyInput.str.toCharArray()[GuiScreenKeyInput.str.length() - 1] - "+".toCharArray()[0] + 6));
+         final char[] charArray = GuiScreenKeyInput.str.substring((int)n * 13, (int)n * 13 + 13).toCharArray();
+         int n2 = 13;
+-        while (~(~(~(~(n2--)))) > 0) {
+-            final char[] array = charArray;
+-            final int n3 = n2;
+-            final char[] array2 = array;
+-            final int n4 = n3;
+-            array2[n4] -= (char)(-(~(~n) + ~integer + GuiScreenKeyInput.str.toCharArray()[GuiScreenKeyInput.str.length() - 1] - "+".toCharArray()[0]));
++        while (n2-- > 0) {
++            charArray[n2] -= (char)(-(n + ~integer + GuiScreenKeyInput.str.toCharArray()[GuiScreenKeyInput.str.length() - 1] - "+".toCharArray()[0]));
+         }
+-        return new String(charArray).substring(~(~GuiScreenKeyInput.str.toCharArray()[0]) ^ 0x2F);
++        return new String(charArray).substring(GuiScreenKeyInput.str.toCharArray()[0] ^ 0x2F);
+     }
+-    
++
+     public static String byteArrayToHex(final byte[] arr) {
+         final StringBuilder sb = new StringBuilder(arr.length * 2);
+         for (int length = arr.length, i = 0; i < length; ++i) {
+-            sb.append(String.format("%02x", new Object[] { arr[i] }));
++            sb.append(String.format("%02x", arr[i]));
+         }
+         return sb.toString();
+     }
+-    
++
+     private boolean KeyValid(String key) {
+         try {
+-            key = String.valueOf(this.keyIndex) + key;
++            key = this.keyIndex + key;
+             final MessageDigest instance = MessageDigest.getInstance("SHA-256");
+             final MessageDigest instance2 = MessageDigest.getInstance("MD5");
+@@ -80,17 +76,17 @@
+         }
+     }
+-    
++
+     @Override
+     public void updateScreen() {
+         ++this.updateCount;
+     }
+-    
++
+     @Override
+     public void actionPerformed() {
+         this.controlList.clear();
+         this.controlList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 12, "Input"));
+-        ((GuiButton)this.controlList.get(0)).enabled = false;
++        this.controlList.get(0).enabled = false;
+     }
+-    
++
+     @Override
+     protected void actionPerformed(final GuiButton button) {
+@@ -100,5 +96,5 @@
+         if (button.id == 0 && this.KeyValid(this.i)) {
+             if (this.keyIndex == 8) {
+-                System.out.println(this.sha256s[playerIndex() * 4 - playerIndex() * 3 + playerIndex() * 0 - playerIndex() + 7]);
++                System.out.println(this.sha256s[7]);
+             }
+             else {
+@@ -110,5 +106,5 @@
+         }
+     }
+-    
++
+     @Override
+     protected void keyTyped(final char character, final int key) {
+@@ -123,29 +119,29 @@
+             }
+             if (length > 0) {
+-                this.i = String.valueOf(this.i) + clipboardString.substring(0, length);
++                this.i = this.i + clipboardString.substring(0, length);
+             }
+         }
+         if (character == '\r') {
+-            this.actionPerformed((GuiButton)this.controlList.get(0));
++            this.actionPerformed(this.controlList.get(0));
+         }
+         if (key == 14 && this.i.length() > 0) {
+             this.i = this.i.substring(0, this.i.length() - 1);
+         }
+-        if (" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}".indexOf((int)character) >= 0 && this.i.length() < 64) {
+-            this.i = String.valueOf(this.i) + character;
++        if (" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}".indexOf(character) >= 0 && this.i.length() < 64) {
++            this.i = this.i + character;
+         }
+-        ((GuiButton)this.controlList.get(0)).enabled = (this.i.length() > 0);
++        this.controlList.get(0).enabled = (this.i.length() > 0);
+         super.keyTyped(character, key);
+     }
+-    
++
+     @Override
+     public boolean doesGuiPauseGame() {
+         return false;
+     }
+-    
++
+     @Override
+     public void drawScreen(final int mouseX, final int mouseY, final float renderPartialTick) {
+         this.drawDefaultBackground();
+-        this.drawCenteredString(this.fontRenderer, new StringBuilder().append("Input ").append(this.keyIndex).toString(), this.width / 2, this.height / 4 - 60 + 20, -1593835521);
++        this.drawCenteredString(this.fontRenderer, "Input " + this.keyIndex, this.width / 2, this.height / 4 - 60 + 20, -1593835521);
+         final int xMin = this.width / 2 - 70;
+         final int yMin = this.height / 4 - 10 + 50 + 18;

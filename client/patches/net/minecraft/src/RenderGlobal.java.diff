@@ -96,7 +96,7 @@
 -                RenderManager.instance.renderEntity(entity, renderPartialTick);
 +        try {
 +            for (Entity value : loadedEntityList) {
-+                if (value.isInRangeToRenderVec3D(vector) && camera.isBoundingBoxInFrustum(value.boundingBox) && (value != this.mc.thePlayer || this.mc.gameSettings.thirdPersonView)) {
++                if (value.isInRangeToRenderVec3D(vector) && camera.isBoundingBoxInFrustum(value.boundingBox) && (value != this.mc.thePlayer || this.mc.entityRenderer.thirdPersonView)) {
 +                    ++this.countEntitiesRendered;
 +                    RenderManager.instance.renderEntity(value, renderPartialTick);
 +                }

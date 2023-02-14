@@ -42,8 +42,8 @@ jar {
 
 abstract class DeletePatches extends DefaultTask {
 
-	@Input
-	String rmPath = "none";
+    @Input
+    String rmPath = "none";
 
     static def rm(Path path) {
         File file = new File(path.toString())
@@ -55,57 +55,57 @@ abstract class DeletePatches extends DefaultTask {
         file.delete()
     }
 
-	@TaskAction
-	def delete() {
-		rm(Paths.get(rmPath))
-	}
+    @TaskAction
+    def delete() {
+        rm(Paths.get(rmPath))
+    }
 }
 
 abstract class InjectClasses extends DefaultTask {
 
-	@Input
-	String source = "none";
-	@Input
-	String dest = "none";
+    @Input
+    String source = "none";
+    @Input
+    String dest = "none";
 
     static def cp(Path source, Path dest) {
         File file = new File(source.toString())
         if (file.isDirectory()) {
-        	dest.toFile().mkdirs()
+            dest.toFile().mkdirs()
             for (String sf : file.list()) {
-            	cp(source.resolve(sf), dest.resolve(sf))
+                cp(source.resolve(sf), dest.resolve(sf))
             }
         }
         else if (file.isFile()) {
-        	Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING)
+            Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING)
         }
     }
 
-	@TaskAction
-	def copy() {
-		cp(Paths.get(source), Paths.get(dest))
-	}
+    @TaskAction
+    def copy() {
+        cp(Paths.get(source), Paths.get(dest))
+    }
 }
 
 abstract class CreateInjectClasses extends DefaultTask {
 
-	@Input
-	String source = "none";
-	@Input
-	String orig = "none";
-	@Input
-	String dest = "none";
+    @Input
+    String source = "none";
+    @Input
+    String orig = "none";
+    @Input
+    String dest = "none";
 
     static def cpIfMissing(Path source, Path check, Path dest) {
         File file = source.toFile()
         if (file.isDirectory()) {
             for (String sf : file.list()) {
-            	cpIfMissing(source.resolve(sf), check.resolve(sf), dest.resolve(sf))
+                cpIfMissing(source.resolve(sf), check.resolve(sf), dest.resolve(sf))
             }
         }
         else if (file.isFile() && !check.toFile().exists()) {
-        	dest.parent.toFile().mkdirs();
-        	Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING)
+            dest.parent.toFile().mkdirs();
+            Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING)
         }
     }
 
@@ -119,11 +119,11 @@ abstract class CreateInjectClasses extends DefaultTask {
         file.delete()
     }
 
-	@TaskAction
-	def copy() {
-		rm(Paths.get(dest))
-		cpIfMissing(Paths.get(source), Paths.get(orig), Paths.get(dest))
-	}
+    @TaskAction
+    def copy() {
+        rm(Paths.get(dest))
+        cpIfMissing(Paths.get(source), Paths.get(orig), Paths.get(dest))
+    }
 }
 
 FileCollection getLilypadClasspath(FileCollection originalCollection, String libraryFolder, String mainFile) {
@@ -165,18 +165,18 @@ static String makeAndGetDir(String dir) {
 }
 
 tasks.register("deletePatches", DeletePatches) {
-	rmPath = "${projectDir}/patches"
+    rmPath = "${projectDir}/patches"
 }
 
 tasks.register("injectClasses", InjectClasses) {
-	source = "${projectDir}/inject"
-	dest = "${projectDir}/src/main"
+    source = "${projectDir}/inject"
+    dest = "${projectDir}/src/main"
 }
 
 tasks.register("ejectClasses", CreateInjectClasses) {
-	source = "${projectDir}/src/main/java"
-	orig = "${projectDir}/src/orig/java"
-	dest = "${projectDir}/inject/java"
+    source = "${projectDir}/src/main/java"
+    orig = "${projectDir}/src/orig/java"
+    dest = "${projectDir}/inject/java"
 }
 
 String username = "Player" + new Random().nextInt(999)
@@ -208,7 +208,7 @@ createPatches {
 }
 
 shadowJar {
-    dependsOn "processPatches"
+    //dependsOn "processPatches"
     dependsOn "injectClasses"
 }
 

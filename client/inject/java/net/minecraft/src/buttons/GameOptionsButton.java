@@ -16,12 +16,12 @@ public class GameOptionsButton implements GuiOptionsButton {
 
 	@Override
 	public void run(GuiButton button, GuiScreen parent) {
-    	settings.mc.displayGuiScreen(
-    			new GuiOptions(
-    					parent,
-    					settings.getGameOptionsMenuContext()
-    			)
-    	);
+//  	settings.mc.displayGuiScreen(
+//  			new GuiOptions(
+//  					parent,
+//  					settings.getGameOptionsMenuContext()
+//  			)
+//  	);
 	}
 
 }

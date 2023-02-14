@@ -11,12 +11,13 @@ public class DebugInfoButton implements GuiOptionsButton {
 
 	@Override
 	public String getText() {
-    	return "Debug info: " + (settings.showFPS ? "ON" : "OFF");
+		return "";
+    	//return "Debug info: " + (settings.showFPS ? "ON" : "OFF");
 	}
 
 	@Override
 	public void run(GuiButton button, GuiScreen parent) {
-    	settings.showFPS = !settings.showFPS;
+    	//settings.showFPS = !settings.showFPS;
 	}
 
 }

@@ -32,9 +32,10 @@
 -    
 +
      public void drawScreen(final int mouseX, final int mouseY, final float renderPartialTick) {
-         for (int i = 0; i < this.controlList.size(); ++i) {
+-        for (int i = 0; i < this.controlList.size(); ++i) {
 -            ((GuiButton)this.controlList.get(i)).drawButton(this.mc, mouseX, mouseY);
-+        	this.controlList.get(i).drawButton(this.mc, mouseX, mouseY);
++        for (GuiButton guiButton : this.controlList) {
++            guiButton.drawButton(this.mc, mouseX, mouseY);
          }
 +        drawRect(mouseX - 1, mouseY - 1, mouseX + 1, mouseY + 1, 0xFFFF0000);
      }
@@ -42,41 +43,61 @@
 +
      protected void keyTyped(final char character, final int key) {
          if (key == 1) {
-@@ -49,5 +50,5 @@
+@@ -49,35 +50,52 @@
          }
      }
 -    
 +
      public static String getClipboardString() {
          try {
-@@ -60,10 +61,11 @@
+             final Transferable contents = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+             if (contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+-                return (String)contents.getTransferData(DataFlavor.stringFlavor);
++                return (String) contents.getTransferData(DataFlavor.stringFlavor);
+             }
+         }
+-        catch (Exception ex) {}
++        catch (Exception ignored) {}
          return null;
      }
 -    
 +
      protected void mouseClicked(final int x, final int y, final int mouseButton) {
-+        System.out.println("mouse post X: " + x + ", Y: " + y + ", B: " + mouseButton + ", S: true");
++        //System.out.println("mouse post X: " + x + ", Y: " + y + ", B: " + mouseButton + ", S: true");
          if (mouseButton == 0) {
-             for (int i = 0; i < this.controlList.size(); ++i) {
+-            for (int i = 0; i < this.controlList.size(); ++i) {
 -                final GuiButton button = (GuiButton)this.controlList.get(i);
 -                if (button.mousePressed(x, y)) {
-+                final GuiButton button = this.controlList.get(i);
++            for (final GuiButton button : this.controlList) {
 +                if (button.isHovered(x, y)) {
                      this.mc.sndManager.playSoundFX("random.click", 1.0f, 1.0f);
                      this.actionPerformed(button);
-@@ -72,12 +74,17 @@
++                    button.mousePressed(x - button.xPosition, y - button.yPosition);
++                    break; // There's no reason to activate multiple buttons at once
+                 }
+             }
          }
      }
 -    
 -    protected void mouseMovedOrUp(final int x, final int y, final int mouseButton) {
 +
 +    protected void mouseUp(final int x, final int y, final int mouseButton) {
-+        System.out.println("mouse post X: " + x + ", Y: " + y + ", B: " + mouseButton + ", S: false");
++        //System.out.println("mouse post X: " + x + ", Y: " + y + ", B: " + mouseButton + ", S: false");
++        for (final GuiButton button : this.controlList) {
++            if (button.isHovered(x, y) || button.listensForMouseEvents()) {
++                button.mouseReleased(x - button.xPosition, y - button.yPosition);
++            }
++        }
      }
 -    
 +
 +    protected void mouseMoved(final int x, final int y) {
-+        System.out.println("mouse post X: " + x + ", Y: " + y + ", move");
++        //System.out.println("mouse post X: " + x + ", Y: " + y + ", move");
++        for (final GuiButton button : this.controlList) {
++            if (button.isHovered(x, y) || button.listensForMouseEvents()) {
++                button.mouseMoved(x - button.xPosition, y - button.yPosition);
++            }
++        }
 +    }
 +
      protected void actionPerformed(final GuiButton button) {
@@ -87,7 +108,7 @@
 +    public void setWorldAndResolution(final Minecraft minecraft, final ScaledResolution size) {
          this.mc = minecraft;
          if (this.hasInputHandler) {
-@@ -85,14 +92,16 @@
+@@ -85,14 +103,16 @@
          }
          this.fontRenderer = minecraft.fontRenderer;
 -        this.width = width;
@@ -105,10 +126,10 @@
 +
      public void handleInput() {
          while (Mouse.next()) {
-+            System.out.println("mouse pre X: " + Mouse.getEventX() + ", Y: " + Mouse.getEventY() + ", B: " + Mouse.getEventButton() + ", S: " + Mouse.getEventButtonState());
++            //System.out.println("mouse pre X: " + Mouse.getEventX() + ", Y: " + Mouse.getEventY() + ", B: " + Mouse.getEventButton() + ", S: " + Mouse.getEventButtonState());
              this.handleMouseInput();
          }
-@@ -108,56 +117,61 @@
+@@ -108,56 +128,61 @@
          }
      }
 -    
@@ -185,7 +206,7 @@
 +                    System.out.println("Current entered ID: " + GuiScreen.currentID);
                  }
                  else if (Keyboard.getEventKey() == 74) {
-@@ -167,13 +181,16 @@
+@@ -167,13 +192,16 @@
                      try {
                          if (Block.BLOCKS_LIST.length > Integer.parseInt(GuiScreen.currentID) && Block.BLOCKS_LIST[Integer.parseInt(GuiScreen.currentID)] != null) {
 -                            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Block.BLOCKS_LIST[Integer.parseInt(GuiScreen.currentID)], 64), true);
@@ -206,7 +227,7 @@
 +                            System.out.println("No block or item with ID " + GuiScreen.currentID);
                          }
                      }
-@@ -190,15 +207,15 @@
+@@ -190,15 +218,15 @@
          }
      }
 -    
@@ -226,14 +247,20 @@
 +
      public void drawWorldBackground(final int integer) {
          if (this.mc.theWorld != null) {
-@@ -209,5 +226,5 @@
+@@ -209,5 +237,5 @@
          }
      }
 -    
 +
      public void drawBackground(final int integer) {
          GL11.glDisable(2896);
-@@ -224,9 +241,9 @@
+@@ -220,13 +248,13 @@
+         instance.addVertexWithUV(0.0, this.height, 0.0, 0.0, this.height / 32.0f + integer);
+         instance.addVertexWithUV(this.width, this.height, 0.0, this.width / 32.0f, this.height / 32.0f + integer);
+-        instance.addVertexWithUV(this.width, 0.0, 0.0, this.width / 32.0f, 0 + integer);
+-        instance.addVertexWithUV(0.0, 0.0, 0.0, 0.0, 0 + integer);
++        instance.addVertexWithUV(this.width, 0.0, 0.0, this.width / 32.0f, integer);
++        instance.addVertexWithUV(0.0, 0.0, 0.0, 0.0, integer);
          instance.draw();
      }
 -    
