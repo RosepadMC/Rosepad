@@ -1,0 +1,163 @@
+--- GuiInventory.java
++++ GuiInventory.java
+@@ -1,8 +1,14 @@
+ package net.minecraft.src;
+ 
++import java.util.Locale;
++
++import org.lwjgl.input.Keyboard;
+ import org.lwjgl.opengl.GL11;
+ 
++import net.minecraft.client.devtools.DevToolsCreativeMenu;
++
+ public class GuiInventory extends GuiContainer {
+     private CraftingInventoryPlayerCB craftingInventory;
++    private InventoryCreative creativeInventory;
+     private float xSize_lo;
+     private float ySize_lo;
+@@ -10,28 +16,47 @@
+     public GuiInventory(final IInventory inventory, final ItemStack[] items) {
+         this.allowUserInput = true;
+-        this.craftingInventory = new CraftingInventoryPlayerCB(items);
+-        this.inventorySlots.add(new SlotCrafting(this, this.craftingInventory.craftMatrix, this.craftingInventory.craftResult, 0, 144, 36));
+-        for (int i = 0; i < 2; ++i) {
+-            for (int j = 0; j < 2; ++j) {
+-                this.inventorySlots.add(new SlotInventory(this, this.craftingInventory.craftMatrix, j + i * 2, 88 + j * 18, 26 + i * 18));
++        if (DevToolsCreativeMenu.ENABLED) {
++            creativeInventory = new InventoryCreative(9 * 6 - 1);
++            creativeInventory.setFilter("");
++            for (int i = 0; i < 6; ++i) {
++                for (int j = 0; j < 9; ++j) {
++                    this.inventorySlots.add(new SlotInventory(this, creativeInventory, j + i * 9, 8 + j * 18, 30 + i * 18));
++                }
+             }
++            for (int i = 0; i < 9; ++i) {
++                this.inventorySlots.add(new SlotInventory(this, inventory, i, 8 + i * 18, 142));
++            }
+         }
+-        for (int i = 0; i < 4; ++i) {
+-            final int j = i;
+-            this.inventorySlots.add(new SlotArmor(this, this, inventory, inventory.getSizeInventory() - 1 - i, 8, 8 + i * 18, j));
+-        }
+-        for (int i = 0; i < 3; ++i) {
+-            for (int j = 0; j < 9; ++j) {
+-                this.inventorySlots.add(new SlotInventory(this, inventory, j + (i + 1) * 9, 8 + j * 18, 84 + i * 18));
++        else {
++            this.craftingInventory = new CraftingInventoryPlayerCB(items);
++            this.inventorySlots.add(new SlotCrafting(this, this.craftingInventory.craftMatrix, this.craftingInventory.craftResult, 0, 144, 36));
++            for (int i = 0; i < 2; ++i) {
++                for (int j = 0; j < 2; ++j) {
++                    this.inventorySlots.add(new SlotInventory(this, this.craftingInventory.craftMatrix, j + i * 2, 88 + j * 18, 26 + i * 18));
++                }
+             }
++            for (int i = 0; i < 4; ++i) {
++                final int j = i;
++                this.inventorySlots.add(new SlotArmor(this, this, inventory, inventory.getSizeInventory() - 1 - i, 8, 8 + i * 18, j));
++            }
++            for (int i = 0; i < 3; ++i) {
++                for (int j = 0; j < 9; ++j) {
++                    this.inventorySlots.add(new SlotInventory(this, inventory, j + (i + 1) * 9, 8 + j * 18, 84 + i * 18));
++                }
++            }
++            for (int i = 0; i < 9; ++i) {
++                this.inventorySlots.add(new SlotInventory(this, inventory, i, 8 + i * 18, 142));
++            }
+         }
+-        for (int i = 0; i < 9; ++i) {
+-            this.inventorySlots.add(new SlotInventory(this, inventory, i, 8 + i * 18, 142));
+-        }
+     }
+     
+     @Override
+     protected void drawGuiContainerForegroundLayer() {
+-        this.fontRenderer.drawString("Crafting", 86, 16, 16777215);
++        if (creativeInventory == null) {
++            this.fontRenderer.drawString("Crafting", 86, 16, 16777215);
++        }
++        else {
++            this.fontRenderer.drawString("Crafting", 82, 9, 16777215);
++        }
+     }
+     
+@@ -45,5 +70,5 @@
+     @Override
+     protected void drawGuiContainerBackgroundLayer(final float renderPartialTick) {
+-        final int texture = this.mc.renderEngine.getTexture("/gui/inventory.png");
++        final int texture = this.mc.renderEngine.getTexture(DevToolsCreativeMenu.ENABLED ? "/gui/gminventory.png" : "/gui/inventory.png");
+         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         this.mc.renderEngine.bindTexture(texture);
+@@ -51,31 +76,47 @@
+         final int y = (this.height - this.ySize) / 2;
+         this.drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
+-        GL11.glEnable(32826);
+-        GL11.glEnable(2903);
+-        GL11.glPushMatrix();
+-        GL11.glTranslatef((float)(x + 51), (float)(y + 75), 50.0f);
+-        final float n = 30.0f;
+-        GL11.glScalef(-30.0f, 30.0f, 30.0f);
+-        GL11.glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
+-        final float renderYawOffset = this.mc.thePlayer.renderYawOffset;
+-        final float rotationYaw = this.mc.thePlayer.rotationYaw;
+-        final float rotationPitch = this.mc.thePlayer.rotationPitch;
+-        final float n2 = x + 51 - this.xSize_lo;
+-        final float n3 = y + 75 - 50 - this.ySize_lo;
+-        GL11.glRotatef(135.0f, 0.0f, 1.0f, 0.0f);
+-        RenderHelper.enableStandardItemLighting();
+-        GL11.glRotatef(-135.0f, 0.0f, 1.0f, 0.0f);
+-        GL11.glRotatef(-(float)Math.atan((double)(n3 / 40.0f)) * 20.0f, 1.0f, 0.0f, 0.0f);
+-        this.mc.thePlayer.renderYawOffset = (float)Math.atan((double)(n2 / 40.0f)) * 20.0f;
+-        this.mc.thePlayer.rotationYaw = (float)Math.atan((double)(n2 / 40.0f)) * 40.0f;
+-        this.mc.thePlayer.rotationPitch = -(float)Math.atan((double)(n3 / 40.0f)) * 20.0f;
+-        GL11.glTranslatef(0.0f, this.mc.thePlayer.yOffset, 0.0f);
+-        RenderManager.instance.renderEntityWithPosYaw(this.mc.thePlayer, 0.0, 0.0, 0.0, 0.0f, 1.0f);
+-        this.mc.thePlayer.renderYawOffset = renderYawOffset;
+-        this.mc.thePlayer.rotationYaw = rotationYaw;
+-        this.mc.thePlayer.rotationPitch = rotationPitch;
+-        GL11.glPopMatrix();
+-        RenderHelper.disableStandardItemLighting();
+-        GL11.glDisable(32826);
++        if (creativeInventory == null) {
++            GL11.glEnable(32826);
++            GL11.glEnable(2903);
++            GL11.glPushMatrix();
++                GL11.glTranslatef((float)(x + 51), (float)(y + 75), 50.0f);
++                final float n = 30.0f;
++                GL11.glScalef(-30.0f, 30.0f, 30.0f);
++                GL11.glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
++                final float renderYawOffset = this.mc.thePlayer.renderYawOffset;
++                final float rotationYaw = this.mc.thePlayer.rotationYaw;
++                final float rotationPitch = this.mc.thePlayer.rotationPitch;
++                final float n2 = x + 51 - this.xSize_lo;
++                final float n3 = y + 75 - 50 - this.ySize_lo;
++                GL11.glRotatef(135.0f, 0.0f, 1.0f, 0.0f);
++                RenderHelper.enableStandardItemLighting();
++                    GL11.glRotatef(-135.0f, 0.0f, 1.0f, 0.0f);
++                    GL11.glRotatef(-(float)Math.atan((double)(n3 / 40.0f)) * 20.0f, 1.0f, 0.0f, 0.0f);
++                    this.mc.thePlayer.renderYawOffset = (float)Math.atan((double)(n2 / 40.0f)) * 20.0f;
++                    this.mc.thePlayer.rotationYaw = (float)Math.atan((double)(n2 / 40.0f)) * 40.0f;
++                    this.mc.thePlayer.rotationPitch = -(float)Math.atan((double)(n3 / 40.0f)) * 20.0f;
++                    GL11.glTranslatef(0.0f, this.mc.thePlayer.yOffset, 0.0f);
++                    RenderManager.instance.renderEntityWithPosYaw(this.mc.thePlayer, 0.0, 0.0, 0.0, 0.0f, 1.0f);
++                    this.mc.thePlayer.renderYawOffset = renderYawOffset;
++                    this.mc.thePlayer.rotationYaw = rotationYaw;
++                    this.mc.thePlayer.rotationPitch = rotationPitch;
++                RenderHelper.disableStandardItemLighting();
++            GL11.glPopMatrix();
++            GL11.glDisable(32826);
++        }
+     }
++
++    @Override
++    protected void keyTyped(char character, int key) {
++        if (creativeInventory == null || key == Keyboard.KEY_ESCAPE)
++            super.keyTyped(character, key);
++        else {
++            String filter = creativeInventory.getFilter();
++            if (character >= 'a' && character <= 'z' || character >= 'A' && character <= 'Z' || character >= '0' && character <= '9')
++                filter += ((Character) character).toString().toLowerCase(Locale.ROOT);
++            else if (key == Keyboard.KEY_BACK && filter.length() >= 1)
++                if (!filter.isEmpty()) filter = filter.substring(0, filter.length() - 1);
++            creativeInventory.setFilter(filter);
++        }
++    }
+ }

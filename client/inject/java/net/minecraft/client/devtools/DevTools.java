@@ -105,6 +105,7 @@ public class DevTools extends GuiScreen {
         elements.add(new DevToolsTextElement("# Render"));
         elements.add(new DevToolsSubmenuElement("> Skin render", skinRenderPage()));
         elements.add(new DevToolsEnableColoredLighting());
+        elements.add(new DevToolsCreativeMenu());
 
         return elements;
     }

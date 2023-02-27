@@ -121,7 +121,7 @@
      private int joinPlayerCounter;
 -    
 +
-+    private @Nullable Thread currectThread = null;
++    private @Nullable Thread mainThread = null;
 +    private boolean doShutdown = false;
 +
 +    public static Minecraft INSTANCE;
@@ -187,7 +187,7 @@
 -    
 +
      public void startGame() throws LWJGLException {
-+        currectThread = Thread.currentThread();
++        mainThread = Thread.currentThread();
 +        Game.options = gameSettings = new GameSettings(this, new File(this.mcDataDir, "options.txt"));
          if (this.mcCanvas != null) {
              final Graphics graphics = this.mcCanvas.getGraphics();
@@ -352,7 +352,7 @@
 -    
 +
      public void shutdownMinecraftApplet() {
-+        if (currectThread != Thread.currentThread()) {
++        if (mainThread != Thread.currentThread()) {
 +            doShutdown = true;
 +            return;
 +        }

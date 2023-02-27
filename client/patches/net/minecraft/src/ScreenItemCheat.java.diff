@@ -1,13 +1,12 @@
 --- ScreenItemCheat.java
 +++ ScreenItemCheat.java
-@@ -1,10 +1,14 @@
+@@ -1,10 +1,13 @@
  package net.minecraft.src;
  
 +import org.lwjgl.input.Keyboard;
  import org.lwjgl.opengl.GL11;
  import net.minecraft.client.Minecraft;
  
-+import java.security.Key;
 +import java.util.*;
 +
  public class ScreenItemCheat extends GuiScreen {
@@ -16,27 +15,27 @@
 +    private final RenderBlocks blockRendererBlurryTroll;
      private boolean createButtons;
      private int lastCols;
-@@ -15,4 +19,5 @@
+@@ -15,4 +18,5 @@
      private boolean resetButtons;
      private int currentPage;
 +    private String search = "";
      
      public ScreenItemCheat(final Minecraft minecraft) {
-@@ -55,5 +60,5 @@
+@@ -55,5 +59,5 @@
          int n = 0;
          for (int i = 1; i != 256; ++i) {
 -            if (Block.BLOCKS_LIST[i] != null && i != 120) {
 +            if (Block.BLOCKS_LIST[i] != null && isSearchedFor(Block.BLOCKS_LIST[i])) {
                  ++n;
              }
-@@ -68,5 +73,5 @@
+@@ -68,5 +72,5 @@
          int n = 0;
          for (int i = 1; i != 256; ++i) {
 -            if (Block.BLOCKS_LIST[i] != null && i != 120) {
 +            if (Block.BLOCKS_LIST[i] != null && isSearchedFor(Block.BLOCKS_LIST[i])) {
                  ++n;
              }
-@@ -74,9 +79,41 @@
+@@ -74,9 +78,41 @@
          return n;
      }
 -    
@@ -80,14 +79,14 @@
 +                    && isSearchedFor(Item.ITEMS_LIST[i]))) {
                  ++n;
              }
-@@ -91,5 +128,5 @@
+@@ -91,5 +127,5 @@
          int n = 0;
          for (int i = 256; i != Item.ITEMS_LIST.length; ++i) {
 -            if (Item.ITEMS_LIST[i] != null) {
 +            if (Item.ITEMS_LIST[i] != null && isSearchedFor(Item.ITEMS_LIST[i])) {
                  ++n;
              }
-@@ -131,8 +168,10 @@
+@@ -131,8 +167,10 @@
          }
          if (button.id >= 4096) {
 -            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Item.ITEMS_LIST[button.id - 4096], 1), true);
@@ -100,14 +99,14 @@
 +            this.mc.thePlayer.dropPlayerItemWithRandomChoice(new ItemStack(Block.BLOCKS_LIST[button.id - 2048], this.mc.gameSettings.getCheatMenuItemAmount(0)), true);
          }
      }
-@@ -140,4 +179,6 @@
+@@ -140,4 +178,6 @@
      @Override
      public void drawScreen(final int mouseX, final int mouseY, final float renderPartialTick) {
 +        String itemName = null;
 +        List<String> itemInfo = new ArrayList<>();
          this.drawDefaultBackground();
          if (this.rotateTimer == -1L) {
-@@ -146,5 +187,8 @@
+@@ -146,5 +186,8 @@
          this.drawGradientRect(0, (int)(this.height * (1.0f - Math.min((System.currentTimeMillis() - this.rotateTimer) / 100.0f, 1.0f))), this.width, this.height, 1614823488, 1612718112);
          this.drawCenteredString(this.fontRenderer, "Palette", this.width / 2, 15, 16777215);
 -        this.drawCenteredString(this.fontRenderer, new StringBuilder().append("").append(this.currentPage).toString(), 208, 35, 16777215);
@@ -117,7 +116,7 @@
 +        }
          GL11.glBindTexture(3553, this.mc.renderEngine.getTexture("/terrain.png"));
          final int lastCols = (this.width - 18) / 32;
-@@ -170,7 +214,7 @@
+@@ -170,7 +213,7 @@
              this.controlList.add(new GuiSelButton(4, 148, 30, "<<"));
              this.controlList.add(new GuiSelButton(5, 218, 30, ">>"));
 -            ((GuiButton)this.controlList.get((int)(this.selectingBlocks ? 0 : 1))).enabled = false;
@@ -128,13 +127,13 @@
 +            final GuiButton guiButton2 = this.controlList.get(3);
              final boolean b = i != 1;
              guiButton2.enabled = b;
-@@ -178,4 +222,5 @@
+@@ -178,4 +221,5 @@
          }
          final int n = this.currentPage * lastCols * lastRows;
 +        int skipJ = 0;
          for (int j = 0; j != lastCols * lastRows; ++j) {
              if (this.selectingBlocks) {
-@@ -212,6 +257,10 @@
+@@ -212,6 +256,10 @@
                  }
                  final Item di = Item.ITEMS_LIST[n2];
 -                final float n5 = 18.0f + 32.0f * (j % lastCols);
@@ -147,7 +146,7 @@
 +                final float n3 = 50.0f + 23.0f * ((j - skipJ) / lastCols);
                  if (this.createButtons) {
                      this.controlList.add(new GuiBlockButton(4096 + n2, (int)n5, (int)n3, "", n2, (GuiScreen)this));
-@@ -226,3 +275,17 @@
+@@ -226,3 +274,17 @@
          super.drawScreen(mouseX, mouseY, renderPartialTick);
      }
 +

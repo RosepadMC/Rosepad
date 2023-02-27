@@ -1,6 +1,6 @@
 --- GameSettings.java
 +++ GameSettings.java
-@@ -1,265 +1,284 @@
+@@ -1,265 +1,286 @@
  package net.minecraft.src;
  
 -import java.io.Writer;
@@ -37,6 +37,11 @@
 -    public KeyBinding keyBindToggleFog;
 -    public KeyBinding[] keyBindings;
 -    protected Minecraft mc;
+-    private File optionsFile;
+-    public int numberOfOptions;
+-    public int difficulty;
+-    public boolean thirdPersonView;
+-    
 +import java.util.*;
 +
 +import net.buj.rml.options.GameOption;
@@ -60,11 +65,6 @@
 +    public boolean renderChunkName = true;
 +    public boolean enableDiscordRPC = false;
 +    public Minecraft mc;
-     private File optionsFile;
--    public int numberOfOptions;
--    public int difficulty;
--    public boolean thirdPersonView;
--    
 +    public int difficulty = 2;
 +    public int cheatMenuMode = 0;
 +
@@ -106,7 +106,7 @@
 +        this.renderChunkName = true;
 +        this.enableDiscordRPC = false;
          this.mc = minecraft;
-         this.optionsFile = new File(optionsLocation, "options.txt");
+-        this.optionsFile = new File(optionsLocation, "options.txt");
 -        this.loadOptions();
 +
 +        addDefault();
@@ -205,7 +205,7 @@
 +                  .withName("View bobbing"));
 +        setOption(new GameOption.BooleanGameOption("anaglyph3d",
 +                                                   new String[] { "Render options" },
-+                                                   true,
++                                                   false,
 +                                                   "YES", "NO")
 +                  .withListener(o -> {
 +                          anaglyph = o.getValue();
@@ -228,7 +228,7 @@
 +                  .withListener(o -> {
 +                          limitFramerate = o.getValue();
 +                  })
-+                  .withName("Graphics"));
++                  .withName("Limit framerate"));
 +        setOption(new GameOption.SliderIntegerGameOption("guiScaling",
 +                                                         new String[] { "Render options" },
 +                                                         4,
@@ -290,6 +290,17 @@
 -    
 -    public String getKeyBindingDescription(final int bindingIndex) {
 -        return String.valueOf(this.keyBindings[bindingIndex].keyDescription) + ": " + Keyboard.getKeyName(this.keyBindings[bindingIndex].keyCode);
+-    }
+-    
+-    public void setKeyBinding(final int bindingIndex, final int keyCode) {
+-        this.keyBindings[bindingIndex].keyCode = keyCode;
+-        this.saveOptions();
+-    }
+-    
+-    public void setOptionValue(final int optionIndex, final int value) {
+-        if (optionIndex == 0) {
+-            this.musicVolume = !this.musicVolume;
+-            this.mc.sndManager.onSoundOptionsChanged();
 +
 +    public int getCheatMenuItemAmount(int type) {
 +        if (type == 1 && this.cheatMenuMode == 0) return 1;
@@ -303,31 +314,7 @@
 +        case 2:
 +        default:
 +            return 64;
-+        }
-     }
-     
--    public void setKeyBinding(final int bindingIndex, final int keyCode) {
--        this.keyBindings[bindingIndex].keyCode = keyCode;
--        this.saveOptions();
-+    public GuiOptionsContext getGameOptionsMenuContext() {
-+        GuiOptionsContext context = new GuiOptionsContext();
-+
-+        context.title = "Game settings";
-+        context.topButtons = new ArrayList<>();
-+        context.bottomButtons = new ArrayList<>();
-+
-+        context.topButtons.add(new DifficultyButton(this));
-+        context.topButtons.add(new RemoteScriptsButton(this));
-+        context.topButtons.add(new CheatMenuModeButton(this));
-+
-+        return context;
-     }
-     
--    public void setOptionValue(final int optionIndex, final int value) {
--        if (optionIndex == 0) {
--            this.musicVolume = !this.musicVolume;
--            this.mc.sndManager.onSoundOptionsChanged();
--        }
+         }
 -        if (optionIndex == 1) {
 -            this.soundVolume = !this.soundVolume;
 -            this.mc.sndManager.onSoundOptionsChanged();
@@ -359,26 +346,8 @@
 -            this.mc.renderGlobal.loadRenderers();
 -        }
 -        this.saveOptions();
-+    public GuiOptionsContext getRenderOptionsMenuContext() {
-+        GuiOptionsContext context = new GuiOptionsContext();
-+
-+        context.title = "Render settings";
-+        context.topButtons = new ArrayList<>();
-+        context.bottomButtons = new ArrayList<>();
-+
-+        context.topButtons.add(new RenderDistanceButton(this));
-+        context.topButtons.add(new DebugInfoButton(this));
-+        context.topButtons.add(new ViewBobbingButton(this));
-+        context.topButtons.add(new AnaglyphButton(this));
-+        context.topButtons.add(new LimitFramerateButton(this));
-+        context.topButtons.add(new GraphicsModeButton(this));
-+        context.topButtons.add(new GuiScalingButton(this));
-+        context.topButtons.add(new RenderQANameButton(this));
-+        context.topButtons.add(new RenderChunkNameButton(this));
-+
-+        return context;
      }
-     
+-    
 -    public String getOptionDisplayString(final int optionIndex) {
 -        if (optionIndex == 0) {
 -            return new StringBuilder().append("Music: ").append(this.musicVolume ? "ON" : "OFF").toString();
@@ -411,19 +380,22 @@
 -            return new StringBuilder().append("Graphics: ").append(this.fancyGraphics ? "FANCY" : "FAST").toString();
 -        }
 -        return "";
-+    public GuiOptionsContext getSoundOptionsMenuContext() {
++
++    @Deprecated
++    public GuiOptionsContext getGameOptionsMenuContext() {
 +        GuiOptionsContext context = new GuiOptionsContext();
 +
-+        context.title = "Sound settings";
++        context.title = "Game settings";
 +        context.topButtons = new ArrayList<>();
 +        context.bottomButtons = new ArrayList<>();
 +
-+        context.topButtons.add(new MusicButton(this));
-+        context.topButtons.add(new SoundButton(this));
++        context.topButtons.add(new DifficultyButton(this));
++        context.topButtons.add(new RemoteScriptsButton(this));
++        context.topButtons.add(new CheatMenuModeButton(this));
 +
 +        return context;
      }
-     
+-    
 -    public void loadOptions() {
 -        try {
 -            if (!this.optionsFile.exists()) {
@@ -481,19 +453,24 @@
 -            System.out.println("Failed to load options");
 -            ex.printStackTrace();
 -        }
-+    public GuiOptionsContext getMainOptionsMenuContext() {
++
++    @Deprecated
++    public GuiOptionsContext getRenderOptionsMenuContext() {
 +        GuiOptionsContext context = new GuiOptionsContext();
 +
-+        context.title = "Settings";
++        context.title = "Render settings";
 +        context.topButtons = new ArrayList<>();
 +        context.bottomButtons = new ArrayList<>();
 +
-+        context.topButtons.add(new RenderOptionsButton(this));
-+        context.topButtons.add(new SoundOptionsButton(this));
-+        context.topButtons.add(new GameOptionsButton(this));
-+        context.topButtons.add(new DiscordRPCButton(this));
-+
-+        context.bottomButtons.add(new ControlsOptionsButton(this));
++        context.topButtons.add(new RenderDistanceButton(this));
++        context.topButtons.add(new DebugInfoButton(this));
++        context.topButtons.add(new ViewBobbingButton(this));
++        context.topButtons.add(new AnaglyphButton(this));
++        context.topButtons.add(new LimitFramerateButton(this));
++        context.topButtons.add(new GraphicsModeButton(this));
++        context.topButtons.add(new GuiScalingButton(this));
++        context.topButtons.add(new RenderQANameButton(this));
++        context.topButtons.add(new RenderChunkNameButton(this));
 +
 +        return context;
      }
@@ -523,5 +500,36 @@
 -            System.out.println("Failed to save options");
 -            ex.printStackTrace();
 -        }
--    }
++
++    @Deprecated
++    public GuiOptionsContext getSoundOptionsMenuContext() {
++        GuiOptionsContext context = new GuiOptionsContext();
++
++        context.title = "Sound settings";
++        context.topButtons = new ArrayList<>();
++        context.bottomButtons = new ArrayList<>();
++
++        context.topButtons.add(new MusicButton(this));
++        context.topButtons.add(new SoundButton(this));
++
++        return context;
+     }
++
++    @Deprecated
++    public GuiOptionsContext getMainOptionsMenuContext() {
++        GuiOptionsContext context = new GuiOptionsContext();
++
++        context.title = "Settings";
++        context.topButtons = new ArrayList<>();
++        context.bottomButtons = new ArrayList<>();
++
++        context.topButtons.add(new RenderOptionsButton(this));
++        context.topButtons.add(new SoundOptionsButton(this));
++        context.topButtons.add(new GameOptionsButton(this));
++        context.topButtons.add(new DiscordRPCButton(this));
++
++        context.bottomButtons.add(new ControlsOptionsButton(this));
++
++        return context;
++    }
  }
