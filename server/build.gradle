@@ -198,8 +198,9 @@ jar {
     }
 }
 
+tasks["compileJava"].dependsOn("processPatches", "injectClasses")
+
 shadowJar {
-    //dependsOn "processPatches"
     dependsOn "injectClasses"
 }
 

@@ -207,8 +207,9 @@ createPatches {
     dependsOn tasks.named("deletePatches").get()
 }
 
+tasks["compileJava"].dependsOn("processPatches", "injectClasses")
+
 shadowJar {
-    //dependsOn "processPatches"
     dependsOn "injectClasses"
 }
 
