@@ -1,6 +1,6 @@
 --- GameSettings.java
 +++ GameSettings.java
-@@ -1,265 +1,286 @@
+@@ -1,265 +1,223 @@
  package net.minecraft.src;
  
 -import java.io.Writer;
@@ -42,12 +42,9 @@
 -    public int difficulty;
 -    public boolean thirdPersonView;
 -    
-+import java.util.*;
-+
 +import net.buj.rml.options.GameOption;
 +import net.buj.rml.options.GameOptions;
 +import net.minecraft.client.*;
-+import net.minecraft.src.buttons.*;
 +
 +public class GameSettings extends GameOptions {
 +    public static final String[] RENDER_DISTANCES;
@@ -171,10 +168,10 @@
 +                  })
 +                  .withName("Sound volume"));
 +
-+        setOption(new GameOption.SliderIntegerGameOption("renderDistance",
++        setOption(new GameOption.SliderChoiceGameOption("renderDistance",
 +                                                         new String[] { "Render options" },
 +                                                         1,
-+                                                         0, 3)
++                                                         RENDER_DISTANCES)
 +                  .withListener(o -> {
 +                          renderDistance = o.getValue();
 +                  })
@@ -232,7 +229,7 @@
 +        setOption(new GameOption.SliderIntegerGameOption("guiScaling",
 +                                                         new String[] { "Render options" },
 +                                                         4,
-+                                                         0, 4)
++                                                         1, 4)
 +                  .withListener(o -> {
 +                          ScaledResolution.guiScaling = o.getValue();
 +                          mc.displayGuiScreen(mc.currentScreen);
@@ -256,14 +253,22 @@
 +                  .withName("Render chunk name"));
 +
 +        // TODO: Replace with DropdownGameOption once it's done
-+        setOption(new GameOption.SliderIntegerGameOption("a1605ext_difficulty",
++        setOption(new GameOption.SliderChoiceGameOption("a1605ext_difficulty",
 +                                                         new String[] { "Game options" },
 +                                                         2,
-+                                                         0, 5)
++                                                         DIFFICULTY_LEVELS)
 +                  .withListener(o -> {
 +                          difficulty = o.getValue();
 +                  })
 +                  .withName("Difficulty"));
++        setOption(new GameOption.SliderChoiceGameOption("cheat_menu_mode",
++                                                         new String[] { "Game options" },
++                                                         0,
++                                                         CHEAT_MENU_MODES)
++                  .withListener(o -> {
++                          cheatMenuMode = o.getValue();
++                  })
++                  .withName("Cheat menu mode"));
 +
 +
 +
@@ -380,21 +385,7 @@
 -            return new StringBuilder().append("Graphics: ").append(this.fancyGraphics ? "FANCY" : "FAST").toString();
 -        }
 -        return "";
-+
-+    @Deprecated
-+    public GuiOptionsContext getGameOptionsMenuContext() {
-+        GuiOptionsContext context = new GuiOptionsContext();
-+
-+        context.title = "Game settings";
-+        context.topButtons = new ArrayList<>();
-+        context.bottomButtons = new ArrayList<>();
-+
-+        context.topButtons.add(new DifficultyButton(this));
-+        context.topButtons.add(new RemoteScriptsButton(this));
-+        context.topButtons.add(new CheatMenuModeButton(this));
-+
-+        return context;
-     }
+-    }
 -    
 -    public void loadOptions() {
 -        try {
@@ -453,27 +444,7 @@
 -            System.out.println("Failed to load options");
 -            ex.printStackTrace();
 -        }
-+
-+    @Deprecated
-+    public GuiOptionsContext getRenderOptionsMenuContext() {
-+        GuiOptionsContext context = new GuiOptionsContext();
-+
-+        context.title = "Render settings";
-+        context.topButtons = new ArrayList<>();
-+        context.bottomButtons = new ArrayList<>();
-+
-+        context.topButtons.add(new RenderDistanceButton(this));
-+        context.topButtons.add(new DebugInfoButton(this));
-+        context.topButtons.add(new ViewBobbingButton(this));
-+        context.topButtons.add(new AnaglyphButton(this));
-+        context.topButtons.add(new LimitFramerateButton(this));
-+        context.topButtons.add(new GraphicsModeButton(this));
-+        context.topButtons.add(new GuiScalingButton(this));
-+        context.topButtons.add(new RenderQANameButton(this));
-+        context.topButtons.add(new RenderChunkNameButton(this));
-+
-+        return context;
-     }
+-    }
 -    
 -    public void saveOptions() {
 -        try {
@@ -500,36 +471,5 @@
 -            System.out.println("Failed to save options");
 -            ex.printStackTrace();
 -        }
-+
-+    @Deprecated
-+    public GuiOptionsContext getSoundOptionsMenuContext() {
-+        GuiOptionsContext context = new GuiOptionsContext();
-+
-+        context.title = "Sound settings";
-+        context.topButtons = new ArrayList<>();
-+        context.bottomButtons = new ArrayList<>();
-+
-+        context.topButtons.add(new MusicButton(this));
-+        context.topButtons.add(new SoundButton(this));
-+
-+        return context;
-     }
-+
-+    @Deprecated
-+    public GuiOptionsContext getMainOptionsMenuContext() {
-+        GuiOptionsContext context = new GuiOptionsContext();
-+
-+        context.title = "Settings";
-+        context.topButtons = new ArrayList<>();
-+        context.bottomButtons = new ArrayList<>();
-+
-+        context.topButtons.add(new RenderOptionsButton(this));
-+        context.topButtons.add(new SoundOptionsButton(this));
-+        context.topButtons.add(new GameOptionsButton(this));
-+        context.topButtons.add(new DiscordRPCButton(this));
-+
-+        context.bottomButtons.add(new ControlsOptionsButton(this));
-+
-+        return context;
-+    }
+-    }
  }

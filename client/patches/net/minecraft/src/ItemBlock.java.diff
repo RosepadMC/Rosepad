@@ -1,0 +1,9 @@
+--- ItemBlock.java
++++ ItemBlock.java
+@@ -43,5 +43,5 @@
+                 Block.BLOCKS_LIST[this.blockID].onBlockPlaced(world, x, y, z, side);
+                 world.playSoundEffect(x + 0.5f, y + 0.5f, z + 0.5f, block.stepSound.getStepSound(), (block.stepSound.getVolume() + 1.0f) / 2.0f, block.stepSound.getPitch() * 0.8f);
+-                --stack.stackSize;
++                if (stack.stackSize > 0) --stack.stackSize; // No reason for "infs" to run out
+             }
+         }
