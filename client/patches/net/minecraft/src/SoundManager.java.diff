@@ -1,6 +1,19 @@
 --- SoundManager.java
 +++ SoundManager.java
-@@ -19,4 +19,7 @@
+@@ -8,6 +8,7 @@
+ import java.util.Random;
+ import paulscode.sound.SoundSystem;
++import net.minecraft.client.Minecraft;
+ 
+-public class SoundManager {
++public final class SoundManager {
+     private SoundSystem sndSystem;
+     private SoundPool soundPoolSounds;
+@@ -15,8 +16,10 @@
+     private SoundPool soundPoolMusic;
+     private int playerSoundsCount;
+-    private GameSettings gameSettings;
+     private boolean loaded;
      private Random rand;
      private int ticksBeforeMusic;
 +
@@ -8,14 +21,35 @@
 +    private int musicVolume = 100;
      
      public SoundManager() {
-@@ -33,5 +36,5 @@
+@@ -28,29 +31,41 @@
+         this.rand = new Random();
+         this.ticksBeforeMusic = this.rand.nextInt(12000);
++
++        if (Minecraft.INSTANCE.gameSettings != null) {
++            setMusicVolume((int) Minecraft.INSTANCE.gameSettings.getOption("music").getValue());
++            setSoundVolume((int) Minecraft.INSTANCE.gameSettings.getOption("sound").getValue());
++        }
+     }
+     
+-    public void loadSoundSettings(final GameSettings gameSettings) {
++    public void loadSoundSettings(final SoundManager previous) {
          this.soundPoolStreaming.isGetRandomSound = false;
-         this.gameSettings = gameSettings;
+-        this.gameSettings = gameSettings;
 -        if (!this.loaded && (gameSettings == null || gameSettings.soundVolume || gameSettings.musicVolume)) {
-+        if (!this.loaded && (gameSettings == null || soundVolume > 0 || musicVolume > 0)) {
-             this.tryToSetLibraryAndCodecs();
+-            this.tryToSetLibraryAndCodecs();
++        if (previous == null) {
++            if (Minecraft.INSTANCE.gameSettings != null) {
++                setMusicVolume((int) Minecraft.INSTANCE.gameSettings.getOption("music").getValue());
++                setSoundVolume((int) Minecraft.INSTANCE.gameSettings.getOption("sound").getValue());
++            }
          }
-@@ -40,17 +43,17 @@
++        else {
++            setMusicVolume(previous.musicVolume);
++            setSoundVolume(previous.soundVolume);
++        }
++        onSoundOptionsChanged();
+     }
+     
      private void tryToSetLibraryAndCodecs() {
          try {
 -            final boolean soundVolume = this.gameSettings.soundVolume;
@@ -44,7 +78,7 @@
 +            //this.gameSettings.saveOptions();
          }
          catch (Throwable t) {
-@@ -62,10 +65,13 @@
+@@ -62,10 +77,13 @@
      
      public void onSoundOptionsChanged() {
 -        if (!this.loaded && (this.gameSettings.soundVolume || this.gameSettings.musicVolume)) {
@@ -60,21 +94,48 @@
 +        }
      }
      
-@@ -89,5 +95,5 @@
+@@ -89,5 +107,5 @@
      
      public void playRandomMusicIfReady() {
 -        if (!this.loaded || !this.gameSettings.musicVolume) {
 +        if (!this.loaded || musicVolume == 0) {
              return;
          }
-@@ -107,5 +113,5 @@
+@@ -106,33 +124,28 @@
+     }
      
-     public void setListener(final EntityLiving ge, final float float2) {
+-    public void setListener(final EntityLiving ge, final float float2) {
 -        if (!this.loaded || !this.gameSettings.soundVolume) {
++    public void setListener(final EntityLiving target, final float distance) {
 +        if (!this.loaded || soundVolume == 0) {
              return;
          }
-@@ -129,10 +135,10 @@
+-        if (ge == null) {
++        if (target == null) {
+             return;
+         }
+-        final float n = ge.prevRotationYaw + (ge.rotationYaw - ge.prevRotationYaw) * float2;
+-        final double n2 = ge.prevPosX + (ge.posX - ge.prevPosX) * float2;
+-        final double n3 = ge.prevPosY + (ge.posY - ge.prevPosY) * float2;
+-        final double n4 = ge.prevPosZ + (ge.posZ - ge.prevPosZ) * float2;
+-        final float cos = MathHelper.cos(-n * 0.017453292f - 3.1415927f);
+-        final float float3 = -MathHelper.sin(-n * 0.017453292f - 3.1415927f);
+-        final float float4 = 0.0f;
+-        final float float5 = -cos;
+-        final float float6 = 0.0f;
+-        final float float7 = 1.0f;
+-        final float float8 = 0.0f;
+-        this.sndSystem.setListenerPosition((float)n2, (float)n3, (float)n4);
+-        this.sndSystem.setListenerOrientation(float3, 0.0f, float5, 0.0f, 1.0f, 0.0f);
++        final float angle = target.prevRotationYaw + (target.rotationYaw - target.prevRotationYaw) * distance;
++        final double lx = target.prevPosX + (target.posX - target.prevPosX) * distance;
++        final double ly = target.prevPosY + (target.posY - target.prevPosY) * distance;
++        final double lz = target.prevPosZ + (target.posZ - target.prevPosZ) * distance;
++        final float lookX = -MathHelper.sin(-angle * 0.017453292f - (float) Math.PI);
++        final float lookZ = -MathHelper.cos(-angle * 0.017453292f - (float) Math.PI);
++        this.sndSystem.setListenerPosition((float)lx, (float)ly, (float)lz);
++        this.sndSystem.setListenerOrientation(lookX, 0.0f, lookZ, 0.0f, 1.0f, 0.0f);
+     }
      
      public void playStreaming(final String string, final float float2, final float float3, final float float4, final float float5, final float float6) {
 -        if (!this.loaded || !this.gameSettings.soundVolume) {
@@ -89,7 +150,7 @@
 +            this.sndSystem.stop(name);
          }
          if (string == null) {
-@@ -144,12 +150,12 @@
+@@ -144,12 +157,12 @@
                  this.sndSystem.stop("BgMusic");
              }
 -            this.sndSystem.newStreamingSource(true, "streaming", randomSoundFromSoundPool.soundUrl, randomSoundFromSoundPool.soundName, false, float2, float3, float4, 2, 64.0f);
@@ -106,7 +167,7 @@
 +        if (!this.loaded || soundVolume == 0) {
              return;
          }
-@@ -167,11 +173,11 @@
+@@ -167,11 +180,11 @@
                  float5 = 1.0f;
              }
 -            this.sndSystem.setVolume(string2, float5);
@@ -121,7 +182,7 @@
 +        if (!this.loaded || soundVolume == 0) {
              return;
          }
-@@ -181,12 +187,20 @@
+@@ -181,12 +194,28 @@
              final String string2 = new StringBuilder().append("sound_").append(this.playerSoundsCount).toString();
              this.sndSystem.newSource(false, string2, randomSoundFromSoundPool.soundUrl, randomSoundFromSoundPool.soundName, false, 0.0f, 0.0f, 0.0f, 0, 0.0f);
 -            if (float2 > 1.0f) {
@@ -144,5 +205,13 @@
 +
 +    public void setMusicVolume(int volume) {
 +        musicVolume = volume;
++    }
++
++    public int getSoundVolume() {
++        return soundVolume;
++    }
++
++    public int getMusicVolume() {
++        return musicVolume;
 +    }
  }
