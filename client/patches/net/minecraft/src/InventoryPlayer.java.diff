@@ -1,5 +1,16 @@
 --- InventoryPlayer.java
 +++ InventoryPlayer.java
+@@ -95,7 +95,7 @@
+         }
+         integer2 -= n2;
+-        final ItemStack itemStack2;
+-        final ItemStack itemStack = itemStack2 = this.mainInventory[n];
+-        itemStack2.stackSize += n2;
++        final ItemStack itemStack = this.mainInventory[n];
++        itemStack.stackSize += n2;
++        if (itemStack.stackSize < 0) itemStack.stackSize = -127;
+         this.mainInventory[n].animationsToGo = 5;
+         return integer2;
 @@ -263,10 +263,10 @@
      }
      

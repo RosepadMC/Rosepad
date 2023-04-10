@@ -1,0 +1,9 @@
+--- Packet5PlayerInventory.java
++++ Packet5PlayerInventory.java
+@@ -43,5 +43,5 @@
+             else {
+                 dataOutputStream.writeShort((int)(short)this.inventory[i].itemID);
+-                dataOutputStream.writeByte((int)(byte)this.inventory[i].stackSize);
++                dataOutputStream.writeByte(this.inventory[i].stackSize >= 0 ? (int)(byte)this.inventory[i].stackSize : -127);
+                 dataOutputStream.writeShort((int)(short)this.inventory[i].itemDmg);
+             }
