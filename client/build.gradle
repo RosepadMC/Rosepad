@@ -25,12 +25,12 @@ dependencies {
     implementation files('../libs/codecwav-20101023.jar')
     implementation files('../libs/libraryjavasound-20101123.jar')
     implementation files('../libs/librarylwjglopenal-20100824.jar')
-    implementation files('../libs/lwjgl-2.9.1-nightly-20130708.jar')
-    implementation files('../libs/lwjgl_util-2.9.1-nightly-20130708.jar')
+    shadow files('../libs/lwjgl-2.9.1-nightly-20130708.jar')
+    shadow files('../libs/lwjgl_util-2.9.1-nightly-20130708.jar')
     implementation files('../libs/soundsystem-20120107.jar')
     implementation group: 'org.json', name: 'json', version: '20220320'
     implementation 'com.github.Vatuu:discord-rpc:1.6.2'
-    implementation project(':rml')
+    shadow project(':rml')
     implementation 'org.java-websocket:Java-WebSocket:1.5.3'
 }
 

@@ -62,11 +62,10 @@
 +    private final List<ServerCommand> commands;
      public EntityTracker entityTracker;
      public boolean onlineMode;
-@@ -57,20 +39,54 @@
+@@ -57,20 +39,52 @@
      public String serverId;
      private static Random rand;
 -    
-+    public RosepadModLoader modLoader;
 +
 +    public static MinecraftServer INSTANCE;
 +
@@ -116,14 +115,13 @@
 -        this.commands = Collections.synchronizedList((List)new ArrayList());
 +        this.playersOnline = new ArrayList<>();
 +        this.commands = Collections.synchronizedList(new ArrayList<>());
-+        this.modLoader = new RosepadModLoader();
          new ThreadSleepForeverServer(this);
      }
 -    
 +
      private boolean startServer() throws IOException {
          final ThreadCommandReader threadCommandReader1 = new ThreadCommandReader(this);
-@@ -78,20 +94,21 @@
+@@ -78,20 +92,21 @@
          threadCommandReader1.start();
          ConsoleLogManager.init();
 -        MinecraftServer.logger.info("Starting minecraft server version 0.2.1");
@@ -151,14 +149,14 @@
 +        MinecraftServer.logger.info("Starting Minecraft server on " + ((string2.length() == 0) ? "*" : string2) + ":" + i4);
          this.serverId = Long.toHexString(MinecraftServer.rand.nextLong());
          try {
-@@ -100,5 +117,5 @@
+@@ -100,5 +115,5 @@
          catch (IOException iOException6) {
              MinecraftServer.logger.warning("**** FAILED TO BIND TO PORT!");
 -            MinecraftServer.logger.log(Level.WARNING, new StringBuilder("The exception was: ").append(iOException6.toString()).toString());
 +            MinecraftServer.logger.log(Level.WARNING, "The exception was: " + iOException6);
              MinecraftServer.logger.warning("Perhaps a server is already running on that port?");
              return false;
-@@ -117,14 +134,14 @@
+@@ -117,14 +132,15 @@
          this.configManager = new ServerConfigurationManager(this);
          this.entityTracker = new EntityTracker(this);
 -        final String string3 = this.propertyManagerObj.getStringProperty("level-name", "world");
@@ -166,6 +164,7 @@
 +        final String string3 = this.propertyManagerObj.<String>getOption("level-name").getValue();
 +        MinecraftServer.logger.info("Preparing level \"" + string3 + "\"");
          this.initWorld(string3);
++        Game.modLoader.postInit(Environment.SERVER);
          MinecraftServer.logger.info("Done! For help, type \"help\" or \"?\"");
          return true;
      }
@@ -177,7 +176,7 @@
 +        (this.worldMngr = new WorldServer(new File("."), worldName, this.propertyManagerObj.<Boolean>getOption("monsters").getValue())).addWorldAccess(new WorldManager(this));
          this.worldMngr.difficultySetting = 1;
          this.configManager.setPlayerManager(this.worldMngr);
-@@ -141,21 +158,21 @@
+@@ -141,21 +157,21 @@
          this.clearCurrentTask();
      }
 -    
@@ -204,7 +203,7 @@
 +
      private void stop() {
          MinecraftServer.logger.info("Stopping server");
-@@ -167,9 +184,9 @@
+@@ -167,9 +183,9 @@
          }
      }
 -    
@@ -216,14 +215,14 @@
 +
      public void run() {
          try {
-@@ -211,5 +228,5 @@
+@@ -211,5 +227,5 @@
          catch (Exception exception16) {
              exception16.printStackTrace();
 -            MinecraftServer.logger.log(Level.SEVERE, "Unexpected exception", (Throwable)exception16);
 +            MinecraftServer.logger.log(Level.SEVERE, "Unexpected exception", exception16);
              while (this.serverRunning) {
                  this.commandLineParser();
-@@ -223,18 +240,13 @@
+@@ -223,18 +239,13 @@
              return;
          }
 -        finally {
@@ -245,7 +244,7 @@
 +            final int i4 = MinecraftServer.playerList.get(string3);
              if (i4 > 0) {
                  MinecraftServer.playerList.put(string3, (i4 - 1));
-@@ -244,6 +256,6 @@
+@@ -244,6 +255,6 @@
              }
          }
 -        for (int i5 = 0; i5 < arrayList1.size(); ++i5) {
@@ -254,7 +253,7 @@
 +            MinecraftServer.playerList.remove(s);
          }
          AxisAlignedBB.clearBoundingBoxPool();
-@@ -254,11 +266,11 @@
+@@ -254,11 +265,11 @@
          }
          this.worldMngr.tick();
 -        while (this.worldMngr.updatingLighting()) {}
@@ -269,7 +268,7 @@
 +            iUpdatePlayerListBox.addAllPlayers();
          }
          try {
-@@ -266,15 +278,17 @@
+@@ -266,15 +277,17 @@
          }
          catch (Exception exception5) {
 -            MinecraftServer.logger.log(Level.WARNING, "Unexpected exception while parsing console command", (Throwable)exception5);
@@ -291,14 +290,14 @@
 +            final ServerCommand serverCommand1 = this.commands.remove(0);
              String string2 = serverCommand1.command;
              final ICommandListener iCommandListener3 = serverCommand1.commandListener;
-@@ -282,5 +296,5 @@
+@@ -282,5 +295,5 @@
              if (!string2.toLowerCase().startsWith("help") && !string2.toLowerCase().startsWith("?")) {
                  if (string2.toLowerCase().startsWith("list")) {
 -                    iCommandListener3.addHelpCommandMessage(new StringBuilder("Connected players: ").append(this.configManager.getPlayerList()).toString());
 +                    iCommandListener3.addHelpCommandMessage("Connected players: " + this.configManager.getPlayerList());
                  }
                  else if (string2.toLowerCase().startsWith("stop")) {
-@@ -432,4 +446,77 @@
+@@ -432,4 +445,77 @@
                      iCommandListener3.addHelpCommandMessage("There's no player by that name online.");
                  }
 +                else if (string2.toLowerCase().startsWith("whitelist")) {
@@ -376,7 +375,7 @@
 +                }
                  else {
                      MinecraftServer.logger.info("Unknown console command. Type \"help\" for help.");
-@@ -457,14 +544,15 @@
+@@ -457,14 +543,15 @@
                  iCommandListener3.addHelpCommandMessage("   list                      lists all currently connected players");
                  iCommandListener3.addHelpCommandMessage("   say <message>             broadcasts a message to all players");
 +                iCommandListener3.addHelpCommandMessage("   whitelist                 manage server whitelist");
@@ -395,7 +394,7 @@
 +
      private int parseInt(final String string, final int defaultValue) {
          try {
-@@ -475,13 +563,13 @@
+@@ -475,13 +562,13 @@
          }
      }
 -    
@@ -412,7 +411,7 @@
 +            if (!GraphicsEnvironment.isHeadless() && (args.length == 0 || !args[0].equals("nogui"))) {
                  ServerGUI.initGui(minecraftServer1);
              }
-@@ -489,20 +577,20 @@
+@@ -489,20 +576,20 @@
          }
          catch (Exception exception2) {
 -            MinecraftServer.logger.log(Level.SEVERE, "Failed to start the minecraft server", (Throwable)exception2);
