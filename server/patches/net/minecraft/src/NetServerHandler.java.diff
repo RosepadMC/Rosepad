@@ -1,12 +1,17 @@
 --- NetServerHandler.java
 +++ NetServerHandler.java
-@@ -3,4 +3,5 @@
+@@ -2,5 +2,10 @@
+ 
  import java.io.IOException;
++
++import net.buj.rml.Game;
++import net.buj.rml.events.server.ChatMessageEvent;
++import net.buj.rml.events.server.PlayerLeaveEvent;
  import net.minecraft.server.MinecraftServer;
 +
  import java.util.logging.Logger;
  
-@@ -59,39 +60,42 @@
+@@ -59,39 +64,42 @@
              this.lastPosY = this.playerEntity.posY;
              this.lastPosZ = this.playerEntity.posZ;
 -            double d2 = this.playerEntity.posX;
@@ -67,7 +72,7 @@
 -            d7 = d4 - this.playerEntity.posZ;
              final double d8 = d5 * d5 + d6 * d6 + d7 * d7;
              boolean z18 = false;
-@@ -100,8 +104,15 @@
+@@ -100,8 +108,14 @@
                  NetServerHandler.logger.warning(String.valueOf(this.playerEntity.username) + " moved wrongly!");
              }
 -            this.playerEntity.setPositionAndRotation(d2, d3, d4, f8, f9);
@@ -75,7 +80,6 @@
              final boolean z19 = this.mcServer.worldMngr.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.boundingBox.copy().removeCoord(f10, f10, f10)).size() == 0;
              if (z17 && (z18 || !z19)) {
 -                this.teleportTo(this.lastPosX, this.lastPosY, this.lastPosZ, f8, f9);
-+                System.out.println(playerEntity.username + " checks " + z17 + ", " + z18 + ", " + z19);
 +                int blockX = (int) Math.floor(posX);
 +                int blockY = (int) Math.floor(posY);
 +                int blockZ = (int) Math.floor(posZ);
@@ -85,7 +89,7 @@
 +                this.teleportTo(this.lastPosX, this.lastPosY, this.lastPosZ, rotationYaw, rotationPitch);
                  return;
              }
-@@ -151,10 +162,10 @@
+@@ -151,10 +165,10 @@
          final int i20 = packet.zPosition;
          final int i21 = packet.face;
 -        final int maxDistX = (int)MathHelper.abs((float)(i18 - this.mcServer.worldMngr.spawnX));
@@ -102,7 +106,7 @@
 +        final boolean allowed = (isAuthed || !mcServer.onlineMode) && distance < 7.5 && spawnDistance > 16 || isOP;
          if (packet.status == 0) {
              if (allowed) {
-@@ -193,10 +204,10 @@
+@@ -193,10 +207,10 @@
          final int i5 = packet.zPosition;
          final int i6 = packet.direction;
 -        final int maxDistX = (int)MathHelper.abs((float)(i3 - this.mcServer.worldMngr.spawnX));
@@ -119,35 +123,41 @@
 +        final boolean allowed = (isAuthed || !mcServer.onlineMode) && distance < 7.5 && spawnDistance > 16 || isOP;
          if (allowed) {
              final ItemStack itemStack9 = (packet.id >= 0) ? new ItemStack(packet.id) : null;
-@@ -209,5 +220,5 @@
+@@ -209,5 +223,5 @@
      @Override
      public void handleErrorMessage(final String message) {
 -        NetServerHandler.logger.info(String.valueOf(this.playerEntity.username) + " lost connection: " + message);
 +        NetServerHandler.logger.info(this.playerEntity.username + " lost connection: " + message);
          this.mcServer.configManager.playerLoggedOut(this.playerEntity);
          this.connectionClosed = true;
-@@ -216,5 +227,5 @@
+@@ -216,5 +230,5 @@
      @Override
      public void registerPacket(final Packet packet) {
 -        NetServerHandler.logger.warning(new StringBuilder().append(this.getClass()).append(" wasn't prepared to deal with a ").append(packet.getClass()).toString());
 +        NetServerHandler.logger.warning(this.getClass() + " wasn't prepared to deal with a " + packet.getClass());
          this.kickPlayer("Protocol error, unexpected packet");
      }
-@@ -269,5 +280,5 @@
+@@ -269,7 +283,9 @@
              }
              else {
 -                string2 = new StringBuilder("<").append(this.playerEntity.username).append("> ").append(string2).toString();
-+                string2 = "<" + this.playerEntity.username + "> " + string2;
-                 NetServerHandler.logger.info(string2);
-                 this.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat(string2));
-@@ -278,5 +289,5 @@
+-                NetServerHandler.logger.info(string2);
+-                this.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat(string2));
++                ChatMessageEvent event = new ChatMessageEvent(this.playerEntity.username, string2);
++                if (!Game.eventLoop.emit(event).isCancelled()) {
++                    this.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat(event.getMessage()));
++                    NetServerHandler.logger.info(event.getMessage());
++                }
+             }
+         }
+@@ -278,5 +294,5 @@
      private void handleSlashCommand(String string1) {
          if (string1.toLowerCase().startsWith("/me ")) {
 -            string1 = new StringBuilder("* ").append(this.playerEntity.username).append(" ").append(string1.substring(string1.indexOf(" ")).trim()).toString();
 +            string1 = "* " + this.playerEntity.username + " " + string1.substring(string1.indexOf(" ")).trim();
              NetServerHandler.logger.info(string1);
              this.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat(string1));
-@@ -287,6 +298,6 @@
+@@ -287,6 +303,6 @@
                  string1 = string1.substring(string1.indexOf(" ")).trim();
                  string1 = string1.substring(string1.indexOf(" ")).trim();
 -                string1 = new StringBuilder("§7").append(this.playerEntity.username).append(" whispers ").append(string1).toString();
@@ -156,7 +166,7 @@
 +                NetServerHandler.logger.info(string1 + " to " + string2[1]);
                  if (!this.mcServer.configManager.sendPacketToPlayer(string2[1], new Packet3Chat(string1))) {
                      this.sendPacket(new Packet3Chat("§cThere's no player by that name online."));
-@@ -294,17 +305,17 @@
+@@ -294,17 +310,17 @@
              }
          }
 -        else if (string1.toLowerCase().equalsIgnoreCase("/home")) {
@@ -179,7 +189,7 @@
 +                NetServerHandler.logger.info(this.playerEntity.username + " ironed!");
                  for (int i3 = 0; i3 < 4; ++i3) {
                      this.playerEntity.dropPlayerItem(new ItemStack(Item.ingotIron, 1));
-@@ -312,14 +323,14 @@
+@@ -312,14 +328,14 @@
              }
          }
 -        else if (string1.toLowerCase().equalsIgnoreCase("/wood")) {
@@ -198,7 +208,7 @@
 +                    this.playerEntity.dropPlayerItem(new ItemStack(Block.SAPLING, 1));
                  }
              }
-@@ -327,10 +338,10 @@
+@@ -327,10 +343,10 @@
          else if (this.mcServer.configManager.isOp(this.playerEntity.username)) {
              final String string3 = string1.substring(1);
 -            NetServerHandler.logger.info(String.valueOf(this.playerEntity.username) + " issued server command: " + string3);
@@ -211,14 +221,20 @@
 +            NetServerHandler.logger.info(this.playerEntity.username + " tried command: " + string3);
          }
      }
-@@ -354,5 +365,5 @@
+@@ -346,4 +362,5 @@
+     public void handleKickDisconnect(final Packet255KickDisconnect packet) {
+         this.netManager.networkShutdown("Quitting");
++        Game.eventLoop.emit(new PlayerLeaveEvent(playerEntity.username));
+     }
+     
+@@ -354,5 +371,5 @@
      @Override
      public void addHelpCommandMessage(final String helpCommandMessage) {
 -        this.sendPacket(new Packet3Chat(new StringBuilder("§7").append(helpCommandMessage).toString()));
 +        this.sendPacket(new Packet3Chat("§7" + helpCommandMessage));
      }
      
-@@ -389,3 +400,28 @@
+@@ -389,3 +406,28 @@
          }
      }
 +

@@ -226,8 +226,8 @@
 +        catch (Exception ignored) {}
          this.checkGLError("Post startup");
          this.ingameGUI = new GuiIngame(this);
-+        Game.options.load();
 +        Game.modLoader.postInit(Environment.CLIENT);
++        Game.options.load();
          if (this.serverName != null) {
 -            this.displayGuiScreen(new GuiConnecting(this, this.serverName, this.serverPort));
 +            try {
