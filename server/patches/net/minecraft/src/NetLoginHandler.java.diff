@@ -1,17 +1,15 @@
 --- NetLoginHandler.java
 +++ NetLoginHandler.java
-@@ -5,5 +5,10 @@
+@@ -5,5 +5,8 @@
  import java.io.IOException;
  import java.net.Socket;
 +
-+import net.buj.rml.Game;
-+import net.buj.rml.events.server.PlayerJoinEvent;
  import net.minecraft.server.MinecraftServer;
 +
 +import java.net.URLEncoder;
  import java.util.Random;
  import java.util.logging.Logger;
-@@ -17,10 +22,10 @@
+@@ -17,10 +20,10 @@
      private long loginStart;
      private String username;
 +    private String password;
@@ -25,7 +23,7 @@
 +    private static final long LOGIN_TIMEOUT = 30000L;
      
      static {
-@@ -33,19 +38,19 @@
+@@ -33,19 +36,19 @@
          this.loginStart = System.currentTimeMillis();
          this.username = null;
 +        this.password = "";
@@ -49,14 +47,14 @@
 +        if (this.loginStart + LOGIN_TIMEOUT < System.currentTimeMillis()) {
              this.kickUser("Took too long to log in");
          }
-@@ -56,5 +61,5 @@
+@@ -56,5 +59,5 @@
      
      public void kickUser(final String playerName) {
 -        NetLoginHandler.logger.info(new StringBuilder("Disconnecting ").append(this.getUserAndIPString()).append(": ").append(playerName).toString());
 +        NetLoginHandler.logger.info("Disconnecting " + this.getUserAndIPString() + ": " + playerName);
          this.netManager.addToSendQueue(new Packet255KickDisconnect(playerName));
          this.netManager.serverShutdown();
-@@ -76,12 +81,14 @@
+@@ -76,12 +79,14 @@
      public void handleLogin(final Packet1Login packet) {
          this.username = packet.username;
 +        this.password = packet.password;
@@ -75,7 +73,7 @@
 +        }
          this.doLogin(packet);
      }
-@@ -89,11 +96,22 @@
+@@ -89,11 +94,22 @@
      @Override
      public void handleULPPLoggedIn(final Packet129ULPPLoggedIn packet) {
 +        if (this.username == null) {
@@ -100,7 +98,7 @@
 +                NetLoginHandler.logger.info(this.username + " failed to authenticate");
                  this.kickUser("Unable to authenticate using ULPP");
                  return;
-@@ -102,12 +120,13 @@
+@@ -102,12 +118,12 @@
          catch (IOException e) {
              e.printStackTrace();
 -            NetLoginHandler.logger.info(String.valueOf(this.username) + " failed to authenticate");
@@ -113,45 +111,37 @@
 +        final EntityPlayerMP loggedInPlayer = this.mcServer.configManager.login(this, this.username, this.password, true);
          if (loggedInPlayer == null) {
              this.finishedProcessing = true;
-+            Game.eventLoop.emit(new PlayerJoinEvent(username));
 +            return;
          }
          final int minVersion = Integer.min(this.ULPPVersion, 1);
-@@ -119,5 +138,7 @@
+@@ -119,4 +135,5 @@
          this.mcServer.networkServer.addPlayer(ULPPLoginServerHandler);
          ULPPLoginServerHandler.sendPacket(new Packet4UpdateTime(this.mcServer.worldMngr.worldTime));
 +        NetLoginHandler.logger.info(this.username + " authenticated using ULPP");
          this.finishedProcessing = true;
-+        Game.eventLoop.emit(new PlayerJoinEvent(username));
      }
-     
-@@ -125,5 +146,5 @@
+@@ -125,5 +142,5 @@
          final int minVersion = Integer.min(this.ULPPVersion, 1);
          final int usedULPPVer = 1;
 -        if (this.isULPPOnline && minVersion > 0 && this.mcServer.ULPPOnlineMode) {
 +        if (this.ULPPVersion == 1 && this.mcServer.ULPPOnlineMode) {
              this.netManager.addToSendQueue(new Packet1Login("", this.mcServer.serverId, usedULPPVer));
              return;
-@@ -131,5 +152,5 @@
+@@ -131,5 +148,5 @@
          final EntityPlayerMP entityPlayerMP2 = this.mcServer.configManager.login(this, loginPacket.username, loginPacket.password, false);
          if (entityPlayerMP2 != null) {
 -            NetLoginHandler.logger.info(String.valueOf(this.getUserAndIPString()) + " logged in with ULPP" + Integer.toString(this.ULPPVersion));
 +            NetLoginHandler.logger.info(this.getUserAndIPString() + " logged in with ULPP" + this.ULPPVersion);
              NetServerHandler netServerHandler3;
              if (minVersion == 0) {
-@@ -148,9 +169,10 @@
-         }
-         this.finishedProcessing = true;
-+        Game.eventLoop.emit(new PlayerJoinEvent(username));
-     }
-     
+@@ -152,5 +169,5 @@
      @Override
      public void handleErrorMessage(final String message) {
 -        NetLoginHandler.logger.info(String.valueOf(this.getUserAndIPString()) + " lost connection");
 +        NetLoginHandler.logger.info(this.getUserAndIPString() + " lost connection");
          this.finishedProcessing = true;
      }
-@@ -162,5 +184,5 @@
+@@ -162,5 +179,5 @@
      
      public String getUserAndIPString() {
 -        return (this.username != null) ? (String.valueOf(this.username) + " [" + this.netManager.getRemoteAddress().toString() + "]") : this.netManager.getRemoteAddress().toString();
