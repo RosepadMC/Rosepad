@@ -169,15 +169,16 @@ tasks.register("ejectClasses", CreateInjectClasses) {
     dest = "${projectDir}/inject"
 }
 
-task runServer (type: JavaExec) {
-    mainClass = mainServerClass
-    classpath = getLilypadClasspath(sourceSets.main.runtimeClasspath, libraryPath)
-    argsString = "nogui"
-    jvmArgs = getRunJVMArgs("2048M")
-    workingDir = makeAndGetDir("${projectDir}/run/")
+//task runServer (type: JavaExec) {
+//    mainClass = mainServerClass
+//    classpath = getLilypadClasspath(sourceSets.main.runtimeClasspath, libraryPath)
+//    argsString = "nogui"
+//    jvmArgs = getRunJVMArgs("2048M")
+//    workingDir = makeAndGetDir("${projectDir}/run/")
+//    jvmArgs = { HOME = "${projectDir}/run/" }
 
-    dependsOn "shadowJar"
-}
+//    dependsOn ""
+//}
 
 processPatches {
     content = "${projectDir}/src/orig/java"

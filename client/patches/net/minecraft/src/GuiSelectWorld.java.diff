@@ -11,7 +11,7 @@
 +import org.lwjgl.input.Mouse;
  
  public class GuiSelectWorld extends GuiScreen {
-@@ -8,52 +13,90 @@
+@@ -8,52 +13,97 @@
      protected String screenTitle;
      private boolean selected;
 -    
@@ -20,6 +20,13 @@
 +    int mouseX = 0;
 +    int mouseY = 0;
 +    int putButtonsFor = -1;
++
++    private File[] notNullOrDefault(File[] files) {
++        if (files == null) {
++            return new File[0];
++        }
++        return files;
++    }
 +
 +    private static class SelectableWorld {
 +        private final String dirname;
@@ -49,7 +56,7 @@
 +    public void refresh() {
 +        worlds.clear();
 +        File saves = new File(Minecraft.getMinecraftDir(), "saves");
-+        for (File save : Objects.requireNonNull(saves.listFiles())) {
++        for (File save : notNullOrDefault(saves.listFiles())) {
 +            String worldName = save.getName();
 +            worlds.add(new SelectableWorld(worldName));
 +        }
@@ -134,7 +141,7 @@
 +    public void selectWorld(SelectableWorld world) {
          this.mc.displayGuiScreen(null);
          if (this.selected) {
-@@ -62,12 +105,78 @@
+@@ -62,12 +112,78 @@
          this.selected = true;
          this.mc.playerController = new PlayerControllerSP(this.mc);
 -        this.mc.startWorld(new StringBuilder().append("World").append(worldNum).toString());

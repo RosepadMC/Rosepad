@@ -25,8 +25,8 @@ dependencies {
     implementation files('../libs/codecwav-20101023.jar')
     implementation files('../libs/libraryjavasound-20101123.jar')
     implementation files('../libs/librarylwjglopenal-20100824.jar')
-    shadow files('../libs/lwjgl-2.9.1-nightly-20130708.jar')
-    shadow files('../libs/lwjgl_util-2.9.1-nightly-20130708.jar')
+    shadow files('../libs/lwjgl.jar')
+    shadow files('../libs/lwjgl_util.jar')
     implementation files('../libs/soundsystem-20120107.jar')
     implementation group: 'org.json', name: 'json', version: '20220320'
     implementation 'com.github.Vatuu:discord-rpc:1.6.2'
@@ -182,17 +182,17 @@ tasks.register("ejectClasses", CreateInjectClasses) {
 String username = "Player" + new Random().nextInt(999)
 String libraryPath = "${projectDir}/../libs/"
 
-task runClient (type: JavaExec) {
-    mainClass = "net.minecraft.client.Minecraft"
-    classpath = getLilypadClasspath(sourceSets.main.runtimeClasspath, libraryPath,
-            "${projectDir}/build/libs/client-${version}-all.jar")
-    argsString = username
-    jvmArgs = getRunJVMArgs("1024M", libraryPath)
-    environment("HOME", "${projectDir}/run/")
-    workingDir = makeAndGetDir("${projectDir}/run/")
+//task runClient (type: JavaExec) {
+//    mainClass = "net.minecraft.client.Minecraft"
+//    classpath = getLilypadClasspath(sourceSets.main.runtimeClasspath, libraryPath,
+//            "${projectDir}/build/libs/client-${version}-all.jar")
+//    argsString = username
+//    jvmArgs = getRunJVMArgs("1024M", libraryPath)
+//    environment("HOME", "${projectDir}/run/")
+//    workingDir = makeAndGetDir("${projectDir}/run/")
 
-    dependsOn "shadowJar"
-}
+//    dependsOn "shadowJar"
+//}
 
 processPatches {
     content = "${projectDir}/src/orig/java"

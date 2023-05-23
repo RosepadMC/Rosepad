@@ -16,3 +16,4 @@ jars/*
 /client/run
 /.metadata/
 tools/jdk17*
+/run
