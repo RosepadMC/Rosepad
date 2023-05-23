@@ -529,14 +529,16 @@
 +
      private void clickMiddleMouseButton() {
          if (this.objectMouseOver != null) {
-@@ -807,5 +812,5 @@
+@@ -807,6 +812,7 @@
          }
      }
 -    
 +
      public void runTick() {
++        Game.eventLoop.runQueuedFns();
          this.ingameGUI.updateTick();
-@@ -870,7 +875,4 @@
+         this.entityRenderer.getMouseOver(1.0f);
+@@ -870,7 +876,4 @@
                  }
                  else {
 -                    if (this.currentScreen == null) {
@@ -544,7 +546,7 @@
 -                    }
                      this.currentScreen.handleMouseInput();
                  }
-@@ -896,14 +898,18 @@
+@@ -896,14 +899,18 @@
                                  this.forceReload();
                              }
 -                            if (InputHandler.GetKBEventKey() == 63) {
@@ -568,7 +570,7 @@
 +                            if (this.isMultiplayerWorld() && InputHandler.GetKBEventKey() == Game.options.keyCodeFor("chat")) {
                                  this.displayGuiScreen(new GuiChat());
                              }
-@@ -914,8 +920,8 @@
+@@ -914,8 +921,8 @@
                              }
                          }
 -                        if (InputHandler.GetKBEventKey() != this.gameSettings.keyBindToggleFog.keyCode) {
@@ -579,7 +581,7 @@
 +                        ingameGUI.showDebugInfo = !ingameGUI.showDebugInfo;
                      }
                  }
-@@ -963,15 +969,17 @@
+@@ -963,15 +970,17 @@
          this.systemTime = System.currentTimeMillis();
      }
 -    
@@ -601,7 +603,7 @@
 +
      public void startWorld(final String worldName) {
          this.changeWorld1(null);
-@@ -985,9 +993,9 @@
+@@ -985,9 +994,9 @@
          }
      }
 -    
@@ -613,7 +615,7 @@
 +
      public void changeWorld(final World world, final String title) {
          this.sndManager.playStreaming(null, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-@@ -1003,7 +1011,5 @@
+@@ -1003,7 +1012,5 @@
              else if (this.thePlayer != null) {
                  this.thePlayer.preparePlayerToSpawn();
 -                if (world != null) {
@@ -622,7 +624,7 @@
 +                world.spawnEntityInWorld(this.thePlayer);
              }
              if (!world.multiplayerWorld) {
-@@ -1032,6 +1038,7 @@
+@@ -1032,6 +1039,7 @@
          System.gc();
          this.systemTime = 0L;
 +        DiscordRPCManager.updatePresence(true);
@@ -631,7 +633,7 @@
 +
      private void preloadWorld(final String title) {
          this.loadingScreen.resetProgressAndMessage(title);
-@@ -1045,18 +1052,18 @@
+@@ -1045,18 +1053,18 @@
              int spawnZ = this.theWorld.spawnZ;
              if (this.thePlayer != null) {
 -                spawnX = (int)this.thePlayer.posX;
@@ -654,7 +656,7 @@
 +
      public void installResource(String name, final File file) {
          final int index = name.indexOf("/");
-@@ -1079,21 +1086,21 @@
+@@ -1079,21 +1087,21 @@
          }
      }
 -    
@@ -682,7 +684,7 @@
 +
      public void respawn() {
          this.theWorld.setSpawnLocation();
-@@ -1108,35 +1115,34 @@
+@@ -1108,35 +1116,34 @@
          this.preloadWorld("Respawning");
      }
 -    
@@ -729,7 +731,7 @@
 +            minecraft.session = new Session("Player" + System.currentTimeMillis() % 1000L, "");
          }
          if (server != null) {
-@@ -1145,10 +1151,10 @@
+@@ -1145,10 +1152,10 @@
          }
          frame.setVisible(true);
 -        frame.addWindowListener((WindowListener)new GameWindowListener(minecraft, thread));
@@ -743,7 +745,7 @@
 +        String string = "Player" + System.currentTimeMillis() % 1000L;
          if (args.length > 0) {
              string = args[0];
-@@ -1160,3 +1166,8 @@
+@@ -1160,3 +1167,8 @@
          startMainThread(string, sessionID);
      }
 +

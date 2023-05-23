@@ -241,7 +241,7 @@
 +            MinecraftServer.logger.log(Level.SEVERE, "Unexpected exception", exception16);
              while (this.serverRunning) {
                  this.commandLineParser();
-@@ -223,18 +258,13 @@
+@@ -223,18 +258,14 @@
              return;
          }
 -        finally {
@@ -257,13 +257,14 @@
 +
      private void doTick() throws IOException {
 -        final ArrayList arrayList1 = new ArrayList();
++        Game.eventLoop.runQueuedFns();
 +        final ArrayList<String> arrayList1 = new ArrayList<>();
          for (final String string3 : MinecraftServer.playerList.keySet()) {
 -            final int i4 = (int)MinecraftServer.playerList.get(string3);
 +            final int i4 = MinecraftServer.playerList.get(string3);
              if (i4 > 0) {
                  MinecraftServer.playerList.put(string3, (i4 - 1));
-@@ -244,6 +274,6 @@
+@@ -244,6 +275,6 @@
              }
          }
 -        for (int i5 = 0; i5 < arrayList1.size(); ++i5) {
@@ -272,7 +273,7 @@
 +            MinecraftServer.playerList.remove(s);
          }
          AxisAlignedBB.clearBoundingBoxPool();
-@@ -254,11 +284,11 @@
+@@ -254,11 +285,11 @@
          }
          this.worldMngr.tick();
 -        while (this.worldMngr.updatingLighting()) {}
@@ -287,7 +288,7 @@
 +            iUpdatePlayerListBox.addAllPlayers();
          }
          try {
-@@ -266,15 +296,17 @@
+@@ -266,15 +297,17 @@
          }
          catch (Exception exception5) {
 -            MinecraftServer.logger.log(Level.WARNING, "Unexpected exception while parsing console command", (Throwable)exception5);
@@ -309,14 +310,14 @@
 +            final ServerCommand serverCommand1 = this.commands.remove(0);
              String string2 = serverCommand1.command;
              final ICommandListener iCommandListener3 = serverCommand1.commandListener;
-@@ -282,5 +314,5 @@
+@@ -282,5 +315,5 @@
              if (!string2.toLowerCase().startsWith("help") && !string2.toLowerCase().startsWith("?")) {
                  if (string2.toLowerCase().startsWith("list")) {
 -                    iCommandListener3.addHelpCommandMessage(new StringBuilder("Connected players: ").append(this.configManager.getPlayerList()).toString());
 +                    iCommandListener3.addHelpCommandMessage("Connected players: " + this.configManager.getPlayerList());
                  }
                  else if (string2.toLowerCase().startsWith("stop")) {
-@@ -432,4 +464,77 @@
+@@ -432,4 +465,77 @@
                      iCommandListener3.addHelpCommandMessage("There's no player by that name online.");
                  }
 +                else if (string2.toLowerCase().startsWith("whitelist")) {
@@ -394,7 +395,7 @@
 +                }
                  else {
                      MinecraftServer.logger.info("Unknown console command. Type \"help\" for help.");
-@@ -457,14 +562,15 @@
+@@ -457,14 +563,15 @@
                  iCommandListener3.addHelpCommandMessage("   list                      lists all currently connected players");
                  iCommandListener3.addHelpCommandMessage("   say <message>             broadcasts a message to all players");
 +                iCommandListener3.addHelpCommandMessage("   whitelist                 manage server whitelist");
@@ -413,7 +414,7 @@
 +
      private int parseInt(final String string, final int defaultValue) {
          try {
-@@ -475,13 +581,13 @@
+@@ -475,13 +582,13 @@
          }
      }
 -    
@@ -430,7 +431,7 @@
 +            if (!GraphicsEnvironment.isHeadless() && (args.length == 0 || !args[0].equals("nogui"))) {
                  ServerGUI.initGui(minecraftServer1);
              }
-@@ -489,20 +595,20 @@
+@@ -489,20 +596,20 @@
          }
          catch (Exception exception2) {
 -            MinecraftServer.logger.log(Level.SEVERE, "Failed to start the minecraft server", (Throwable)exception2);
