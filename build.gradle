@@ -16,17 +16,17 @@ java {
     }
 }
 
-//if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-//    System.err.println("/!\\ Warning! /!\\")
-//    System.err.println("Rosepad ONLY supports Java 8")
-//    System.err.println("")
-//    System.err.println("Compiling Rosepad with anything other than JDK 8 might result in " +
-//            "broken jar file. Use -Dorg.gradle.java.home=/path/to/your/java8/home to change your JDK version " +
-//            "for this build")
-//    System.err.println("")
-//    System.err.println("Build will resume in 10 seconds")
-//    Thread.sleep(10000)
-//}
+if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+    System.err.println("/!\\ Warning! /!\\")
+    System.err.println("Rosepad ONLY supports Java 8")
+    System.err.println("")
+    System.err.println("Compiling Rosepad with anything other than JDK 8 might result in " +
+            "broken jar file. Use -Dorg.gradle.java.home=/path/to/your/java8/home to change your JDK version " +
+            "for this build")
+    System.err.println("")
+    System.err.println("Build will resume in 10 seconds")
+    Thread.sleep(10000)
+}
 
 tasks.register("setupJDK") {
     doLast {
