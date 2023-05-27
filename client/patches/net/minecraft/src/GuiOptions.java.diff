@@ -1,6 +1,6 @@
 --- GuiOptions.java
 +++ GuiOptions.java
-@@ -1,41 +1,163 @@
+@@ -1,41 +1,165 @@
  package net.minecraft.src;
  
 +import java.util.*;
@@ -9,6 +9,8 @@
 +import net.buj.rml.options.GameOption;
 +import net.buj.rml.options.GameOptionUI;
 +import net.minecraft.client.Minecraft;
++
++import net.minecraft.src.GuiName;
 +
  public class GuiOptions extends GuiScreen {
      private GuiScreen parentScreen;
@@ -188,7 +190,7 @@
 +
      @Override
      public void drawScreen(final int mouseX, final int mouseY, final float renderPartialTick) {
-@@ -44,3 +166,12 @@
+@@ -44,3 +168,12 @@
          super.drawScreen(mouseX, mouseY, renderPartialTick);
      }
 +
