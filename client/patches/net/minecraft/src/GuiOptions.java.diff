@@ -1,6 +1,6 @@
 --- GuiOptions.java
 +++ GuiOptions.java
-@@ -1,41 +1,165 @@
+@@ -1,42 +1,168 @@
  package net.minecraft.src;
  
 +import java.util.*;
@@ -19,6 +19,8 @@
 -    
 -    public GuiOptions(final GuiScreen screen, final GameSettings gameSettings) {
 -        this.screenTitle = "Options";
+-        this.parentScreen = screen;
+-        this.gameSettings = gameSettings;
 +    private List<Object> buttons;
 +    private String[] category;
 +
@@ -38,7 +40,12 @@
 +            }
 +            this.displayString = option.getUI().getName(option);
 +        }
-+    }
+     }
+-    
+-    @Override
+-    public void actionPerformed() {
+-        for (int i = 0; i < this.gameSettings.numberOfOptions; ++i) {
+-            this.controlList.add(new GuiSmallButton(i, this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), this.gameSettings.getOptionDisplayString(i)));
 +
 +    private static class OptionIntoSlider<T> extends GuiSlider {
 +        private GameOption<T> option;
@@ -52,18 +59,30 @@
 +                    ui.change(option, p);
 +                    this.displayString = ui.getName(option);
 +            });
-+        }
-+    }
+         }
+-        this.controlList.add(new GuiButton(100, this.width / 2 - 100, this.height / 6 + 120 + 12, "Controls..."));
+-        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, "Done"));
+     }
+-    
+-    @Override
+-    protected void actionPerformed(final GuiButton button) {
+-        if (!button.enabled) {
+-            return;
 +
 +    private GuiButton optionIntoCtrl(GameOption<?> opt, int x, int y) {
 +        GameOptionUI<?> ui = opt.getUI();
 +
 +        if (ui instanceof GameOptionUI.Button) {
 +            return new OptionIntoButton<>(x, y, opt);
-+        }
+         }
+-        if (button.id < 100) {
+-            this.gameSettings.setOptionValue(button.id, 1);
+-            button.displayString = this.gameSettings.getOptionDisplayString(button.id);
 +        if (ui instanceof GameOptionUI.Slider) {
 +            return new OptionIntoSlider<>(x, y, opt);
-+        }
+         }
+-        if (button.id == 100) {
+-            this.mc.displayGuiScreen(new GuiControls(this, this.gameSettings));
 +
 +        throw new RuntimeException("panic! unknown option ui type");
 +    }
@@ -76,13 +95,16 @@
 +            super(-1, x, y, 150, 20, c.length == 0 ? "Unnamed" : c[c.length - 1]);
 +            category = c;
 +            screen = parent;
-+        }
+         }
+-        if (button.id == 200) {
+-            this.mc.displayGuiScreen(this.parentScreen);
 +
 +        @Override
 +        public void mousePressed(int mouseX, int mouseY) {
 +            Minecraft.INSTANCE.displayGuiScreen(new GuiOptions(screen, category));
-+        }
-+    }
+         }
+     }
+-    
 +
 +    public GuiOptions(
 +            final GuiScreen screen,
@@ -90,8 +112,7 @@
 +    ) {
 +        if (path.length == 0) this.screenTitle = "Options";
 +        else this.screenTitle = path[path.length - 1];
-         this.parentScreen = screen;
--        this.gameSettings = gameSettings;
++        this.parentScreen = screen;
 +        this.category = path;
 +
 +        List<Object> gotoSubmenus = new ArrayList<>();
@@ -113,13 +134,10 @@
 +        }
 +
 +        buttons = gotoSubmenus;
-     }
--    
++    }
 +
      @Override
-     public void actionPerformed() {
--        for (int i = 0; i < this.gameSettings.numberOfOptions; ++i) {
--            this.controlList.add(new GuiSmallButton(i, this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), this.gameSettings.getOptionDisplayString(i)));
++    public void actionPerformed() {
 +        this.controlList.clear();
 +
 +        int buttonID = 0;
@@ -141,12 +159,16 @@
 +            else System.err.println("No mappings for class " + button.getClass().getSimpleName());
 +
 +            buttonID++;
-         }
--        this.controlList.add(new GuiButton(100, this.width / 2 - 100, this.height / 6 + 120 + 12, "Controls..."));
--        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, "Done"));
++        }
 +
-+        this.controlList.add(new GuiButton(150, this.width / 2 - 100, this.height / 4 + 20 + 12, "Change name"));
-+
++        this.controlList.add(
++            new GuiButton(
++                150,
++                this.width / 2 - 100,
++                this.height / 4 + 20 + 12,
++                "Change name").setOnClickListener(() -> {
++                    mc.displayGuiScreen(new GuiName(this));
++            }));
 +        this.controlList.add(
 +                new GuiButton(
 +                              -1,
@@ -163,34 +185,17 @@
 +                                  this.width / 2 - 100, this.size.getScaledHeight() / 6 * 5 - 30,
 +                                  "Controls"
 +            ).setOnClickListener(() -> {
-+                    mc.displayGuiScreen(new GuiName(this));
++                    mc.displayGuiScreen(new GuiControls(this));
 +            }));
-     }
--    
++    }
 +
-     @Override
-     protected void actionPerformed(final GuiButton button) {
--        if (!button.enabled) {
--            return;
-+        if (button.id == 150) {
-+            mc.displayGuiScreen(new GuiName(this));
-         }
--        if (button.id < 100) {
--            this.gameSettings.setOptionValue(button.id, 1);
--            button.displayString = this.gameSettings.getOptionDisplayString(button.id);
--        }
--        if (button.id == 100) {
--            this.mc.displayGuiScreen(new GuiControls(this, this.gameSettings));
--        }
--        if (button.id == 200) {
--            this.mc.displayGuiScreen(this.parentScreen);
--        }
-     }
--    
++    @Override
++    protected void actionPerformed(final GuiButton button) {}
 +
-     @Override
++    @Override
      public void drawScreen(final int mouseX, final int mouseY, final float renderPartialTick) {
-@@ -44,3 +168,12 @@
+         this.drawDefaultBackground();
+@@ -44,3 +170,12 @@
          super.drawScreen(mouseX, mouseY, renderPartialTick);
      }
 +
