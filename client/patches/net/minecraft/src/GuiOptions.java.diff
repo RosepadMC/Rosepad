@@ -165,7 +165,7 @@
 +            new GuiButton(
 +                150,
 +                this.width / 2 - 100,
-+                this.height / 4 + 20 + 12,
++                this.size.getScaledHeight() / 6 * 5 - 60,
 +                "Change name").setOnClickListener(() -> {
 +                    mc.displayGuiScreen(new GuiName(this));
 +            }));
