@@ -126,63 +126,62 @@ class Utils {
         }
     }
 
-    static def decompile(Path jar, Path source, Path dest, Path tiny2map) {
-        enigma(jar, source, dest, tiny2map)
-
-        LoopFunction loop1 = (Path p) -> {}
-        loop1 = (Path p) -> {
-            File file = p.toFile()
-            if (file.isDirectory()) {
-                 for (String sf : file.list()) {
-                     if (loop1(p.resolve(sf))) {
-                         return true
-                     }
-                 }
-            }
-            else if (file.isFile()) {
-                FileInputStream stream = new FileInputStream(file)
-                Scanner scanner = new Scanner(stream)
-                if (scanner.nextLine().startsWith("java.lang.ArrayIndexOutOfBoundsException")) {
-                    stream.close()
-                    scanner.close()
+    static boolean isDamaged(File file) {
+        if (file.isDirectory()) {
+            for (File sub : file.listFiles()) {
+                if (isDamaged(sub)) {
                     return true
                 }
-                while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine()
-                    if (line.contains('throw new IllegalStateException("An error occurred while decompiling this method.");')) {
-                        stream.close()
-                        scanner.close()
-                        return true
-                    }
-                }
-                stream.close()
-                scanner.close()
             }
             return false
         }
-        if (!loop1(dest)) return
 
-        Path fix = dest.parent.resolve(".java-tmp")
-        rm(fix)
+        FileInputStream stream = new FileInputStream(file);
+        Scanner scanner = new Scanner(stream);
 
-        LoopFunction2 loop2 = (Path p1, Path p2) -> {}
-        loop2 = (Path p1, Path p2) -> {
-             File file = p1.toFile()
-             if (file.isDirectory()) {
-                 for (String sf : file.list()) {
-                     loop2(p1.resolve(sf), p2.resolve(sf))
-                 }
-             }
-             else if (file.isFile() && loop1(p1)) {
-                 cp(p2, p1)
-             }
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            if (line.contains("java.lang.ArrayIndexOutOfBoundsException") ||
+                line.contains("An error occurred while decompiling this method")) {
+                stream.close()
+                scanner.close()
+                return true
+            }
         }
+
+        stream.close()
+        scanner.close()
+
+        return false
+    }
+
+    static def merge(File fix, File dest) {
+        if (fix.isDirectory()) {
+            for (String sub : fix.list()) {
+                merge(new File(fix, sub), new File(dest, sub));
+            }
+        }
+        else if (isDamaged(dest)) {
+            cp(fix.toPath(), dest.toPath())
+        }
+    }
+
+    static def decompile(Path jar, Path source, Path dest, Path tiny2map) {
+        Path fix = dest
+
         do {
-            println "Detected damaged files, re-running enigma..."
+            if (fix != dest) {
+                println "Detected damaged files, re-running Enigma..."
+            }
             enigma(jar, source, fix, tiny2map)
-            loop2(dest, fix)
-            rm(fix)
-        } while (loop1(dest))
+            if (fix == dest) {
+                fix = dest.parent.resolve(".java-tmp")
+            }
+            else {
+                merge(fix.toFile(), dest.toFile())
+                rm(fix)
+            }
+        } while (isDamaged(dest.toFile()));
     }
 
     static def tiny(Path jar, Path source, Path dest, Path tiny2map, String from, String to) {
@@ -254,18 +253,6 @@ class StreamGobbler extends Thread { // Stolen from a guy on stackoverflow
     }
 }
 
-interface LoopFunction {
-    void run(Path dir)
-}
-
-interface LoopFunction2 {
-    void run(Path dir, Path dir2)
-}
-
-interface LoopFunction3 {
-    void run(Path dir, String entry)
-}
-
 tasks.register("prepare") {
     dependsOn "setupJDK"
 
@@ -283,10 +270,6 @@ tasks.register("prepare") {
             from(zipTree(Paths.get(project.rootDir.toString(), "jars", "lilypad_client_s.jar")))
             into(Paths.get(project.rootDir.toString(), "client/src/main/resources"))
             exclude "**/*.class", "com/**", "net/**", "org/**", "paulscode/**"
-        }
-        copy {
-            from(Paths.get(project.rootDir.toString(), "client/src/main/resources"))
-            into(Paths.get(project.rootDir.toString(), "client/src/orig/resources"))
         }
 
         Utils.decompile(
@@ -336,6 +319,10 @@ tasks.register("prepare") {
             Paths.get(project.rootDir.toString(), "server/src/main/java"),
             Paths.get(project.rootDir.toString(), "server/src/orig/java"),
         )
+        copy {
+            from(Paths.get(project.rootDir.toString(), "client/src/main/resources"))
+            into(Paths.get(project.rootDir.toString(), "client/src/orig/resources"))
+        }
     }
 }
 
