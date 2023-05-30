@@ -190,6 +190,7 @@ createPatches {
     content = "${projectDir}/src/orig/java"
     modified = "${projectDir}/src/main/java"
     destination = "${projectDir}/patches"
+
     dependsOn tasks.named("deletePatches").get()
 }
 
@@ -199,7 +200,9 @@ jar {
     }
 }
 
-tasks["compileJava"].dependsOn("processPatches", "injectClasses")
+tasks.named("compileJava") {
+    dependsOn("processPatches", "injectClasses")
+}
 
 shadowJar {
     dependsOn "injectClasses"

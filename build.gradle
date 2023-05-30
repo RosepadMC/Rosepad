@@ -16,6 +16,13 @@ java {
     }
 }
 
+if (Files.exists(Paths.get(project.rootDir.toString(), "client/src/main"))) {
+    defaultTasks 'createPatches', 'pack'
+}
+else {
+    defaultTasks 'prepare', 'processPatches', 'pack'
+}
+
 if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
     System.err.println("/!\\ Warning! /!\\")
     System.err.println("Rosepad ONLY supports Java 8")
@@ -92,36 +99,6 @@ class Utils {
         Path parent = path.parent
         Files.createDirectories(parent)
         Files.copy(new URL(file).openStream(), path, StandardCopyOption.REPLACE_EXISTING)
-    }
-
-    static def unzip(Path source, Path dest) {
-        byte[] buffer = new byte[1024]
-        ZipInputStream zis = new ZipInputStream(new FileInputStream(source.toAbsolutePath().normalize().toString()))
-        ZipEntry zipEntry = zis.getNextEntry()
-        while (zipEntry != null) {
-            File newFile = new File(dest.toString(), zipEntry.name)
-            if (zipEntry.isDirectory()) {
-                if (!newFile.isDirectory() && !newFile.mkdirs()) {
-                    throw new IOException("Failed to create directory " + newFile)
-                }
-            } else {
-                // fix for Windows-created archives
-                File parent = newFile.parentFile
-                if (!parent.isDirectory() && !parent.mkdirs()) {
-                    throw new IOException("Failed to create directory " + parent)
-                }
-                // write file content
-                FileOutputStream fos = new FileOutputStream(newFile)
-                int len = 0
-                while ((len = zis.read(buffer)) > 0) {
-                    fos.write(buffer, 0, len)
-                }
-                fos.close()
-            }
-            zipEntry = zis.getNextEntry()
-        }
-        zis.closeEntry()
-        zis.close()
     }
 
     static def enigma(Path jar, Path source, Path dest, Path tiny2map) {
@@ -277,55 +254,52 @@ class StreamGobbler extends Thread { // Stolen from a guy on stackoverflow
     }
 }
 
-abstract class JarEarlyPatcher extends DefaultTask {
+interface LoopFunction {
+    void run(Path dir)
+}
 
-    @TaskAction
-    def patchJars() {
+interface LoopFunction2 {
+    void run(Path dir, Path dir2)
+}
+
+interface LoopFunction3 {
+    void run(Path dir, String entry)
+}
+
+tasks.register("prepare") {
+    dependsOn "setupJDK"
+
+    doLast {
         Utils.fetch(
-                "https://github.com/AlphaVerUnofficialJars/LilypadClient/releases/download/v106/lilypad_qamod_v106.jar",
-                Paths.get(project.rootDir.toString(), "jars", "lilypad_client_s.jar"),
+            "https://github.com/AlphaVerUnofficialJars/LilypadClient/releases/download/v106/lilypad_qamod_v106.jar",
+            Paths.get(project.rootDir.toString(), "jars", "lilypad_client_s.jar"),
         )
         Utils.fetch(
-                "https://github.com/AlphaVerUnofficialJars/LilypadServer/releases/download/v105/lilypad_server_v105.jar",
-                Paths.get(project.rootDir.toString(), "jars", "lilypad_server_s.jar"),
-        )
-        Utils.unzip(
-                Paths.get(project.rootDir.toString(), "jars", "lilypad_client_s.jar"),
-                Paths.get(project.rootDir.toString(), "client/src/main/resources"),
+            "https://github.com/AlphaVerUnofficialJars/LilypadServer/releases/download/v105/lilypad_server_v105.jar",
+            Paths.get(project.rootDir.toString(), "jars", "lilypad_server_s.jar"),
         )
 
-        LoopFunction loop = (Path dir) -> {} // Throwaway
-        loop = (Path dir) -> { // Remove all .class files
-            File file = new File(dir.toString())
-            if (!file.isDirectory()) return true
-            List<File> files = new ArrayList(Arrays.asList(file.listFiles()))
-            for (File sf : new ArrayList(files)) {
-                if (sf.isDirectory()) {
-                    if (!loop.run(sf.toPath())) files.remove(sf)
-                    continue
-                }
-                if (sf.path.endsWith(".class")) {
-                    sf.delete()
-                    files.remove(sf)
-                }
-            }
-            if (files.size() > 0) return true
-            file.delete()
-            return false
+        copy {
+            from(zipTree(Paths.get(project.rootDir.toString(), "jars", "lilypad_client_s.jar")))
+            into(Paths.get(project.rootDir.toString(), "client/src/main/resources"))
+            exclude "**/*.class", "com/**", "net/**", "org/**", "paulscode/**"
         }
-        loop.run(Paths.get(project.rootDir.toString(), "client/src/main/resources"))
+        copy {
+            from(Paths.get(project.rootDir.toString(), "client/src/main/resources"))
+            into(Paths.get(project.rootDir.toString(), "client/src/orig/resources"))
+        }
 
         Utils.decompile(
-                Paths.get(project.rootDir.toString(), "tools", "enigma.jar"),
-                Paths.get(project.rootDir.toString(), "jars", "lilypad_client_s.jar"),
-                Paths.get(project.rootDir.toString(), "client/src/main/java"),
-                Paths.get(project.rootDir.toString(), "mappings", "client.tiny2"),
+            Paths.get(project.rootDir.toString(), "tools", "enigma.jar"),
+            Paths.get(project.rootDir.toString(), "jars", "lilypad_client_s.jar"),
+            Paths.get(project.rootDir.toString(), "client/src/main/java"),
+            Paths.get(project.rootDir.toString(), "mappings", "client.tiny2"),
         )
         Utils.decompile(
-                Paths.get(project.rootDir.toString(), "tools", "enigma.jar"),
-                Paths.get(project.rootDir.toString(), "jars", "lilypad_server_s.jar"),
-                Paths.get(project.rootDir.toString(), "server/src/main/java"),
-                Paths.get(project.rootDir.toString(), "mappings", "server_deobf.tiny"),
+            Paths.get(project.rootDir.toString(), "tools", "enigma.jar"),
+            Paths.get(project.rootDir.toString(), "jars", "lilypad_server_s.jar"),
+            Paths.get(project.rootDir.toString(), "server/src/main/java"),
+            Paths.get(project.rootDir.toString(), "mappings", "server_deobf.tiny"),
         )
 
         Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java/paulscode"))
@@ -334,10 +308,11 @@ abstract class JarEarlyPatcher extends DefaultTask {
         Utils.rm(Paths.get(project.rootDir.toString(), "client/src/main/java/net/java"))
 
         Utils.rm(Paths.get(project.rootDir.toString(), "client/src/orig"))
-        Utils.cp(
-                Paths.get(project.rootDir.toString(), "client/src/main/java"),
-                Paths.get(project.rootDir.toString(), "client/src/orig/java"),
-        )
+
+        copy {
+            from Paths.get(project.rootDir.toString(), "client/src/main/java")
+            into Paths.get(project.rootDir.toString(), "client/src/orig/java")
+        }
 
         Path serverDefaultPkg = Paths.get(project.rootDir.toString(), "server/src/main/java")
         for (String file : serverDefaultPkg.toFile().list()) {
@@ -358,52 +333,13 @@ abstract class JarEarlyPatcher extends DefaultTask {
 
         Utils.rm(Paths.get(project.rootDir.toString(), "server/src/orig"))
         Utils.cp(
-                Paths.get(project.rootDir.toString(), "server/src/main/java"),
-                Paths.get(project.rootDir.toString(), "server/src/orig/java"),
+            Paths.get(project.rootDir.toString(), "server/src/main/java"),
+            Paths.get(project.rootDir.toString(), "server/src/orig/java"),
         )
     }
 }
 
-abstract class ObfuscateTask extends DefaultTask {
-
-    @TaskAction
-    def obfuscate() {
-        Files.createDirectories(Paths.get(project.rootDir.toString(), "build"))
-        Utils.tiny(
-                Paths.get(project.rootDir.toString(), "tools", "tiny-remapper.jar"),
-                Paths.get(project.rootDir.toString(), "server/build/libs/server-1.1-SNAPSHOT-all.jar"),
-                Paths.get(project.rootDir.toString(), "build/RosepadServer.jar"),
-                Paths.get(project.rootDir.toString(), "mappings/server_reobf.tiny"),
-                "official",
-                "named",
-        )
-        Utils.tiny(
-                Paths.get(project.rootDir.toString(), "tools", "tiny-remapper.jar"),
-                Paths.get(project.rootDir.toString(), "client/build/libs/client-1.1-SNAPSHOT-all.jar"),
-                Paths.get(project.rootDir.toString(), "build/RosepadClient.jar"),
-                Paths.get(project.rootDir.toString(), "mappings/client.tiny2"),
-                "named",
-                "intermediary"
-        )
-    }
-}
-
-interface LoopFunction {
-    boolean run(Path dir)
-}
-
-interface LoopFunction2 {
-    void run(Path dir, Path dir2)
-}
-
-interface LoopFunction3 {
-    void run(Path dir, String entry)
-}
-
-tasks.register("prepare", JarEarlyPatcher) {
-    dependsOn "setupJDK"
-}
-tasks.register("obfuscate", ObfuscateTask) {
+tasks.register("compileSub") {
     dependsOn "setupJDK"
     dependsOn ":client:shadowJar"
     dependsOn ":server:shadowJar"

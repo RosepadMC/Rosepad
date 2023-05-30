@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/loader/Rosepad.loader.main.iml" filepath="$PROJECT_DIR$/.idea/modules/loader/Rosepad.loader.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/488238081/Rosepad.loader.test.iml" filepath="$PROJECT_DIR$/.idea/modules/488238081/Rosepad.loader.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/488238081/java.Rosepad.loader.main.iml" filepath="$PROJECT_DIR$/.idea/modules/488238081/java.Rosepad.loader.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/488238081/net.buj.Rosepad.loader.main.iml" filepath="$PROJECT_DIR$/.idea/modules/488238081/net.buj.Rosepad.loader.main.iml" />
     </modules>
   </component>

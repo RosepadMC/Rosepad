@@ -179,21 +179,6 @@ tasks.register("ejectClasses", CreateInjectClasses) {
     dest = "${projectDir}/inject/java"
 }
 
-String username = "Player" + new Random().nextInt(999)
-String libraryPath = "${projectDir}/../libs/"
-
-//task runClient (type: JavaExec) {
-//    mainClass = "net.minecraft.client.Minecraft"
-//    classpath = getLilypadClasspath(sourceSets.main.runtimeClasspath, libraryPath,
-//            "${projectDir}/build/libs/client-${version}-all.jar")
-//    argsString = username
-//    jvmArgs = getRunJVMArgs("1024M", libraryPath)
-//    environment("HOME", "${projectDir}/run/")
-//    workingDir = makeAndGetDir("${projectDir}/run/")
-
-//    dependsOn "shadowJar"
-//}
-
 processPatches {
     content = "${projectDir}/src/orig/java"
     patches = "${projectDir}/patches"
@@ -204,12 +189,16 @@ createPatches {
     content = "${projectDir}/src/orig/java"
     modified = "${projectDir}/src/main/java"
     destination = "${projectDir}/patches"
+
     dependsOn tasks.named("deletePatches").get()
 }
 
-tasks["compileJava"].dependsOn("processPatches", "injectClasses")
+tasks.named("compileJava") {
+    dependsOn("processPatches", "injectClasses")
+}
 
 shadowJar {
+    dependsOn "processPatches"
     dependsOn "injectClasses"
 }
 

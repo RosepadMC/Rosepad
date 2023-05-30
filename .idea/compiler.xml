@@ -11,7 +11,7 @@
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-tree/5.2/733a8d67f6f4174d12142b7bbcfc496a6d99882e/asm-tree-5.2.jar" />
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm/5.2/4ce3ecdc7115bcbf9d4ff4e6ec638e60760819df/asm-5.2.jar" />
         </processorPath>
-        <module name="net.buj.Rosepad.loader.main" />
+        <module name="java.Rosepad.loader.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8" />
