@@ -1,57 +1,14 @@
 --- GuiMainMenu.java
 +++ GuiMainMenu.java
-@@ -1,8 +1,14 @@
- package net.minecraft.src;
- 
-+import net.minecraft.client.Minecraft;
-+import net.minecraft.client.devtools.DevTools;
-+import org.lwjgl.input.Keyboard;
- import org.lwjgl.util.glu.GLU;
- import org.lwjgl.opengl.GL11;
-+
-+import java.security.Key;
- import java.util.Date;
- import java.util.Calendar;
-+import java.util.Objects;
- import java.util.Random;
- 
-@@ -43,7 +49,17 @@
-         }
-     }
--    
-+
-     @Override
-+    public void handleKeyboardInput() {
-+        if (Keyboard.getEventKey() == Keyboard.KEY_ESCAPE) return;
-+        super.handleKeyboardInput();
-+    }
-+
-+    @Override
-     protected void keyTyped(final char character, final int key) {
-+        if (key == Keyboard.KEY_HOME && !(mc.currentScreen instanceof DevTools)
-+                && Objects.equals(Minecraft.INSTANCE.getVersionTag(), "dev")) {
-+            mc.displayGuiScreen(new DevTools(DevTools.mainPage(), mc.currentScreen, mc));
-+        }
-     }
-     
-@@ -76,5 +92,5 @@
-     protected void actionPerformed(final GuiButton button) {
-         if (button.id == 0) {
--            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
-+            this.mc.displayGuiScreen(new GuiOptions(this, new String[0]));
-         }
-         if (button.id == 1) {
-@@ -82,5 +98,5 @@
-         }
-         if (button.id == 2) {
--            this.mc.displayGuiScreen(new GuiMultiplayer(this));
-+            this.mc.displayGuiScreen(new GuiMultiplayerList(this));
-         }
-     }
-@@ -130,5 +146,5 @@
-         GL11.glLoadIdentity();
-         int i = 120 * new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight).scaleFactor;
--        GLU.gluPerspective(70.0f, this.mc.displayWidth / (float)i, 0.05f, 100.0f);
-+        GLU.gluPerspective(mc.gameSettings.fov, this.mc.displayWidth / (float)i, 0.05f, 100.0f);
-         GL11.glViewport(0, this.mc.displayHeight - i, this.mc.displayWidth, i);
-         GL11.glMatrixMode(5888);
+@@ -83,7 +83,8 @@
+         this.controlList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 48, "Singleplayer"));
+         this.controlList.add(new GuiButton(2, this.width / 2 - 100, this.height / 4 + 72, "Multiplayer"));
+-        this.controlList.add(new GuiButton(0, this.width / 2 - 1, this.height / 4 + 96 + 0 + 0, 98, 20, "Options..."));
+-        this.controlList.add(new GuiButton(3, this.width / 2 - 100, this.height / 4 + 96 + 0 + 0, 98, 20, "Mods Menu"));
+-        this.controlList.add(new GuiButton(4, this.width / 2 - 100, this.height / 4 + 120, "Quit Game"));
++        this.controlList.add(new GuiButton(0, this.width / 2 - -2, this.height / 4 + 96 + 0 + 0, 98, 20, "Options..."));
++        this.controlList.add(new GuiButton(4, this.width / 2 - 100, this.height / 4 + 96 + 0 + 0, 98, 20, "Mods Menu"));
++        this.controlList.add(new GuiButton(3, this.width / 2 - 100, this.height / 4 + 120, "Quit Game"));
++        ((GuiButton)this.controlList.get(3)).enabled = false;
+         if (this.mc.session == null) {
+             ((GuiButton)this.controlList.get(1)).enabled = false;
