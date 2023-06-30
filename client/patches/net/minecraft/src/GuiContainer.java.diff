@@ -300,11 +300,11 @@
 -    @Override
      protected void keyTyped(final char character, final int key) {
 -        if (key == 1 || key == this.mc.gameSettings.keyBindInventory.keyCode) {
-+        if (key == 1 || key == Game.options.keyCodeFor("inventory")) {
++        if (key == 1 || key == Game.OPTIONS.keyCodeFor("inventory")) {
              this.mc.displayGuiScreen(null);
          }
 +
-+        if (key == Game.options.keyCodeFor("drop") && this.selectedInventory != null) {
++        if (key == Game.OPTIONS.keyCodeFor("drop") && this.selectedInventory != null) {
 +            ItemStack stack = this.selectedInventory.getStackInSlot(this.selectedSlot);
 +            if (stack != null)
 +                if (stack.stackSize > 0) {

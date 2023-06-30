@@ -101,7 +101,7 @@ public class DiscordRPCManager {
             }
         }
         DiscordRichPresence.Builder rpc = new DiscordRichPresence.Builder(state)
-                .setBigImage("rosepad", Game.minecraft.getVersionString())
+                .setBigImage("rosepad", Game.MINECRAFT.getVersionString())
                 .setSmallImage(smallIcon, smallIconInfo);
         if (!state.equals("Idle")) {
             rpc.setStartTimestamps(timestamp);

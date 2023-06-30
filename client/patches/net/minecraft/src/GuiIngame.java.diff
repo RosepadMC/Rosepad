@@ -1,26 +1,30 @@
 --- GuiIngame.java
 +++ GuiIngame.java
-@@ -3,8 +3,11 @@
+@@ -3,10 +3,14 @@
  import java.awt.Color;
  import java.util.ArrayList;
 +import java.util.List;
 +import java.util.Objects;
 +import java.util.Random;
 +
++import net.buj.rml.Chat;
  import org.lwjgl.opengl.GL11;
 +
  import net.minecraft.client.Minecraft;
 -import java.util.Random;
 -import java.util.List;
  
- public class GuiIngame extends Gui {
-@@ -19,5 +22,4 @@
+-public class GuiIngame extends Gui {
++public class GuiIngame extends Gui implements Chat {
+     private static RenderItem itemRenderer;
+     private List<ChatLine> chatMessageList;
+@@ -19,5 +23,4 @@
      public float damageGuiPartialTime;
      float prevVignetteBrightness;
 -    public boolean renderQAName;
      public static String uqKey;
      private boolean initedArea;
-@@ -28,6 +30,11 @@
+@@ -28,6 +31,11 @@
      public long areaTimer;
      private static final String[] syllab;
 -    private static final String versionName = "Minecraft Alpha 1.0.16.05_13 Lilypad (LPUJ v106)";
@@ -34,42 +38,42 @@
 +
      static {
          GuiIngame.uqKey = "";
-@@ -35,5 +42,5 @@
+@@ -35,5 +43,5 @@
          GuiIngame.itemRenderer = new RenderItem();
      }
 -    
 +
      public void RenderHungerBar() {
          GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-@@ -44,5 +51,5 @@
+@@ -44,5 +52,5 @@
          this.drawTexturedModalRect(0, 0, n * 32, 43, 32, 16);
      }
 -    
 +
      public void renderSomethingIdk(final int integer1, final int integer2, final int integer3, final int integer4, final int integer5, final int integer6) {
          final Tessellator instance = Tessellator.instance;
-@@ -55,5 +62,5 @@
+@@ -55,5 +63,5 @@
          instance.draw();
      }
 -    
 +
      public static String Namegen2(final long long1, final int integer2, final int integer3) {
          final long n = (integer3 + 392214) * 784428L + (integer2 + 392214);
-@@ -73,5 +80,5 @@
+@@ -73,5 +81,5 @@
          return String.valueOf(s) + GuiIngame.syllab[(int)((n * 2L + n2) % 45L)] + GuiIngame.syllab[(int)((n * 3L + n2) % 45L)] + GuiIngame.syllab[(int)((n * 4L + n2) % 45L)];
      }
 -    
 +
      public void ResetNamegen() {
          this.lgroupX = (int)(this.mc.thePlayer.posX / 32.0);
-@@ -83,5 +90,5 @@
+@@ -83,5 +91,5 @@
          this.areaTimer = System.currentTimeMillis();
      }
 -    
 +
      public boolean NamegenNeedsReset() {
          final int n = (int)(this.mc.thePlayer.posX / 32.0);
-@@ -89,11 +96,10 @@
+@@ -89,11 +97,10 @@
          return !this.initedArea || this.lastSeed != this.mc.theWorld.randomSeed || n != this.lgroupX || n2 != this.lgroupY;
      }
 -    
@@ -83,7 +87,7 @@
 +        this.chatMessageList = new ArrayList<>();
          this.rand = new Random();
          this.testMessage = null;
-@@ -103,7 +109,9 @@
+@@ -103,7 +110,9 @@
          this.prevVignetteBrightness = 1.0f;
          this.mc = minecraft;
 +        this.showGUI = true;
@@ -94,20 +98,20 @@
 +        if (!this.showGUI && this.mc.currentScreen == null) return;
          final ScaledResolution scaledResolution = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
          final int scaledWidth = scaledResolution.getScaledWidth();
-@@ -132,5 +140,5 @@
+@@ -132,5 +141,5 @@
          final int health = this.mc.thePlayer.health;
          final int prevHealth = this.mc.thePlayer.prevHealth;
 -        this.rand.setSeed((long)(this.updateCounter * 312871));
 +        this.rand.setSeed((long)(this.updateCounter * 312871L));
          if (this.mc.playerController.shouldDrawHUD()) {
              final int i = this.mc.thePlayer.getPlayerArmorValue();
-@@ -140,5 +148,4 @@
+@@ -140,5 +149,4 @@
                  final ItemStack armorItemInSlot = this.mc.thePlayer.inventory.armorItemInSlot(j);
                  if (armorItemInSlot != null && armorItemInSlot.getItem() instanceof ItemArmor) {
 -                    armorItemInSlot.getItem();
                      final int maxDamage = armorItemInSlot.getMaxDamage();
                      final int n3 = maxDamage - armorItemInSlot.itemDmg;
-@@ -241,41 +248,75 @@
+@@ -241,41 +249,75 @@
          GLStatics.disableStandardItemLighting();
          GL11.glDisable(32826);
 -        if (this.mc.gameSettings.showFPS) {
@@ -207,7 +211,7 @@
 -        GL11.glPopMatrix();
          GL11.glBindTexture(3553, this.mc.renderEngine.getTexture("/gui/icons.png"));
          if (this.recordPlayingUpFor > 0) {
-@@ -306,10 +347,12 @@
+@@ -306,10 +348,12 @@
          GL11.glPushMatrix();
          GL11.glTranslatef(0.0f, (float)(scaledHeight - 48), 0.0f);
 -        if (GuiScreen.currentID != "") {
@@ -223,7 +227,7 @@
 +                                !Item.ITEMS_LIST[int1].getVanilla() && NetClientHandler.rosepadMeta == null)) {
                      fontRenderer.drawStringWithShadow("(INVALID)", 2, 30, 16711680);
                  }
-@@ -341,7 +384,7 @@
+@@ -341,7 +385,7 @@
              }
          }
 -        if (this.renderQAName) {
@@ -233,7 +237,28 @@
 +            fontRenderer.drawStringWithShadow("QA BUILD: " + GuiScreenInputPass.name, 5, 0, 553320302);
          }
          GL11.glPopMatrix();
-@@ -410,6 +453,5 @@
+@@ -356,5 +400,5 @@
+         GL11.glDisable(3042);
+     }
+-    
++
+     private void renderVignette(float brightness, final int width, final int height) {
+         brightness = 1.0f - brightness;
+@@ -383,5 +427,5 @@
+         GL11.glBlendFunc(770, 771);
+     }
+-    
++
+     private void renderInventorySlot(final int slot, final int x, final int y, final float renderPartialTick) {
+         final ItemStack itemStack = this.mc.thePlayer.inventory.mainInventory[slot];
+@@ -403,5 +447,5 @@
+         GuiIngame.itemRenderer.renderItemOverlayIntoGUI(this.mc.fontRenderer, this.mc.renderEngine, itemStack, x, y);
+     }
+-    
++
+     public void updateTick() {
+         if (this.recordPlayingUpFor > 0) {
+@@ -410,11 +454,11 @@
          ++this.updateCounter;
          for (int i = 0; i < this.chatMessageList.size(); ++i) {
 -            final ChatLine chatLine2;
@@ -241,23 +266,38 @@
 +            final ChatLine chatLine2 = this.chatMessageList.get(i);
              ++chatLine2.updateCounter;
          }
-@@ -417,4 +459,5 @@
-     
+     }
+-    
++
      public void addChatMessage(String message) {
 +        if (message.length() > 2000) message = message.substring(message.length() - 2000).trim();
          while (this.mc.fontRenderer.getStringWidth(message) > 320) {
              int n;
-@@ -424,5 +467,5 @@
+@@ -424,12 +468,24 @@
          }
          this.chatMessageList.add(0, new ChatLine(message));
 -        while (this.chatMessageList.size() > 50) {
 +        while (this.chatMessageList.size() > 512) {
              this.chatMessageList.remove(this.chatMessageList.size() - 1);
          }
-@@ -430,5 +473,5 @@
-     
+     }
+-    
++
      public void setRecordPlayingMessage(final String record) {
 -        this.recordPlaying = new StringBuilder("Now playing: ").append(record).toString();
 +        this.recordPlaying = "Now playing: " + record;
          this.recordPlayingUpFor = 60;
      }
++
++    public void clear() {
++        chatMessageList.clear();
++    }
++
++    public void append(String text) {
++        addChatMessage(text);
++    }
++
++    public void append(String username, String text) {
++        // do nothing
++    }
+ }

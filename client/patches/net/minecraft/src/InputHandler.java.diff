@@ -16,6 +16,27 @@
 +
  public class InputHandler {
      public static Controller[] gamepads;
+@@ -36,5 +41,5 @@
+     public static boolean KBEventKeyState;
+     public static boolean LastAPress;
+-    
++
+     static {
+         InputHandler.EventDWheel = -1;
+@@ -60,5 +65,5 @@
+         InputHandler.LastAPress = false;
+     }
+-    
++
+     public static void UpdateAxis3() {
+         if (InputHandler.activeGamepad != null && InputHandler.axis4isMinusOne && InputHandler.activeGamepad.getAxisValue(4) != -1.0) {
+@@ -66,5 +71,5 @@
+         }
+     }
+-    
++
+     public static void CaptureGamepad() {
+         InputHandler.activeGamepad = null;
 @@ -78,8 +83,8 @@
                  else {
                      InputHandler.activeGamepad = InputHandler.gamepads[i];
@@ -27,20 +48,76 @@
 +            catch (NullPointerException ignored) {}
          }
          if (InputHandler.activeGamepad != null) {
-@@ -149,4 +154,7 @@
-     
+@@ -87,9 +92,9 @@
+         }
+     }
+-    
++
+     public static void InputR1() {
+         InputHandler.LastR1Press = InputHandler.activeGamepad.isButtonPressed(5);
+     }
+-    
++
+     public static void InputR2() {
+         InputHandler.LastR2Press = (InputHandler.activeGamepad.getAxisValue(4) < -0.4f);
+@@ -101,10 +106,10 @@
+         InputHandler.pushedGamepadEvent = true;
+     }
+-    
++
+     public static void InputL1() {
+         InputHandler.LastL1Press = InputHandler.activeGamepad.isButtonPressed(4);
+         InputDash();
+     }
+-    
++
+     public static void InputL2() {
+         InputHandler.LastL2Press = (InputHandler.activeGamepad.getAxisValue(4) > 0.4f);
+@@ -116,5 +121,5 @@
+         InputHandler.pushedGamepadEvent = true;
+     }
+-    
++
+     public static void InputA() {
+         InputHandler.LastAPress = InputHandler.activeGamepad.isButtonPressed(0);
+@@ -122,5 +127,5 @@
+         InputHandler.KBEventKeyState = InputHandler.LastAPress;
+     }
+-    
++
+     public static void InputStart() {
+         InputHandler.LastStartPress = InputHandler.activeGamepad.isButtonPressed(7);
+@@ -128,5 +133,5 @@
+         InputHandler.KBEventKeyState = InputHandler.LastStartPress;
+     }
+-    
++
+     public static void InputPOV(final float povX) {
+         if (povX != InputHandler.lastPovX) {
+@@ -140,5 +145,5 @@
+         }
+     }
+-    
++
+     public static MobGiant SpawnGiant(final double x, final double y, final double z) {
+         final MobGiant entity = new MobGiant(InputHandler.mc.theWorld, (int)InputHandler.mc.theWorld.milestone);
+@@ -147,6 +152,9 @@
+         return entity;
+     }
+-    
++
      public static void KBEventInject() {
 +        if (mc == null) return;
 +        if (mc.thePlayer == null) return;
 +        if (mc.theWorld == null) return;
          if (InputHandler.KBEventKey == 26) {
              InputHandler.lastX = InputHandler.mc.thePlayer.posX;
-@@ -164,12 +172,19 @@
+@@ -164,30 +172,32 @@
              InputHandler.mc.thePlayer.setPosition(InputHandler.mc.thePlayer.posX, InputHandler.mc.thePlayer.posY, InputHandler.mc.thePlayer.posZ);
          }
 -        else if (InputHandler.KBEventKey == 47 && InputHandler.KBEventKeyState && InputHandler.cheatsEnabled && !(InputHandler.mc.currentScreen instanceof GuiChat)) {
 -            if (InputHandler.mc.thePlayer != null && !IsKeyDown(29)) {
-+        else if (InputHandler.KBEventKey == Game.options.keyCodeFor("cheat_menu") && InputHandler.KBEventKeyState && InputHandler.cheatsEnabled) {
++        else if (InputHandler.KBEventKey == Game.OPTIONS.keyCodeFor("cheat_menu") && InputHandler.KBEventKeyState && InputHandler.cheatsEnabled) {
 +            if (mc.currentScreen == null && mc.gameSettings.cheatMenuMode != 4) {
                  InputHandler.mc.displayGuiScreen(new ScreenItemCheat(InputHandler.mc));
              }
@@ -51,15 +128,17 @@
 +                && Objects.equals(Minecraft.INSTANCE.getVersionTag(), "dev")) {
 +            InputHandler.mc.displayGuiScreen(new DevTools(DevTools.mainPage(), mc.currentScreen, mc));
          }
-+        else if (InputHandler.KBEventKey == Game.options.keyCodeFor("debug_menu") && InputHandler.KBEventKeyState && mc.currentScreen == null && mc.ingameGUI != null) {
++        else if (InputHandler.KBEventKey == Game.OPTIONS.keyCodeFor("debug_menu") && InputHandler.KBEventKeyState && mc.currentScreen == null && mc.ingameGUI != null) {
 +            mc.ingameGUI.showDebugInfo = !mc.ingameGUI.showDebugInfo;
 +        }
-+        else if (InputHandler.KBEventKey == Game.options.keyCodeFor("dash") && InputHandler.KBEventKeyState) {
++        else if (InputHandler.KBEventKey == Game.OPTIONS.keyCodeFor("dash") && InputHandler.KBEventKeyState) {
 +            if (mc.currentScreen == null) InputDash();
 +        }
      }
-     
-@@ -178,13 +193,8 @@
+-    
++
+     public static void InputDash() {
+         if (InputHandler.mc.thePlayer != null && InputHandler.mc.thePlayer.dashTimer == 0) {
              InputHandler.mc.theWorld.playSoundEffect(InputHandler.mc.thePlayer.posX, InputHandler.mc.thePlayer.posY, InputHandler.mc.thePlayer.posZ, "ext.dash", 0.6f, 1.0f);
              InputHandler.mc.thePlayer.dashTimer = 30;
 -            final EntityPlayerSP thePlayer4;
@@ -77,3 +156,73 @@
 +            player.motionZ *= 10.0;
          }
      }
+-    
++
+     public static boolean NextKBEvent() {
+         if (Keyboard.next()) {
+@@ -213,5 +223,5 @@
+         return false;
+     }
+-    
++
+     public static boolean NextEvent() {
+         UpdateAxis3();
+@@ -244,41 +254,41 @@
+         return false;
+     }
+-    
++
+     public static int GetDWheel() {
+         return InputHandler.EventDWheel;
+     }
+-    
++
+     public static int GetEventButton() {
+         return InputHandler.EventButton;
+     }
+-    
++
+     public static int GetEventDX() {
+         return InputHandler.EventDX;
+     }
+-    
++
+     public static int GetEventDY() {
+         return InputHandler.EventDY;
+     }
+-    
++
+     public static int GetEventX() {
+         return InputHandler.EventX;
+     }
+-    
++
+     public static int GetEventY() {
+         return InputHandler.EventY;
+     }
+-    
++
+     public static boolean GetEventButtonState() {
+         return InputHandler.EventButtonState;
+     }
+-    
++
+     public static int GetKBEventKey() {
+         return InputHandler.KBEventKey;
+     }
+-    
++
+     public static boolean GetKBEventKeyState() {
+         return InputHandler.KBEventKeyState;
+     }
+-    
++
+     public static boolean IsKeyDown(final int keyCode) {
+         boolean buttonPressed = false;
+@@ -288,5 +298,5 @@
+         return Keyboard.isKeyDown(keyCode) || buttonPressed;
+     }
+-    
++
+     public static boolean InputMouseAction(final int buttonCode) {
+         if (InputHandler.activeGamepad != null && !InputHandler.axis4isMinusOne) {

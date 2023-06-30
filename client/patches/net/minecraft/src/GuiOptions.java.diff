@@ -165,7 +165,7 @@
 +                              this.width / 2 - 100, this.size.getScaledHeight() / 6 * 5,
 +                              "Done"
 +        ).setOnClickListener(() -> {
-+                Game.options.save();
++                Game.OPTIONS.save();
 +                mc.displayGuiScreen(parentScreen);
 +        }));
 +        if (category.length == 0)
@@ -192,7 +192,7 @@
 +    @Override
 +    protected void keyTyped(final char character, final int key) {
 +        if (key == 1) {
-+            Game.options.save();
++            Game.OPTIONS.save();
 +            this.mc.displayGuiScreen(this.parentScreen);
 +            this.mc.setIngameFocus();
 +        }
