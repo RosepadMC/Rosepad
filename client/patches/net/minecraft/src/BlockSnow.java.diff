@@ -1,0 +1,76 @@
+--- BlockSnow.java
++++ BlockSnow.java
+@@ -9,20 +9,20 @@
+         this.setTickOnLoad(true);
+     }
+-    
++
+     @Override
+     public AxisAlignedBB getCollisionBoundingBoxFromPool(final World world, final int x, final int y, final int z) {
+         return null;
+     }
+-    
++
+     @Override
+     public boolean isOpaqueCube() {
+         return false;
+     }
+-    
++
+     @Override
+     public boolean renderAsNormalBlock() {
+         return false;
+     }
+-    
++
+     @Override
+     public boolean canPlaceBlockAt(final World world, final int x, final int y, final int z) {
+@@ -30,10 +30,10 @@
+         return blockID != 0 && Block.BLOCKS_LIST[blockID].isOpaqueCube() && world.getBlockMaterial(x, y - 1, z).getIsSolid();
+     }
+-    
++
+     @Override
+     public void onNeighborBlockChange(final World world, final int x, final int y, final int z, final int id) {
+         this.canSnowStay(world, x, y, z);
+     }
+-    
++
+     private boolean canSnowStay(final World world, final int x, final int y, final int z) {
+         if (!this.canPlaceBlockAt(world, x, y, z)) {
+@@ -44,5 +44,5 @@
+         return true;
+     }
+-    
++
+     @Override
+     public void harvestBlock(final World world, final int x, final int y, final int z, final int metadata) {
+@@ -54,23 +54,23 @@
+         world.setBlockWithNotify(x, y, z, 0);
+     }
+-    
++
+     @Override
+     public int idDropped(final int metadata, final Random rand) {
+         return Item.SNOWBALL.shiftedIndex;
+     }
+-    
++
+     @Override
+     public int quantityDropped(final Random rand) {
+         return 0;
+     }
+-    
++
+     @Override
+     public void updateTick(final World world, final int x, final int y, final int z, final Random rand) {
+-        if (world.getSavedLightValue(EnumSkyBlock.BLOCK, x, y, z) > 11) {
++        if (world.getAvgSavedLightValue(EnumSkyBlock.BLOCK, x, y, z) > 11) {
+             this.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z));
+             world.setBlockWithNotify(x, y, z, 0);
+         }
+     }
+-    
++
+     @Override
+     public boolean shouldSideBeRendered(final IBlockAccess blockAccess, final int x, final int y, final int z, final int side) {

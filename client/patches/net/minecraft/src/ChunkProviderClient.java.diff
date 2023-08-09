@@ -1,0 +1,63 @@
+--- ChunkProviderClient.java
++++ ChunkProviderClient.java
+@@ -12,5 +12,5 @@
+     private List<Chunk> chunkListing;
+     private World world;
+-    
++
+     public ChunkProviderClient(final World world) {
+         this.chunkMapping = (Map<ChunkCoordinates, Chunk>)new HashMap();
+@@ -21,9 +21,9 @@
+         this.world = world;
+     }
+-    
++
+     public boolean chunkExists(final int x, final int z) {
+         return this.chunkMapping.containsKey(new ChunkCoordinates(x, z));
+     }
+-    
++
+     public void unloadChunk(final int x, final int z) {
+         final Chunk provideChunk = this.provideChunk(x, z);
+@@ -34,14 +34,16 @@
+         this.chunkListing.remove(provideChunk);
+     }
+-    
++
+     public Chunk loadChunk(final int x, final int z) {
+         final ChunkCoordinates chunkCoordinates = new ChunkCoordinates(x, z);
+         final Chunk chunk = new Chunk(this.world, new byte[32768], x, z);
+-        Arrays.fill(chunk.skylightMap.data, (byte)(-1));
++        Arrays.fill(chunk.skylightMapR.data, (byte)(-1));
++        Arrays.fill(chunk.skylightMapG.data, (byte)(-1));
++        Arrays.fill(chunk.skylightMapB.data, (byte)(-1));
+         this.chunkMapping.put(chunkCoordinates, chunk);
+         chunk.isChunkLoaded = true;
+         return chunk;
+     }
+-    
++
+     public Chunk provideChunk(final int x, final int z) {
+         final Chunk chunk = (Chunk)this.chunkMapping.get(new ChunkCoordinates(x, z));
+@@ -51,17 +53,17 @@
+         return chunk;
+     }
+-    
++
+     public boolean saveChunks(final boolean boolean1, final IProgressUpdate progressUpdate) {
+         return true;
+     }
+-    
++
+     public boolean unload100OldestChunks() {
+         return false;
+     }
+-    
++
+     public boolean canSave() {
+         return false;
+     }
+-    
++
+     public void populate(final IChunkProvider chunkProvider, final int x, final int z) {
+     }

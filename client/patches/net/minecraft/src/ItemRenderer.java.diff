@@ -1,0 +1,98 @@
+--- ItemRenderer.java
++++ ItemRenderer.java
+@@ -10,5 +10,5 @@
+     private float prevEquippedProgress;
+     private RenderBlocks renderBlocksInstance;
+-    
++
+     public ItemRenderer(final Minecraft minecraft) {
+         this.itemToRender = null;
+@@ -18,5 +18,5 @@
+         this.mc = minecraft;
+     }
+-    
++
+     public void renderItem(final ItemStack stack) {
+         GL11.glPushMatrix();
+@@ -114,5 +114,5 @@
+         GL11.glPopMatrix();
+     }
+-    
++
+     public void renderItemInFirstPerson(final float renderPartialTick) {
+         final float n = this.prevEquippedProgress + (this.equippedProgress - this.prevEquippedProgress) * renderPartialTick;
+@@ -123,6 +123,8 @@
+         RenderHelper.enableStandardItemLighting();
+         GL11.glPopMatrix();
+-        final float brightness = this.mc.theWorld.getBrightness(MathHelper.floor_double(thePlayer.posX), MathHelper.floor_double(thePlayer.posY), MathHelper.floor_double(thePlayer.posZ));
+-        GL11.glColor4f(brightness, brightness, brightness, 1.0f);
++        final float brightnessR = this.mc.theWorld.getBrightness(MathHelper.floor_double(thePlayer.posX), MathHelper.floor_double(thePlayer.posY), MathHelper.floor_double(thePlayer.posZ), EnumColorChannel.RED);
++        final float brightnessG = this.mc.theWorld.getBrightness(MathHelper.floor_double(thePlayer.posX), MathHelper.floor_double(thePlayer.posY), MathHelper.floor_double(thePlayer.posZ), EnumColorChannel.GREEN);
++        final float brightnessB = this.mc.theWorld.getBrightness(MathHelper.floor_double(thePlayer.posX), MathHelper.floor_double(thePlayer.posY), MathHelper.floor_double(thePlayer.posZ), EnumColorChannel.BLUE);
++        GL11.glColor4f(brightnessR, brightnessG, brightnessB, 1.0f);
+         if (this.itemToRender != null) {
+             GL11.glPushMatrix();
+@@ -177,5 +179,5 @@
+         RenderHelper.disableStandardItemLighting();
+     }
+-    
++
+     public void renderOverlays(final float renderPartialTick) {
+         GL11.glDisable(3008);
+@@ -202,10 +204,11 @@
+         GL11.glEnable(3008);
+     }
+-    
++
+     private void renderInsideOfBlock(final float renderPartialTick, final int id) {
+         final Tessellator instance = Tessellator.instance;
+-        float brightness = this.mc.thePlayer.getBrightness(renderPartialTick);
+-        brightness = 0.1f;
+-        GL11.glColor4f(brightness, brightness, brightness, 0.5f);
++        float brightnessR = this.mc.thePlayer.getBrightness(renderPartialTick, EnumColorChannel.RED);
++        float brightnessG = this.mc.thePlayer.getBrightness(renderPartialTick, EnumColorChannel.GREEN);
++        float brightnessB = this.mc.thePlayer.getBrightness(renderPartialTick, EnumColorChannel.BLUE);
++        GL11.glColor4f(brightnessR, brightnessG, brightnessB, 0.5f);
+         GL11.glPushMatrix();
+         final float n = -1.0f;
+@@ -228,9 +231,11 @@
+         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+     }
+-    
++
+     private void renderWarpedTextureOverlay(final float renderPartialTick) {
+         final Tessellator instance = Tessellator.instance;
+-        final float brightness = this.mc.thePlayer.getBrightness(renderPartialTick);
+-        GL11.glColor4f(brightness, brightness, brightness, 0.5f);
++        final float brightnessR = this.mc.thePlayer.getBrightness(renderPartialTick, EnumColorChannel.RED);
++        final float brightnessG = this.mc.thePlayer.getBrightness(renderPartialTick, EnumColorChannel.GREEN);
++        final float brightnessB = this.mc.thePlayer.getBrightness(renderPartialTick, EnumColorChannel.BLUE);
++        GL11.glColor4f(brightnessR, brightnessG, brightnessB, 0.5f);
+         GL11.glEnable(3042);
+         GL11.glBlendFunc(770, 771);
+@@ -254,5 +259,5 @@
+         GL11.glDisable(3042);
+     }
+-    
++
+     private void renderFireInFirstPerson(final float renderPartialTick) {
+         final Tessellator instance = Tessellator.instance;
+@@ -288,5 +293,5 @@
+         GL11.glDisable(3042);
+     }
+-    
++
+     public void updateEquippedItem() {
+         this.prevEquippedProgress = this.equippedProgress;
+@@ -305,9 +310,9 @@
+         }
+     }
+-    
++
+     public void resetEquippedProgress() {
+         this.equippedProgress = 0.0f;
+     }
+-    
++
+     public void resetEquippedProgress2() {
+         this.equippedProgress = 0.0f;

@@ -1,0 +1,26 @@
+--- EntitySlimeFX.java
++++ EntitySlimeFX.java
+@@ -12,10 +12,10 @@
+         this.particleScale /= 2.0f;
+     }
+-    
++
+     @Override
+     public int getFXLayer() {
+         return 2;
+     }
+-    
++
+     @Override
+     public void renderParticle(final Tessellator tessellator, final float renderPartialTick, final float xOffset, final float yOffset, final float zOffset, final float xOffset2, final float zOffset2) {
+@@ -28,6 +28,8 @@
+         final float n7 = (float)(this.prevPosY + (this.posY - this.prevPosY) * renderPartialTick - EntitySlimeFX.interpPosY);
+         final float n8 = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * renderPartialTick - EntitySlimeFX.interpPosZ);
+-        final float brightness = this.getBrightness(renderPartialTick);
+-        tessellator.setColorOpaque_F(brightness * this.particleBlue, brightness * this.particleGreen, brightness * this.particleRed);
++        final float brightnessR = this.getBrightness(renderPartialTick, EnumColorChannel.RED);
++        final float brightnessG = this.getBrightness(renderPartialTick, EnumColorChannel.GREEN);
++        final float brightnessB = this.getBrightness(renderPartialTick, EnumColorChannel.BLUE);
++        tessellator.setColorOpaque_F(brightnessR * this.particleBlue, brightnessG * this.particleGreen, brightnessB * this.particleRed);
+         tessellator.addVertexWithUV(n6 - xOffset * n5 - xOffset2 * n5, n7 - yOffset * n5, n8 - zOffset * n5 - zOffset2 * n5, n, n4);
+         tessellator.addVertexWithUV(n6 - xOffset * n5 + xOffset2 * n5, n7 + yOffset * n5, n8 - zOffset * n5 + zOffset2 * n5, n, n3);

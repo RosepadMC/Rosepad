@@ -1,0 +1,72 @@
+--- BlockFarmland.java
++++ BlockFarmland.java
+@@ -9,22 +9,22 @@
+         this.setTickOnLoad(true);
+         this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 0.9375f, 1.0f);
+-        this.setLightOpacity(255);
++        this.setLightOpacity(255, 255, 255);
+     }
+-    
++
+     @Override
+     public AxisAlignedBB getCollisionBoundingBoxFromPool(final World world, final int x, final int y, final int z) {
+         return AxisAlignedBB.getBoundingBoxFromPool(x + 0, y + 0, z + 0, x + 1, y + 1, z + 1);
+     }
+-    
++
+     @Override
+     public boolean isOpaqueCube() {
+         return false;
+     }
+-    
++
+     @Override
+     public boolean renderAsNormalBlock() {
+         return false;
+     }
+-    
++
+     @Override
+     public int getBlockTextureFromSideAndMetadata(final int side, final int metadata) {
+@@ -37,5 +37,5 @@
+         return 2;
+     }
+-    
++
+     @Override
+     public void updateTick(final World world, final int x, final int y, final int z, final Random rand) {
+@@ -55,5 +55,5 @@
+         }
+     }
+-    
++
+     @Override
+     public void onEntityWalking(final World world, final int x, final int y, final int z, final Entity entity) {
+@@ -62,5 +62,5 @@
+         }
+     }
+-    
++
+     private boolean isCropsNearby(final World world, final int x, final int y, final int z) {
+         for (int n = 0, i = x - n; i <= x + n; ++i) {
+@@ -73,5 +73,5 @@
+         return false;
+     }
+-    
++
+     private boolean isWaterNearby(final World world, final int x, final int y, final int z) {
+         for (int i = x - 4; i <= x + 4; ++i) {
+@@ -86,5 +86,5 @@
+         return false;
+     }
+-    
++
+     @Override
+     public void onNeighborBlockChange(final World world, final int x, final int y, final int z, final int id) {
+@@ -94,5 +94,5 @@
+         }
+     }
+-    
++
+     @Override
+     public int idDropped(final int metadata, final Random rand) {

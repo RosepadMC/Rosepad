@@ -1,0 +1,13 @@
+--- EntityGiantZombie.java
++++ EntityGiantZombie.java
+@@ -11,8 +11,8 @@
+         this.setSize(this.width * 6.0f, this.height * 6.0f);
+     }
+-    
++
+     @Override
+     protected float getBlockPathWeight(final int x, final int y, final int z) {
+-        return this.worldObj.getBrightness(x, y, z) - 0.5f;
++        return this.worldObj.getAvgBrightness(x, y, z) - 0.5f;
+     }
+ }

@@ -1,0 +1,47 @@
+--- TerrainTextureManager.java
++++ TerrainTextureManager.java
+@@ -14,5 +14,5 @@
+     private int[] yBuf;
+     private int[] textures;
+-    
++
+     public TerrainTextureManager() {
+         this.texCols = new float[768];
+@@ -64,5 +64,5 @@
+         }
+     }
+-    
++
+     public void render(final IsoImageBuffer isoImageBuffer) {
+         final World level = isoImageBuffer.level;
+@@ -101,5 +101,5 @@
+                             final int blockID = level.getBlockID(j, k + 1, i);
+                             if (blockID == 0 || Block.BLOCKS_LIST[blockID].material != Material.WATER) {
+-                                final float n9 = level.getBrightness(j, k + 1, i) * (k / 127.0f * 0.6f + 0.4f);
++                                final float n9 = level.getAvgBrightness(j, k + 1, i) * (k / 127.0f * 0.6f + 0.4f);
+                                 if (n8 >= 0 && n8 < 160) {
+                                     final int n10 = n7 + n8 * 32;
+@@ -129,5 +129,5 @@
+                                 final int n12 = n7 + n8 * 32;
+                                 final int n13 = this.textures[block.blockID * 3 + 0];
+-                                final float n14 = (level.getBrightness(j, k + 1, i) * 0.8f + 0.2f) * n11;
++                                final float n14 = (level.getAvgBrightness(j, k + 1, i) * 0.8f + 0.2f) * n11;
+                                 final int n15 = n13;
+                                 if (n7 >= 0) {
+@@ -149,7 +149,7 @@
+                                 final int n12 = n7 + (n8 + 1) * 32;
+                                 final int n13 = this.textures[block.blockID * 3 + 1];
+-                                final float n14 = level.getBrightness(j - 1, k, i) * 0.8f + 0.2f;
++                                final float n14 = level.getAvgBrightness(j - 1, k, i) * 0.8f + 0.2f;
+                                 final int n15 = this.textures[block.blockID * 3 + 2];
+-                                final float n16 = level.getBrightness(j, k, i + 1) * 0.8f + 0.2f;
++                                final float n16 = level.getAvgBrightness(j, k, i + 1) * 0.8f + 0.2f;
+                                 if (n7 >= 0) {
+                                     final float n17 = n14 * n11 * 0.6f;
+@@ -179,5 +179,5 @@
+         isoImageBuffer.rendered = true;
+     }
+-    
++
+     private void postProcess() {
+         for (int i = 0; i < 32; ++i) {

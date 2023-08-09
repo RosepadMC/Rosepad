@@ -1,6 +1,32 @@
 --- RenderBlocks.java
 +++ RenderBlocks.java
-@@ -31,44 +31,36 @@
+@@ -8,5 +8,5 @@
+     private boolean flipTexture;
+     private boolean renderAllFaces;
+-    
++
+     public RenderBlocks(final IBlockAccess blockAccess) {
+         this.overrideBlockTexture = -1;
+@@ -15,5 +15,5 @@
+         this.blockAccess = blockAccess;
+     }
+-    
++
+     public RenderBlocks() {
+         this.overrideBlockTexture = -1;
+@@ -21,5 +21,5 @@
+         this.renderAllFaces = false;
+     }
+-    
++
+     public void renderBlockUsingTexture(final Block block, final int x, final int y, final int z, final int texID) {
+         this.overrideBlockTexture = texID;
+@@ -27,79 +27,81 @@
+         this.overrideBlockTexture = -1;
+     }
+-    
++
+     public boolean renderBlockByRenderType(final Block block, final int x, final int y, final int z) {
          final int renderType = block.getRenderType();
          block.setBlockBoundsBasedOnState(this.blockAccess, x, y, z);
 -        if (renderType == 0) {
@@ -75,8 +101,29 @@
 -        }
 -        return renderType == 12 && this.renderBlockLever(block, x, y, z);
      }
-     
-@@ -84,19 +76,21 @@
+-    
++
+     public boolean renderBlockTorch(final Block block, final int x, final int y, final int z) {
+         final int blockMetadata = this.blockAccess.getBlockMetadata(x, y, z);
+         final Tessellator instance = Tessellator.instance;
+-        float blockBrightness = block.getBlockBrightness(this.blockAccess, x, y, z);
+-        if (Block.LIGHT_VALUE[block.blockID] > 0) {
+-            blockBrightness = 1.0f;
++        float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.RED);
++        if (Block.LIGHT_VALUE_R[block.blockID] > 0) {
++            blockBrightnessR = 1.0f;
+         }
+-        instance.setColorOpaque_F(blockBrightness, blockBrightness, blockBrightness);
++        float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.GREEN);
++        if (Block.LIGHT_VALUE_G[block.blockID] > 0) {
++            blockBrightnessG = 1.0f;
++        }
++        float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.BLUE);
++        if (Block.LIGHT_VALUE_B[block.blockID] > 0) {
++            blockBrightnessB = 1.0f;
++        }
++        instance.setColorOpaque_F(blockBrightnessR, blockBrightnessG, blockBrightnessB);
+         final double n = 0.4000000059604645;
          final double n2 = 0.09999999403953552;
          final double n3 = 0.20000000298023224;
 -        if (blockMetadata == 1) {
@@ -112,3 +159,901 @@
 -        }
          return true;
      }
+-    
++
+     public boolean renderBlockLever(final Block block, final int x, final int y, final int z) {
+         final int blockMetadata = this.blockAccess.getBlockMetadata(x, y, z);
+@@ -136,9 +138,17 @@
+             this.overrideBlockTexture = -1;
+         }
+-        float blockBrightness = block.getBlockBrightness(this.blockAccess, x, y, z);
+-        if (Block.LIGHT_VALUE[block.blockID] > 0) {
+-            blockBrightness = 1.0f;
++        float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.RED);
++        if (Block.LIGHT_VALUE_R[block.blockID] > 0) {
++            blockBrightnessR = 1.0f;
+         }
+-        instance.setColorOpaque_F(blockBrightness, blockBrightness, blockBrightness);
++        float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.GREEN);
++        if (Block.LIGHT_VALUE_G[block.blockID] > 0) {
++            blockBrightnessG = 1.0f;
++        }
++        float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.BLUE);
++        if (Block.LIGHT_VALUE_B[block.blockID] > 0) {
++            blockBrightnessB = 1.0f;
++        }
++        instance.setColorOpaque_F(blockBrightnessR, blockBrightnessG, blockBrightnessB);
+         int n5 = block.getBlockTextureFromSide(0);
+         if (this.overrideBlockTexture >= 0) {
+@@ -278,5 +288,5 @@
+         return true;
+     }
+-    
++
+     public boolean renderBlockFire(final Block block, final int x, int y, final int z) {
+         final Tessellator instance = Tessellator.instance;
+@@ -285,6 +295,8 @@
+             n = this.overrideBlockTexture;
+         }
+-        final float blockBrightness = block.getBlockBrightness(this.blockAccess, x, y, z);
+-        instance.setColorOpaque_F(blockBrightness, blockBrightness, blockBrightness);
++        final float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.RED);
++        final float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.GREEN);
++        final float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.BLUE);
++        instance.setColorOpaque_F(blockBrightnessR, blockBrightnessG, blockBrightnessB);
+         final int n2 = (n & 0xF) << 4;
+         final int n3 = n & 0xF0;
+@@ -453,5 +465,5 @@
+         return true;
+     }
+-    
++
+     public boolean renderBlockRedstoneWire(final Block block, final int x, final int y, final int z) {
+         final Tessellator instance = Tessellator.instance;
+@@ -460,6 +472,8 @@
+             n = this.overrideBlockTexture;
+         }
+-        final float blockBrightness = block.getBlockBrightness(this.blockAccess, x, y, z);
+-        instance.setColorOpaque_F(blockBrightness, blockBrightness, blockBrightness);
++        final float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.RED);
++        final float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.GREEN);
++        final float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.BLUE);
++        instance.setColorOpaque_F(blockBrightnessR, blockBrightnessG, blockBrightnessB);
+         final int n2 = (n & 0xF) << 4;
+         final int n3 = n & 0xF0;
+@@ -582,5 +596,5 @@
+         return true;
+     }
+-    
++
+     public boolean renderBlockMinecartTrack(final Block block, final int x, final int y, final int z) {
+         final Tessellator instance = Tessellator.instance;
+@@ -590,6 +604,8 @@
+             n = this.overrideBlockTexture;
+         }
+-        final float blockBrightness = block.getBlockBrightness(this.blockAccess, x, y, z);
+-        instance.setColorOpaque_F(blockBrightness, blockBrightness, blockBrightness);
++        final float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.RED);
++        final float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.GREEN);
++        final float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.BLUE);
++        instance.setColorOpaque_F(blockBrightnessR, blockBrightnessG, blockBrightnessB);
+         final int n2 = (n & 0xF) << 4;
+         final int n3 = n & 0xF0;
+@@ -647,5 +663,5 @@
+         return true;
+     }
+-    
++
+     public boolean renderBlockLadder(final Block block, final int x, final int y, final int z) {
+         final Tessellator instance = Tessellator.instance;
+@@ -654,6 +670,8 @@
+             n = this.overrideBlockTexture;
+         }
+-        final float blockBrightness = block.getBlockBrightness(this.blockAccess, x, y, z);
+-        instance.setColorOpaque_F(blockBrightness, blockBrightness, blockBrightness);
++        final float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.RED);
++        final float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.GREEN);
++        final float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.BLUE);
++        instance.setColorOpaque_F(blockBrightnessR, blockBrightnessG, blockBrightnessB);
+         final int n2 = (n & 0xF) << 4;
+         final int n3 = n & 0xF0;
+@@ -691,21 +709,25 @@
+         return true;
+     }
+-    
++
+     public boolean renderBlockReed(final Block block, final int x, final int y, final int z) {
+         final Tessellator instance = Tessellator.instance;
+-        final float blockBrightness = block.getBlockBrightness(this.blockAccess, x, y, z);
+-        instance.setColorOpaque_F(blockBrightness, blockBrightness, blockBrightness);
++        final float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.RED);
++        final float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.GREEN);
++        final float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.BLUE);
++        instance.setColorOpaque_F(blockBrightnessR, blockBrightnessG, blockBrightnessB);
+         this.renderCrossedSquares(block, this.blockAccess.getBlockMetadata(x, y, z), x, y, z);
+         return true;
+     }
+-    
++
+     public boolean renderBlockCrops(final Block block, final int x, final int y, final int z) {
+         final Tessellator instance = Tessellator.instance;
+-        final float blockBrightness = block.getBlockBrightness(this.blockAccess, x, y, z);
+-        instance.setColorOpaque_F(blockBrightness, blockBrightness, blockBrightness);
++        final float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.RED);
++        final float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.GREEN);
++        final float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.BLUE);
++        instance.setColorOpaque_F(blockBrightnessR, blockBrightnessG, blockBrightnessB);
+         this.renderBlockCropsImpl(block, this.blockAccess.getBlockMetadata(x, y, z), x, y - 0.0625f, z);
+         return true;
+     }
+-    
++
+     public void renderTorchAtAngle(final Block block, double x, final double y, double z, final double sizeX, final double sizeZ) {
+         final Tessellator instance = Tessellator.instance;
+@@ -753,5 +775,5 @@
+         instance.addVertexWithUV(n12, y + 1.0, z - 0.0625, n5, n6);
+     }
+-    
++
+     public void renderCrossedSquares(final Block block, final int metadata, final double x, final double y, final double z) {
+         final Tessellator instance = Tessellator.instance;
+@@ -787,5 +809,5 @@
+         instance.addVertexWithUV(n8, y + 1.0, n11, n5, n6);
+     }
+-    
++
+     public void renderBlockCropsImpl(final Block block, final int metadata, final double x, final double y, final double z) {
+         final Tessellator instance = Tessellator.instance;
+@@ -841,5 +863,5 @@
+         instance.addVertexWithUV(n9, y + 1.0, n11, n5, n6);
+     }
+-    
++
+     public boolean renderBlockFluids(final Block block, final int x, final int y, final int z) {
+         final Tessellator instance = Tessellator.instance;
+@@ -883,6 +905,8 @@
+             final float n8 = MathHelper.sin(n5) * 8.0f / 256.0f;
+             final float n9 = MathHelper.cos(n5) * 8.0f / 256.0f;
+-            final float blockBrightness = block.getBlockBrightness(this.blockAccess, x, y, z);
+-            instance.setColorOpaque_F(1.0f * blockBrightness, 1.0f * blockBrightness, 1.0f * blockBrightness);
++            final float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.RED);
++            final float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.GREEN);
++            final float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.BLUE);
++            instance.setColorOpaque_F(blockBrightnessR, blockBrightnessG, blockBrightnessB);
+             instance.addVertexWithUV(x + 0, y + fluidHeight, z + 0, n6 - n9 - n8, n7 - n9 + n8);
+             instance.addVertexWithUV(x + 0, y + fluidHeight2, z + 1, n6 - n9 + n8, n7 + n9 + n8);
+@@ -891,6 +915,8 @@
+         }
+         if (this.renderAllFaces || shouldSideBeRendered2) {
+-            final float blockBrightness2 = block.getBlockBrightness(this.blockAccess, x, y - 1, z);
+-            instance.setColorOpaque_F(0.5f * blockBrightness2, 0.5f * blockBrightness2, 0.5f * blockBrightness2);
++            final float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x, y - 1, z, EnumColorChannel.RED);
++            final float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x, y - 1, z, EnumColorChannel.GREEN);
++            final float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x, y - 1, z, EnumColorChannel.BLUE);
++            instance.setColorOpaque_F(blockBrightnessR, blockBrightnessG, blockBrightnessB);
+             this.renderBottomFace(block, x, y, z, block.getBlockTextureFromSide(0));
+             b = true;
+@@ -960,12 +986,26 @@
+                 final double v2 = (n11 + (1.0f - n13) * 16.0f) / 256.0f;
+                 final double n19 = (n11 + 16 - 0.01) / 256.0;
+-                float blockBrightness4 = block.getBlockBrightness(this.blockAccess, x2, y2, z2);
++                float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x2, y2, z2, EnumColorChannel.RED);
+                 if (i < 2) {
+-                    blockBrightness4 *= 0.8f;
++                    blockBrightnessR *= 0.8f;
+                 }
+                 else {
+-                    blockBrightness4 *= 0.6f;
++                    blockBrightnessR *= 0.6f;
+                 }
+-                instance.setColorOpaque_F(1.0f * blockBrightness4, 1.0f * blockBrightness4, 1.0f * blockBrightness4);
++                float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x2, y2, z2, EnumColorChannel.GREEN);
++                if (i < 2) {
++                    blockBrightnessG *= 0.8f;
++                }
++                else {
++                    blockBrightnessG *= 0.6f;
++                }
++                float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x2, y2, z2, EnumColorChannel.BLUE);
++                if (i < 2) {
++                    blockBrightnessB *= 0.8f;
++                }
++                else {
++                    blockBrightnessB *= 0.6f;
++                }
++                instance.setColorOpaque_F(blockBrightnessR, blockBrightnessG, blockBrightnessB);
+                 instance.addVertexWithUV(n14, y + n12, blockBrightness3, n17, v);
+                 instance.addVertexWithUV(n15, y + n13, n16, n18, v2);
+@@ -978,5 +1018,5 @@
+         return b;
+     }
+-    
++
+     private float getFluidHeight(final int x, final int y, final int z, final Material material) {
+         int n = 0;
+@@ -1005,5 +1045,5 @@
+         return 1.0f - n2 / n;
+     }
+-    
++
+     public void renderBlockFallingSand(final Block block, final World world, final int x, final int y, final int z) {
+         final float n = 0.5f;
+@@ -1013,52 +1053,110 @@
+         final Tessellator instance = Tessellator.instance;
+         instance.startDrawingQuads();
+-        final float blockBrightness = block.getBlockBrightness(world, x, y, z);
+-        float n5 = block.getBlockBrightness(world, x, y - 1, z);
+-        if (n5 < blockBrightness) {
+-            n5 = blockBrightness;
++
++        final float blockBrightnessR = block.getBlockBrightness(world, x, y, z, EnumColorChannel.RED);
++        float nr = block.getBlockBrightness(world, x, y - 1, z, EnumColorChannel.RED);
++        if (nr < blockBrightnessR) {
++            nr = blockBrightnessR;
+         }
+-        instance.setColorOpaque_F(0.5f * n5, 0.5f * n5, 0.5f * n5);
++        final float blockBrightnessG = block.getBlockBrightness(world, x, y, z, EnumColorChannel.GREEN);
++        float ng = block.getBlockBrightness(world, x, y - 1, z, EnumColorChannel.GREEN);
++        if (ng < blockBrightnessG) {
++            ng = blockBrightnessG;
++        }
++        final float blockBrightnessB = block.getBlockBrightness(world, x, y, z, EnumColorChannel.BLUE);
++        float nb = block.getBlockBrightness(world, x, y - 1, z, EnumColorChannel.BLUE);
++        if (nb < blockBrightnessB) {
++            nb = blockBrightnessB;
++        }
++        instance.setColorOpaque_F(0.5f * nr, 0.5f * ng, 0.5f * nb);
+         this.renderBottomFace(block, -0.5, -0.5, -0.5, block.getBlockTextureFromSide(0));
+-        n5 = block.getBlockBrightness(world, x, y + 1, z);
+-        if (n5 < blockBrightness) {
+-            n5 = blockBrightness;
++
++        nr = block.getBlockBrightness(world, x, y + 1, z, EnumColorChannel.RED);
++        if (nr < blockBrightnessR) {
++            nr = blockBrightnessR;
+         }
+-        instance.setColorOpaque_F(1.0f * n5, 1.0f * n5, 1.0f * n5);
++        ng = block.getBlockBrightness(world, x, y + 1, z, EnumColorChannel.GREEN);
++        if (ng < blockBrightnessG) {
++            ng = blockBrightnessG;
++        }
++        nb = block.getBlockBrightness(world, x, y + 1, z, EnumColorChannel.BLUE);
++        if (nb < blockBrightnessB) {
++            nb = blockBrightnessB;
++        }
++        instance.setColorOpaque_F(1.0f * nr, 1.0f * ng, 1.0f * nb);
+         this.renderTopFace(block, -0.5, -0.5, -0.5, block.getBlockTextureFromSide(1));
+-        n5 = block.getBlockBrightness(world, x, y, z - 1);
+-        if (n5 < blockBrightness) {
+-            n5 = blockBrightness;
++
++        nr = block.getBlockBrightness(world, x, y, z - 1, EnumColorChannel.RED);
++        if (nr < blockBrightnessR) {
++            nr = blockBrightnessR;
+         }
+-        instance.setColorOpaque_F(0.8f * n5, 0.8f * n5, 0.8f * n5);
++        ng = block.getBlockBrightness(world, x, y, z - 1, EnumColorChannel.GREEN);
++        if (ng < blockBrightnessG) {
++            ng = blockBrightnessG;
++        }
++        nb = block.getBlockBrightness(world, x, y, z - 1, EnumColorChannel.BLUE);
++        if (nb < blockBrightnessB) {
++            nb = blockBrightnessB;
++        }
++        instance.setColorOpaque_F(0.8f * nr, 0.8f * ng, 0.8f * nb);
+         this.renderEastFace(block, -0.5, -0.5, -0.5, block.getBlockTextureFromSide(2));
+-        n5 = block.getBlockBrightness(world, x, y, z + 1);
+-        if (n5 < blockBrightness) {
+-            n5 = blockBrightness;
++
++        nr = block.getBlockBrightness(world, x, y, z + 1, EnumColorChannel.RED);
++        if (nr < blockBrightnessR) {
++            nr = blockBrightnessR;
+         }
+-        instance.setColorOpaque_F(0.8f * n5, 0.8f * n5, 0.8f * n5);
++        ng = block.getBlockBrightness(world, x, y, z + 1, EnumColorChannel.GREEN);
++        if (ng < blockBrightnessG) {
++            ng = blockBrightnessG;
++        }
++        nb = block.getBlockBrightness(world, x, y, z + 1, EnumColorChannel.BLUE);
++        if (nb < blockBrightnessB) {
++            nb = blockBrightnessB;
++        }
++        instance.setColorOpaque_F(0.8f * nr, 0.8f * ng, 0.8f * nb);
+         this.renderWestFace(block, -0.5, -0.5, -0.5, block.getBlockTextureFromSide(3));
+-        n5 = block.getBlockBrightness(world, x - 1, y, z);
+-        if (n5 < blockBrightness) {
+-            n5 = blockBrightness;
++
++        nr = block.getBlockBrightness(world, x - 1, y, z, EnumColorChannel.RED);
++        if (nr < blockBrightnessR) {
++            nr = blockBrightnessR;
+         }
+-        instance.setColorOpaque_F(0.6f * n5, 0.6f * n5, 0.6f * n5);
++        ng = block.getBlockBrightness(world, x - 1, y, z, EnumColorChannel.GREEN);
++        if (ng < blockBrightnessG) {
++            ng = blockBrightnessG;
++        }
++        nb = block.getBlockBrightness(world, x - 1, y, z, EnumColorChannel.BLUE);
++        if (nb < blockBrightnessB) {
++            nb = blockBrightnessB;
++        }
++        instance.setColorOpaque_F(0.6f * nr, 0.6f * ng, 0.6f * nb);
+         this.renderNorthFace(block, -0.5, -0.5, -0.5, block.getBlockTextureFromSide(4));
+-        n5 = block.getBlockBrightness(world, x + 1, y, z);
+-        if (n5 < blockBrightness) {
+-            n5 = blockBrightness;
++
++        nr = block.getBlockBrightness(world, x + 1, y, z, EnumColorChannel.RED);
++        if (nr < blockBrightnessR) {
++            nr = blockBrightnessR;
+         }
+-        instance.setColorOpaque_F(0.6f * n5, 0.6f * n5, 0.6f * n5);
++        ng = block.getBlockBrightness(world, x + 1, y, z, EnumColorChannel.GREEN);
++        if (ng < blockBrightnessG) {
++            ng = blockBrightnessG;
++        }
++        nb = block.getBlockBrightness(world, x + 1, y, z, EnumColorChannel.BLUE);
++        if (nb < blockBrightnessB) {
++            nb = blockBrightnessB;
++        }
++        instance.setColorOpaque_F(0.6f * nr, 0.6f * ng, 0.6f * nb);
+         this.renderSouthFace(block, -0.5, -0.5, -0.5, block.getBlockTextureFromSide(5));
++
+         instance.draw();
+     }
+-    
++
+     public boolean renderStandardBlock(final Block block, final int x, final int y, final int z) {
+         final int colorMultiplier = block.colorMultiplier(this.blockAccess, x, y, z);
+         return this.renderStandardBlockWithColorMultiplier(block, x, y, z, (colorMultiplier >> 16 & 0xFF) / 255.0f, (colorMultiplier >> 8 & 0xFF) / 255.0f, (colorMultiplier & 0xFF) / 255.0f);
+     }
+-    
++
+     public boolean renderStandardBlockWithColorMultiplier(final Block block, final int x, final int y, final int z, final float r, final float g, final float b) {
+         final Tessellator instance = Tessellator.instance;
+         boolean b2 = false;
++        // Notch I hate you so much
+         final float n = 0.5f;
+         final float n2 = 1.0f;
+@@ -1077,53 +1175,97 @@
+         final float n15 = 0.8f * b;
+         final float n16 = 0.6f * b;
+-        final float blockBrightness = block.getBlockBrightness(this.blockAccess, x, y, z);
++        final float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.RED);
++        final float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.GREEN);
++        final float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.BLUE);
+         if (this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x, y - 1, z, 0)) {
+-            final float n17 = block.getBlockBrightness(this.blockAccess, x, y - 1, z);
+-            instance.setColorOpaque_F(n5 * n17, n9 * n17, n13 * n17);
++            final float br = block.getBlockBrightness(this.blockAccess, x, y - 1, z, EnumColorChannel.RED);
++            final float bg = block.getBlockBrightness(this.blockAccess, x, y - 1, z, EnumColorChannel.GREEN);
++            final float bb = block.getBlockBrightness(this.blockAccess, x, y - 1, z, EnumColorChannel.BLUE);
++            instance.setColorOpaque_F(n5 * br, n9 * bg, n13 * bb);
+             this.renderBottomFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 0));
+             b2 = true;
+         }
+         if (this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x, y + 1, z, 1)) {
+-            float n17 = block.getBlockBrightness(this.blockAccess, x, y + 1, z);
++            float br = block.getBlockBrightness(this.blockAccess, x, y + 1, z, EnumColorChannel.RED);
++            float bg = block.getBlockBrightness(this.blockAccess, x, y + 1, z, EnumColorChannel.GREEN);
++            float bb = block.getBlockBrightness(this.blockAccess, x, y + 1, z, EnumColorChannel.BLUE);
+             if (block.maxY != 1.0 && !block.material.getIsLiquid()) {
+-                n17 = blockBrightness;
++                br = blockBrightnessR;
+             }
+-            instance.setColorOpaque_F(n6 * n17, n10 * n17, n14 * n17);
++            if (block.maxY != 1.0 && !block.material.getIsLiquid()) {
++                bg = blockBrightnessG;
++            }
++            if (block.maxY != 1.0 && !block.material.getIsLiquid()) {
++                bb = blockBrightnessB;
++            }
++            instance.setColorOpaque_F(n6 * br, n10 * bg, n14 * bb);
+             this.renderTopFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 1));
+             b2 = true;
+         }
+         if (this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x, y, z - 1, 2)) {
+-            float n17 = block.getBlockBrightness(this.blockAccess, x, y, z - 1);
++            float br = block.getBlockBrightness(this.blockAccess, x, y, z - 1, EnumColorChannel.RED);
++            float bg = block.getBlockBrightness(this.blockAccess, x, y, z - 1, EnumColorChannel.GREEN);
++            float bb = block.getBlockBrightness(this.blockAccess, x, y, z - 1, EnumColorChannel.BLUE);
+             if (block.minZ > 0.0) {
+-                n17 = blockBrightness;
++                br = blockBrightnessR;
+             }
+-            instance.setColorOpaque_F(n7 * n17, n11 * n17, n15 * n17);
++            if (block.minZ > 0.0) {
++                bg = blockBrightnessG;
++            }
++            if (block.minZ > 0.0) {
++                bb = blockBrightnessB;
++            }
++            instance.setColorOpaque_F(n7 * br, n11 * bg, n15 * bb);
+             this.renderEastFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 2));
+             b2 = true;
+         }
+         if (this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x, y, z + 1, 3)) {
+-            float n17 = block.getBlockBrightness(this.blockAccess, x, y, z + 1);
++            float br = block.getBlockBrightness(this.blockAccess, x, y, z + 1, EnumColorChannel.RED);
++            float bg = block.getBlockBrightness(this.blockAccess, x, y, z + 1, EnumColorChannel.GREEN);
++            float bb = block.getBlockBrightness(this.blockAccess, x, y, z + 1, EnumColorChannel.BLUE);
+             if (block.maxZ < 1.0) {
+-                n17 = blockBrightness;
++                br = blockBrightnessR;
+             }
+-            instance.setColorOpaque_F(n7 * n17, n11 * n17, n15 * n17);
++            if (block.maxZ < 1.0) {
++                bg = blockBrightnessG;
++            }
++            if (block.maxZ < 1.0) {
++                bb = blockBrightnessB;
++            }
++            instance.setColorOpaque_F(n7 * br, n11 * bg, n15 * bb);
+             this.renderWestFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 3));
+             b2 = true;
+         }
+         if (this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x - 1, y, z, 4)) {
+-            float n17 = block.getBlockBrightness(this.blockAccess, x - 1, y, z);
++            float br = block.getBlockBrightness(this.blockAccess, x - 1, y, z, EnumColorChannel.RED);
++            float bg = block.getBlockBrightness(this.blockAccess, x - 1, y, z, EnumColorChannel.GREEN);
++            float bb = block.getBlockBrightness(this.blockAccess, x - 1, y, z, EnumColorChannel.BLUE);
+             if (block.minX > 0.0) {
+-                n17 = blockBrightness;
++                br = blockBrightnessR;
+             }
+-            instance.setColorOpaque_F(n8 * n17, n12 * n17, n16 * n17);
++            if (block.minX > 0.0) {
++                bg = blockBrightnessG;
++            }
++            if (block.minX > 0.0) {
++                bb = blockBrightnessB;
++            }
++            instance.setColorOpaque_F(n8 * br, n12 * bg, n16 * bb);
+             this.renderNorthFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 4));
+             b2 = true;
+         }
+         if (this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x + 1, y, z, 5)) {
+-            float n17 = block.getBlockBrightness(this.blockAccess, x + 1, y, z);
++            float br = block.getBlockBrightness(this.blockAccess, x + 1, y, z, EnumColorChannel.RED);
++            float bg = block.getBlockBrightness(this.blockAccess, x + 1, y, z, EnumColorChannel.GREEN);
++            float bb = block.getBlockBrightness(this.blockAccess, x + 1, y, z, EnumColorChannel.BLUE);
+             if (block.maxX < 1.0) {
+-                n17 = blockBrightness;
++                br = blockBrightnessR;
+             }
+-            instance.setColorOpaque_F(n8 * n17, n12 * n17, n16 * n17);
++            if (block.maxX < 1.0) {
++                bb = blockBrightnessG;
++            }
++            if (block.maxX < 1.0) {
++                bg = blockBrightnessB;
++            }
++            instance.setColorOpaque_F(n8 * br, n12 * bg, n16 * bb);
+             this.renderSouthFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 5));
+             b2 = true;
+@@ -1131,13 +1273,14 @@
+         return b2;
+     }
+-    
++
+     public boolean renderBlockCactus(final Block block, final int x, final int y, final int z) {
+         final int colorMultiplier = block.colorMultiplier(this.blockAccess, x, y, z);
+         return this.renderBlockCactusImpl(block, x, y, z, (colorMultiplier >> 16 & 0xFF) / 255.0f, (colorMultiplier >> 8 & 0xFF) / 255.0f, (colorMultiplier & 0xFF) / 255.0f);
+     }
+-    
++
+     public boolean renderBlockCactusImpl(final Block block, final int x, final int y, final int z, final float r, final float g, final float b) {
+         final Tessellator instance = Tessellator.instance;
+         boolean b2 = false;
++        // Notch I hate you so much
+         final float n = 0.5f;
+         final float n2 = 1.0f;
+@@ -1156,68 +1299,112 @@
+         final float n15 = 0.8f * b;
+         final float n16 = 0.6f * b;
+-        final float n17 = 0.0625f;
+-        final float blockBrightness = block.getBlockBrightness(this.blockAccess, x, y, z);
++        final float translation = 0.0625f;
++        final float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.RED);
++        final float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.GREEN);
++        final float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.BLUE);
+         if (this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x, y - 1, z, 0)) {
+-            final float n18 = block.getBlockBrightness(this.blockAccess, x, y - 1, z);
+-            instance.setColorOpaque_F(n5 * n18, n9 * n18, n13 * n18);
++            final float br = block.getBlockBrightness(this.blockAccess, x, y - 1, z, EnumColorChannel.RED);
++            final float bg = block.getBlockBrightness(this.blockAccess, x, y - 1, z, EnumColorChannel.GREEN);
++            final float bb = block.getBlockBrightness(this.blockAccess, x, y - 1, z, EnumColorChannel.BLUE);
++            instance.setColorOpaque_F(n5 * br, n9 * bg, n13 * bb);
+             this.renderBottomFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 0));
+             b2 = true;
+         }
+         if (this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x, y + 1, z, 1)) {
+-            float n18 = block.getBlockBrightness(this.blockAccess, x, y + 1, z);
++            float br = block.getBlockBrightness(this.blockAccess, x, y + 1, z, EnumColorChannel.RED);
++            float bg = block.getBlockBrightness(this.blockAccess, x, y + 1, z, EnumColorChannel.GREEN);
++            float bb = block.getBlockBrightness(this.blockAccess, x, y + 1, z, EnumColorChannel.BLUE);
+             if (block.maxY != 1.0 && !block.material.getIsLiquid()) {
+-                n18 = blockBrightness;
++                br = blockBrightnessR;
+             }
+-            instance.setColorOpaque_F(n6 * n18, n10 * n18, n14 * n18);
++            if (block.maxY != 1.0 && !block.material.getIsLiquid()) {
++                bg = blockBrightnessG;
++            }
++            if (block.maxY != 1.0 && !block.material.getIsLiquid()) {
++                bb = blockBrightnessB;
++            }
++            instance.setColorOpaque_F(n6 * br, n10 * bg, n14 * bb);
+             this.renderTopFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 1));
+             b2 = true;
+         }
+         if (this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x, y, z - 1, 2)) {
+-            float n18 = block.getBlockBrightness(this.blockAccess, x, y, z - 1);
++            float br = block.getBlockBrightness(this.blockAccess, x, y, z - 1, EnumColorChannel.RED);
++            float bg = block.getBlockBrightness(this.blockAccess, x, y, z - 1, EnumColorChannel.GREEN);
++            float bb = block.getBlockBrightness(this.blockAccess, x, y, z - 1, EnumColorChannel.BLUE);
+             if (block.minZ > 0.0) {
+-                n18 = blockBrightness;
++                br = blockBrightnessR;
+             }
+-            instance.setColorOpaque_F(n7 * n18, n11 * n18, n15 * n18);
+-            instance.addTranslationF(0.0f, 0.0f, 0.0625f);
++            if (block.minZ > 0.0) {
++                bg = blockBrightnessG;
++            }
++            if (block.minZ > 0.0) {
++                bb = blockBrightnessB;
++            }
++            instance.setColorOpaque_F(n7 * br, n11 * bg, n15 * bb);
++            instance.addTranslationF(0.0f, 0.0f, translation);
+             this.renderEastFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 2));
+-            instance.addTranslationF(0.0f, 0.0f, -0.0625f);
++            instance.addTranslationF(0.0f, 0.0f, -translation);
+             b2 = true;
+         }
+         if (this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x, y, z + 1, 3)) {
+-            float n18 = block.getBlockBrightness(this.blockAccess, x, y, z + 1);
++            float br = block.getBlockBrightness(this.blockAccess, x, y, z + 1, EnumColorChannel.RED);
++            float bg = block.getBlockBrightness(this.blockAccess, x, y, z + 1, EnumColorChannel.GREEN);
++            float bb = block.getBlockBrightness(this.blockAccess, x, y, z + 1, EnumColorChannel.BLUE);
+             if (block.maxZ < 1.0) {
+-                n18 = blockBrightness;
++                br = blockBrightnessR;
+             }
+-            instance.setColorOpaque_F(n7 * n18, n11 * n18, n15 * n18);
+-            instance.addTranslationF(0.0f, 0.0f, -0.0625f);
++            if (block.maxZ < 1.0) {
++                bg = blockBrightnessG;
++            }
++            if (block.maxZ < 1.0) {
++                bb = blockBrightnessB;
++            }
++            instance.setColorOpaque_F(n7 * br, n11 * bg, n15 * bb);
++            instance.addTranslationF(0.0f, 0.0f, -translation);
+             this.renderWestFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 3));
+-            instance.addTranslationF(0.0f, 0.0f, 0.0625f);
++            instance.addTranslationF(0.0f, 0.0f, translation);
+             b2 = true;
+         }
+         if (this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x - 1, y, z, 4)) {
+-            float n18 = block.getBlockBrightness(this.blockAccess, x - 1, y, z);
++            float br = block.getBlockBrightness(this.blockAccess, x - 1, y, z, EnumColorChannel.RED);
++            float bg = block.getBlockBrightness(this.blockAccess, x - 1, y, z, EnumColorChannel.GREEN);
++            float bb = block.getBlockBrightness(this.blockAccess, x - 1, y, z, EnumColorChannel.BLUE);
+             if (block.minX > 0.0) {
+-                n18 = blockBrightness;
++                br = blockBrightnessR;
+             }
+-            instance.setColorOpaque_F(n8 * n18, n12 * n18, n16 * n18);
+-            instance.addTranslationF(0.0625f, 0.0f, 0.0f);
++            if (block.minX > 0.0) {
++                bg = blockBrightnessG;
++            }
++            if (block.minX > 0.0) {
++                bb = blockBrightnessB;
++            }
++            instance.setColorOpaque_F(n8 * br, n12 * bg, n16 * bb);
++            instance.addTranslationF(translation, 0.0f, 0.0f);
+             this.renderNorthFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 4));
+-            instance.addTranslationF(-0.0625f, 0.0f, 0.0f);
++            instance.addTranslationF(-translation, 0.0f, 0.0f);
+             b2 = true;
+         }
+         if (this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x + 1, y, z, 5)) {
+-            float n18 = block.getBlockBrightness(this.blockAccess, x + 1, y, z);
++            float br = block.getBlockBrightness(this.blockAccess, x + 1, y, z, EnumColorChannel.RED);
++            float bg = block.getBlockBrightness(this.blockAccess, x + 1, y, z, EnumColorChannel.GREEN);
++            float bb = block.getBlockBrightness(this.blockAccess, x + 1, y, z, EnumColorChannel.BLUE);
+             if (block.maxX < 1.0) {
+-                n18 = blockBrightness;
++                br = blockBrightnessR;
+             }
+-            instance.setColorOpaque_F(n8 * n18, n12 * n18, n16 * n18);
+-            instance.addTranslationF(-0.0625f, 0.0f, 0.0f);
++            if (block.maxX < 1.0) {
++                bb = blockBrightnessG;
++            }
++            if (block.maxX < 1.0) {
++                bg = blockBrightnessB;
++            }
++            instance.setColorOpaque_F(n8 * br, n12 * bg, n16 * bb);
++            instance.addTranslationF(-translation, 0.0f, 0.0f);
+             this.renderSouthFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 5));
+-            instance.addTranslationF(0.0625f, 0.0f, 0.0f);
++            instance.addTranslationF(translation, 0.0f, 0.0f);
+             b2 = true;
+         }
+         return b2;
+     }
+-    
++
+     public boolean renderBlockFence(final Block block, final int x, final int y, final int z) {
+         final boolean b = false;
+@@ -1270,5 +1457,5 @@
+         return false;
+     }
+-    
++
+     public boolean renderBlockStairs(final Block block, final int x, final int y, final int z) {
+         final boolean b = false;
+@@ -1301,5 +1488,5 @@
+         return false;
+     }
+-    
++
+     public boolean renderBlockDoor(final Block block, final int x, final int y, final int z) {
+         final Tessellator instance = Tessellator.instance;
+@@ -1310,33 +1497,77 @@
+         final float n3 = 0.8f;
+         final float n4 = 0.6f;
+-        final float blockBrightness = block.getBlockBrightness(this.blockAccess, x, y, z);
+-        float n5 = block.getBlockBrightness(this.blockAccess, x, y - 1, z);
++        final float blockBrightnessR = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.RED);
++        float br = block.getBlockBrightness(this.blockAccess, x, y - 1, z, EnumColorChannel.RED);
+         if (blockDoor.minY > 0.0) {
+-            n5 = blockBrightness;
++            br = blockBrightnessR;
+         }
+-        if (Block.LIGHT_VALUE[block.blockID] > 0) {
+-            n5 = 1.0f;
++        if (Block.LIGHT_VALUE_R[block.blockID] > 0) {
++            br = 1.0f;
+         }
+-        instance.setColorOpaque_F(0.5f * n5, 0.5f * n5, 0.5f * n5);
++        final float blockBrightnessG = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.GREEN);
++        float bg = block.getBlockBrightness(this.blockAccess, x, y - 1, z, EnumColorChannel.GREEN);
++        if (blockDoor.minY > 0.0) {
++            bg = blockBrightnessG;
++        }
++        if (Block.LIGHT_VALUE_G[block.blockID] > 0) {
++            bg = 1.0f;
++        }
++        final float blockBrightnessB = block.getBlockBrightness(this.blockAccess, x, y, z, EnumColorChannel.BLUE);
++        float bb = block.getBlockBrightness(this.blockAccess, x, y - 1, z, EnumColorChannel.BLUE);
++        if (blockDoor.minY > 0.0) {
++            bb = blockBrightnessB;
++        }
++        if (Block.LIGHT_VALUE_B[block.blockID] > 0) {
++            bb = 1.0f;
++        }
++        instance.setColorOpaque_F(0.5f * br, 0.5f * bg, 0.5f * bb);
+         this.renderBottomFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 0));
+         b = true;
+-        n5 = block.getBlockBrightness(this.blockAccess, x, y + 1, z);
++        br = block.getBlockBrightness(this.blockAccess, x, y + 1, z, EnumColorChannel.RED);
+         if (blockDoor.maxY < 1.0) {
+-            n5 = blockBrightness;
++            br = blockBrightnessR;
+         }
+-        if (Block.LIGHT_VALUE[block.blockID] > 0) {
+-            n5 = 1.0f;
++        if (Block.LIGHT_VALUE_R[block.blockID] > 0) {
++            br = 1.0f;
+         }
+-        instance.setColorOpaque_F(1.0f * n5, 1.0f * n5, 1.0f * n5);
++        bg = block.getBlockBrightness(this.blockAccess, x, y + 1, z, EnumColorChannel.GREEN);
++        if (blockDoor.maxY < 1.0) {
++            bg = blockBrightnessG;
++        }
++        if (Block.LIGHT_VALUE_G[block.blockID] > 0) {
++            bg = 1.0f;
++        }
++        bb = block.getBlockBrightness(this.blockAccess, x, y + 1, z, EnumColorChannel.BLUE);
++        if (blockDoor.maxY < 1.0) {
++            bb = blockBrightnessB;
++        }
++        if (Block.LIGHT_VALUE_B[block.blockID] > 0) {
++            bb = 1.0f;
++        }
++        instance.setColorOpaque_F(1.0f * br, 1.0f * bg, 1.0f * bb);
+         this.renderTopFace(block, x, y, z, block.getBlockTexture(this.blockAccess, x, y, z, 1));
+         b = true;
+-        n5 = block.getBlockBrightness(this.blockAccess, x, y, z - 1);
++        br = block.getBlockBrightness(this.blockAccess, x, y, z - 1, EnumColorChannel.RED);
+         if (blockDoor.minZ > 0.0) {
+-            n5 = blockBrightness;
++            br = blockBrightnessR;
+         }
+-        if (Block.LIGHT_VALUE[block.blockID] > 0) {
+-            n5 = 1.0f;
++        if (Block.LIGHT_VALUE_R[block.blockID] > 0) {
++            br = 1.0f;
+         }
+-        instance.setColorOpaque_F(0.8f * n5, 0.8f * n5, 0.8f * n5);
++        bg = block.getBlockBrightness(this.blockAccess, x, y, z - 1, EnumColorChannel.GREEN);
++        if (blockDoor.minZ > 0.0) {
++            bg = blockBrightnessG;
++        }
++        if (Block.LIGHT_VALUE_G[block.blockID] > 0) {
++            bg = 1.0f;
++        }
++        bb = block.getBlockBrightness(this.blockAccess, x, y, z - 1, EnumColorChannel.BLUE);
++        if (blockDoor.minZ > 0.0) {
++            bb = blockBrightnessB;
++        }
++        if (Block.LIGHT_VALUE_B[block.blockID] > 0) {
++            bb = 1.0f;
++        }
++        instance.setColorOpaque_F(0.8f * br, 0.8f * bg, 0.8f * bb);
+         int n6 = block.getBlockTexture(this.blockAccess, x, y, z, 2);
+         if (n6 < 0) {
+@@ -1347,12 +1578,26 @@
+         b = true;
+         this.flipTexture = false;
+-        n5 = block.getBlockBrightness(this.blockAccess, x, y, z + 1);
++        br = block.getBlockBrightness(this.blockAccess, x, y, z + 1, EnumColorChannel.RED);
+         if (blockDoor.maxZ < 1.0) {
+-            n5 = blockBrightness;
++            br = blockBrightnessR;
+         }
+-        if (Block.LIGHT_VALUE[block.blockID] > 0) {
+-            n5 = 1.0f;
++        if (Block.LIGHT_VALUE_R[block.blockID] > 0) {
++            br = 1.0f;
+         }
+-        instance.setColorOpaque_F(0.8f * n5, 0.8f * n5, 0.8f * n5);
++        bg = block.getBlockBrightness(this.blockAccess, x, y, z + 1, EnumColorChannel.GREEN);
++        if (blockDoor.maxZ < 1.0) {
++            bg = blockBrightnessG;
++        }
++        if (Block.LIGHT_VALUE_G[block.blockID] > 0) {
++            bg = 1.0f;
++        }
++        bb = block.getBlockBrightness(this.blockAccess, x, y, z + 1, EnumColorChannel.BLUE);
++        if (blockDoor.maxZ < 1.0) {
++            bb = blockBrightnessB;
++        }
++        if (Block.LIGHT_VALUE_B[block.blockID] > 0) {
++            bb = 1.0f;
++        }
++        instance.setColorOpaque_F(0.8f * br, 0.8f * bg, 0.8f * bb);
+         n6 = block.getBlockTexture(this.blockAccess, x, y, z, 3);
+         if (n6 < 0) {
+@@ -1363,12 +1608,26 @@
+         b = true;
+         this.flipTexture = false;
+-        n5 = block.getBlockBrightness(this.blockAccess, x - 1, y, z);
++        br = block.getBlockBrightness(this.blockAccess, x - 1, y, z, EnumColorChannel.RED);
+         if (blockDoor.minX > 0.0) {
+-            n5 = blockBrightness;
++            br = blockBrightnessR;
+         }
+-        if (Block.LIGHT_VALUE[block.blockID] > 0) {
+-            n5 = 1.0f;
++        if (Block.LIGHT_VALUE_R[block.blockID] > 0) {
++            br = 1.0f;
+         }
+-        instance.setColorOpaque_F(0.6f * n5, 0.6f * n5, 0.6f * n5);
++        bg = block.getBlockBrightness(this.blockAccess, x - 1, y, z, EnumColorChannel.GREEN);
++        if (blockDoor.minX > 0.0) {
++            bg = blockBrightnessG;
++        }
++        if (Block.LIGHT_VALUE_G[block.blockID] > 0) {
++            bg = 1.0f;
++        }
++        bb = block.getBlockBrightness(this.blockAccess, x - 1, y, z, EnumColorChannel.BLUE);
++        if (blockDoor.minX > 0.0) {
++            bb = blockBrightnessB;
++        }
++        if (Block.LIGHT_VALUE_B[block.blockID] > 0) {
++            bb = 1.0f;
++        }
++        instance.setColorOpaque_F(0.6f * br, 0.6f * bg, 0.6f * bb);
+         n6 = block.getBlockTexture(this.blockAccess, x, y, z, 4);
+         if (n6 < 0) {
+@@ -1379,12 +1638,26 @@
+         b = true;
+         this.flipTexture = false;
+-        n5 = block.getBlockBrightness(this.blockAccess, x + 1, y, z);
++        br = block.getBlockBrightness(this.blockAccess, x + 1, y, z, EnumColorChannel.RED);
+         if (blockDoor.maxX < 1.0) {
+-            n5 = blockBrightness;
++            br = blockBrightnessR;
+         }
+-        if (Block.LIGHT_VALUE[block.blockID] > 0) {
+-            n5 = 1.0f;
++        if (Block.LIGHT_VALUE_R[block.blockID] > 0) {
++            br = 1.0f;
+         }
+-        instance.setColorOpaque_F(0.6f * n5, 0.6f * n5, 0.6f * n5);
++        bg = block.getBlockBrightness(this.blockAccess, x + 1, y, z, EnumColorChannel.GREEN);
++        if (blockDoor.maxX < 1.0) {
++            bg = blockBrightnessG;
++        }
++        if (Block.LIGHT_VALUE_G[block.blockID] > 0) {
++            bg = 1.0f;
++        }
++        bb = block.getBlockBrightness(this.blockAccess, x + 1, y, z, EnumColorChannel.BLUE);
++        if (blockDoor.maxX < 1.0) {
++            bb = blockBrightnessB;
++        }
++        if (Block.LIGHT_VALUE_B[block.blockID] > 0) {
++            bb = 1.0f;
++        }
++        instance.setColorOpaque_F(0.6f * br, 0.6f * bg, 0.6f * bb);
+         n6 = block.getBlockTexture(this.blockAccess, x, y, z, 5);
+         if (n6 < 0) {
+@@ -1397,5 +1670,5 @@
+         return b;
+     }
+-    
++
+     public void renderBottomFace(final Block block, final double x, final double y, final double z, int texID) {
+         final Tessellator instance = Tessellator.instance;
+@@ -1427,5 +1700,5 @@
+         instance.addVertexWithUV(n8, n9, n11, n4, n6);
+     }
+-    
++
+     public void renderTopFace(final Block block, final double x, final double y, final double z, int texID) {
+         final Tessellator instance = Tessellator.instance;
+@@ -1457,5 +1730,5 @@
+         instance.addVertexWithUV(n7, n9, n11, n3, n6);
+     }
+-    
++
+     public void renderEastFace(final Block block, final double x, final double y, final double z, int texID) {
+         final Tessellator instance = Tessellator.instance;
+@@ -1492,5 +1765,5 @@
+         instance.addVertexWithUV(n7, n9, n11, n4, n6);
+     }
+-    
++
+     public void renderWestFace(final Block block, final double x, final double y, final double z, int texID) {
+         final Tessellator instance = Tessellator.instance;
+@@ -1527,5 +1800,5 @@
+         instance.addVertexWithUV(n8, n10, n11, n4, n5);
+     }
+-    
++
+     public void renderNorthFace(final Block block, final double x, final double y, final double z, int texID) {
+         final Tessellator instance = Tessellator.instance;
+@@ -1562,5 +1835,5 @@
+         instance.addVertexWithUV(n7, n8, n11, n4, n6);
+     }
+-    
++
+     public void renderSouthFace(final Block block, final double x, final double y, final double z, int texID) {
+         final Tessellator instance = Tessellator.instance;
+@@ -1597,5 +1870,5 @@
+         instance.addVertexWithUV(n7, n9, n11, n3, n5);
+     }
+-    
++
+     public void renderBlockAsItem(final Block block, final float alpha) {
+         final int renderType = block.getRenderType();
+@@ -1623,5 +1896,5 @@
+         }
+     }
+-    
++
+     public void renderBlockOnInventory(final Block block) {
+         final int n = -1;
+@@ -1795,5 +2068,5 @@
+         }
+     }
+-    
++
+     public static boolean renderItemIn3D(final int itemCode) {
+         return itemCode == 0 || itemCode == 13 || itemCode == 10 || itemCode == 11;

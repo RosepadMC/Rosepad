@@ -1,0 +1,63 @@
+--- RenderLiving.java
++++ RenderLiving.java
+@@ -6,14 +6,14 @@
+     protected ModelBase mainModel;
+     protected ModelBase renderPassModel;
+-    
++
+     public RenderLiving(final ModelBase modelBase, final float shadowSize) {
+         this.mainModel = modelBase;
+         this.shadowSize = shadowSize;
+     }
+-    
++
+     public void setRenderPassModel(final ModelBase modelBase) {
+         this.renderPassModel = modelBase;
+     }
+-    
++
+     @Override
+     public void doRender(final Entity entity, final double x, final double y, final double z, final float rotation, final float renderPartialTick) {
+@@ -62,5 +62,5 @@
+             }
+             this.renderEquippedItems(entityLiving, renderPartialTick);
+-            final float brightness = entityLiving.getBrightness(renderPartialTick);
++            final float brightness = entityLiving.getBrightness(renderPartialTick, EnumColorChannel.RED);
+             final int colorMultiplier = this.getColorMultiplier(entityLiving, brightness, renderPartialTick);
+             if ((colorMultiplier >> 24 & 0xFF) > 0 || entityLiving.hurtTime > 0 || entityLiving.deathTime > 0) {
+@@ -107,28 +107,28 @@
+         GL11.glPopMatrix();
+     }
+-    
++
+     protected float renderSwingProgress(final EntityLiving entityLiving, final float renderPartialTick) {
+         return entityLiving.getSwingProgress(renderPartialTick);
+     }
+-    
++
+     protected float preRenderCallback(final EntityLiving entity, final float renderPartialTick) {
+         return entity.ticksExisted + renderPartialTick;
+     }
+-    
++
+     protected void renderEquippedItems(final EntityLiving ge, final float float2) {
+     }
+-    
++
+     protected boolean shouldRenderPass(final EntityLiving entity, final int integer) {
+         return false;
+     }
+-    
++
+     protected float getDeathMaxRotation(final EntityLiving entitySpider) {
+         return 90.0f;
+     }
+-    
++
+     protected int getColorMultiplier(final EntityLiving ge, final float float2, final float float3) {
+         return 0;
+     }
+-    
++
+     protected void preRenderScale(final EntityLiving entity, final float renderPartialTick) {
+     }

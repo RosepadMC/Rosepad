@@ -1,0 +1,80 @@
+--- EntityMob.java
++++ EntityMob.java
+@@ -3,5 +3,5 @@
+ public class EntityMob extends EntityCreature implements IMobs {
+     protected int attackStrength;
+-    
++
+     public EntityMob(final World world) {
+         super(world);
+@@ -9,13 +9,13 @@
+         this.health = 20;
+     }
+-    
++
+     @Override
+     public void onLivingUpdate() {
+-        if (this.getBrightness(1.0f) > 0.5f) {
++        if (this.getAvgBrightness(1.0f) > 0.5f) {
+             this.entityAge += 2;
+         }
+         super.onLivingUpdate();
+     }
+-    
++
+     @Override
+     public void onUpdate() {
+@@ -25,5 +25,5 @@
+         }
+     }
+-    
++
+     @Override
+     protected Entity findPlayerToAttack() {
+@@ -34,5 +34,5 @@
+         return null;
+     }
+-    
++
+     @Override
+     public boolean attackEntityFrom(final Entity entity, final int damage) {
+@@ -48,5 +48,5 @@
+         return true;
+     }
+-    
++
+     @Override
+     protected void attackEntity(final Entity entity, final float distance) {
+@@ -56,20 +56,20 @@
+         }
+     }
+-    
++
+     @Override
+     protected float getBlockPathWeight(final int x, final int y, final int z) {
+-        return 0.5f - this.worldObj.getBrightness(x, y, z);
++        return 0.5f - this.worldObj.getAvgBrightness(x, y, z);
+     }
+-    
++
+     @Override
+     public void writeEntityToNBT(final NBTTagCompound compoundTag) {
+         super.writeEntityToNBT(compoundTag);
+     }
+-    
++
+     @Override
+     public void readEntityFromNBT(final NBTTagCompound compoundTag) {
+         super.readEntityFromNBT(compoundTag);
+     }
+-    
++
+     @Override
+     public boolean getCanSpawnHere() {
+@@ -77,5 +77,5 @@
+         final int floor_double2 = MathHelper.floor_double(this.boundingBox.minY);
+         final int floor_double3 = MathHelper.floor_double(this.posZ);
+-        return this.worldObj.getSavedLightValue(EnumSkyBlock.SKY, floor_double, floor_double2, floor_double3) <= this.rand.nextInt(32) && this.worldObj.getBlockLightValue(floor_double, floor_double2, floor_double3) <= this.rand.nextInt(8) && super.getCanSpawnHere();
++        return this.worldObj.getAvgSavedLightValue(EnumSkyBlock.SKY, floor_double, floor_double2, floor_double3) <= this.rand.nextInt(32) && this.worldObj.getAvgBlockLightValue(floor_double, floor_double2, floor_double3) <= this.rand.nextInt(8) && super.getCanSpawnHere();
+     }
+ }

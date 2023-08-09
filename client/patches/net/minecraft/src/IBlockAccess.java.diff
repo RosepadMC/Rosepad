@@ -1,0 +1,24 @@
+--- IBlockAccess.java
++++ IBlockAccess.java
+@@ -3,13 +3,15 @@
+ public interface IBlockAccess {
+     int getBlockID(final int x, final int y, final int z);
+-    
++
+     TileEntity getBlockTileEntity(final int x, final int y, final int z);
+-    
+-    float getBrightness(final int x, final int y, final int z);
+-    
++
++    float getBrightness(final int x, final int y, final int z, final EnumColorChannel color);
++
++    float getAvgBrightness(final int x, final int y, final int z);
++
+     int getBlockMetadata(final int x, final int y, final int z);
+-    
++
+     Material getBlockMaterial(final int x, final int y, final int z);
+-    
++
+     boolean isBlockNormalCube(final int x, final int y, final int z);
+ }

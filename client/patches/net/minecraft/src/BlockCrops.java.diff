@@ -1,0 +1,61 @@
+--- BlockCrops.java
++++ BlockCrops.java
+@@ -11,14 +11,14 @@
+         this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 0.25f, 1.0f);
+     }
+-    
++
+     @Override
+     protected boolean canThisPlantGrowOnThisBlockID(final int blockID) {
+         return blockID == Block.TILLED_FIELD.blockID;
+     }
+-    
++
+     @Override
+     public void updateTick(final World world, final int x, final int y, final int z, final Random rand) {
+         super.updateTick(world, x, y, z, rand);
+-        if (world.getBlockLightValue(x, y + 1, z) >= 9) {
++        if (world.getAvgBlockLightValue(x, y + 1, z) >= 9) {
+             int blockMetadata = world.getBlockMetadata(x, y, z);
+             if (blockMetadata < 7 && rand.nextInt((int)(100.0f / this.getGrowthRate(world, x, y, z))) == 0) {
+@@ -28,5 +28,5 @@
+         }
+     }
+-    
++
+     private float getGrowthRate(final World world, final int x, final int y, final int z) {
+         float n = 1.0f;
+@@ -63,5 +63,5 @@
+         return n;
+     }
+-    
++
+     @Override
+     public int getBlockTextureFromSideAndMetadata(final int side, int metadata) {
+@@ -71,10 +71,10 @@
+         return this.blockIndexInTexture + metadata;
+     }
+-    
++
+     @Override
+     public int getRenderType() {
+         return 6;
+     }
+-    
++
+     @Override
+     public void onBlockDestroyedByPlayer(final World world, final int x, final int y, final int z, final int metadata) {
+@@ -89,5 +89,5 @@
+         }
+     }
+-    
++
+     @Override
+     public int idDropped(final int metadata, final Random rand) {
+@@ -98,5 +98,5 @@
+         return -1;
+     }
+-    
++
+     @Override
+     public int quantityDropped(final Random rand) {

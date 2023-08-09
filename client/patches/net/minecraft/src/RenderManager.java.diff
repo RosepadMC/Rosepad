@@ -63,14 +63,22 @@
 +
      public void renderEntity(final Entity entity, final float renderPartialTick) {
          final double n = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * renderPartialTick;
-@@ -92,5 +97,5 @@
+@@ -88,9 +93,11 @@
+         final double n3 = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * renderPartialTick;
+         final float yaw = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * renderPartialTick;
+-        final float brightness = entity.getBrightness(renderPartialTick);
+-        GL11.glColor3f(brightness, brightness, brightness);
++        final float brightnessR = entity.getBrightness(renderPartialTick, EnumColorChannel.RED);
++        final float brightnessG = entity.getBrightness(renderPartialTick, EnumColorChannel.GREEN);
++        final float brightnessB = entity.getBrightness(renderPartialTick, EnumColorChannel.BLUE);
++        GL11.glColor3f(brightnessR, brightnessG, brightnessB);
          this.renderEntityWithPosYaw(entity, n - RenderManager.renderPosX, n2 - RenderManager.renderPosY, n3 - RenderManager.renderPosZ, yaw, renderPartialTick);
      }
 -    
 +
      public void renderEntityWithPosYaw(final Entity entity, final double x, final double y, final double z, final float yaw, final float pitch) {
          final Render entityRenderObject = this.getEntityRenderObject(entity);
-@@ -100,9 +105,9 @@
+@@ -100,9 +107,9 @@
          }
      }
 -    
@@ -82,7 +90,7 @@
 +
      public double getDistanceToCamera(final double x, final double y, final double z) {
          final double n = x - this.viewerPosX;
-@@ -111,5 +116,5 @@
+@@ -111,5 +118,5 @@
          return n * n + n2 * n2 + n3 * n3;
      }
 -    

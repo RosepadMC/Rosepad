@@ -1,0 +1,25 @@
+--- BlockSnowBlock.java
++++ BlockSnowBlock.java
+@@ -8,18 +8,18 @@
+         this.setTickOnLoad(true);
+     }
+-    
++
+     @Override
+     public int idDropped(final int metadata, final Random rand) {
+         return Item.SNOWBALL.shiftedIndex;
+     }
+-    
++
+     @Override
+     public int quantityDropped(final Random rand) {
+         return 4;
+     }
+-    
++
+     @Override
+     public void updateTick(final World world, final int x, final int y, final int z, final Random rand) {
+-        if (world.getSavedLightValue(EnumSkyBlock.BLOCK, x, y, z) > 11) {
++        if (world.getAvgSavedLightValue(EnumSkyBlock.BLOCK, x, y, z) > 11) {
+             this.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z));
+             world.setBlockWithNotify(x, y, z, 0);

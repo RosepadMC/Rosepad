@@ -1,0 +1,64 @@
+--- EntityFX.java
++++ EntityFX.java
+@@ -15,5 +15,5 @@
+     public static double interpPosY;
+     public static double interpPosZ;
+-    
++
+     public EntityFX(final World world, final double x, final double y, final double z, final double motionX, final double motionY, final double motionZ) {
+         super(world);
+@@ -42,5 +42,5 @@
+         this.canTriggerWalking = false;
+     }
+-    
++
+     public EntityFX multiplyVelocity(final float velocityMultiplier) {
+         this.motionX *= velocityMultiplier;
+@@ -49,5 +49,5 @@
+         return this;
+     }
+-    
++
+     public EntityFX multiplyParticleScaleBy(final float scaleMultiplier) {
+         this.setSize(0.2f * scaleMultiplier, 0.2f * scaleMultiplier);
+@@ -55,5 +55,5 @@
+         return this;
+     }
+-    
++
+     @Override
+     public void onUpdate() {
+@@ -74,5 +74,5 @@
+         }
+     }
+-    
++
+     public void renderParticle(final Tessellator tessellator, final float renderPartialTick, final float xOffset, final float yOffset, final float zOffset, final float xOffset2, final float zOffset2) {
+         final float n = this.particleTextureIndex % 16 / 16.0f;
+@@ -84,6 +84,8 @@
+         final float n7 = (float)(this.prevPosY + (this.posY - this.prevPosY) * renderPartialTick - EntityFX.interpPosY);
+         final float n8 = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * renderPartialTick - EntityFX.interpPosZ);
+-        final float brightness = this.getBrightness(renderPartialTick);
+-        tessellator.setColorOpaque_F(this.particleBlue * brightness, this.particleGreen * brightness, this.particleRed * brightness);
++        final float brightnessR = this.getBrightness(renderPartialTick, EnumColorChannel.RED);
++        final float brightnessG = this.getBrightness(renderPartialTick, EnumColorChannel.GREEN);
++        final float brightnessB = this.getBrightness(renderPartialTick, EnumColorChannel.BLUE);
++        tessellator.setColorOpaque_F(this.particleBlue * brightnessR, this.particleGreen * brightnessG, this.particleRed * brightnessB);
+         tessellator.addVertexWithUV(n6 - xOffset * n5 - xOffset2 * n5, n7 - yOffset * n5, n8 - zOffset * n5 - zOffset2 * n5, n, n4);
+         tessellator.addVertexWithUV(n6 - xOffset * n5 + xOffset2 * n5, n7 + yOffset * n5, n8 - zOffset * n5 + zOffset2 * n5, n, n3);
+@@ -91,12 +93,12 @@
+         tessellator.addVertexWithUV(n6 + xOffset * n5 - xOffset2 * n5, n7 - yOffset * n5, n8 + zOffset * n5 - zOffset2 * n5, n2, n4);
+     }
+-    
++
+     public int getFXLayer() {
+         return 0;
+     }
+-    
++
+     public void writeEntityToNBT(final NBTTagCompound compoundTag) {
+     }
+-    
++
+     public void readEntityFromNBT(final NBTTagCompound compoundTag) {
+     }

@@ -1,12 +1,36 @@
 --- EntityRenderer.java
 +++ EntityRenderer.java
-@@ -27,4 +27,5 @@
+@@ -27,5 +27,6 @@
      private float prevFogColor;
      private float fogColor;
+-    
 +    public boolean thirdPersonView = false;
-     
++
      public EntityRenderer(final Minecraft minecraft) {
-@@ -98,7 +99,7 @@
+         this.farPlaneDistance = 0.0f;
+@@ -39,8 +40,8 @@
+         this.itemRenderer = new ItemRenderer(minecraft);
+     }
+-    
++
+     public void updateRenderer() {
+         this.prevFogColor = this.fogColor;
+-        final float brightness = this.mc.theWorld.getBrightness(MathHelper.floor_double(this.mc.thePlayer.posX), MathHelper.floor_double(this.mc.thePlayer.posY), MathHelper.floor_double(this.mc.thePlayer.posZ));
++        final float brightness = this.mc.theWorld.getAvgBrightness(MathHelper.floor_double(this.mc.thePlayer.posX), MathHelper.floor_double(this.mc.thePlayer.posY), MathHelper.floor_double(this.mc.thePlayer.posZ));
+         final float n = (3 - this.mc.gameSettings.renderDistance) / 3.0f;
+         this.fogColor += (brightness * (1.0f - n) + n - this.fogColor) * 0.1f;
+@@ -51,5 +52,5 @@
+         }
+     }
+-    
++
+     public void getMouseOver(final float renderPartialTick) {
+         if (this.mc.thePlayer == null) {
+@@ -95,10 +96,10 @@
+         }
+     }
+-    
++
      private float getFOVModifier(final float renderPartialTick) {
          final EntityPlayerSP thePlayer = this.mc.thePlayer;
 -        float n = 70.0f;
@@ -16,13 +40,30 @@
 +            n -= 10;
          }
          if (thePlayer.health <= 0) {
-@@ -126,5 +127,5 @@
-     
+@@ -107,5 +108,5 @@
+         return n;
+     }
+-    
++
+     private void hurtCameraEffect(final float renderPartialTick) {
+         final EntityPlayerSP thePlayer = this.mc.thePlayer;
+@@ -124,7 +125,7 @@
+         GL11.glRotatef(attackedAtYaw, 0.0f, 1.0f, 0.0f);
+     }
+-    
++
      private void setupViewBobbing(final float renderPartialTick) {
 -        if (this.mc.gameSettings.thirdPersonView) {
 +        if (thirdPersonView) {
              return;
          }
+@@ -138,5 +139,5 @@
+         GL11.glRotatef(n3, 1.0f, 0.0f, 0.0f);
+     }
+-    
++
+     private void orientCamera(final float renderPartialTick) {
+         final EntityPlayerSP thePlayer = this.mc.thePlayer;
 @@ -144,5 +145,5 @@
          final double y = thePlayer.prevPosY + (thePlayer.posY - thePlayer.prevPosY) * renderPartialTick;
          final double z = thePlayer.prevPosZ + (thePlayer.posZ - thePlayer.prevPosZ) * renderPartialTick;
@@ -30,6 +71,20 @@
 +        if (thirdPersonView) {
              double n = 4.0;
              final float n2 = thePlayer.rotationYaw - 10.0f;
+@@ -178,5 +179,5 @@
+         GL11.glRotatef(thePlayer.prevRotationYaw + (thePlayer.rotationYaw - thePlayer.prevRotationYaw) * renderPartialTick + 180.0f, 0.0f, 1.0f, 0.0f);
+     }
+-    
++
+     private void setupCameraTransform(final float renderPartialTick, final int integer) {
+         this.farPlaneDistance = (float)(256 >> this.mc.gameSettings.renderDistance);
+@@ -198,5 +199,5 @@
+         this.orientCamera(renderPartialTick);
+     }
+-    
++
+     private void renderHand(final float renderPartialTick, final int integer) {
+         GL11.glLoadIdentity();
 @@ -209,9 +210,9 @@
              this.setupViewBobbing(renderPartialTick);
          }
@@ -42,6 +97,20 @@
 +        if (!thirdPersonView) {
              this.itemRenderer.renderOverlays(renderPartialTick);
              this.hurtCameraEffect(renderPartialTick);
+@@ -221,5 +222,5 @@
+         }
+     }
+-    
++
+     public void updateCameraAndRender(final float renderPartialTick) {
+         if (!Display.isActive()) {
+@@ -268,5 +269,5 @@
+         }
+     }
+-    
++
+     public void renderWorld(final float renderPartialTick) {
+         this.getMouseOver(renderPartialTick);
 @@ -316,5 +317,6 @@
                  GL11.glDisable(3008);
                  renderGlobal.drawBlockBreaking(thePlayer, this.mc.objectMouseOver, 0, thePlayer.inventory.getCurrentItem(), renderPartialTick);
@@ -66,3 +135,56 @@
 +                this.renderHand(renderPartialTick, i);
              if (!this.mc.gameSettings.anaglyph) {
                  return;
+@@ -369,5 +373,5 @@
+         GL11.glColorMask(true, true, true, false);
+     }
+-    
++
+     private void addRainParticles() {
+         if (!this.mc.gameSettings.fancyGraphics) {
+@@ -393,5 +397,5 @@
+         }
+     }
+-    
++
+     private void renderSnow(final float renderPartialTick) {
+         final EntityPlayerSP thePlayer = this.mc.thePlayer;
+@@ -437,6 +441,8 @@
+                     final float n13 = MathHelper.sqrt_double(n11 * n11 + n12 * n12) / n4;
+                     instance.startDrawingQuads();
+-                    final float brightness = theWorld.getBrightness(i, 128, j);
+-                    GL11.glColor4f(brightness, brightness, brightness, (1.0f - n13 * n13) * 0.7f);
++                    final float brightnessR = theWorld.getBrightness(i, 128, j, EnumColorChannel.RED);
++                    final float brightnessG = theWorld.getBrightness(i, 128, j, EnumColorChannel.GREEN);
++                    final float brightnessB = theWorld.getBrightness(i, 128, j, EnumColorChannel.BLUE);
++                    GL11.glColor4f(brightnessR, brightnessG, brightnessB, (1.0f - n13 * n13) * 0.7f);
+                     instance.setTranslationD(-n * 1.0, -n2 * 1.0, -n3 * 1.0);
+                     instance.addVertexWithUV(i + 0, n5, j + 0, 0.0f + n9, n5 * 2.0f / 8.0f + n8 * 2.0f + n10);
+@@ -456,5 +462,5 @@
+         GL11.glDisable(3042);
+     }
+-    
++
+     public void setupOverlayRendering() {
+         final ScaledResolution scaledResolution = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
+@@ -469,5 +475,5 @@
+         GL11.glTranslatef(0.0f, 0.0f, -2000.0f);
+     }
+-    
++
+     private void updateFogColor(final float renderPartialTick) {
+         final World theWorld = this.mc.theWorld;
+@@ -514,5 +520,5 @@
+         GL11.glClearColor(this.fogColorRed, this.fogColorBlue, this.fogColorGreen, 0.0f);
+     }
+-    
++
+     private void setupFog(final int fogDistanceModifier) {
+         final EntityPlayerSP thePlayer = this.mc.thePlayer;
+@@ -545,5 +551,5 @@
+         GL11.glColorMaterial(1028, 4608);
+     }
+-    
++
+     private FloatBuffer setFogColorBuffer(final float r, final float g, final float b, final float a) {
+         this.fogColorBuffer.clear();

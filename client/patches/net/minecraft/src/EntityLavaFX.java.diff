@@ -1,0 +1,30 @@
+--- EntityLavaFX.java
++++ EntityLavaFX.java
+@@ -3,5 +3,5 @@
+ public class EntityLavaFX extends EntityFX {
+     private float lavaParticleScale;
+-    
++
+     public EntityLavaFX(final World world, final double x, final double y, final double z) {
+         super(world, x, y, z, 0.0, 0.0, 0.0);
+@@ -20,10 +20,10 @@
+         this.particleTextureIndex = 49;
+     }
+-    
++
+     @Override
+-    public float getBrightness(final float renderPartialTick) {
++    public float getBrightness(final float renderPartialTick, final EnumColorChannel color) {
+         return 1.0f;
+     }
+-    
++
+     @Override
+     public void renderParticle(final Tessellator tessellator, final float renderPartialTick, final float xOffset, final float yOffset, final float zOffset, final float xOffset2, final float zOffset2) {
+@@ -32,5 +32,5 @@
+         super.renderParticle(tessellator, renderPartialTick, xOffset, yOffset, zOffset, xOffset2, zOffset2);
+     }
+-    
++
+     @Override
+     public void onUpdate() {

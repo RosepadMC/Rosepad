@@ -1,0 +1,65 @@
+--- EntitySpider.java
++++ EntitySpider.java
+@@ -8,35 +8,35 @@
+         this.moveSpeed = 0.8f;
+     }
+-    
++
+     public double getMountedYOffset() {
+         return this.height * 0.75 - 0.5;
+     }
+-    
++
+     @Override
+     protected Entity findPlayerToAttack() {
+-        if (this.getBrightness(1.0f) < 0.5f) {
++        if (this.getAvgBrightness(1.0f) < 0.5f) {
+             return this.worldObj.getClosestPlayerToEntity(this, 16.0);
+         }
+         return null;
+     }
+-    
++
+     @Override
+     protected String getLivingSound() {
+         return "mob.spider";
+     }
+-    
++
+     @Override
+     protected String getHurtSound() {
+         return "mob.spider";
+     }
+-    
++
+     @Override
+     protected String getDeathSound() {
+         return "mob.spiderdeath";
+     }
+-    
++
+     @Override
+     protected void attackEntity(final Entity entity, final float distance) {
+-        if (this.getBrightness(1.0f) > 0.5f && this.rand.nextInt(100) == 0) {
++        if (this.getAvgBrightness(1.0f) > 0.5f && this.rand.nextInt(100) == 0) {
+             this.entityToAttack = null;
+             return;
+@@ -56,15 +56,15 @@
+         }
+     }
+-    
++
+     @Override
+     public void writeEntityToNBT(final NBTTagCompound compoundTag) {
+         super.writeEntityToNBT(compoundTag);
+     }
+-    
++
+     @Override
+     public void readEntityFromNBT(final NBTTagCompound compoundTag) {
+         super.readEntityFromNBT(compoundTag);
+     }
+-    
++
+     @Override
+     protected int getDropItemID() {

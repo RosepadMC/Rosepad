@@ -1,0 +1,38 @@
+--- BlockGrass.java
++++ BlockGrass.java
+@@ -9,5 +9,5 @@
+         this.setTickOnLoad(true);
+     }
+-    
++
+     @Override
+     public int getBlockTexture(final IBlockAccess blockAccess, final int x, final int y, final int z, final int side) {
+@@ -24,8 +24,8 @@
+         return 3;
+     }
+-    
++
+     @Override
+     public void updateTick(final World world, final int x, final int y, final int z, final Random rand) {
+-        if (world.getBlockLightValue(x, y + 1, z) < 4 && world.getBlockMaterial(x, y + 1, z).getCanBlockGrass()) {
++        if (world.getAvgBlockLightValue(x, y + 1, z) < 4 && world.getBlockMaterial(x, y + 1, z).getCanBlockGrass()) {
+             if (rand.nextInt(4) != 0) {
+                 return;
+@@ -33,14 +33,14 @@
+             world.setBlockWithNotify(x, y, z, Block.DIRT.blockID);
+         }
+-        else if (world.getBlockLightValue(x, y + 1, z) >= 9) {
++        else if (world.getAvgBlockLightValue(x, y + 1, z) >= 9) {
+             final int n = x + rand.nextInt(3) - 1;
+             final int n2 = y + rand.nextInt(5) - 3;
+             final int n3 = z + rand.nextInt(3) - 1;
+-            if (world.getBlockID(n, n2, n3) == Block.DIRT.blockID && world.getBlockLightValue(n, n2 + 1, n3) >= 4 && !world.getBlockMaterial(n, n2 + 1, n3).getCanBlockGrass()) {
++            if (world.getBlockID(n, n2, n3) == Block.DIRT.blockID && world.getAvgBlockLightValue(n, n2 + 1, n3) >= 4 && !world.getBlockMaterial(n, n2 + 1, n3).getCanBlockGrass()) {
+                 world.setBlockWithNotify(n, n2, n3, Block.GRASS.blockID);
+             }
+         }
+     }
+-    
++
+     @Override
+     public int idDropped(final int metadata, final Random rand) {

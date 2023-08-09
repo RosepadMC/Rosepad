@@ -1,0 +1,170 @@
+--- BlockFluid.java
++++ BlockFluid.java
+@@ -5,5 +5,5 @@
+ public abstract class BlockFluid extends Block {
+     protected int fluidType;
+-    
++
+     protected BlockFluid(final int id, final Material material) {
+         super(id, ((material == Material.LAVA) ? 14 : 12) * 16 + 13, material);
+@@ -17,5 +17,5 @@
+         this.setTickOnLoad(true);
+     }
+-    
++
+     public static float getFluidHeightPercent(int integer) {
+         if (integer >= 8) {
+@@ -24,5 +24,5 @@
+         return (integer + 1) / 9.0f;
+     }
+-    
++
+     @Override
+     public int getBlockTextureFromSide(final int side) {
+@@ -32,5 +32,5 @@
+         return this.blockIndexInTexture + 1;
+     }
+-    
++
+     protected int getFlowDecay(final World world, final int x, final int y, final int z) {
+         if (world.getBlockMaterial(x, y, z) != this.material) {
+@@ -39,5 +39,5 @@
+         return world.getBlockMetadata(x, y, z);
+     }
+-    
++
+     protected int getEffectiveFlowDecay(final IBlockAccess blockAccess, final int x, final int y, final int z) {
+         if (blockAccess.getBlockMaterial(x, y, z) != this.material) {
+@@ -50,20 +50,20 @@
+         return blockMetadata;
+     }
+-    
++
+     @Override
+     public boolean renderAsNormalBlock() {
+         return false;
+     }
+-    
++
+     @Override
+     public boolean isOpaqueCube() {
+         return false;
+     }
+-    
++
+     @Override
+     public boolean canCollideCheck(final int metadata, final boolean boolean2) {
+         return boolean2 && metadata == 0;
+     }
+-    
++
+     @Override
+     public boolean shouldSideBeRendered(final IBlockAccess blockAccess, final int x, final int y, final int z, final int side) {
+@@ -71,25 +71,25 @@
+         return blockMaterial != this.material && blockMaterial != Material.ICE && (side == 1 || super.shouldSideBeRendered(blockAccess, x, y, z, side));
+     }
+-    
++
+     @Override
+     public AxisAlignedBB getCollisionBoundingBoxFromPool(final World world, final int x, final int y, final int z) {
+         return null;
+     }
+-    
++
+     @Override
+     public int getRenderType() {
+         return 4;
+     }
+-    
++
+     @Override
+     public int idDropped(final int metadata, final Random rand) {
+         return 0;
+     }
+-    
++
+     @Override
+     public int quantityDropped(final Random rand) {
+         return 0;
+     }
+-    
++
+     private Vec3D getFlowVector(final IBlockAccess blockAccess, final int x, final int y, final int z) {
+         Vec3D vec3D = Vec3D.createVector(0.0, 0.0, 0.0);
+@@ -157,5 +157,5 @@
+         return vec3D.normalize();
+     }
+-    
++
+     @Override
+     public void velocityToAddToEntity(final World world, final int x, final int y, final int z, final Entity entity, final Vec3D velocityVector) {
+@@ -165,5 +165,5 @@
+         velocityVector.zCoord += flowVector.zCoord;
+     }
+-    
++
+     @Override
+     public int tickRate() {
+@@ -176,22 +176,22 @@
+         return 0;
+     }
+-    
++
+     @Override
+-    public float getBlockBrightness(final IBlockAccess blockAccess, final int x, final int y, final int z) {
+-        final float brightness = blockAccess.getBrightness(x, y, z);
+-        final float brightness2 = blockAccess.getBrightness(x, y + 1, z);
++    public float getBlockBrightness(final IBlockAccess blockAccess, final int x, final int y, final int z, final EnumColorChannel color) {
++        final float brightness = blockAccess.getBrightness(x, y, z, color);
++        final float brightness2 = blockAccess.getBrightness(x, y + 1, z, color);
+         return (brightness > brightness2) ? brightness : brightness2;
+     }
+-    
++
+     @Override
+     public void updateTick(final World world, final int x, final int y, final int z, final Random rand) {
+         super.updateTick(world, x, y, z, rand);
+     }
+-    
++
+     @Override
+     public int getRenderBlockPass() {
+         return (this.material == Material.WATER) ? 1 : 0;
+     }
+-    
++
+     @Override
+     public void randomDisplayTick(final World world, final int x, final int y, final int z, final Random rand) {
+@@ -206,5 +206,5 @@
+         }
+     }
+-    
++
+     public static double getFlowDirection(final IBlockAccess blockAccess, final int x, final int y, final int z, final Material material) {
+         Vec3D vec3D = null;
+@@ -220,15 +220,15 @@
+         return Math.atan2(vec3D.zCoord, vec3D.xCoord) - 1.5707963267948966;
+     }
+-    
++
+     @Override
+     public void onBlockAdded(final World world, final int x, final int y, final int z) {
+         this.checkForHarden(world, x, y, z);
+     }
+-    
++
+     @Override
+     public void onNeighborBlockChange(final World world, final int x, final int y, final int z, final int id) {
+         this.checkForHarden(world, x, y, z);
+     }
+-    
++
+     private void checkForHarden(final World world, final int x, final int y, final int z) {
+         if (world.getBlockID(x, y, z) != this.blockID) {
+@@ -264,5 +264,5 @@
+         }
+     }
+-    
++
+     protected void triggerLavaMixEffects(final World world, final int x, final int y, final int z) {
+         world.playSoundEffect((double)(x + 0.5f), (double)(y + 0.5f), (double)(z + 0.5f), "random.fizz", 0.5f, 2.6f + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8f);

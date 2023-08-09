@@ -34,21 +34,76 @@
 +
      public void storeChunkInCompound(final Chunk chunk, final World world, final NBTTagCompound compoundTag) {
          world.checkSessionLock();
-@@ -112,5 +112,5 @@
+@@ -105,6 +105,10 @@
+         compoundTag.setByteArray("Blocks", chunk.blocks);
+         compoundTag.setByteArray("Data", chunk.data.data);
+-        compoundTag.setByteArray("SkyLight", chunk.skylightMap.data);
+-        compoundTag.setByteArray("BlockLight", chunk.blocklightMap.data);
++        compoundTag.setByteArray("SkyLightR", chunk.skylightMapR.data);
++        compoundTag.setByteArray("SkyLightG", chunk.skylightMapG.data);
++        compoundTag.setByteArray("SkyLightB", chunk.skylightMapB.data);
++        compoundTag.setByteArray("BlockLightR", chunk.blocklightMapR.data);
++        compoundTag.setByteArray("BlockLightG", chunk.blocklightMapG.data);
++        compoundTag.setByteArray("BlockLightB", chunk.blocklightMapB.data);
+         compoundTag.setByteArray("HeightMap", chunk.heightMap);
+         compoundTag.setBoolean("TerrainPopulated", chunk.isTerrainPopulated);
+@@ -112,5 +116,5 @@
          final NBTTagList tag = new NBTTagList();
          for (int i = 0; i < chunk.entities.size(); ++i) {
 -            for (final Entity entity : (List)chunk.entities.get(i)) {
 +            for (final Entity entity : chunk.entities.get(i)) {
                  chunk.hasEntities = true;
                  final NBTTagCompound nbtTagCompound = new NBTTagCompound();
-@@ -129,5 +129,5 @@
+@@ -129,11 +133,25 @@
          compoundTag.setTag("TileEntities", (NBTBase)tag2);
      }
 -    
 +
      public static Chunk loadChunkIntoWorldFromCompound(final World world, final NBTTagCompound compoundTag) {
          final Chunk chunk = new Chunk(world, compoundTag.getInteger("xPos"), compoundTag.getInteger("zPos"));
-@@ -171,11 +171,11 @@
+         chunk.blocks = compoundTag.getByteArray("Blocks");
+         chunk.data = new NibbleArray(compoundTag.getByteArray("Data"));
+-        chunk.skylightMap = new NibbleArray(compoundTag.getByteArray("SkyLight"));
+-        chunk.blocklightMap = new NibbleArray(compoundTag.getByteArray("BlockLight"));
++        if (compoundTag.getByteArray("SkyLightR").length == 0) {
++            chunk.skylightMapR = new NibbleArray(compoundTag.getByteArray("SkyLight"));
++            chunk.skylightMapG = new NibbleArray(compoundTag.getByteArray("SkyLight"));
++            chunk.skylightMapB = new NibbleArray(compoundTag.getByteArray("SkyLight"));
++            chunk.blocklightMapR = new NibbleArray(compoundTag.getByteArray("BlockLight"));
++            chunk.blocklightMapG = new NibbleArray(compoundTag.getByteArray("BlockLight"));
++            chunk.blocklightMapB = new NibbleArray(compoundTag.getByteArray("BlockLight"));
++        }
++        else {
++            chunk.skylightMapR = new NibbleArray(compoundTag.getByteArray("SkyLightR"));
++            chunk.skylightMapG = new NibbleArray(compoundTag.getByteArray("SkyLightG"));
++            chunk.skylightMapB = new NibbleArray(compoundTag.getByteArray("SkyLightB"));
++            chunk.blocklightMapR = new NibbleArray(compoundTag.getByteArray("BlockLightR"));
++            chunk.blocklightMapG = new NibbleArray(compoundTag.getByteArray("BlockLightG"));
++            chunk.blocklightMapB = new NibbleArray(compoundTag.getByteArray("BlockLightB"));
++        }
+         chunk.heightMap = compoundTag.getByteArray("HeightMap");
+         chunk.isTerrainPopulated = compoundTag.getBoolean("TerrainPopulated");
+@@ -141,11 +159,15 @@
+             chunk.data = new NibbleArray(chunk.blocks.length);
+         }
+-        if (chunk.heightMap == null || !chunk.skylightMap.isValid()) {
++        if (chunk.heightMap == null || !chunk.skylightMapR.isValid() || chunk.skylightMapG.isValid() || chunk.blocklightMapB.isValid()) {
+             chunk.heightMap = new byte[256];
+-            chunk.skylightMap = new NibbleArray(chunk.blocks.length);
++            chunk.skylightMapR = new NibbleArray(chunk.blocks.length);
++            chunk.skylightMapG = new NibbleArray(chunk.blocks.length);
++            chunk.skylightMapB = new NibbleArray(chunk.blocks.length);
+             chunk.generateSkylightMap();
+         }
+-        if (!chunk.blocklightMap.isValid()) {
+-            chunk.blocklightMap = new NibbleArray(chunk.blocks.length);
++        if (!chunk.blocklightMapR.isValid() || !chunk.blocklightMapG.isValid() || chunk.blocklightMapB.isValid()) {
++            chunk.blocklightMapR = new NibbleArray(chunk.blocks.length);
++            chunk.blocklightMapG = new NibbleArray(chunk.blocks.length);
++            chunk.blocklightMapB = new NibbleArray(chunk.blocks.length);
+             chunk.doNothing();
+         }
+@@ -171,11 +193,11 @@
          return chunk;
      }
 -    

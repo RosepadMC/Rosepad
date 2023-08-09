@@ -1,0 +1,133 @@
+--- ChunkCache.java
++++ ChunkCache.java
+@@ -6,5 +6,5 @@
+     private Chunk[][] chunkArray;
+     private World worldObj;
+-    
++
+     public ChunkCache(final World world, final int minX, final int minY, final int minZ, final int maxX, final int maxY, final int maxZ) {
+         this.worldObj = world;
+@@ -20,5 +20,5 @@
+         }
+     }
+-    
++
+     public int getBlockID(final int x, final int y, final int z) {
+         if (y < 0) {
+@@ -30,18 +30,18 @@
+         return this.chunkArray[(x >> 4) - this.chunkX][(z >> 4) - this.chunkZ].getBlockID(x & 0xF, y, z & 0xF);
+     }
+-    
++
+     public TileEntity getBlockTileEntity(final int x, final int y, final int z) {
+         return this.chunkArray[(x >> 4) - this.chunkX][(z >> 4) - this.chunkZ].getChunkBlockTileEntity(x & 0xF, y, z & 0xF);
+     }
+-    
+-    public float getBrightness(final int x, final int y, final int z) {
+-        return World.LIGHT_BRIGHTNESS_TABLE[this.getLightValue(x, y, z)];
++
++    public float getBrightness(final int x, final int y, final int z, final EnumColorChannel color) {
++        return World.LIGHT_BRIGHTNESS_TABLE[this.getLightValue(x, y, z, color)];
+     }
+-    
+-    public int getLightValue(final int x, final int y, final int z) {
+-        return this.getLightValueExt(x, y, z, true);
++
++    public int getLightValue(final int x, final int y, final int z, final EnumColorChannel color) {
++        return this.getLightValueExt(x, y, z, true, color);
+     }
+-    
+-    public int getLightValueExt(final int x, final int y, final int z, final boolean checkSmallBlocks) {
++
++    public int getLightValueExt(final int x, final int y, final int z, final boolean checkSmallBlocks, final EnumColorChannel color) {
+         if (x < -32000000 || z < -32000000 || x >= 32000000 || z > 32000000) {
+             return 15;
+@@ -50,9 +50,9 @@
+             final int blockID = this.getBlockID(x, y, z);
+             if (blockID == Block.STAIR_SINGLE.blockID || blockID == Block.TILLED_FIELD.blockID) {
+-                int lightValueExt = this.getLightValueExt(x, y + 1, z, false);
+-                final int lightValueExt2 = this.getLightValueExt(x + 1, y, z, false);
+-                final int lightValueExt3 = this.getLightValueExt(x - 1, y, z, false);
+-                final int lightValueExt4 = this.getLightValueExt(x, y, z + 1, false);
+-                final int lightValueExt5 = this.getLightValueExt(x, y, z - 1, false);
++                int lightValueExt = this.getLightValueExt(x, y + 1, z, false, color);
++                final int lightValueExt2 = this.getLightValueExt(x + 1, y, z, false, color);
++                final int lightValueExt3 = this.getLightValueExt(x - 1, y, z, false, color);
++                final int lightValueExt4 = this.getLightValueExt(x, y, z + 1, false, color);
++                final int lightValueExt5 = this.getLightValueExt(x, y, z - 1, false, color);
+                 if (lightValueExt2 > lightValueExt) {
+                     lightValueExt = lightValueExt2;
+@@ -82,7 +82,57 @@
+         int blockID = (x >> 4) - this.chunkX;
+         int lightValueExt = (z >> 4) - this.chunkZ;
+-        return this.chunkArray[blockID][lightValueExt].getBlockLightValue(x & 0xF, y, z & 0xF, this.worldObj.skylightSubtracted);
++        return this.chunkArray[blockID][lightValueExt].getBlockLightValue(x & 0xF, y, z & 0xF, this.worldObj.skylightSubtracted, color);
+     }
+-    
++
++    public float getAvgBrightness(final int x, final int y, final int z) {
++        return World.LIGHT_BRIGHTNESS_TABLE[this.getAvgLightValue(x, y, z)];
++    }
++
++    public int getAvgLightValue(final int x, final int y, final int z) {
++        return this.getAvgLightValueExt(x, y, z, true);
++    }
++
++    public int getAvgLightValueExt(final int x, final int y, final int z, final boolean checkSmallBlocks) {
++        if (x < -32000000 || z < -32000000 || x >= 32000000 || z > 32000000) {
++            return 15;
++        }
++        if (checkSmallBlocks) {
++            final int blockID = this.getBlockID(x, y, z);
++            if (blockID == Block.STAIR_SINGLE.blockID || blockID == Block.TILLED_FIELD.blockID) {
++                int lightValueExt = this.getAvgLightValueExt(x, y + 1, z, false);
++                final int lightValueExt2 = this.getAvgLightValueExt(x + 1, y, z, false);
++                final int lightValueExt3 = this.getAvgLightValueExt(x - 1, y, z, false);
++                final int lightValueExt4 = this.getAvgLightValueExt(x, y, z + 1, false);
++                final int lightValueExt5 = this.getAvgLightValueExt(x, y, z - 1, false);
++                if (lightValueExt2 > lightValueExt) {
++                    lightValueExt = lightValueExt2;
++                }
++                if (lightValueExt3 > lightValueExt) {
++                    lightValueExt = lightValueExt3;
++                }
++                if (lightValueExt4 > lightValueExt) {
++                    lightValueExt = lightValueExt4;
++                }
++                if (lightValueExt5 > lightValueExt) {
++                    lightValueExt = lightValueExt5;
++                }
++                return lightValueExt;
++            }
++        }
++        if (y < 0) {
++            return 0;
++        }
++        if (y >= 128) {
++            int blockID = 15 - this.worldObj.skylightSubtracted;
++            if (blockID < 0) {
++                blockID = 0;
++            }
++            return blockID;
++        }
++        int blockID = (x >> 4) - this.chunkX;
++        int lightValueExt = (z >> 4) - this.chunkZ;
++        return this.chunkArray[blockID][lightValueExt].getAvgBlockLightValue(x & 0xF, y, z & 0xF, this.worldObj.skylightSubtracted);
++    }
++
+     public int getBlockMetadata(final int x, final int y, final int z) {
+         if (y < 0) {
+@@ -94,5 +144,5 @@
+         return this.chunkArray[(x >> 4) - this.chunkX][(z >> 4) - this.chunkZ].getBlockMetadata(x & 0xF, y, z & 0xF);
+     }
+-    
++
+     public Material getBlockMaterial(final int x, final int y, final int z) {
+         final int blockID = this.getBlockID(x, y, z);
+@@ -102,5 +152,5 @@
+         return Block.BLOCKS_LIST[blockID].material;
+     }
+-    
++
+     public boolean isBlockNormalCube(final int x, final int y, final int z) {
+         final Block block = Block.BLOCKS_LIST[this.getBlockID(x, y, z)];

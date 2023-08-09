@@ -1,0 +1,65 @@
+--- BlockFlower.java
++++ BlockFlower.java
+@@ -11,14 +11,14 @@
+         this.setBlockBounds(0.3f, 0.0f, 0.3f, 0.7f, 0.6f, 0.7f);
+     }
+-    
++
+     @Override
+     public boolean canPlaceBlockAt(final World world, final int x, final int y, final int z) {
+         return this.canThisPlantGrowOnThisBlockID(world.getBlockID(x, y - 1, z));
+     }
+-    
++
+     protected boolean canThisPlantGrowOnThisBlockID(final int blockID) {
+         return blockID == Block.GRASS.blockID || blockID == Block.DIRT.blockID || blockID == Block.TILLED_FIELD.blockID;
+     }
+-    
++
+     @Override
+     public void onNeighborBlockChange(final World world, final int x, final int y, final int z, final int id) {
+@@ -26,10 +26,10 @@
+         this.checkFlowerChange(world, x, y, z);
+     }
+-    
++
+     @Override
+     public void updateTick(final World world, final int x, final int y, final int z, final Random rand) {
+         this.checkFlowerChange(world, x, y, z);
+     }
+-    
++
+     protected final void checkFlowerChange(final World world, final int x, final int y, final int z) {
+         if (!this.canBlockStay(world, x, y, z)) {
+@@ -38,25 +38,25 @@
+         }
+     }
+-    
++
+     @Override
+     public boolean canBlockStay(final World world, final int x, final int y, final int z) {
+-        return (world.getBlockLightValue(x, y, z) >= 8 || world.canBlockSeeTheSky(x, y, z)) && this.canThisPlantGrowOnThisBlockID(world.getBlockID(x, y - 1, z));
++        return (world.getAvgBlockLightValue(x, y, z) >= 8 || world.canBlockSeeTheSky(x, y, z)) && this.canThisPlantGrowOnThisBlockID(world.getBlockID(x, y - 1, z));
+     }
+-    
++
+     @Override
+     public AxisAlignedBB getCollisionBoundingBoxFromPool(final World world, final int x, final int y, final int z) {
+         return null;
+     }
+-    
++
+     @Override
+     public boolean isOpaqueCube() {
+         return false;
+     }
+-    
++
+     @Override
+     public boolean renderAsNormalBlock() {
+         return false;
+     }
+-    
++
+     @Override
+     public int getRenderType() {

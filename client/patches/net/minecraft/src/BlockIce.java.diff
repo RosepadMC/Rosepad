@@ -1,0 +1,38 @@
+--- BlockIce.java
++++ BlockIce.java
+@@ -9,15 +9,15 @@
+         this.setTickOnLoad(true);
+     }
+-    
++
+     @Override
+     public int getRenderBlockPass() {
+         return 1;
+     }
+-    
++
+     @Override
+     public boolean shouldSideBeRendered(final IBlockAccess blockAccess, final int x, final int y, final int z, final int side) {
+         return super.shouldSideBeRendered(blockAccess, x, y, z, 1 - side);
+     }
+-    
++
+     @Override
+     public void onBlockRemoval(final World world, final int x, final int y, final int z) {
+@@ -27,13 +27,13 @@
+         }
+     }
+-    
++
+     @Override
+     public int quantityDropped(final Random rand) {
+         return 0;
+     }
+-    
++
+     @Override
+     public void updateTick(final World world, final int x, final int y, final int z, final Random rand) {
+-        if (world.getSavedLightValue(EnumSkyBlock.BLOCK, x, y, z) > 11 - Block.LIGHT_OPACITY[this.blockID]) {
++        if (world.getAvgSavedLightValue(EnumSkyBlock.BLOCK, x, y, z) > 11 - (Block.LIGHT_OPACITY_R[this.blockID] + Block.LIGHT_OPACITY_G[this.blockID] * 3 + Block.LIGHT_OPACITY_B[this.blockID] * 2) / 6) {
+             this.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z));
+             world.setBlockWithNotify(x, y, z, Block.WATER_STILL.blockID);

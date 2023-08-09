@@ -1,0 +1,36 @@
+--- EntityFlameFX.java
++++ EntityFlameFX.java
+@@ -3,5 +3,5 @@
+ public class EntityFlameFX extends EntityFX {
+     private float flameScale;
+-    
++
+     public EntityFlameFX(final World world, double x, double y, double z, final double motionX, final double motionY, final double motionZ) {
+         super(world, x, y, z, motionX, motionY, motionZ);
+@@ -21,5 +21,5 @@
+         this.particleTextureIndex = 48;
+     }
+-    
++
+     @Override
+     public void renderParticle(final Tessellator tessellator, final float renderPartialTick, final float xOffset, final float yOffset, final float zOffset, final float xOffset2, final float zOffset2) {
+@@ -28,7 +28,7 @@
+         super.renderParticle(tessellator, renderPartialTick, xOffset, yOffset, zOffset, xOffset2, zOffset2);
+     }
+-    
++
+     @Override
+-    public float getBrightness(final float renderPartialTick) {
++    public float getBrightness(final float renderPartialTick, final EnumColorChannel color) {
+         float n = (this.particleAge + renderPartialTick) / this.particleMaxAge;
+         if (n < 0.0f) {
+@@ -38,7 +38,7 @@
+             n = 1.0f;
+         }
+-        return super.getBrightness(renderPartialTick) * n + (1.0f - n);
++        return super.getBrightness(renderPartialTick, color) * n + (1.0f - n);
+     }
+-    
++
+     @Override
+     public void onUpdate() {

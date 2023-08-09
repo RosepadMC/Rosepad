@@ -1,0 +1,39 @@
+--- EntityZombie.java
++++ EntityZombie.java
+@@ -8,9 +8,9 @@
+         this.attackStrength = 5;
+     }
+-    
++
+     @Override
+     public void onLivingUpdate() {
+         if (this.worldObj.isDaytime()) {
+-            final float brightness = this.getBrightness(1.0f);
++            final float brightness = this.getAvgBrightness(1.0f);
+             if (brightness > 0.5f && this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) && this.rand.nextFloat() * 30.0f < (brightness - 0.4f) * 2.0f) {
+                 this.fire = 300;
+@@ -19,20 +19,20 @@
+         super.onLivingUpdate();
+     }
+-    
++
+     @Override
+     protected String getLivingSound() {
+         return "mob.zombie";
+     }
+-    
++
+     @Override
+     protected String getHurtSound() {
+         return "mob.zombiehurt";
+     }
+-    
++
+     @Override
+     protected String getDeathSound() {
+         return "mob.zombiedeath";
+     }
+-    
++
+     @Override
+     protected int getDropItemID() {

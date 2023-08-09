@@ -1,0 +1,41 @@
+--- EntityAnimal.java
++++ EntityAnimal.java
+@@ -5,5 +5,5 @@
+         super(world);
+     }
+-    
++
+     @Override
+     protected float getBlockPathWeight(final int x, final int y, final int z) {
+@@ -11,17 +11,17 @@
+             return 10.0f;
+         }
+-        return this.worldObj.getBrightness(x, y, z) - 0.5f;
++        return this.worldObj.getAvgBrightness(x, y, z) - 0.5f;
+     }
+-    
++
+     @Override
+     public void writeEntityToNBT(final NBTTagCompound compoundTag) {
+         super.writeEntityToNBT(compoundTag);
+     }
+-    
++
+     @Override
+     public void readEntityFromNBT(final NBTTagCompound compoundTag) {
+         super.readEntityFromNBT(compoundTag);
+     }
+-    
++
+     @Override
+     public boolean getCanSpawnHere() {
+@@ -29,7 +29,7 @@
+         final int floor_double2 = MathHelper.floor_double(this.boundingBox.minY);
+         final int floor_double3 = MathHelper.floor_double(this.posZ);
+-        return this.worldObj.getBlockID(floor_double, floor_double2 - 1, floor_double3) == Block.GRASS.blockID && this.worldObj.getBlockLightValue(floor_double, floor_double2, floor_double3) > 8 && super.getCanSpawnHere();
++        return this.worldObj.getBlockID(floor_double, floor_double2 - 1, floor_double3) == Block.GRASS.blockID && this.worldObj.getAvgBlockLightValue(floor_double, floor_double2, floor_double3) > 8 && super.getCanSpawnHere();
+     }
+-    
++
+     @Override
+     public int getTalkInterval() {

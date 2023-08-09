@@ -1,21 +1,72 @@
 --- Entity.java
 +++ Entity.java
-@@ -108,6 +108,6 @@
+@@ -67,9 +67,9 @@
+     public int serverPosY;
+     public int serverPosZ;
+-    
++
+     static {
+         Entity.nextEntityId = 0;
      }
-     
+-    
++
+     public Entity(final World world) {
+         this.entityID = Entity.nextEntityId++;
+@@ -107,13 +107,13 @@
+         this.setPosition(0.0, 0.0, 0.0);
+     }
+-    
 -    public boolean equals(final Object entity) {
 -        return entity instanceof Entity && ((Entity)entity).entityID == this.entityID;
++
 +    public boolean equals(final Entity entity) {
 +        return entity instanceof Entity && entity.entityID == this.entityID;
      }
-     
+-    
++
+     public int hashCode() {
+         return this.entityID;
+     }
+-    
++
+     protected void preparePlayerToSpawn() {
+         if (this.worldObj == null) {
 @@ -127,5 +127,4 @@
              ++this.posY;
          }
 -        final double motionX = 0.0;
          this.motionZ = 0.0;
          this.motionY = 0.0;
-@@ -159,6 +158,6 @@
+@@ -133,19 +132,19 @@
+         this.rotationPitch = 0.0f;
+     }
+-    
++
+     public void setEntityDead() {
+         this.isDead = true;
+     }
+-    
++
+     protected void setSize(final float width, final float height) {
+         this.width = width;
+         this.height = height;
+     }
+-    
++
+     protected void setRotation(final float rotationYaw, final float rotationPitch) {
+         this.rotationYaw = rotationYaw;
+         this.rotationPitch = rotationPitch;
+     }
+-    
++
+     public void setPosition(final double posX, final double posY, final double posZ) {
+         this.posX = posX;
+@@ -155,10 +154,10 @@
+         this.boundingBox.setBounds(posX - n, posY - this.yOffset + this.ySize, posZ - n, posX + n, posY - this.yOffset + this.ySize + this.height, posZ + n);
+     }
+-    
++
+     public void setAngles(final float yaw, final float pitch) {
          final float rotationPitch = this.rotationPitch;
          final float rotationYaw = this.rotationYaw;
 -        this.rotationYaw += (float)(yaw * 0.15);
@@ -24,6 +75,36 @@
 +        this.rotationPitch -= pitch * 0.15;
          if (this.rotationPitch < -90.0f) {
              this.rotationPitch = -90.0f;
+@@ -170,9 +169,9 @@
+         this.prevRotationYaw += this.rotationYaw - rotationYaw;
+     }
+-    
++
+     public void onUpdate() {
+         this.onEntityUpdate();
+     }
+-    
++
+     public void onEntityUpdate() {
+         if (this.ridingEntity != null && this.ridingEntity.isDead) {
+@@ -227,14 +226,14 @@
+         this.firstUpdate = false;
+     }
+-    
++
+     protected void kill() {
+         this.setEntityDead();
+     }
+-    
++
+     public boolean isOffsetPositionInLiquid(final double offsetX, final double offsetY, final double offsetZ) {
+         final AxisAlignedBB offsetBoundingBox = this.boundingBox.getOffsetBoundingBox(offsetX, offsetY, offsetZ);
+         return this.worldObj.getCollidingBoundingBoxes(this, offsetBoundingBox).size() <= 0 && !this.worldObj.getIsAnyLiquid(offsetBoundingBox);
+     }
+-    
++
+     public void moveEntity(double moveX, double moveY, double moveZ) {
+         if (this.noClip) {
 @@ -253,5 +252,5 @@
          final List<AxisAlignedBB> collidingBoundingBoxes = this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox.addCoord(moveX, moveY, moveZ));
          for (int i = 0; i < collidingBoundingBoxes.size(); ++i) {
@@ -66,9 +147,285 @@
 +                moveZ = collidingBoundingBoxes2.get(k).calculateZOffset(this.boundingBox, moveZ);
              }
              this.boundingBox.offset(0.0, 0.0, moveZ);
-@@ -722,5 +721,4 @@
+@@ -400,20 +399,20 @@
+         }
+     }
+-    
++
+     public AxisAlignedBB getBoundingBox() {
+         return null;
+     }
+-    
++
+     protected void dealFireDamage(final int damage) {
+         this.attackEntityFrom(null, damage);
+     }
+-    
++
+     protected void fall(final float distance) {
+     }
+-    
++
+     public boolean handleWaterMovement() {
+         return this.worldObj.handleMaterialAcceleration(this.boundingBox.expand(0.0, -0.4000000059604645, 0.0), Material.WATER, this);
+     }
+-    
++
+     public boolean isInsideOfMaterial(final Material material) {
+         final double value = this.posY + this.getEyeHeight();
+@@ -424,13 +423,13 @@
+         return blockID != 0 && Block.BLOCKS_LIST[blockID].material == material && value < floor_float + 1 - (BlockFluid.getFluidHeightPercent(this.worldObj.getBlockMetadata(floor_double, floor_float, floor_double2)) - 0.11111111f);
+     }
+-    
++
+     protected float getEyeHeight() {
+         return 0.0f;
+     }
+-    
++
+     public boolean handleLavaMovement() {
+         return this.worldObj.isMaterialInBB(this.boundingBox.expand(0.0, -0.4000000059604645, 0.0), Material.LAVA);
+     }
+-    
++
+     public void moveFlying(float moveX, float moveY, final float moveZ) {
+         float sqrt_float = MathHelper.sqrt_float(moveX * moveX + moveY * moveY);
+@@ -449,13 +448,17 @@
+         this.motionZ += moveY * cos + moveX * sin;
+     }
+-    
+-    public float getBrightness(final float renderPartialTick) {
+-        return this.worldObj.getBrightness(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY - this.yOffset + (this.boundingBox.maxY - this.boundingBox.minY) * 0.66), MathHelper.floor_double(this.posZ));
++
++    public float getBrightness(final float renderPartialTick, final EnumColorChannel color) {
++        return this.worldObj.getBrightness(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY - this.yOffset + (this.boundingBox.maxY - this.boundingBox.minY) * 0.66), MathHelper.floor_double(this.posZ), color);
+     }
+-    
++
++    public float getAvgBrightness(final float renderPartialTick) {
++        return this.worldObj.getAvgBrightness(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY - this.yOffset + (this.boundingBox.maxY - this.boundingBox.minY) * 0.66), MathHelper.floor_double(this.posZ));
++    }
++
+     public void setWorld(final World world) {
+         this.worldObj = world;
+     }
+-    
++
+     public void setPositionAndRotation(final double posX, final double posY, final double posZ, final float rotationYaw, final float rotationPitch) {
+         this.posX = posX;
+@@ -477,5 +480,5 @@
+         this.setPosition(this.posX, this.posY, this.posZ);
+     }
+-    
++
+     public void setLocationAndAngles(final double x, final double y, final double z, final float rotationYaw, final float rotationPitch) {
+         this.posX = x;
+@@ -490,5 +493,5 @@
+         this.setPosition(this.posX, this.posY, this.posZ);
+     }
+-    
++
+     public float getDistanceToEntity(final Entity entity) {
+         final float n = (float)(this.posX - entity.posX);
+@@ -497,5 +500,5 @@
+         return MathHelper.sqrt_float(n * n + n2 * n2 + n3 * n3);
+     }
+-    
++
+     public double getDistanceSq(final double x, final double y, final double z) {
+         final double n = this.posX - x;
+@@ -504,5 +507,5 @@
+         return n * n + n2 * n2 + n3 * n3;
+     }
+-    
++
+     public double getDistance(final double x, final double y, final double z) {
+         final double n = this.posX - x;
+@@ -511,5 +514,5 @@
+         return MathHelper.sqrt_double(n * n + n2 * n2 + n3 * n3);
+     }
+-    
++
+     public double getDistanceSqToEntity(final Entity entity) {
+         final double n = this.posX - entity.posX;
+@@ -518,8 +521,8 @@
+         return n * n + n2 * n2 + n3 * n3;
+     }
+-    
++
+     public void onCollideWithPlayer(final EntityPlayer entityPlayer) {
+     }
+-    
++
+     public void applyEntityCollision(final Entity entity) {
+         if (entity.riddenByEntity == this || entity.ridingEntity == this) {
+@@ -547,5 +550,5 @@
+         }
+     }
+-    
++
+     public void addVelocity(final double motionX, final double motionY, final double motionZ) {
+         this.motionX += motionX;
+@@ -553,20 +556,20 @@
+         this.motionZ += motionZ;
+     }
+-    
++
+     public boolean attackEntityFrom(final Entity entity, final int damage) {
+         return false;
+     }
+-    
++
+     public boolean canBeCollidedWith() {
+         return false;
+     }
+-    
++
+     public boolean canBePushed() {
+         return false;
+     }
+-    
++
+     public void addToPlayerScore(final Entity entity, final int score) {
+     }
+-    
++
+     public boolean isInRangeToRenderVec3D(final Vec3D vector) {
+         final double n = this.posX - vector.xCoord;
+@@ -575,5 +578,5 @@
+         return this.isInRangeToRenderDist(n * n + n2 * n2 + n3 * n3);
+     }
+-    
++
+     public boolean isInRangeToRenderDist(final double distance) {
+         double averageEdgeLength = this.boundingBox.getAverageEdgeLength();
+@@ -581,9 +584,9 @@
+         return distance < averageEdgeLength * averageEdgeLength;
+     }
+-    
++
+     public String getTexture() {
+         return null;
+     }
+-    
++
+     public boolean addEntityID(final NBTTagCompound compoundTag) {
+         final String entityString = this.getEntityString();
+@@ -595,5 +598,5 @@
+         return true;
+     }
+-    
++
+     public void writeToNBT(final NBTTagCompound compoundTag) {
+         compoundTag.setTag("Pos", (NBTBase)this.newDoubleNBTList(this.posX, this.posY, this.posZ));
+@@ -606,5 +609,5 @@
+         this.writeEntityToNBT(compoundTag);
+     }
+-    
++
+     public void readFromNBT(final NBTTagCompound compoundTag) {
+         final NBTTagList tagList = compoundTag.getTagList("Pos");
+@@ -640,13 +643,13 @@
+         this.readEntityFromNBT(compoundTag);
+     }
+-    
++
+     protected final String getEntityString() {
+         return EntityList.getEntityString(this);
+     }
+-    
++
+     protected abstract void readEntityFromNBT(final NBTTagCompound compoundTag);
+-    
++
+     protected abstract void writeEntityToNBT(final NBTTagCompound compoundTag);
+-    
++
+     protected NBTTagList newDoubleNBTList(final double... doubleArray) {
+         final NBTTagList list = new NBTTagList();
+@@ -656,5 +659,5 @@
+         return list;
+     }
+-    
++
+     protected NBTTagList newFloatNBTList(final float... floatArray) {
+         final NBTTagList list = new NBTTagList();
+@@ -664,13 +667,13 @@
+         return list;
+     }
+-    
++
+     public float getShadowSize() {
+         return this.height / 2.0f;
+     }
+-    
++
+     public EntityItem dropItem(final int integer1, final int integer2) {
+         return this.entityDropItem(integer1, integer2, 0.0f);
+     }
+-    
++
+     public EntityItem entityDropItem(final int integer1, final int integer2, final float float3) {
+         final EntityItem entity = new EntityItem(this.worldObj, this.posX, this.posY + float3, this.posZ, new ItemStack(integer1, integer2));
+@@ -679,21 +682,21 @@
+         return entity;
+     }
+-    
++
+     public boolean isEntityAlive() {
+         return !this.isDead;
+     }
+-    
++
+     public boolean isEntityInsideOpaqueBlock() {
+         return this.worldObj.isBlockNormalCube(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY + this.getEyeHeight()), MathHelper.floor_double(this.posZ));
+     }
+-    
++
+     public boolean interact(final EntityPlayer entityPlayer) {
+         return false;
+     }
+-    
++
+     public AxisAlignedBB getCollisionBox(final Entity entity) {
+         return null;
+     }
+-    
++
+     public void updateRidden() {
+         if (this.ridingEntity.isDead) {
+@@ -722,5 +725,4 @@
          double n = this.entityRiderYawDelta * 0.5;
          double n2 = this.entityRiderPitchDelta * 0.5;
 -        final float n3 = 10.0f;
          if (n > 10.0) {
              n = 10.0;
+@@ -740,17 +742,17 @@
+         this.rotationPitch += (float)n2;
+     }
+-    
++
+     protected void updateRiderPosition() {
+         this.riddenByEntity.setPosition(this.posX, this.posY + this.getMountedYOffset() + this.riddenByEntity.getYOffset(), this.posZ);
+     }
+-    
++
+     public double getYOffset() {
+         return this.yOffset;
+     }
+-    
++
+     public double getMountedYOffset() {
+         return this.height * 0.75;
+     }
+-    
++
+     public void mountEntity(final Entity entity) {
+         this.entityRiderPitchDelta = 0.0;
+@@ -771,5 +773,5 @@
+         entity.riddenByEntity = this;
+     }
+-    
++
+     public void setPositionAndRotation(final double x, final double y, final double z, final float yaw, final float pitch, final int newPosRotationIncrements) {
+         this.setPosition(x, y, z);

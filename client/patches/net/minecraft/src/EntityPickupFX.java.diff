@@ -1,0 +1,41 @@
+--- EntityPickupFX.java
++++ EntityPickupFX.java
+@@ -9,5 +9,5 @@
+     private int maxAge;
+     private float yOffs;
+-    
++
+     public EntityPickupFX(final World world, final Entity entityToPickUp, final Entity entityPickingUp, final float yOffset) {
+         super(world, entityToPickUp.posX, entityToPickUp.posY, entityToPickUp.posZ, entityToPickUp.motionX, entityToPickUp.motionY, entityToPickUp.motionZ);
+@@ -19,5 +19,5 @@
+         this.yOffs = yOffset;
+     }
+-    
++
+     @Override
+     public void renderParticle(final Tessellator tessellator, final float renderPartialTick, final float xOffset, final float yOffset, final float zOffset, final float xOffset2, final float zOffset2) {
+@@ -33,12 +33,14 @@
+         double n5 = posY + (n3 - posY) * n;
+         double value2 = posZ + (n4 - posZ) * n;
+-        final float brightness = this.worldObj.getBrightness(MathHelper.floor_double(value), MathHelper.floor_double(n5 + this.yOffset / 2.0f), MathHelper.floor_double(value2));
++        final float brightnessR = this.worldObj.getBrightness(MathHelper.floor_double(value), MathHelper.floor_double(n5 + this.yOffset / 2.0f), MathHelper.floor_double(value2), EnumColorChannel.RED);
++        final float brightnessG = this.worldObj.getBrightness(MathHelper.floor_double(value), MathHelper.floor_double(n5 + this.yOffset / 2.0f), MathHelper.floor_double(value2), EnumColorChannel.GREEN);
++        final float brightnessB = this.worldObj.getBrightness(MathHelper.floor_double(value), MathHelper.floor_double(n5 + this.yOffset / 2.0f), MathHelper.floor_double(value2), EnumColorChannel.BLUE);
+         value -= EntityPickupFX.interpPosX;
+         n5 -= EntityPickupFX.interpPosY;
+         value2 -= EntityPickupFX.interpPosZ;
+-        GL11.glColor4f(brightness, brightness, brightness, 1.0f);
++        GL11.glColor4f(brightnessR, brightnessG, brightnessB, 1.0f);
+         RenderManager.instance.renderEntityWithPosYaw(this.entityToPickUp, (float)value, (float)n5, (float)value2, this.entityToPickUp.rotationYaw, renderPartialTick);
+     }
+-    
++
+     @Override
+     public void onUpdate() {
+@@ -48,5 +50,5 @@
+         }
+     }
+-    
++
+     @Override
+     public int getFXLayer() {

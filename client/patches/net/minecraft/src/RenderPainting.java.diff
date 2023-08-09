@@ -1,0 +1,45 @@
+--- RenderPainting.java
++++ RenderPainting.java
+@@ -8,14 +8,14 @@
+ public class RenderPainting extends Render {
+     private Random rand;
+-    
++
+     public RenderPainting() {
+         this.rand = new Random();
+     }
+-    
++
+     @Override
+     public void doRender(final Entity entity, final double x, final double y, final double z, final float rotation, final float renderPartialTick) {
+         this.renderThePainting((EntityPainting)entity, x, y, z, rotation, renderPartialTick);
+     }
+-    
++
+     public void renderThePainting(final EntityPainting paintingEnt, final double x, final double y, final double z, final float rotation, final float float6) {
+         this.rand.setSeed(187L);
+@@ -32,5 +32,5 @@
+         GL11.glPopMatrix();
+     }
+-    
++
+     private void setSizes(final EntityPainting paintingEnt, final int sizeX, final int sizeY, final int offsetX, final int offsetY) {
+         final float n = -sizeX / 2.0f;
+@@ -83,5 +83,5 @@
+         }
+     }
+-    
++
+     private void getOffset(final EntityPainting paintingEnt, final float float2, final float float3) {
+         int x = MathHelper.floor_double(paintingEnt.posX);
+@@ -100,6 +100,8 @@
+             z = MathHelper.floor_double(paintingEnt.posZ + float2 / 16.0f);
+         }
+-        final float brightness = this.renderManager.worldObj.getBrightness(x, floor_double, z);
+-        GL11.glColor3f(brightness, brightness, brightness);
++        final float brightnessR = this.renderManager.worldObj.getBrightness(x, floor_double, z, EnumColorChannel.RED);
++        final float brightnessG = this.renderManager.worldObj.getBrightness(x, floor_double, z, EnumColorChannel.GREEN);
++        final float brightnessB = this.renderManager.worldObj.getBrightness(x, floor_double, z, EnumColorChannel.BLUE);
++        GL11.glColor3f(brightnessR, brightnessG, brightnessB);
+     }
+ }

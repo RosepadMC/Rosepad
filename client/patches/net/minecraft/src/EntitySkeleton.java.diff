@@ -1,0 +1,58 @@
+--- EntitySkeleton.java
++++ EntitySkeleton.java
+@@ -6,24 +6,24 @@
+         this.texture = "/mob/skeleton.png";
+     }
+-    
++
+     @Override
+     protected String getLivingSound() {
+         return "mob.skeleton";
+     }
+-    
++
+     @Override
+     protected String getHurtSound() {
+         return "mob.skeletonhurt";
+     }
+-    
++
+     @Override
+     protected String getDeathSound() {
+         return "mob.skeletonhurt";
+     }
+-    
++
+     @Override
+     public void onLivingUpdate() {
+         if (this.worldObj.isDaytime()) {
+-            final float brightness = this.getBrightness(1.0f);
++            final float brightness = this.getAvgBrightness(1.0f);
+             if (brightness > 0.5f && this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) && this.rand.nextFloat() * 30.0f < (brightness - 0.4f) * 2.0f) {
+                 this.fire = 300;
+@@ -32,5 +32,5 @@
+         super.onLivingUpdate();
+     }
+-    
++
+     @Override
+     protected void attackEntity(final Entity entity, final float distance) {
+@@ -54,15 +54,15 @@
+         }
+     }
+-    
++
+     @Override
+     public void writeEntityToNBT(final NBTTagCompound compoundTag) {
+         super.writeEntityToNBT(compoundTag);
+     }
+-    
++
+     @Override
+     public void readEntityFromNBT(final NBTTagCompound compoundTag) {
+         super.readEntityFromNBT(compoundTag);
+     }
+-    
++
+     @Override
+     protected int getDropItemID() {

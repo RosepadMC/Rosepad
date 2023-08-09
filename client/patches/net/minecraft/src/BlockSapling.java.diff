@@ -1,0 +1,14 @@
+--- BlockSapling.java
++++ BlockSapling.java
+@@ -9,9 +9,9 @@
+         this.setBlockBounds(0.099999994f, 0.0f, 0.099999994f, 0.9f, 0.8f, 0.9f);
+     }
+-    
++
+     @Override
+     public void updateTick(final World world, final int x, final int y, final int z, final Random rand) {
+         super.updateTick(world, x, y, z, rand);
+-        if (world.getBlockLightValue(x, y + 1, z) >= 9 && rand.nextInt(5) == 0) {
++        if (world.getAvgBlockLightValue(x, y + 1, z) >= 9 && rand.nextInt(5) == 0) {
+             final int blockMetadata = world.getBlockMetadata(x, y, z);
+             if (blockMetadata < 15) {
