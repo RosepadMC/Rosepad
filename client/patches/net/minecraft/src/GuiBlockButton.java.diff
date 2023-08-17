@@ -1,0 +1,23 @@
+--- GuiBlockButton.java
++++ GuiBlockButton.java
+@@ -7,5 +7,5 @@
+     public int bID;
+     public GuiScreen caller;
+-    
++
+     public GuiBlockButton(final int integer1, final int integer2, final int integer3, final String string, final int integer5, final GuiScreen bh) {
+         super(integer1, integer2, integer3, 25, 20, string);
+@@ -13,5 +13,5 @@
+         this.caller = bh;
+     }
+-    
++
+     @Override
+     public void drawButton(final Minecraft minecraft, final int mouseX, final int mouseY) {
+@@ -21,5 +21,5 @@
+         final FontRenderer fontRenderer = minecraft.fontRenderer;
+         GL11.glBindTexture(3553, minecraft.renderEngine.getTexture("/gui/GUICREA.png"));
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         int n = 1;
+         final boolean b = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;

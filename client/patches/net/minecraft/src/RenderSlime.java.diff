@@ -1,0 +1,27 @@
+--- RenderSlime.java
++++ RenderSlime.java
+@@ -5,10 +5,10 @@
+ public class RenderSlime extends RenderLiving {
+     private ModelBase modelSlime;
+-    
++
+     public RenderSlime(final ModelBase fo1, final ModelBase fo2, final float float3) {
+         super(fo1, float3);
+         this.modelSlime = fo2;
+     }
+-    
++
+     @Override
+     protected boolean shouldRenderPass(final EntityLiving entity, final int integer) {
+@@ -22,9 +22,9 @@
+         if (integer == 1) {
+             GL11.glDisable(3042);
+-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++            RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         }
+         return false;
+     }
+-    
++
+     @Override
+     protected void preRenderScale(final EntityLiving entity, final float renderPartialTick) {

@@ -288,13 +288,15 @@
 +        final ScaledResolution scaledResolution = new ScaledResolution(this.displayWidth, this.displayHeight, true);
          final int scaledWidth = scaledResolution.getScaledWidth();
          final int scaledHeight = scaledResolution.getScaledHeight();
-@@ -304,6 +316,4 @@
+@@ -304,7 +316,5 @@
          instance.addVertexWithUV(0.0, 0.0, 0.0, 0.0, 0.0);
          instance.draw();
 -        final int integer5 = 256;
 -        final int integer6 = 256;
-         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
          instance.setColorOpaque_I(16777215);
+         this.scaledTessellator((this.displayWidth / 2 - 256) / 2, (this.displayHeight / 2 - 256) / 2, 0, 0, 256, 256);
 @@ -315,8 +325,6 @@
          Display.swapBuffers();
      }

@@ -1,5 +1,24 @@
 --- RenderPlayer.java
 +++ RenderPlayer.java
+@@ -8,9 +8,9 @@
+     private ModelBiped modelArmor;
+     private static final String[] armorFilenamePrefix;
+-    
++
+     static {
+         armorFilenamePrefix = new String[] { "cloth", "chain", "iron", "diamond", "gold", "obsidian" };
+     }
+-    
++
+     public RenderPlayer() {
+         super(new ModelBiped(0.0f), 0.5f);
+@@ -19,5 +19,5 @@
+         this.modelArmor = new ModelBiped(0.5f);
+     }
+-    
++
+     @Override
+     protected boolean shouldRenderPass(final EntityLiving entity, final int integer) {
 @@ -27,5 +27,5 @@
              final Item item5 = itemStack4.getItem();
              if (item5 instanceof ItemArmor) {
@@ -7,14 +26,17 @@
 +                this.loadTexture("/armor/" + RenderPlayer.armorFilenamePrefix[((ItemArmor) item5).renderIndex] + "_" + ((integer == 2) ? 2 : 1) + ".png");
                  final ModelBiped modelBiped7 = (integer == 2) ? this.modelArmor : this.modelArmorChestplate;
                  modelBiped7.bipedHead.showModel = (integer == 0);
-@@ -44,5 +44,5 @@
-     
+@@ -42,7 +42,7 @@
+         return false;
+     }
+-    
++
      @Override
 -    public void doRender(final Entity entity, final double x, final double y, final double z, final float rotation, final float renderPartialTick) {
 +    public void doRender(final Entity entity, final double x, final double y, final double z, final float rotation, final float renderPartialTick) { // This method is a lie
          final EntityPlayer entityPlayer = (EntityPlayer)entity;
          final ItemStack itemStack11 = entityPlayer.inventory.getCurrentItem();
-@@ -53,38 +53,42 @@
+@@ -53,40 +53,44 @@
          final FontRenderer fontRenderer13 = this.getFontRendererFromRenderManager();
          float float15 = 0.02666667f;
 -        if (!entityPlayer.username.startsWith("\u0107") && !entityPlayer.username.startsWith("\u015b")) {
@@ -86,8 +108,25 @@
 +        fontRenderer13.drawString(username, -fontRenderer13.getStringWidth(username) / 2, 0, -1);
 +        GL11.glEnable(2896);
 +        GL11.glDisable(3042);
-+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 +
 +        GL11.glPopMatrix();
      }
-     
+-    
++
+     @Override
+     protected void renderEquippedItems(final EntityLiving entity, final float renderPartialTick) {
+@@ -124,5 +128,5 @@
+         }
+     }
+-    
++
+     @Override
+     protected void preRenderScale(final EntityLiving entity, final float renderPartialTick) {
+@@ -130,5 +134,5 @@
+         GL11.glScalef(float4, float4, float4);
+     }
+-    
++
+     public void drawFirstPersonHand() {
+         this.modelBipedMain.swingProgress = 0.0f;

@@ -1,11 +1,47 @@
 --- Gui.java
 +++ Gui.java
-@@ -63,6 +63,6 @@
+@@ -5,9 +5,9 @@
+ public class Gui {
+     protected float zLevel;
+-    
++
+     public Gui() {
+         this.zLevel = 0.0f;
      }
-     
+-    
++
+     protected void drawRect(final int xMin, final int yMin, final int xMax, final int yMax, final int colorInt) {
+         final float n = (colorInt >> 24 & 0xFF) / 255.0f;
+@@ -19,5 +19,5 @@
+         GL11.glDisable(3553);
+         GL11.glBlendFunc(770, 771);
+-        GL11.glColor4f(n2, n3, n4, n);
++        RenderEngine.glColor4f(n2, n3, n4, n);
+         instance.startDrawingQuads();
+         instance.addVertex(xMin, yMax, 0.0);
+@@ -29,5 +29,5 @@
+         GL11.glDisable(3042);
+     }
+-    
++
+     protected void drawGradientRect(final int xMin, final int yMin, final int xMax, final int yMax, final int colorIntYMin, final int colorIntYMax) {
+         final float a = (colorIntYMin >> 24 & 0xFF) / 255.0f;
+@@ -58,13 +58,13 @@
+         GL11.glEnable(3553);
+     }
+-    
++
+     public void drawCenteredString(final FontRenderer fontRenderer, final String string, final int integer3, final int integer4, final int integer5) {
+         fontRenderer.drawStringWithShadow(string, integer3 - fontRenderer.getStringWidth(string) / 2, integer4, integer5);
+     }
+-    
 -    public void drawString(final FontRenderer fontRenderer, final String string, final int integer3, final int integer4, final int integer5) {
 -        fontRenderer.drawStringWithShadow(string, integer3, integer4, integer5);
++
 +    public void drawString(final FontRenderer fontRenderer, final String string, final int beginX, final int beginY, final int color) {
 +        fontRenderer.drawStringWithShadow(string, beginX, beginY, color);
      }
-     
+-    
++
+     public void drawTexturedModalRect(final int x, final int y, final int u, final int v, final int width, final int height) {
+         final float n = 0.00390625f;

@@ -15,7 +15,27 @@
 +import java.util.Objects;
  import java.util.Random;
  
-@@ -43,7 +49,17 @@
+@@ -15,10 +21,10 @@
+     private String[] splashes;
+     public static boolean shw;
+-    
++
+     static {
+         GuiMainMenu.shw = false;
+         rand = new Random();
+     }
+-    
++
+     public GuiMainMenu() {
+         this.splashes = new String[] { "MINECRAFT DEMO", "(Stay tuned for more)" };
+@@ -31,5 +37,5 @@
+         catch (Exception ex) {}
+     }
+-    
++
+     @Override
+     public void updateScreen() {
+@@ -43,9 +49,19 @@
          }
      }
 -    
@@ -33,21 +53,47 @@
 +            mc.displayGuiScreen(new DevTools(DevTools.mainPage(), mc.currentScreen, mc));
 +        }
      }
-     
-@@ -76,5 +92,5 @@
+-    
++
+     @Override
+     public void actionPerformed() {
+@@ -72,9 +88,9 @@
+         }
+     }
+-    
++
+     @Override
      protected void actionPerformed(final GuiButton button) {
          if (button.id == 0) {
 -            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
 +            this.mc.displayGuiScreen(new GuiOptions(this, new String[0]));
          }
          if (button.id == 1) {
-@@ -82,5 +98,5 @@
+@@ -82,8 +98,8 @@
          }
          if (button.id == 2) {
 -            this.mc.displayGuiScreen(new GuiMultiplayer(this));
 +            this.mc.displayGuiScreen(new GuiMultiplayerList(this));
          }
      }
+-    
++
+     @Override
+     public void drawScreen(final int mouseX, final int mouseY, final float renderPartialTick) {
+@@ -92,5 +108,5 @@
+         this.drawLogo(renderPartialTick);
+         GL11.glBindTexture(3553, this.mc.renderEngine.getTexture("/gui/logo.png"));
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         instance.setColorOpaque_I(16777215);
+         GL11.glPushMatrix();
+@@ -116,5 +132,5 @@
+         this.drawString(this.fontRenderer, new StringBuilder("QA Build: ").append(GuiScreenInputPass.name).toString(), 2, 12, 2105376);
+     }
+-    
++
+     private void drawLogo(final float renderPartialTick) {
+         if (this.logoEffects == null) {
 @@ -130,5 +146,5 @@
          GL11.glLoadIdentity();
          int i = 120 * new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight).scaleFactor;
@@ -55,3 +101,10 @@
 +        GLU.gluPerspective(mc.gameSettings.fov, this.mc.displayWidth / (float)i, 0.05f, 100.0f);
          GL11.glViewport(0, this.mc.displayHeight - i, this.mc.displayWidth, i);
          GL11.glMatrixMode(5888);
+@@ -196,5 +212,5 @@
+         GL11.glEnable(2884);
+     }
+-    
++
+     public static Random getRandom() {
+         return GuiMainMenu.rand;

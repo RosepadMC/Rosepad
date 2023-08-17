@@ -1,0 +1,35 @@
+--- GuiCrafting.java
++++ GuiCrafting.java
+@@ -5,5 +5,5 @@
+ public class GuiCrafting extends GuiContainer {
+     public CraftingInventoryWorkbenchCB craftingInventory;
+-    
++
+     public GuiCrafting(final InventoryPlayer inventoryPlayer) {
+         this.craftingInventory = new CraftingInventoryWorkbenchCB();
+@@ -23,5 +23,5 @@
+         }
+     }
+-    
++
+     @Override
+     public void onGuiClosed() {
+@@ -29,5 +29,5 @@
+         this.craftingInventory.onCraftGuiClosed(this.mc.thePlayer);
+     }
+-    
++
+     @Override
+     protected void drawGuiContainerForegroundLayer() {
+@@ -35,9 +35,9 @@
+         this.fontRenderer.drawString("Inventory", 8, this.ySize - 96 + 2, 16777215);
+     }
+-    
++
+     @Override
+     protected void drawGuiContainerBackgroundLayer(final float renderPartialTick) {
+         final int texture = this.mc.renderEngine.getTexture("/gui/crafting.png");
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         this.mc.renderEngine.bindTexture(texture);
+         this.drawTexturedModalRect((this.width - this.xSize) / 2, (this.height - this.ySize) / 2, 0, 0, this.xSize, this.ySize);

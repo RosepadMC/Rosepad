@@ -1,0 +1,25 @@
+--- RenderTNTPrimed.java
++++ RenderTNTPrimed.java
+@@ -5,10 +5,10 @@
+ public class RenderTNTPrimed extends Render {
+     private RenderBlocks blockRenderer;
+-    
++
+     public RenderTNTPrimed() {
+         this.blockRenderer = new RenderBlocks();
+         this.shadowSize = 0.5f;
+     }
+-    
++
+     @Override
+     public void doRender(final Entity entity, final double x, final double y, final double z, final float rotation, final float renderPartialTick) {
+@@ -37,7 +37,7 @@
+             GL11.glEnable(3042);
+             GL11.glBlendFunc(770, 772);
+-            GL11.glColor4f(1.0f, 1.0f, 1.0f, n);
++            RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, n);
+             this.blockRenderer.renderBlockOnInventory(Block.TNT);
+-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++            RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+             GL11.glDisable(3042);
+             GL11.glEnable(2896);

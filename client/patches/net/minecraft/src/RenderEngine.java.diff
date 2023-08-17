@@ -1,0 +1,212 @@
+--- RenderEngine.java
++++ RenderEngine.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
+ 
+-import java.util.Iterator;
++import java.util.*;
++
+ import org.lwjgl.opengl.GL11;
+ import java.awt.Graphics;
+@@ -8,40 +9,40 @@
+ import java.io.IOException;
+ import javax.imageio.ImageIO;
+-import java.util.ArrayList;
+-import java.util.Map;
+-import java.util.List;
+ import java.nio.ByteBuffer;
+ import java.nio.IntBuffer;
+ import java.awt.image.BufferedImage;
+-import java.util.HashMap;
+ 
+ public class RenderEngine {
+-    public static boolean useMipmaps;
+-    private HashMap<String, Integer> textureMap;
+-    private HashMap<Integer, BufferedImage> textureContentsMap;
+-    private IntBuffer singleIntBuffer;
+-    private ByteBuffer imageData;
+-    private List<TextureFX> textureList;
+-    private Map<String, ThreadDownloadImageData> urlToImageDataMap;
+-    private GameSettings options;
+-    private boolean clampTexture;
+-    
+-    static {
+-        RenderEngine.useMipmaps = false;
++    public static boolean reverseColors = System.getProperty("os.name").toLowerCase().contains("mac");
++    public static boolean useMipmaps = false;
++    private final HashMap<String, Integer> textureMap = new HashMap<>();
++    private final HashMap<Integer, BufferedImage> textureContentsMap = new HashMap<>();
++    private final IntBuffer singleIntBuffer = GLAllocation.createDirectIntBuffer(1);
++    private final ByteBuffer imageData = GLAllocation.createDirectByteBuffer(1048576);
++    private final List<TextureFX> textureList = new ArrayList<>();
++    private final Map<String, ThreadDownloadImageData> urlToImageDataMap = new HashMap<>();
++    private final GameSettings options;
++    private boolean clampTexture = false;
++
++    public static void glColor4f(float r, float g, float b, float a) {
++        if (reverseColors) GL11.glColor4f(b, g, r, a);
++        else GL11.glColor4f(r, g, b, a);
+     }
+-    
++
++    public static void glColor3f(float r, float g, float b) {
++        if (reverseColors) GL11.glColor3f(b, g, r);
++        else GL11.glColor3f(r, g, b);
++    }
++
+     public RenderEngine(final GameSettings gameSettings) {
+-        this.textureMap = (HashMap<String, Integer>)new HashMap();
+-        this.textureContentsMap = (HashMap<Integer, BufferedImage>)new HashMap();
+-        this.singleIntBuffer = GLAllocation.createDirectIntBuffer(1);
+-        this.imageData = GLAllocation.createDirectByteBuffer(1048576);
+-        this.textureList = (List<TextureFX>)new ArrayList();
+-        this.urlToImageDataMap = (Map<String, ThreadDownloadImageData>)new HashMap();
+-        this.clampTexture = false;
+         this.options = gameSettings;
+     }
+-    
++
+     public int getTexture(final String textureName) {
+-        final Integer n = (Integer)this.textureMap.get(textureName);
++        return getTextureI(textureName + (reverseColors ? "@rev" : ""));
++    }
++
++    private int getTextureI(final String textureName) {
++        final Integer n = this.textureMap.get(textureName);
+         if (n != null) {
+             return n;
+@@ -52,13 +53,13 @@
+             final int value = this.singleIntBuffer.get(0);
+             if (textureName.startsWith("##")) {
+-                this.setupTexture(this.unwrapImageByColumns(ImageIO.read(RenderEngine.class.getResourceAsStream(textureName.substring(2)))), value);
++                this.setupTexture(this.unwrapImageByColumns(ImageIO.read(Objects.requireNonNull(RenderEngine.class.getResourceAsStream(textureName.substring(2).replace("@rev", ""))))), value);
+             }
+             else if (textureName.startsWith("%%")) {
+                 this.clampTexture = true;
+-                this.setupTexture(ImageIO.read(RenderEngine.class.getResourceAsStream(textureName.substring(2))), value);
++                this.setupTexture(ImageIO.read(Objects.requireNonNull(RenderEngine.class.getResourceAsStream(textureName.substring(2).replace("@rev", "")))), value);
+                 this.clampTexture = false;
+             }
+             else {
+-                this.setupTexture(ImageIO.read(RenderEngine.class.getResourceAsStream(textureName)), value);
++                this.setupTexture(ImageIO.read(Objects.requireNonNull(RenderEngine.class.getResourceAsStream(textureName.replace("@rev", "")))), value);
+             }
+             this.textureMap.put(textureName, value);
+@@ -69,5 +70,5 @@
+         }
+     }
+-    
++
+     private BufferedImage unwrapImageByColumns(final BufferedImage image) {
+         final int n = image.getWidth() / 16;
+@@ -75,11 +76,11 @@
+         final Graphics graphics = bufferedImage.getGraphics();
+         for (int i = 0; i < n; ++i) {
+-            graphics.drawImage((Image)image, -i * 16, i * image.getHeight(), (ImageObserver)null);
++            graphics.drawImage((Image)image, -i * 16, i * image.getHeight(), null);
+         }
+         graphics.dispose();
+         return bufferedImage;
+     }
+-    
+-    public int alllocateAndSetupTexture(final BufferedImage image) {
++
++    public int allocateAndSetupTexture(final BufferedImage image) {
+         this.singleIntBuffer.clear();
+         GLAllocation.generateTextureNames(this.singleIntBuffer);
+@@ -89,5 +90,5 @@
+         return value;
+     }
+-    
++
+     public void setupTexture(final BufferedImage image, final int glTexID) {
+         GL11.glBindTexture(3553, glTexID);
+@@ -126,7 +127,13 @@
+                 j = int2;
+             }
+-            array2[i * 4 + 0] = (byte)n2;
++            if (reverseColors) {
++                array2[i * 4] = (byte)j;
++                array2[i * 4 + 2] = (byte)n2;
++            }
++            else {
++                array2[i * 4] = (byte)n2;
++                array2[i * 4 + 2] = (byte)j;
++            }
+             array2[i * 4 + 1] = (byte)n3;
+-            array2[i * 4 + 2] = (byte)j;
+             array2[i * 4 + 3] = (byte)n;
+         }
+@@ -151,5 +158,5 @@
+         }
+     }
+-    
++
+     public void deleteTexture(final int texID) {
+         this.textureContentsMap.remove(texID);
+@@ -159,10 +166,10 @@
+         GL11.glDeleteTextures(this.singleIntBuffer);
+     }
+-    
++
+     public int getTextureForDownloadableImage(final String url, final String textureName) {
+         final ThreadDownloadImageData threadDownloadImageData = (ThreadDownloadImageData)this.urlToImageDataMap.get(url);
+         if (threadDownloadImageData != null && threadDownloadImageData.image != null && !threadDownloadImageData.textureSetupComplete) {
+             if (threadDownloadImageData.textureName < 0) {
+-                threadDownloadImageData.textureName = this.alllocateAndSetupTexture(threadDownloadImageData.image);
++                threadDownloadImageData.textureName = this.allocateAndSetupTexture(threadDownloadImageData.image);
+             }
+             else {
+@@ -176,5 +183,5 @@
+         return threadDownloadImageData.textureName;
+     }
+-    
++
+     public ThreadDownloadImageData obtainImageData(final String url, final IImageBuffer image) {
+         final ThreadDownloadImageData threadDownloadImageData = (ThreadDownloadImageData)this.urlToImageDataMap.get(url);
+@@ -189,5 +196,5 @@
+         return threadDownloadImageData;
+     }
+-    
++
+     public void releaseImageData(final String url) {
+         final ThreadDownloadImageData threadDownloadImageData = (ThreadDownloadImageData)this.urlToImageDataMap.get(url);
+@@ -204,10 +211,10 @@
+         }
+     }
+-    
++
+     public void registerTextureFX(final TextureFX textureFX) {
+         this.textureList.add(textureFX);
+         textureFX.onTick();
+     }
+-    
++
+     public void updateDynamicTextures() {
+         for (int i = 0; i < this.textureList.size(); ++i) {
+@@ -268,9 +275,9 @@
+         }
+     }
+-    
++
+     private int averageColor(final int colorInt1, final int colorInt2) {
+         return (((colorInt1 & 0xFF000000) >> 24 & 0xFF) + ((colorInt2 & 0xFF000000) >> 24 & 0xFF) >> 1 << 24) + ((colorInt1 & 0xFEFEFE) + (colorInt2 & 0xFEFEFE) >> 1);
+     }
+-    
++
+     private int alphaBlend(final int colorInt1, final int colorInt2) {
+         int n = (colorInt1 & 0xFF000000) >> 24 & 0xFF;
+@@ -284,5 +291,5 @@
+         return n3 << 24 | ((colorInt1 >> 16 & 0xFF) * n + (colorInt2 >> 16 & 0xFF) * n2) / (n + n2) << 16 | ((colorInt1 >> 8 & 0xFF) * n + (colorInt2 >> 8 & 0xFF) * n2) / (n + n2) << 8 | ((colorInt1 & 0xFF) * n + (colorInt2 & 0xFF) * n2) / (n + n2);
+     }
+-    
++
+     public void refreshTextures() {
+         for (final int intValue : this.textureContentsMap.keySet()) {
+@@ -314,5 +321,5 @@
+         }
+     }
+-    
++
+     public void bindTexture(final int glTexID) {
+         if (glTexID < 0) {

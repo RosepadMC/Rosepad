@@ -1,0 +1,28 @@
+--- GuiChest.java
++++ GuiChest.java
+@@ -7,5 +7,5 @@
+     private IInventory lowerChestInventory;
+     private int inventoryRows;
+-    
++
+     public GuiChest(final IInventory inv1, final IInventory inv2) {
+         this.inventoryRows = 0;
+@@ -31,5 +31,5 @@
+         }
+     }
+-    
++
+     @Override
+     protected void drawGuiContainerForegroundLayer() {
+@@ -37,9 +37,9 @@
+         this.fontRenderer.drawString(this.upperChestInventory.getInvName(), 8, this.ySize - 96 + 2, 16777215);
+     }
+-    
++
+     @Override
+     protected void drawGuiContainerBackgroundLayer(final float renderPartialTick) {
+         final int texture = this.mc.renderEngine.getTexture("/gui/container.png");
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         this.mc.renderEngine.bindTexture(texture);
+         final int n = (this.width - this.xSize) / 2;

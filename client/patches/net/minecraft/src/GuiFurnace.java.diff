@@ -1,0 +1,28 @@
+--- GuiFurnace.java
++++ GuiFurnace.java
+@@ -5,5 +5,5 @@
+ public class GuiFurnace extends GuiContainer {
+     private TileEntityFurnace furnaceInventory;
+-    
++
+     public GuiFurnace(final InventoryPlayer inventoryPlayer, final TileEntityFurnace tileEntityFurnace) {
+         this.furnaceInventory = tileEntityFurnace;
+@@ -20,5 +20,5 @@
+         }
+     }
+-    
++
+     @Override
+     protected void drawGuiContainerForegroundLayer() {
+@@ -26,9 +26,9 @@
+         this.fontRenderer.drawString("Inventory", 8, this.ySize - 96 + 2, 16777215);
+     }
+-    
++
+     @Override
+     protected void drawGuiContainerBackgroundLayer(final float renderPartialTick) {
+         final int texture = this.mc.renderEngine.getTexture("/gui/furnace.png");
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         this.mc.renderEngine.bindTexture(texture);
+         final int x = (this.width - this.xSize) / 2;

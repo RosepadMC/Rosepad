@@ -37,6 +37,13 @@
 +
      public void drawButton(final Minecraft minecraft, final int mouseX, final int mouseY) {
          if (!this.visible) {
+@@ -37,5 +37,5 @@
+         final FontRenderer fontRenderer = minecraft.fontRenderer;
+         GL11.glBindTexture(3553, minecraft.renderEngine.getTexture("/gui/gui.png"));
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         int n = 1;
+         final boolean b = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
 @@ -58,7 +58,22 @@
          }
      }

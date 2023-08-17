@@ -1,0 +1,30 @@
+--- RenderSpider.java
++++ RenderSpider.java
+@@ -8,10 +8,10 @@
+         this.setRenderPassModel(new ModelSpider());
+     }
+-    
++
+     @Override
+     protected float getDeathMaxRotation(final EntityLiving entitySpider) {
+         return 180.0f;
+     }
+-    
++
+     @Override
+     protected boolean shouldRenderPass(final EntityLiving entity, final int integer) {
+@@ -19,7 +19,4 @@
+             return false;
+         }
+-        if (integer != 0) {
+-            return false;
+-        }
+         this.loadTexture("/mob/spider_eyes.png");
+         final float n = (1.0f - entity.getBrightness(1.0f)) * 0.5f;
+@@ -27,5 +24,5 @@
+         GL11.glDisable(3008);
+         GL11.glBlendFunc(770, 771);
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, n);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, n);
+         return true;
+     }

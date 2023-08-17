@@ -1,5 +1,40 @@
 --- RenderItem.java
 +++ RenderItem.java
+@@ -7,5 +7,5 @@
+     private RenderBlocks itemRenderBlocks;
+     private Random random;
+-    
++
+     public RenderItem() {
+         this.itemRenderBlocks = new RenderBlocks();
+@@ -14,5 +14,5 @@
+         this.shadowOpaque = 0.75f;
+     }
+-    
++
+     @Override
+     public void doRender(final Entity entity, final double x, final double y, final double z, final float rotation, final float renderPartialTick) {
+@@ -91,5 +91,5 @@
+         GL11.glPopMatrix();
+     }
+-    
++
+     public void renderItemIntoGUI(final FontRenderer fontRenderer, final RenderEngine renderEngine, final ItemStack itemStack, final int x, final int y) {
+         if (itemStack == null) {
+@@ -106,5 +106,5 @@
+             GL11.glRotatef(210.0f, 1.0f, 0.0f, 0.0f);
+             GL11.glRotatef(45.0f, 0.0f, 1.0f, 0.0f);
+-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++            RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+             GL11.glScalef(1.0f, 1.0f, 1.0f);
+             this.itemRenderBlocks.renderBlockOnInventory(block);
+@@ -124,5 +124,5 @@
+         GL11.glEnable(2884);
+     }
+-    
++
+     public void renderItemOverlayIntoGUI(final FontRenderer fontRenderer, final RenderEngine renderEngine, final ItemStack itemStack, final int x, final int y) {
+         if (itemStack == null) {
 @@ -137,4 +137,20 @@
              GL11.glEnable(2929);
          }
@@ -12,7 +47,7 @@
 +            GL11.glEnable(2929);
 +        }
 +        else if (itemStack.stackSize <= -1) {
-+            final String string = new StringBuilder().append("").append(itemStack.stackSize).toString();
++            final String string = String.valueOf(itemStack.stackSize);
 +            GL11.glDisable(2896);
 +            GL11.glDisable(2929);
 +            fontRenderer.drawStringWithShadow(string, x + 19 - 2 - fontRenderer.getStringWidth(string), y + 6 + 3, 0xffff4040);
@@ -21,3 +56,21 @@
 +        }
          if (itemStack.itemDmg > 0) {
              final int width = 13 - itemStack.itemDmg * 13 / itemStack.getMaxDamage();
+@@ -152,8 +168,8 @@
+             GL11.glEnable(2896);
+             GL11.glEnable(2929);
+-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++            RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         }
+     }
+-    
++
+     private void renderQuad(final Tessellator tessellator, final int x, final int y, final int width, final int height, final int colorInt) {
+         tessellator.startDrawingQuads();
+@@ -165,5 +181,5 @@
+         tessellator.draw();
+     }
+-    
++
+     public void renderIcon(final int x, final int y, final int u, final int v, final int width, final int height) {
+         final float n = 0.0f;

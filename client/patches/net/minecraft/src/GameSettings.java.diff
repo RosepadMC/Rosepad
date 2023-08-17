@@ -1,6 +1,6 @@
 --- GameSettings.java
 +++ GameSettings.java
-@@ -1,265 +1,223 @@
+@@ -1,265 +1,229 @@
  package net.minecraft.src;
  
 -import java.io.Writer;
@@ -70,7 +70,8 @@
          DIFFICULTY_LEVELS = new String[] { "Peaceful", "Easy", "Normal", "Hard", "Frail" };
 +        CHEAT_MENU_MODES = new String[] { "Default", "One", "Stack", "Inf", "Disabled" };
      }
-     
+-    
++
      public GameSettings(final Minecraft minecraft, final File optionsLocation) {
 -        this.musicVolume = true;
 -        this.soundVolume = true;
@@ -192,6 +193,12 @@
 +                          invertMouse = o.getValue();
 +                  })
 +                  .withName("Invert mouse"));
++        setOption(new GameOption.BooleanGameOption("invertColors",
++            new String[] { "Render options" },
++            RenderEngine.reverseColors,
++            "YES", "NO")
++            .withListener(o -> RenderEngine.reverseColors = o.getValue())
++            .withName("Invert colors"));
 +        setOption(new GameOption.BooleanGameOption("bobView",
 +                                                   new String[] { "Render options" },
 +                                                   true,

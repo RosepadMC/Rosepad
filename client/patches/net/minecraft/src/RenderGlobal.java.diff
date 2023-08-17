@@ -18,8 +18,11 @@
 -import java.util.List;
  
  public class RenderGlobal implements IWorldAccess {
-@@ -60,6 +57,6 @@
-     
+@@ -58,8 +55,8 @@
+     public float damagePartialTime;
+     int frustumCheckOffset;
+-    
++
      public RenderGlobal(final Minecraft minecraft, final RenderEngine renderEngine) {
 -        this.tileEntities = (List<TileEntity>)new ArrayList();
 -        this.worldRenderersToUpdate = (List<WorldRenderer>)new ArrayList();
@@ -57,7 +60,27 @@
 +                instance.addVertex(k, -16.0, l + 64);
                  instance.addVertex(k + 64, -16.0, l + 64);
              }
-@@ -181,6 +178,6 @@
+@@ -119,5 +116,5 @@
+         GL11.glEndList();
+     }
+-    
++
+     private void renderStars() {
+         final Random random = new Random(10842L);
+@@ -160,5 +157,5 @@
+         instance.draw();
+     }
+-    
++
+     public void changeWorld(final World world) {
+         if (this.theWorld != null) {
+@@ -176,11 +173,11 @@
+         }
+     }
+-    
++
+     public void loadRenderers() {
+         Block.LEAVES.setGraphicsLevel(this.mc.gameSettings.fancyGraphics);
          this.renderDistance = this.mc.gameSettings.renderDistance;
          if (this.worldRenderers != null) {
 -            for (int i = 0; i < this.worldRenderers.length; ++i) {
@@ -75,7 +98,7 @@
 +            worldRenderer.needsUpdate = false;
          }
          this.worldRenderersToUpdate.clear();
-@@ -228,5 +225,9 @@
+@@ -228,9 +225,13 @@
              final EntityPlayerSP thePlayer = this.mc.thePlayer;
              this.markRenderersForNewPosition(MathHelper.floor_double(thePlayer.posX), MathHelper.floor_double(thePlayer.posY), MathHelper.floor_double(thePlayer.posZ));
 -            Arrays.sort((Object[])this.sortedWorldRenderers, (Comparator)new EntitySorter(thePlayer));
@@ -86,7 +109,12 @@
 +            }
          }
          this.renderEntitiesStartupCounter = 2;
-@@ -252,22 +253,27 @@
+     }
+-    
++
+     public void renderEntities(final Vec3D vector, final ICamera camera, final float renderPartialTick) {
+         if (this.renderEntitiesStartupCounter > 0) {
+@@ -252,24 +253,29 @@
          final List<Entity> loadedEntityList = this.theWorld.getLoadedEntityList();
          this.countEntitiesTotal = loadedEntityList.size();
 -        for (int i = 0; i < loadedEntityList.size(); ++i) {
@@ -111,19 +139,31 @@
 -            TileEntityRenderer.instance.renderTileEntity((TileEntity)this.tileEntities.get(i), renderPartialTick);
 -        }
      }
-     
+-    
++
      public String getDebugInfoRenders() {
 -        return new StringBuilder().append("C: ").append(this.renderersBeingRendered).append("/").append(this.renderersLoaded).append(". F: ").append(this.renderersBeingClipped).append(", O: ").append(this.renderersBeingOccluded).append(", E: ").append(this.renderersSkippingRenderPass).toString();
 +        return "C: §6" + this.renderersBeingRendered + "§r/§e" + this.renderersLoaded + "§r. F: §c"
 +                + this.renderersBeingClipped + "§r, O: §8" + this.renderersBeingOccluded + "§r, E: §7" + this.renderersSkippingRenderPass;
      }
-     
+-    
++
      public String getDebugInfoEntities() {
 -        return new StringBuilder().append("E: ").append(this.countEntitiesRendered).append("/").append(this.countEntitiesTotal).append(". B: ").append(this.countEntitiesHidden).append(", I: ").append(this.countEntitiesTotal - this.countEntitiesHidden - this.countEntitiesRendered).toString();
 +        return "E: §9" + this.countEntitiesRendered + "§r/§b" + this.countEntitiesTotal + "§r. B: §8"
 +                + this.countEntitiesHidden + "§r, I: §7" + (this.countEntitiesTotal - this.countEntitiesHidden - this.countEntitiesRendered);
      }
-     
+-    
++
+     private void markRenderersForNewPosition(int x, int y, int z) {
+         x -= 8;
+@@ -328,5 +334,5 @@
+         }
+     }
+-    
++
+     public int sortAndRender(final EntityPlayer entityPlayer, final int integer, final double double3) {
+         if (this.mc.gameSettings.renderDistance != this.renderDistance) {
 @@ -351,5 +357,9 @@
              this.prevSortZ = entityPlayer.posZ;
              this.markRenderersForNewPosition(MathHelper.floor_double(entityPlayer.posX), MathHelper.floor_double(entityPlayer.posY), MathHelper.floor_double(entityPlayer.posZ));
@@ -142,13 +182,25 @@
 +            n7 = this.renderSortedRenderers(0, i, integer, double3);
              do {
                  final int j = i;
-@@ -420,5 +430,5 @@
+@@ -420,9 +430,9 @@
          }
          else {
 -            n7 = 0 + this.renderSortedRenderers(0, this.sortedWorldRenderers.length, integer, double3);
 +            n7 = this.renderSortedRenderers(0, this.sortedWorldRenderers.length, integer, double3);
          }
          return n7;
+     }
+-    
++
+     private void checkOcclusionQueryResult(final int integer1, final int integer2) {
+         for (int i = integer1; i < integer2; ++i) {
+@@ -439,5 +449,5 @@
+         }
+     }
+-    
++
+     private int renderSortedRenderers(final int integer1, final int integer2, final int integer3, final double double4) {
+         this.glRenderLists.clear();
 @@ -459,5 +469,6 @@
                  }
              }
@@ -174,7 +226,7 @@
 +                if (this.allRenderLists[k].isRenderedAt(glRenderList.posXMinus, glRenderList.posYMinus, glRenderList.posZMinus)) {
                      n3 = k;
                  }
-@@ -482,7 +492,7 @@
+@@ -482,22 +492,22 @@
              if (n3 < 0) {
                  n3 = n2++;
 -                this.allRenderLists[n3].setLocation(worldRenderer.posXMinus, worldRenderer.posYMinus, worldRenderer.posZMinus, playerX, playerY, playerZ);
@@ -184,8 +236,10 @@
 +            this.allRenderLists[n3].render(glRenderList.getGLCallListForPass(integer3));
          }
          this.renderAllRenderLists(integer3, double4);
-@@ -491,6 +501,6 @@
-     
+         return n;
+     }
+-    
++
      public void renderAllRenderLists(final int integer, final double double2) {
 -        for (int i = 0; i < this.allRenderLists.length; ++i) {
 -            this.allRenderLists[i].render();
@@ -193,7 +247,80 @@
 +            allRenderList.render();
          }
      }
-@@ -720,5 +730,5 @@
+-    
++
+     public void updateClouds() {
+         ++this.cloudTickCounter;
+     }
+-    
++
+     public void renderSky(final float renderPartialTick) {
+         GL11.glDisable(3553);
+@@ -514,9 +524,9 @@
+             n3 = n6;
+         }
+-        GL11.glColor3f(n, n2, n3);
++        RenderEngine.glColor3f(n, n2, n3);
+         final Tessellator instance = Tessellator.instance;
+         GL11.glDepthMask(false);
+         GL11.glEnable(2912);
+-        GL11.glColor3f(n, n2, n3);
++        RenderEngine.glColor3f(n, n2, n3);
+         GL11.glCallList(this.glSkyList);
+         GL11.glEnable(3553);
+@@ -526,5 +536,5 @@
+         GL11.glBlendFunc(1, 1);
+         GL11.glPushMatrix();
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         GL11.glTranslatef(0.0f, 0.0f, 0.0f);
+         GL11.glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
+@@ -547,13 +557,13 @@
+         final float starBrightness = this.theWorld.getStarBrightness(renderPartialTick);
+         if (starBrightness > 0.0f) {
+-            GL11.glColor4f(starBrightness, starBrightness, starBrightness, starBrightness);
++            RenderEngine.glColor4f(starBrightness, starBrightness, starBrightness, starBrightness);
+             GL11.glCallList(this.starGLCallList);
+         }
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         GL11.glDisable(3042);
+         GL11.glEnable(3008);
+         GL11.glEnable(2912);
+         GL11.glPopMatrix();
+-        GL11.glColor3f(n * 0.2f + 0.04f, n2 * 0.2f + 0.04f, n3 * 0.6f + 0.1f);
++        RenderEngine.glColor3f(n * 0.2f + 0.04f, n2 * 0.2f + 0.04f, n3 * 0.6f + 0.1f);
+         GL11.glDisable(3553);
+         GL11.glCallList(this.glSkyList2);
+@@ -561,5 +571,5 @@
+         GL11.glDepthMask(true);
+     }
+-    
++
+     public void renderClouds(final float renderPartialTick) {
+         if (this.mc.gameSettings.fancyGraphics) {
+@@ -605,9 +615,9 @@
+         }
+         instance.draw();
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         GL11.glDisable(3042);
+         GL11.glEnable(2884);
+     }
+-    
++
+     public void renderCloudsFancy(final float renderPartialTick) {
+         GL11.glDisable(2884);
+@@ -713,12 +723,12 @@
+             }
+         }
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         GL11.glDisable(3042);
+         GL11.glEnable(2884);
+     }
+-    
++
      public boolean updateRenderers(final EntityPlayer entityPlayer, final boolean boolean2) {
          try {
 -            Collections.sort((List)this.worldRenderersToUpdate, (Comparator)new RenderSorter(entityPlayer));
@@ -207,8 +334,58 @@
 +            final WorldRenderer worldRenderer = this.worldRenderersToUpdate.get(n - i);
              if (!boolean2) {
                  if (worldRenderer.distanceToEntitySquared(entityPlayer) > 1024.0f) {
-@@ -841,32 +851,36 @@
-     
+@@ -749,5 +759,5 @@
+         return this.worldRenderersToUpdate.size() == 0;
+     }
+-    
++
+     public void drawBlockBreaking(final EntityPlayer entityPlayer, final MovingObjectPosition movingObjectPosition, final int integer, final ItemStack ev, final float float5) {
+         final Tessellator instance = Tessellator.instance;
+@@ -755,10 +765,10 @@
+         GL11.glEnable(3008);
+         GL11.glBlendFunc(770, 1);
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, (MathHelper.sin(System.currentTimeMillis() / 100.0f) * 0.2f + 0.4f) * 0.5f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, (MathHelper.sin(System.currentTimeMillis() / 100.0f) * 0.2f + 0.4f) * 0.5f);
+         if (integer == 0) {
+             if (this.damagePartialTime > 0.0f) {
+                 GL11.glBlendFunc(774, 768);
+                 GL11.glBindTexture(3553, this.renderEngine.getTexture("/terrain.png"));
+-                GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
++                RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+                 GL11.glPushMatrix();
+                 final int blockID = this.theWorld.getBlockID(movingObjectPosition.blockX, movingObjectPosition.blockY, movingObjectPosition.blockZ);
+@@ -786,5 +796,5 @@
+             GL11.glBlendFunc(770, 771);
+             final float n = MathHelper.sin(System.currentTimeMillis() / 100.0f) * 0.2f + 0.8f;
+-            GL11.glColor4f(n, n, n, MathHelper.sin(System.currentTimeMillis() / 200.0f) * 0.2f + 0.5f);
++            RenderEngine.glColor4f(n, n, n, MathHelper.sin(System.currentTimeMillis() / 200.0f) * 0.2f + 0.5f);
+             GL11.glBindTexture(3553, this.renderEngine.getTexture("/terrain.png"));
+         }
+@@ -792,10 +802,10 @@
+         GL11.glDisable(3008);
+     }
+-    
++
+     public void drawSelectionBox(final EntityPlayer dm, final MovingObjectPosition mf, final int integer, final ItemStack ev, final float float5) {
+         if (integer == 0 && mf.typeOfHit == 0) {
+             GL11.glEnable(3042);
+             GL11.glBlendFunc(770, 771);
+-            GL11.glColor4f(0.0f, 0.0f, 0.0f, 0.4f);
++            RenderEngine.glColor4f(0.0f, 0.0f, 0.0f, 0.4f);
+             GL11.glLineWidth(2.0f);
+             GL11.glDisable(3553);
+@@ -811,5 +821,5 @@
+         }
+     }
+-    
++
+     private void drawOutlinedBoundingBox(final AxisAlignedBB aabb) {
+         final Tessellator instance = Tessellator.instance;
+@@ -839,45 +849,49 @@
+         instance.draw();
+     }
+-    
++
      public void markBlocksForUpdate(final int minX, final int minY, final int minZ, final int maxX, final int maxY, final int maxZ) {
 -        final int bucketInt = MathHelper.bucketInt(minX, 16);
 -        final int bucketInt2 = MathHelper.bucketInt(minY, 16);
@@ -267,15 +444,62 @@
 +            System.out.println("NOT THIS TIME TIMOTHY");
          }
      }
-@@ -891,5 +905,5 @@
+-    
++
+     public void markBlockAndNeighborsNeedsUpdate(final int x, final int y, final int z) {
+         this.markBlocksForUpdate(x - 1, y - 1, z - 1, x + 1, y + 1, z + 1);
+     }
+-    
++
+     public void markBlockRangeNeedsUpdate(final int minX, final int minY, final int minZ, final int maxX, final int maxY, final int maxZ) {
+         this.markBlocksForUpdate(minX - 1, minY - 1, minZ - 1, maxX + 1, maxY + 1, maxZ + 1);
+     }
+-    
++
+     public void clipRenderersByFrustum(final ICamera camera, final float float2) {
+         for (int i = 0; i < this.worldRenderers.length; ++i) {
+@@ -888,12 +902,12 @@
+         ++this.frustumCheckOffset;
+     }
+-    
++
      public void playRecord(final String record, final int x, final int y, final int z) {
          if (record != null) {
 -            this.mc.ingameGUI.setRecordPlayingMessage(new StringBuilder("C418 - ").append(record).toString());
 +            this.mc.ingameGUI.setRecordPlayingMessage("[5] - " + record);
          }
          this.mc.sndManager.playStreaming(record, (float)x, (float)y, (float)z, 1.0f, 1.0f);
-@@ -958,10 +972,10 @@
-     
+     }
+-    
++
+     public void playSound(final String sound, final double posX, final double posY, final double posZ, final float volume, final float pitch) {
+         float n = 16.0f;
+@@ -905,5 +919,5 @@
+         }
+     }
+-    
++
+     public void spawnParticle(final String particle, final double posX, final double posY, final double posZ, final double motionX, final double motionY, final double motionZ) {
+         final double n = this.mc.thePlayer.posX - posX;
+@@ -944,5 +958,5 @@
+         }
+     }
+-    
++
+     public void obtainEntitySkin(final Entity entity) {
+         if (entity.skinUrl != null) {
+@@ -950,5 +964,5 @@
+         }
+     }
+-    
++
+     public void releaseEntitySkin(final Entity entity) {
+         if (entity.skinUrl != null) {
+@@ -956,16 +970,16 @@
+         }
+     }
+-    
++
      public void updateAllRenderers() {
 -        for (int i = 0; i < this.worldRenderers.length; ++i) {
 -            if (this.worldRenderers[i].isChunkLit) {
@@ -290,3 +514,8 @@
 +                worldRenderer.markDirty();
              }
          }
+     }
+-    
++
+     public void doNothingWithTileEntity(final int integer1, final int integer2, final int integer3, final TileEntity ic) {
+     }

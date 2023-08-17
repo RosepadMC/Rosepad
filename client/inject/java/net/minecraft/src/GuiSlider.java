@@ -26,7 +26,7 @@ public class GuiSlider extends GuiButton {
         final FontRenderer fontRenderer = minecraft.fontRenderer;
 
         GL11.glBindTexture(3553, minecraft.renderEngine.getTexture("/gui/gui.png"));
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
         final int n = enabled ? isHovered(mouseX, mouseY) ? 2 : 1 : 0;
 

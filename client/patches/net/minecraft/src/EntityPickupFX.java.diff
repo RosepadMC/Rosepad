@@ -1,0 +1,34 @@
+--- EntityPickupFX.java
++++ EntityPickupFX.java
+@@ -9,5 +9,5 @@
+     private int maxAge;
+     private float yOffs;
+-    
++
+     public EntityPickupFX(final World world, final Entity entityToPickUp, final Entity entityPickingUp, final float yOffset) {
+         super(world, entityToPickUp.posX, entityToPickUp.posY, entityToPickUp.posZ, entityToPickUp.motionX, entityToPickUp.motionY, entityToPickUp.motionZ);
+@@ -19,5 +19,5 @@
+         this.yOffs = yOffset;
+     }
+-    
++
+     @Override
+     public void renderParticle(final Tessellator tessellator, final float renderPartialTick, final float xOffset, final float yOffset, final float zOffset, final float xOffset2, final float zOffset2) {
+@@ -37,8 +37,8 @@
+         n5 -= EntityPickupFX.interpPosY;
+         value2 -= EntityPickupFX.interpPosZ;
+-        GL11.glColor4f(brightness, brightness, brightness, 1.0f);
++        RenderEngine.glColor4f(brightness, brightness, brightness, 1.0f);
+         RenderManager.instance.renderEntityWithPosYaw(this.entityToPickUp, (float)value, (float)n5, (float)value2, this.entityToPickUp.rotationYaw, renderPartialTick);
+     }
+-    
++
+     @Override
+     public void onUpdate() {
+@@ -48,5 +48,5 @@
+         }
+     }
+-    
++
+     @Override
+     public int getFXLayer() {

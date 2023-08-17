@@ -1,0 +1,100 @@
+--- Render.java
++++ Render.java
+@@ -9,5 +9,5 @@
+     protected float shadowSize;
+     protected float shadowOpaque;
+-    
++
+     public Render() {
+         this.modelBase = new ModelBiped();
+@@ -16,17 +16,17 @@
+         this.shadowOpaque = 1.0f;
+     }
+-    
++
+     public abstract void doRender(final Entity entity, final double x, final double y, final double z, final float rotation, final float renderPartialTick);
+-    
++
+     protected void loadTexture(final String textureName) {
+         final RenderEngine renderEngine = this.renderManager.renderEngine;
+         renderEngine.bindTexture(renderEngine.getTexture(textureName));
+     }
+-    
++
+     protected void loadDownloadableImageTexture(final String string1, final String string2) {
+         final RenderEngine renderEngine = this.renderManager.renderEngine;
+         renderEngine.bindTexture(renderEngine.getTextureForDownloadableImage(string1, string2));
+     }
+-    
++
+     private void renderEntityOnFire(final Entity entity, final double x, final double y, final double z, final float float5) {
+         GL11.glDisable(2896);
+@@ -50,5 +50,5 @@
+         GL11.glRotatef(-this.renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
+         GL11.glTranslatef(0.0f, 0.0f, 0.4f + (int)n11 * 0.02f);
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         instance.startDrawingQuads();
+         while (n11 > 0.0f) {
+@@ -66,5 +66,5 @@
+         GL11.glEnable(2896);
+     }
+-    
++
+     private void renderShadow(final Entity entity, final double x, final double y, final double z, final float float5, final float renderPartialTick) {
+         GL11.glEnable(3042);
+@@ -100,13 +100,13 @@
+         }
+         instance.draw();
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         GL11.glDisable(3042);
+         GL11.glDepthMask(true);
+     }
+-    
++
+     private World getWorldFromRenderManager() {
+         return this.renderManager.worldObj;
+     }
+-    
++
+     private void renderShadowOnBlock(final Block block, final double double2, final double double3, final double double4, final int blockX, final int blockY, final int blockZ, final float float8, final float float9, final double double10, final double double11, final double double12) {
+         final Tessellator instance = Tessellator.instance;
+@@ -136,9 +136,9 @@
+         instance.addVertexWithUV(n3, n4, n5, n8, n9);
+     }
+-    
++
+     public static void renderOffsetAABB(final AxisAlignedBB aabb, final double double2, final double double3, final double double4) {
+         GL11.glDisable(3553);
+         final Tessellator instance = Tessellator.instance;
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         instance.startDrawingQuads();
+         instance.setTranslationD(double2, double3, double4);
+@@ -177,5 +177,5 @@
+         GL11.glEnable(3553);
+     }
+-    
++
+     public static void renderAABB(final AxisAlignedBB aabb) {
+         final Tessellator instance = Tessellator.instance;
+@@ -207,9 +207,9 @@
+         instance.draw();
+     }
+-    
++
+     public void setRenderManager(final RenderManager renderManager) {
+         this.renderManager = renderManager;
+     }
+-    
++
+     public void doRenderShadowAndFire(final Entity entity, final double double2, final double double3, final double double4, final float float5, final float float6) {
+         if (this.renderManager.gameSettings.fancyGraphics && this.shadowSize > 0.0f) {
+@@ -223,5 +223,5 @@
+         }
+     }
+-    
++
+     public FontRenderer getFontRendererFromRenderManager() {
+         return this.renderManager.getFontRenderer();

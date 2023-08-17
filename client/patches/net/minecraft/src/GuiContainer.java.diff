@@ -121,8 +121,11 @@
 +        List<String> additionalInfo = new ArrayList<>();
          this.drawDefaultBackground();
          final int n = (this.width - this.xSize) / 2;
-@@ -35,13 +129,24 @@
-         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+@@ -33,15 +127,26 @@
+         GL11.glPushMatrix();
+         GL11.glTranslatef((float)n, (float)n2, 0.0f);
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
          GL11.glEnable(32826);
 -        for (int i = 0; i < this.inventorySlots.size(); ++i) {
 -            final SlotInventory slotInventory = (SlotInventory)this.inventorySlots.get(i);

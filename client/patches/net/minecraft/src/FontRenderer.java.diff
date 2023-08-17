@@ -1,23 +1,46 @@
 --- FontRenderer.java
 +++ FontRenderer.java
-@@ -93,27 +93,27 @@
+@@ -12,5 +12,5 @@
+     private int fontDisplayLists;
+     private IntBuffer buffer;
+-    
++
+     public FontRenderer(final GameSettings gameSettings, final String resourceName, final RenderEngine renderEngine) {
+         this.charWidth = new int[256];
+@@ -49,5 +49,5 @@
+             this.charWidth[i] = k + 2;
+         }
+-        this.fontTextureName = renderEngine.alllocateAndSetupTexture(read);
++        this.fontTextureName = renderEngine.allocateAndSetupTexture(read);
+         this.fontDisplayLists = GLAllocation.generateDisplayLists(288);
+         final Tessellator instance = Tessellator.instance;
+@@ -88,32 +88,32 @@
+             }
+             GL11.glNewList(this.fontDisplayLists + 256 + j, 4864);
+-            GL11.glColor3f(k / 255.0f, n2 / 255.0f, n5 / 255.0f);
++            RenderEngine.glColor3f(k / 255.0f, n2 / 255.0f, n5 / 255.0f);
+             GL11.glEndList();
+         }
      }
-     
+-    
 -    public void drawStringWithShadow(final String string, final int integer2, final int integer3, final int integer4) {
 -        this.renderString(string, integer2 + 1, integer3 + 1, integer4, true);
 -        this.drawString(string, integer2, integer3, integer4);
++
 +    public void drawStringWithShadow(final String string, final int beginX, final int beginY, final int color) {
 +        this.renderString(string, beginX + 1, beginY + 1, color, true);
 +        this.drawString(string, beginX, beginY, color);
      }
-     
+-    
 -    public void drawString(final String string, final int integer2, final int integer3, final int integer4) {
 -        this.renderString(string, integer2, integer3, integer4, false);
++
 +    public void drawString(final String string, final int beginX, final int beginY, final int color) {
 +        this.renderString(string, beginX, beginY, color, false);
      }
-     
+-    
 -    public void renderString(final String string, final int integer2, final int integer3, int integer4, final boolean boolean5) {
++
 +    public void renderString(final String string, final int beginX, final int beginY, int color, final boolean renderShadow) {
          if (string == null) {
              return;
@@ -41,7 +64,7 @@
 +                color |= n / 2 << 24;
              }
          }
-@@ -121,8 +121,8 @@
+@@ -121,22 +121,34 @@
          GL11.glBlendFunc(770, 771);
          GL11.glBindTexture(3553, this.fontTextureName);
 -        final float n3 = (integer4 >> 16 & 0xFF) / 255.0f;
@@ -54,7 +77,9 @@
 +        float n6 = (color >> 24 & 0xFF) / 255.0f;
          if (n6 == 0.0f) {
              n6 = 1.0f;
-@@ -131,12 +131,24 @@
+         }
+-        GL11.glColor4f(n3, n4, n5, n6);
++        RenderEngine.glColor4f(n3, n4, n5, n6);
          this.buffer.clear();
          GL11.glPushMatrix();
 -        GL11.glTranslatef((float)integer2, (float)integer3, 0.0f);
@@ -86,7 +111,7 @@
 +                }
                  if (this.buffer.remaining() == 0) {
                      this.buffer.flip();
-@@ -144,18 +156,36 @@
+@@ -144,22 +156,40 @@
                      this.buffer.clear();
                  }
 -                i += 2;
@@ -129,6 +154,11 @@
          }
          this.buffer.flip();
          GL11.glCallLists(this.buffer);
-+        GL11.glColor4f(255, 255, 255, 255);
++        RenderEngine.glColor4f(255, 255, 255, 255);
          GL11.glPopMatrix();
          GL11.glDisable(3042);
+     }
+-    
++
+     public int getStringWidth(final String string) {
+         if (string == null) {

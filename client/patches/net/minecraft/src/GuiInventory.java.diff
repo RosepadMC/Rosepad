@@ -1,6 +1,6 @@
 --- GuiInventory.java
 +++ GuiInventory.java
-@@ -1,8 +1,14 @@
+@@ -1,39 +1,64 @@
  package net.minecraft.src;
  
 +import java.util.Locale;
@@ -15,7 +15,8 @@
 +    private InventoryCreative creativeInventory;
      private float xSize_lo;
      private float ySize_lo;
-@@ -10,28 +16,47 @@
+-    
++
      public GuiInventory(final IInventory inventory, final ItemStack[] items) {
          this.allowUserInput = true;
 -        this.craftingInventory = new CraftingInventoryPlayerCB(items);
@@ -67,7 +68,8 @@
 -            this.inventorySlots.add(new SlotInventory(this, inventory, i, 8 + i * 18, 142));
 -        }
      }
-     
+-    
++
      @Override
      protected void drawGuiContainerForegroundLayer() {
 -        this.fontRenderer.drawString("Crafting", 86, 16, 16777215);
@@ -78,15 +80,23 @@
 +            this.fontRenderer.drawString("Crafting", 82, 9, 16777215);
 +        }
      }
-     
-@@ -45,5 +70,5 @@
+-    
++
+     @Override
+     public void drawScreen(final int mouseX, final int mouseY, final float renderPartialTick) {
+@@ -42,40 +67,56 @@
+         this.ySize_lo = (float)mouseY;
+     }
+-    
++
      @Override
      protected void drawGuiContainerBackgroundLayer(final float renderPartialTick) {
 -        final int texture = this.mc.renderEngine.getTexture("/gui/inventory.png");
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 +        final int texture = this.mc.renderEngine.getTexture(DevToolsCreativeMenu.ENABLED ? "/gui/gminventory.png" : "/gui/inventory.png");
-         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
          this.mc.renderEngine.bindTexture(texture);
-@@ -51,31 +76,47 @@
+         final int x = (this.width - this.xSize) / 2;
          final int y = (this.height - this.ySize) / 2;
          this.drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
 -        GL11.glEnable(32826);

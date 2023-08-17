@@ -1,0 +1,28 @@
+--- TileEntitySignRenderer.java
++++ TileEntitySignRenderer.java
+@@ -5,9 +5,9 @@
+ public class TileEntitySignRenderer extends TileEntitySpecialRenderer {
+     private ModelSign modelSign;
+-    
++
+     public TileEntitySignRenderer() {
+         this.modelSign = new ModelSign();
+     }
+-    
++
+     @Override
+     public void renderTileEntityAt(final TileEntity tileEntity, final double x, final double y, final double z, final float renderPartialTick) {
+@@ -53,5 +53,5 @@
+             final String s = tileEntitySign.signText[i];
+             if (i == tileEntitySign.lineBeingEdited) {
+-                final String string = new StringBuilder("> ").append(s).append(" <").toString();
++                final String string = "> " + s + " <";
+                 fontRenderer.drawString(string, -fontRenderer.getStringWidth(string) / 2, i * 10 - tileEntitySign.signText.length * 5, 0);
+             }
+@@ -61,5 +61,5 @@
+         }
+         GL11.glDepthMask(true);
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         GL11.glPopMatrix();
+     }

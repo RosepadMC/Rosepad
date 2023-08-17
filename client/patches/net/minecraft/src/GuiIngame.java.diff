@@ -38,13 +38,16 @@
 +
      static {
          GuiIngame.uqKey = "";
-@@ -35,5 +43,5 @@
+@@ -35,7 +43,7 @@
          GuiIngame.itemRenderer = new RenderItem();
      }
 -    
 +
      public void RenderHungerBar() {
-         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         GL11.glBindTexture(3553, this.mc.renderEngine.getTexture("/gui/icons.png"));
+         this.drawTexturedModalRect(0, 0, 0, 27, 32, 16);
 @@ -44,5 +52,5 @@
          this.drawTexturedModalRect(0, 0, n * 32, 43, 32, 16);
      }
@@ -98,6 +101,13 @@
 +        if (!this.showGUI && this.mc.currentScreen == null) return;
          final ScaledResolution scaledResolution = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
          final int scaledWidth = scaledResolution.getScaledWidth();
+@@ -115,5 +124,5 @@
+             this.renderVignette(this.mc.thePlayer.getBrightness(renderPartialTick), scaledWidth, scaledHeight);
+         }
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         GL11.glBindTexture(3553, this.mc.renderEngine.getTexture("/gui/gui.png"));
+         final InventoryPlayer inventory = this.mc.thePlayer.inventory;
 @@ -132,5 +141,5 @@
          final int health = this.mc.thePlayer.health;
          final int prevHealth = this.mc.thePlayer.prevHealth;
@@ -244,7 +254,18 @@
 +
      private void renderVignette(float brightness, final int width, final int height) {
          brightness = 1.0f - brightness;
-@@ -383,5 +427,5 @@
+@@ -369,5 +413,5 @@
+         GL11.glDepthMask(false);
+         GL11.glBlendFunc(0, 769);
+-        GL11.glColor4f(this.prevVignetteBrightness, this.prevVignetteBrightness, this.prevVignetteBrightness, 1.0f);
++        RenderEngine.glColor4f(this.prevVignetteBrightness, this.prevVignetteBrightness, this.prevVignetteBrightness, 1.0f);
+         GL11.glBindTexture(3553, this.mc.renderEngine.getTexture("/misc/vignette.png"));
+         final Tessellator instance = Tessellator.instance;
+@@ -380,8 +424,8 @@
+         GL11.glDepthMask(true);
+         GL11.glEnable(2929);
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
          GL11.glBlendFunc(770, 771);
      }
 -    

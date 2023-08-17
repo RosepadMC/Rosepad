@@ -1,0 +1,80 @@
+--- RenderLiving.java
++++ RenderLiving.java
+@@ -6,14 +6,14 @@
+     protected ModelBase mainModel;
+     protected ModelBase renderPassModel;
+-    
++
+     public RenderLiving(final ModelBase modelBase, final float shadowSize) {
+         this.mainModel = modelBase;
+         this.shadowSize = shadowSize;
+     }
+-    
++
+     public void setRenderPassModel(final ModelBase modelBase) {
+         this.renderPassModel = modelBase;
+     }
+-    
++
+     @Override
+     public void doRender(final Entity entity, final double x, final double y, final double z, final float rotation, final float renderPartialTick) {
+@@ -71,9 +71,9 @@
+                 GL11.glDepthFunc(514);
+                 if (entityLiving.hurtTime > 0 || entityLiving.deathTime > 0) {
+-                    GL11.glColor4f(brightness, 0.0f, 0.0f, 0.4f);
++                    RenderEngine.glColor4f(brightness, 0.0f, 0.0f, 0.4f);
+                     this.mainModel.render(n5, n4, preRenderCallback, n2 - n, n3, sqrt_float);
+                     for (int j = 0; j < 4; ++j) {
+                         if (this.shouldRenderPass(entityLiving, j)) {
+-                            GL11.glColor4f(brightness, 0.0f, 0.0f, 0.4f);
++                            RenderEngine.glColor4f(brightness, 0.0f, 0.0f, 0.4f);
+                             this.renderPassModel.render(n5, n4, preRenderCallback, n2 - n, n3, sqrt_float);
+                         }
+@@ -85,9 +85,9 @@
+                     final float n8 = (colorMultiplier & 0xFF) / 255.0f;
+                     final float n9 = (colorMultiplier >> 24 & 0xFF) / 255.0f;
+-                    GL11.glColor4f(n6, n7, n8, n9);
++                    RenderEngine.glColor4f(n6, n7, n8, n9);
+                     this.mainModel.render(n5, n4, preRenderCallback, n2 - n, n3, sqrt_float);
+                     for (int k = 0; k < 4; ++k) {
+                         if (this.shouldRenderPass(entityLiving, k)) {
+-                            GL11.glColor4f(n6, n7, n8, n9);
++                            RenderEngine.glColor4f(n6, n7, n8, n9);
+                             this.renderPassModel.render(n5, n4, preRenderCallback, n2 - n, n3, sqrt_float);
+                         }
+@@ -107,28 +107,28 @@
+         GL11.glPopMatrix();
+     }
+-    
++
+     protected float renderSwingProgress(final EntityLiving entityLiving, final float renderPartialTick) {
+         return entityLiving.getSwingProgress(renderPartialTick);
+     }
+-    
++
+     protected float preRenderCallback(final EntityLiving entity, final float renderPartialTick) {
+         return entity.ticksExisted + renderPartialTick;
+     }
+-    
++
+     protected void renderEquippedItems(final EntityLiving ge, final float float2) {
+     }
+-    
++
+     protected boolean shouldRenderPass(final EntityLiving entity, final int integer) {
+         return false;
+     }
+-    
++
+     protected float getDeathMaxRotation(final EntityLiving entitySpider) {
+         return 90.0f;
+     }
+-    
++
+     protected int getColorMultiplier(final EntityLiving ge, final float float2, final float float3) {
+         return 0;
+     }
+-    
++
+     protected void preRenderScale(final EntityLiving entity, final float renderPartialTick) {
+     }

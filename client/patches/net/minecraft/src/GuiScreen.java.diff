@@ -254,7 +254,13 @@
 +
      public void drawBackground(final int integer) {
          GL11.glDisable(2896);
-@@ -220,13 +248,13 @@
+@@ -215,18 +243,18 @@
+         final Tessellator instance = Tessellator.instance;
+         GL11.glBindTexture(3553, this.mc.renderEngine.getTexture("/dirt.png"));
+-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
++        RenderEngine.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+         instance.startDrawingQuads();
+         instance.setColorOpaque_I(4210752);
          instance.addVertexWithUV(0.0, this.height, 0.0, 0.0, this.height / 32.0f + integer);
          instance.addVertexWithUV(this.width, this.height, 0.0, this.width / 32.0f, this.height / 32.0f + integer);
 -        instance.addVertexWithUV(this.width, 0.0, 0.0, this.width / 32.0f, 0 + integer);
