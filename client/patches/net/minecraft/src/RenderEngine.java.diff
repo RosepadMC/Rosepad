@@ -43,13 +43,13 @@
 +    private final GameSettings options;
 +    private boolean clampTexture = false;
 +
-+    public static void glColor4f(float r, float g, float b, float a) {
++    public static void glColor4f(final float r, final float g, final float b, final float a) {
 +        if (reverseColors) GL11.glColor4f(b, g, r, a);
 +        else GL11.glColor4f(r, g, b, a);
      }
 -    
 +
-+    public static void glColor3f(float r, float g, float b) {
++    public static void glColor3f(final float r, final float g, final float b) {
 +        if (reverseColors) GL11.glColor3f(b, g, r);
 +        else GL11.glColor3f(r, g, b);
 +    }

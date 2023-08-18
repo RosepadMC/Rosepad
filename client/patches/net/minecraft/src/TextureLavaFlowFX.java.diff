@@ -1,0 +1,32 @@
+--- TextureLavaFlowFX.java
++++ TextureLavaFlowFX.java
+@@ -7,5 +7,5 @@
+     protected float[] alpha;
+     int tickCounter;
+-    
++
+     public TextureLavaFlowFX() {
+         super(Block.LAVA_MOVING.blockIndexInTexture + 1);
+@@ -17,5 +17,5 @@
+         this.tileSize = 2;
+     }
+-    
++
+     @Override
+     public void onTick() {
+@@ -75,7 +75,13 @@
+                 l = n9;
+             }
+-            this.imageData[j * 4 + 0] = (byte)n3;
++            if (RenderEngine.reverseColors) {
++                this.imageData[j * 4 + 0] = (byte)l;
++                this.imageData[j * 4 + 2] = (byte)n3;
++            }
++            else {
++                this.imageData[j * 4 + 0] = (byte)n3;
++                this.imageData[j * 4 + 2] = (byte)l;
++            }
+             this.imageData[j * 4 + 1] = (byte)k;
+-            this.imageData[j * 4 + 2] = (byte)l;
+             this.imageData[j * 4 + 3] = -1;
+         }

@@ -14,6 +14,13 @@
 +        this.fontTextureName = renderEngine.allocateAndSetupTexture(read);
          this.fontDisplayLists = GLAllocation.generateDisplayLists(288);
          final Tessellator instance = Tessellator.instance;
+@@ -69,5 +69,5 @@
+             int k = (j >> 2 & 0x1) * 170 + n;
+             int n2 = (j >> 1 & 0x1) * 170 + n;
+-            int n5 = (j >> 0 & 0x1) * 170 + n;
++            int n5 = (j & 0x1) * 170 + n;
+             if (j == 6) {
+                 k += 85;
 @@ -88,32 +88,32 @@
              }
              GL11.glNewList(this.fontDisplayLists + 256 + j, 4864);

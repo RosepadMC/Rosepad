@@ -1,0 +1,20 @@
+--- TextureFX.java
++++ TextureFX.java
+@@ -10,5 +10,5 @@
+     public int tileSize;
+     public int tileImage;
+-    
++
+     public TextureFX(final int index) {
+         this.imageData = new byte[1024];
+@@ -19,8 +19,8 @@
+         this.iconIndex = index;
+     }
+-    
++
+     public void onTick() {
+     }
+-    
++
+     public void bindImage(final RenderEngine renderEngine) {
+         if (this.tileImage == 0) {

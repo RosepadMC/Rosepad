@@ -1,0 +1,32 @@
+--- TextureWaterFlowFX.java
++++ TextureWaterFlowFX.java
+@@ -7,5 +7,5 @@
+     protected float[] alpha;
+     private int tickCounter;
+-    
++
+     public TextureWaterFlowFX() {
+         super(Block.WATER_MOVING.blockIndexInTexture + 1);
+@@ -17,5 +17,5 @@
+         this.tileSize = 2;
+     }
+-    
++
+     @Override
+     public void onTick() {
+@@ -76,7 +76,13 @@
+                 n7 = n11;
+             }
+-            this.imageData[j * 4 + 0] = (byte)n2;
++            if (RenderEngine.reverseColors) {
++                this.imageData[j * 4 + 0] = (byte)n7;
++                this.imageData[j * 4 + 2] = (byte)n2;
++            }
++            else {
++                this.imageData[j * 4 + 0] = (byte)n2;
++                this.imageData[j * 4 + 2] = (byte)n7;
++            }
+             this.imageData[j * 4 + 1] = (byte)n3;
+-            this.imageData[j * 4 + 2] = (byte)n7;
+             this.imageData[j * 4 + 3] = (byte)n8;
+         }

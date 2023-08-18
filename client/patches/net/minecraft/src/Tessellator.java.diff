@@ -1,0 +1,115 @@
+--- Tessellator.java
++++ Tessellator.java
+@@ -37,5 +37,5 @@
+     private int vboCount;
+     private int bufferSize;
+-    
++
+     static {
+         Tessellator.convertQuadsToTriangles = true;
+@@ -43,5 +43,5 @@
+         instance = new Tessellator(2097152);
+     }
+-    
++
+     private Tessellator(final int bufferSize) {
+         this.vertexCount = 0;
+@@ -66,5 +66,5 @@
+         }
+     }
+-    
++
+     public void draw() {
+         if (!this.isDrawing) {
+@@ -139,5 +139,5 @@
+         this.reset();
+     }
+-    
++
+     private void reset() {
+         this.vertexCount = 0;
+@@ -146,9 +146,9 @@
+         this.addedVertices = 0;
+     }
+-    
++
+     public void startDrawingQuads() {
+         this.startDrawing(7);
+     }
+-    
++
+     public void startDrawing(final int drawMode) {
+         if (this.isDrawing) {
+@@ -163,5 +163,5 @@
+         this.isColorDisabled = false;
+     }
+-    
++
+     public void setTextureUV(final double u, final double v) {
+         this.hasTexture = true;
+@@ -169,17 +169,17 @@
+         this.textureV = v;
+     }
+-    
++
+     public void setColorOpaque_F(final float r, final float g, final float b) {
+         this.setColorOpaque((int)(r * 255.0f), (int)(g * 255.0f), (int)(b * 255.0f));
+     }
+-    
++
+     public void setColorRGBA_F(final float r, final float g, final float b, final float a) {
+         this.setColorRGBA((int)(r * 255.0f), (int)(g * 255.0f), (int)(b * 255.0f), (int)(a * 255.0f));
+     }
+-    
++
+     public void setColorOpaque(final int r, final int g, final int b) {
+         this.setColorRGBA(r, g, b, 255);
+     }
+-    
++
+     public void setColorRGBA(int r, int g, int b, int a) {
+         if (this.isColorDisabled) {
+@@ -213,10 +213,10 @@
+         this.color = (a << 24 | b << 16 | g << 8 | r);
+     }
+-    
++
+     public void addVertexWithUV(final double x, final double y, final double z, final double u, final double v) {
+         this.setTextureUV(u, v);
+         this.addVertex(x, y, z);
+     }
+-    
++
+     public void addVertex(final double x, final double y, final double z) {
+         ++this.addedVertices;
+@@ -258,13 +258,13 @@
+         }
+     }
+-    
++
+     public void setColorOpaque_I(final int colorInt) {
+         this.setColorOpaque(colorInt >> 16 & 0xFF, colorInt >> 8 & 0xFF, colorInt & 0xFF);
+     }
+-    
++
+     public void disableColor() {
+         this.isColorDisabled = true;
+     }
+-    
++
+     public void setNormal(final float x, final float y, final float z) {
+         if (!this.isDrawing) {
+@@ -274,5 +274,5 @@
+         this.normal = ((byte)(x * 128.0f) | (byte)(y * 127.0f) << 8 | (byte)(z * 127.0f) << 16);
+     }
+-    
++
+     public void setTranslationD(final double x, final double y, final double z) {
+         this.xOffset = x;
+@@ -280,5 +280,5 @@
+         this.zOffset = z;
+     }
+-    
++
+     public void addTranslationF(final float x, final float y, final float z) {
+         this.xOffset += x;
